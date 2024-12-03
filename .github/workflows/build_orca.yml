@@ -134,6 +134,27 @@ jobs:
           name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}
           path: ${{ github.workspace }}/OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
 
+      - name: Upload artifacts mac (FULL)
+        if: inputs.os == 'macos-14'
+        uses: actions/upload-artifact@v4
+        with:
+          name: FULL_OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}
+          path: ${{ github.workspace }}
+
+      - name: Upload artifacts mac .app 1
+        if: inputs.os == 'macos-14'
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.app.1
+          path: OrcaSlicer.app
+
+      - name: Upload artifacts mac .app 2
+        if: inputs.os == 'macos-14'
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.app.2
+          path: ./OrcaSlicer.app
+
 #       - name: Deploy Mac release
 #         if: github.ref == 'refs/heads/main' && inputs.os == 'macos-14'
 #         uses: WebFreak001/deploy-nightly@v3.1.0
