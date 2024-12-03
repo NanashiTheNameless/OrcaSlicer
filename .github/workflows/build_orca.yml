@@ -210,6 +210,13 @@ jobs:
           name: OrcaSlicer_Windows_${{ env.ver }}_portable
           path: ${{ github.workspace }}/build/OrcaSlicer_Windows_${{ env.ver }}_portable.zip
 
+      - name: Upload artifacts Win zip
+        if: inputs.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: FULL_OrcaSlicer_Windows_${{ env.ver }}
+          path: ${{ github.workspace }}/build**
+
       - name: Upload artifacts Win installer
         if: inputs.os == 'windows-latest'
         uses: actions/upload-artifact@v4
@@ -278,8 +285,8 @@ jobs:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-20.04' && '_Ubuntu2004') || '' }}
         run: |
           ./BuildLinux.sh -isr
-          mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage ./build/OrcaSlicer_Linux${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
-          chmod +x ./build/OrcaSlicer_Linux${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
+          mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage ./build/OrcaSlicer-x86_64.AppImage
+          chmod +x ./build/OrcaSlicer**.AppImage
 
       - name: Build orca_custom_preset_tests
         if: github.ref == 'refs/heads/main' && inputs.os == 'ubuntu-20.04'
@@ -298,28 +305,38 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
-          path: './build/OrcaSlicer_Linux${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage'
+          path: './build/OrcaSlicer**.AppImage'
 
-      - name: Deploy Ubuntu release
-        if: ${{ ! env.ACT && github.ref == 'refs/heads/main' && (inputs.os == 'ubuntu-20.04' || inputs.os == 'ubuntu-24.04' || inputs.os == 'ubuntu-22.04') }}
+      - name: Upload artifacts Ubuntu ALT
+        if: ${{ ! env.ACT && inputs.os == 'ubuntu-20.04' || inputs.os == 'ubuntu-24.04' || inputs.os == 'ubuntu-22.04' }}
         env:
+          ubuntu-ver: ${{ (inputs.os == 'ubuntu-20.04' && '2004') || (inputs.os == 'ubuntu-24.04' && '2404') || (inputs.os == 'ubuntu-22.04' && '2204') || '' }}
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
-        uses: WebFreak001/deploy-nightly@v3.1.0
+        uses: actions/upload-artifact@v4
         with:
-          upload_url: https://uploads.github.com/repos/SoftFever/OrcaSlicer/releases/137995723/assets{?name,label}
-          release_id: 137995723
-          asset_path: ./build/OrcaSlicer_Linux${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
-          asset_name: OrcaSlicer_Linux${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
-          asset_content_type: application/octet-stream
-          max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+          name: ALT-OrcaSlicer_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
+          path: ./build**
 
-      - name: Deploy orca_custom_preset_tests
-        if: ${{ ! env.ACT && github.ref == 'refs/heads/main' && inputs.os == 'ubuntu-20.04' }}
-        uses: WebFreak001/deploy-nightly@v3.1.0
-        with:
-          upload_url: https://uploads.github.com/repos/SoftFever/OrcaSlicer/releases/137995723/assets{?name,label}
-          release_id: 137995723
-          asset_path: ${{ github.workspace }}/resources/profiles/orca_custom_preset_tests.zip
-          asset_name: orca_custom_preset_tests.zip
-          asset_content_type: application/octet-stream
-          max_releases: 1
+#       - name: Deploy Ubuntu release
+#         if: ${{ ! env.ACT && github.ref == 'refs/heads/main' && (inputs.os == 'ubuntu-20.04' || inputs.os == 'ubuntu-24.04' || inputs.os == 'ubuntu-22.04') }}
+#         env:
+#           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+#         uses: WebFreak001/deploy-nightly@v3.1.0
+#         with:
+#           upload_url: https://uploads.github.com/repos/SoftFever/OrcaSlicer/releases/137995723/assets{?name,label}
+#           release_id: 137995723
+#           asset_path: ./build/OrcaSlicer-x86_64.AppImage
+#           asset_name: OrcaSlicer-x86_64.AppImage
+#           asset_content_type: application/octet-stream
+#           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+
+#       - name: Deploy orca_custom_preset_tests
+#         if: ${{ ! env.ACT && github.ref == 'refs/heads/main' && inputs.os == 'ubuntu-20.04' }}
+#         uses: WebFreak001/deploy-nightly@v3.1.0
+#         with:
+#           upload_url: https://uploads.github.com/repos/SoftFever/OrcaSlicer/releases/137995723/assets{?name,label}
+#           release_id: 137995723
+#           asset_path: ${{ github.workspace }}/resources/profiles/orca_custom_preset_tests.zip
+#           asset_name: orca_custom_preset_tests.zip
+#           asset_content_type: application/octet-stream
+#           max_releases: 1
