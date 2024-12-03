@@ -35,9 +35,6 @@ on:
         type: boolean
         default: false
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}  
-
 jobs:
   build_all:
     name: Build All
