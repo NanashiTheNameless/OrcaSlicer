@@ -121,7 +121,7 @@ jobs:
 #           xcrun stapler staple OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
 
       - name: Create DMG without notary
-        if: github.ref != 'refs/heads/main' && inputs.os == 'macos-14'
+        if: inputs.os == 'macos-14'
         working-directory: ${{ github.workspace }}
         run: |
           ln -s /Applications ${{ github.workspace }}/build_${{inputs.arch}}/OrcaSlicer/Applications
@@ -155,19 +155,12 @@ jobs:
           name: FULL-extra2_OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}
           path: ./
 
-      - name: Upload artifacts mac .app 1
+      - name: Upload artifacts mac .app
         if: inputs.os == 'macos-14'
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.app.1
-          path: OrcaSlicer.app
-
-      - name: Upload artifacts mac .app 2
-        if: inputs.os == 'macos-14'
-        uses: actions/upload-artifact@v4
-        with:
-          name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.app.2
-          path: ./OrcaSlicer.app
+          path: ${{ github.workspace }}/build_${{inputs.arch}}/OrcaSlicer/OrcaSlicer.app
 
 #       - name: Deploy Mac release
 #         if: github.ref == 'refs/heads/main' && inputs.os == 'macos-14'
