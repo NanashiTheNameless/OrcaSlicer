@@ -138,7 +138,7 @@ jobs:
         if: inputs.os == 'macos-14'
         uses: actions/upload-artifact@v4
         with:
-          name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.app.1
+          name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.app
           path: ${{ github.workspace }}/build_${{inputs.arch}}/OrcaSlicer/OrcaSlicer.app
 
 #       - name: Deploy Mac release
