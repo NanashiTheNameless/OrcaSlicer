@@ -134,13 +134,6 @@ jobs:
           name: OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}
           path: ${{ github.workspace }}/OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
 
-      - name: Upload artifacts mac (FULL)
-        if: inputs.os == 'macos-14'
-        uses: actions/upload-artifact@v4
-        with:
-          name: FULL_OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}
-          path: ${{ github.workspace }}
-
       - name: Upload artifacts mac .app
         if: inputs.os == 'macos-14'
         uses: actions/upload-artifact@v4
