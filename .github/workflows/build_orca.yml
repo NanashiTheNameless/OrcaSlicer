@@ -128,10 +128,7 @@ jobs:
 
       - name: 'Add some waiting Time to avoid "Resource Busy" when creating DMG'
         if: inputs.os == 'macos-14'
-        uses: AliSajid/random-wait-action@40d889c4a98667b64566903e7ba9c86e76be9e32 # v2.7.1
-        with:
-          minimum: 8
-          maximum: 10
+        run: sleep 10
 
       - name: Create DMG without notary
         if: inputs.os == 'macos-14'
