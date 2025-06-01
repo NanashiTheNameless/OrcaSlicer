@@ -111,6 +111,7 @@ jobs:
         name: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
         path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
     - name: Deploy Flatpak to nightly release
+      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
       uses: WebFreak001/deploy-nightly@v3.2.0
       with:
         upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/205149129/assets{?name,label}
