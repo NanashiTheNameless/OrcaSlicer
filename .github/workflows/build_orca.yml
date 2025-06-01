@@ -236,6 +236,7 @@ jobs:
           max_releases: 1
 
 # Ubuntu
+
       - name: Update release tag
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
         uses: rickstaa/action-create-tag@v1.7.2
@@ -244,6 +245,7 @@ jobs:
           tag_exists_error: false
           force_push_tag: true
           message: "Nightly-Rolling"
+
       - name: Install dependencies
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         env:
