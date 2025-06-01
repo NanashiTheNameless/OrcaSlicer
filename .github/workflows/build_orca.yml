@@ -41,7 +41,7 @@ jobs:
           cmakeVersion: "~3.28.0"  # use most recent 3.28.x version
           
       - name: Get the version and date on Ubuntu and macOS
-        if: inputs.os != 'windows-latest'
+        if: ${{ inputs.os != 'windows-latest' }}
         run: |
           ver_pure=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
@@ -55,7 +55,7 @@ jobs:
         shell: bash
 
       - name: Get the version and date on Windows
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         run: |
           $date = Get-Date -Format 'yyyyMMdd'
           $ref = "${{ github.ref }}"
@@ -79,14 +79,14 @@ jobs:
 
 #   Mac
       - name: Install tools mac
-        if: inputs.os == 'macos-14'
+        if: ${{ inputs.os == 'macos-14' }}
         run: |
           brew install libtool
           brew list
           mkdir -p ${{ github.workspace }}/deps/build
 
       - name: Free disk space
-        if: inputs.os == 'macos-14'
+        if: ${{ inputs.os == 'macos-14' }}
         run: |
           df -hI /dev/disk3s1s1
           sudo find /Applications -maxdepth 1 -type d -name "Xcode_*.app" ! -name "Xcode_15.4.app" -exec rm -rf {} +
@@ -94,7 +94,7 @@ jobs:
           df -hI /dev/disk3s1s1
 
       - name: Build slicer mac
-        if: inputs.os == 'macos-14'
+        if: ${{ inputs.os == 'macos-14' }}
         working-directory: ${{ github.workspace }}
         run: |
           ./build_release_macos.sh -s -n -x -a universal -t 10.15 -1
@@ -127,18 +127,18 @@ jobs:
 #           xcrun stapler staple OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
 
       - name: 'Add some waiting Time to avoid "Resource Busy" when creating DMG'
-        if: inputs.os == 'macos-14'
+        if: ${{ inputs.os == 'macos-14' }}
         run: sleep 60
 
       - name: Create DMG without notary
-        if: inputs.os == 'macos-14'
+        if: ${{ inputs.os == 'macos-14' }}
         working-directory: ${{ github.workspace }}
         run: |
           ln -s /Applications ${{ github.workspace }}/build/universal/OrcaSlicer/Applications
           hdiutil create -volname "OrcaSlicer" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer -ov -format UDZO OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
 
       - name: Upload artifacts mac
-        if: inputs.os == 'macos-14'
+        if: ${{ inputs.os == 'macos-14' }}
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Mac_universal_${{ env.ver }}
@@ -157,17 +157,17 @@ jobs:
 
 # Windows
       - name: setup MSVC
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         uses: microsoft/setup-msbuild@v2
 
       - name: Install nsis
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         run: |
           dir "C:/Program Files (x86)/Windows Kits/10/Include"
           choco install nsis
 
       - name: Build slicer Win
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}
         env:
           WindowsSdkDir: 'C:\Program Files (x86)\Windows Kits\10\'
@@ -175,39 +175,39 @@ jobs:
         run: .\build_release_vs2022.bat slicer
 
       - name: Create installer Win
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}/build
         run: |
           cpack -G NSIS
 
       - name: Pack app
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}/build
         shell: cmd
         run: '"C:/Program Files/7-Zip/7z.exe" a -tzip OrcaSlicer_Windows_${{ env.ver }}_portable.zip ${{ github.workspace }}/build/OrcaSlicer'
 
       - name: Pack PDB
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}/build/src/Release
         shell: cmd
         run: '"C:/Program Files/7-Zip/7z.exe" a -m0=lzma2 -mx9 Debug_PDB_${{ env.ver }}_for_developers_only.7z  *.pdb'
 
       - name: Upload artifacts Win zip
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Windows_${{ env.ver }}_${{ inputs.os }}_portable
           path: ${{ github.workspace }}/build/OrcaSlicer
 
       - name: Upload artifacts Win installer
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Windows_${{ env.ver }}_${{ inputs.os }}
           path: ${{ github.workspace }}/build/OrcaSlicer*.exe
 
       - name: Upload artifacts Win PDB
-        if: inputs.os == 'windows-latest'
+        if: ${{ inputs.os == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: PDB
@@ -236,8 +236,16 @@ jobs:
           max_releases: 1
 
 # Ubuntu
+      - name: Update release tag
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
+        uses: rickstaa/action-create-tag@v1.7.2
+        with:
+          tag: "Nightly-Rolling"
+          tag_exists_error: false
+          force_push_tag: true
+          message: "Nightly-Rolling"
       - name: Install dependencies
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         env:
           apt-cmd: ${{ (inputs.os == 'ubuntu-22.04' && 'sudo apt-get') || (inputs.os == 'ubuntu-24.04' && 'sudo apt-get') || '' }}
           webkit-ver: ${{ (inputs.os == 'ubuntu-22.04' && '4.0') || (inputs.os == 'ubuntu-24.04' && '4.1') || '' }}
@@ -252,17 +260,17 @@ jobs:
           libwebkit2gtk-${{ env.webkit-ver }}-dev libxkbcommon-dev locales locales-all m4 pkgconf sudo wayland-protocols wget ${{ env.libfuse2-pkg }}
 
       - name: Install dependencies from BuildLinux.sh
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         shell: bash
         run: sudo ./BuildLinux.sh -ur
 
       - name: Fix permissions
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         shell: bash
         run: sudo chown $USER -R ./
 
       - name: Build slicer
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         shell: bash
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
@@ -272,7 +280,7 @@ jobs:
           chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
 
       - name: Build orca_custom_preset_tests
-        if: inputs.os == 'ubuntu-22.04'
+        if: ${{ inputs.os == 'ubuntu-22.04' }}
         working-directory: ${{ github.workspace }}/build/src
         shell: bash
         run: |
@@ -300,15 +308,6 @@ jobs:
           asset_name: orca_custom_preset_tests.zip
           asset_content_type: application/octet-stream
           max_releases: 1
-
-      - name: Deploy Ubuntu release
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
-        uses: rickstaa/action-create-tag@v1
-        with:
-          tag: "Nightly-Rolling"
-          tag_exists_error: false
-          force_push_tag: true
-          message: "Nightly-Rolling"
 
       - name: Deploy Ubuntu release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
