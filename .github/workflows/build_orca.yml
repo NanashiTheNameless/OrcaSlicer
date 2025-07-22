@@ -285,6 +285,7 @@ jobs:
           chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
 
       - name: Build orca_custom_preset_tests
+        continue-on-error: true
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
         working-directory: ${{ github.workspace }}/build/src
         shell: bash
@@ -326,6 +327,7 @@ jobs:
           message: "Nightly-Rolling"
 
       - name: Deploy orca_custom_preset_tests
+        continue-on-error: true
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
