@@ -333,13 +333,11 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
     }
-
-    bool have_arachne = config->opt_enum<PerimeterGeneratorType>("wall_generator") == PerimeterGeneratorType::Arachne;
 	if (!is_plate_config &&
         config->opt_bool("staggered_perimeters") &&
         (abs(config->opt_float("initial_layer_print_height") - config->opt_float("layer_height")) > EPSILON  ||
-        !(config->option<ConfigOptionFloatOrPercent>("top_surface_line_width") == config->option<ConfigOptionFloatOrPercent>("outer_wall_line_width")) || 
-            !have_arachne || 
+        !(config->option<ConfigOptionFloatOrPercent>("top_surface_line_width") == config->option<ConfigOptionFloatOrPercent>("outer_wall_line_width")) ||
+            !have_arachne ||
             config->opt_bool("spiral_mode")))
     {
         DynamicPrintConfig new_conf = *config;
@@ -511,7 +509,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
     }
-    
+
     bool have_arachne = config->opt_enum<PerimeterGeneratorType>("wall_generator") == PerimeterGeneratorType::Arachne;
     if (config->opt_enum<FuzzySkinMode>("fuzzy_skin_mode") != FuzzySkinMode::Displacement && !have_arachne) {
         wxString msg_text = _(L("Both [Extrusion] and [Combined] modes of Fuzzy Skin require the Arachne Wall Generator to be enabled."));
@@ -524,7 +522,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         auto answer = dialog.ShowModal();
         if (answer == wxID_YES)
             new_conf.set_key_value("wall_generator", new ConfigOptionEnum<PerimeterGeneratorType>(PerimeterGeneratorType::Arachne));
-        else 
+        else
             new_conf.set_key_value("fuzzy_skin_mode", new ConfigOptionEnum<FuzzySkinMode>(FuzzySkinMode::Displacement));
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
@@ -615,7 +613,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
     bool is_locked_zig = config->option<ConfigOptionEnum<InfillPattern>>("sparse_infill_pattern")->value == InfillPattern::ipLockedZag;
 
     toggle_line("infill_shift_step", is_cross_zag || is_locked_zig);
-    
+
     for (auto el : { "skeleton_infill_density", "skin_infill_density", "infill_lock_depth", "skin_infill_depth","skin_infill_line_width", "skeleton_infill_line_width" })
         toggle_line(el, is_locked_zig);
 
@@ -763,7 +761,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
     bool has_ironing = (config->opt_enum<IroningType>("ironing_type") != IroningType::NoIroning);
     for (auto el : { "ironing_pattern", "ironing_flow", "ironing_spacing", "ironing_angle", "ironing_inset"})
         toggle_line(el, has_ironing);
-    
+
     toggle_line("ironing_speed", has_ironing || has_support_ironing);
 
     bool have_sequential_printing = (config->opt_enum<PrintSequence>("print_sequence") == PrintSequence::ByObject);
@@ -804,7 +802,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
     toggle_line("wipe_tower_extra_rib_length", have_prime_tower && !is_BBL_Printer && wipe_tower_wall_type == WipeTowerWallType::wtwRib);
     toggle_line("wipe_tower_rib_width", have_prime_tower && !is_BBL_Printer && wipe_tower_wall_type == WipeTowerWallType::wtwRib);
     toggle_line("wipe_tower_fillet_wall", have_prime_tower && !is_BBL_Printer && wipe_tower_wall_type == WipeTowerWallType::wtwRib);
-    
+
 
     toggle_line("single_extruder_multi_material_priming", !bSEMM && have_prime_tower && !is_BBL_Printer);
 
