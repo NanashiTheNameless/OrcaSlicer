@@ -424,16 +424,6 @@ jobs:
           name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
           path: './build/src/OrcaSlicer_profile_validator'
 
-      - name: Upload OrcaSlicer_profile_validator Ubuntu
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
-        env:
-          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
-          path: './build/src/OrcaSlicer_profile_validator'
-
       - name: Deploy Ubuntu release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
         env:
