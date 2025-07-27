@@ -475,10 +475,11 @@ jobs:
           max_releases: 1
 
       - name: Update release tag
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
-        uses: rickstaa/action-create-tag@v1.7.2
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-24.04') }}
+        uses: NanashiTheNameless/action-create-tag@main
         with:
           tag: "Nightly-Rolling"
           tag_exists_error: false
           force_push_tag: true
           message: "Nightly-Rolling"
+          github_token: ${{ github.token }}
