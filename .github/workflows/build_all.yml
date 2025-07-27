@@ -1,42 +1,38 @@
 name: Build all
-
 on:
   push:
     branches:
-     - main
-     - release/*
+      - main
+      - release/*
     paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - 'localization/**'
-     - 'resources/**'
-     - ".github/workflows/build_*.yml"
-     - 'flatpak/**'
-
+      - 'deps/**'
+      - 'src/**'
+      - '**/CMakeLists.txt'
+      - 'version.inc'
+      - 'localization/**'
+      - 'resources/**'
+      - ".github/workflows/build_*.yml"
+      - 'flatpak/**'
   pull_request:
     branches:
-     - main
-     - release/*
+      - main
+      - release/*
     paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - ".github/workflows/build_*.yml"
-     - 'build_linux.sh'
-     - 'build_release_vs2022.bat'
-     - 'build_release_macos.sh'
-     - 'flatpak/**'
-
+      - 'deps/**'
+      - 'src/**'
+      - '**/CMakeLists.txt'
+      - 'version.inc'
+      - ".github/workflows/build_*.yml"
+      - 'build_linux.sh'
+      - 'build_release_vs2022.bat'
+      - 'build_release_macos.sh'
+      - 'flatpak/**'
   workflow_dispatch: # allows for manual dispatch
     inputs:
       build-deps-only:
         description: 'Only build dependencies (bypasses caching)'
         type: boolean
         default: false
-
 jobs:
   build_all:
     name: Build All
@@ -82,41 +78,40 @@ jobs:
       ver:
       ver_pure:
     steps:
-    - name: "Remove unneeded stuff to free disk space"
-      run:
-        rm -rf /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*"
-    - uses: actions/checkout@v4
-    - name: Get the version and date
-      run: |
-        ver_pure=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
-        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          ver="PR-${{ github.event.number }}"
-        else
-          ver=V$ver_pure
-        fi
-        echo "ver=$ver" >> $GITHUB_ENV
-        echo "ver_pure=$ver_pure" >> $GITHUB_ENV
-        echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
-      shell: bash
-    - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
-      with:
-        bundle: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
-        manifest-path: flatpak/io.github.softfever.OrcaSlicer.yml
-        cache: true
-        arch: ${{ matrix.variant.arch }}
-        upload-artifact: false
-    - name: Upload artifacts Flatpak
-      uses: actions/upload-artifact@v4
-      with:
-        name: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
-        path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
-    - name: Deploy Flatpak to nightly release
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
-      uses: WebFreak001/deploy-nightly@v3.2.0
-      with:
-        upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/205149129/assets{?name,label}
-        release_id: 205149129
-        asset_path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
-        asset_name: OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
-        asset_content_type: application/octet-stream
-        max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+      - name: "Remove unneeded stuff to free disk space"
+        run: rm -rf /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*"
+      - uses: actions/checkout@v4
+      - name: Get the version and date
+        run: |
+          ver_pure=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            ver="PR-${{ github.event.number }}"
+          else
+            ver=V$ver_pure
+          fi
+          echo "ver=$ver" >> $GITHUB_ENV
+          echo "ver_pure=$ver_pure" >> $GITHUB_ENV
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
+        shell: bash
+      - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
+        with:
+          bundle: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
+          manifest-path: flatpak/io.github.softfever.OrcaSlicer.yml
+          cache: true
+          arch: ${{ matrix.variant.arch }}
+          upload-artifact: false
+      - name: Upload artifacts Flatpak
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
+          path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
+      - name: Deploy Flatpak to nightly release
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
+        uses: WebFreak001/deploy-nightly@v3.2.0
+        with:
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/205149129/assets{?name,label}
+          release_id: 205149129
+          asset_path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
+          asset_name: OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
+          asset_content_type: application/octet-stream
+          max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
