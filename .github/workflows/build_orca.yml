@@ -19,9 +19,9 @@ jobs:
     name: Build OrcaSlicer
     runs-on: ${{ inputs.os }}
     env:
-      date:
-      ver:
-      ver_pure:
+      date: ""
+      ver: ""
+      ver_pure: ""
 
     steps:
       - name: Checkout
