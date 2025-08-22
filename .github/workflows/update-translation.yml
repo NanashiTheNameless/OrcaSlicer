@@ -20,7 +20,7 @@ jobs:
           sudo apt-get install -y gettext
       - name: Update translation catalog
         run: |
-          ./run_gettext.sh --full
+          ./scripts/run_gettext.sh --full
           git add localization/i18n/*
       - name: Commit translation catalog updates
         uses: qoomon/actions--create-commit@v1
