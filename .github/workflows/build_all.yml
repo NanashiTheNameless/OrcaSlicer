@@ -112,8 +112,8 @@ jobs:
       if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
       uses: WebFreak001/deploy-nightly@v3.2.0
       with:
-        upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/205149129/assets{?name,label}
-        release_id: 205149129
+        upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+        release_id: 242055857
         asset_path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
         asset_name: OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
         asset_content_type: application/octet-stream
