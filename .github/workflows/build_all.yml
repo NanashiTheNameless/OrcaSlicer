@@ -5,29 +5,29 @@ on:
       - main
       - release/*
     paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - 'localization/**'
-     - 'resources/**'
-     - ".github/workflows/build_*.yml"
-     - 'scripts/flatpak/**'
+      - 'deps/**'
+      - 'src/**'
+      - '**/CMakeLists.txt'
+      - 'version.inc'
+      - 'localization/**'
+      - 'resources/**'
+      - ".github/workflows/build_*.yml"
+      - 'scripts/flatpak/**'
 
   pull_request:
     branches:
       - main
       - release/*
     paths:
-     - 'deps/**'
-     - 'src/**'
-     - '**/CMakeLists.txt'
-     - 'version.inc'
-     - ".github/workflows/build_*.yml"
-     - 'build_linux.sh'
-     - 'build_release_vs2022.bat'
-     - 'build_release_macos.sh'
-     - 'scripts/flatpak/**'
+      - 'deps/**'
+      - 'src/**'
+      - '**/CMakeLists.txt'
+      - 'version.inc'
+      - ".github/workflows/build_*.yml"
+      - 'build_linux.sh'
+      - 'build_release_vs2022.bat'
+      - 'build_release_macos.sh'
+      - 'scripts/flatpak/**'
 
   workflow_dispatch: # allows for manual dispatch
     inputs:
@@ -76,9 +76,9 @@ jobs:
             runner: ubuntu-22.04-arm
     runs-on: ${{ matrix.variant.runner }}
     env:
-      date:
-      ver:
-      ver_pure:
+      date: ""
+      ver: ""
+      ver_pure: ""
     steps:
     - name: "Remove unneeded stuff to free disk space"
       run:

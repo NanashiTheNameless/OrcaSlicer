@@ -26,15 +26,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           lfs: 'true'
+
       - name: load cached deps
         uses: actions/cache@v4
         with:
           path: ${{ inputs.cache-path }}
           key: ${{ inputs.cache-key }}
           fail-on-cache-miss: true
+
       - uses: lukka/get-cmake@latest
         with:
-          cmakeVersion: "~3.28.0" # use most recent 3.28.x version
+          cmakeVersion: "~3.28.0"  # use most recent 3.28.x version
+          
       - name: Get the version and date on Ubuntu and macOS
         if: ${{ inputs.os != 'windows-latest' }}
         run: |
@@ -48,6 +51,7 @@ jobs:
           echo "ver_pure=$ver_pure" >> $GITHUB_ENV
           echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
         shell: bash
+
       - name: Get the version and date on Windows
         if: ${{ inputs.os == 'windows-latest' }}
         run: |
@@ -70,13 +74,15 @@ jobs:
           echo "date=$date" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
           echo "date: ${{ env.date }} version: ${{ env.ver }}"
         shell: pwsh
-        #   Mac
+
+#   Mac
       - name: Install tools mac
         if: ${{ inputs.os == 'macos-14' }}
         run: |
           brew install libtool
           brew list
           mkdir -p ${{ github.workspace }}/deps/build
+
       - name: Free disk space
         if: ${{ inputs.os == 'macos-14' }}
         run: |
@@ -84,23 +90,29 @@ jobs:
           sudo find /Applications -maxdepth 1 -type d -name "Xcode_*.app" ! -name "Xcode_15.4.app" -exec rm -rf {} +
           sudo rm -rf ~/Library/Developer/CoreSimulator/Caches/*
           df -hI /dev/disk3s1s1
+
       - name: Build slicer mac
         if: ${{ inputs.os == 'macos-14' }}
         working-directory: ${{ github.workspace }}
         run: |
           ./build_release_macos.sh -s -n -x -a universal -t 10.15 -1
+
       - name: Add some waiting Time to avoid issues when creating DMG
         if: ${{ inputs.os == 'macos-14' }}
         run: sleep 30
+
       - name: Detach OrcaSlicer volume if mounted
         if: ${{ inputs.os == 'macos-14' }}
         run: hdiutil detach /Volumes/OrcaSlicer || true
+
       - name: Remove existing DMG if present
         if: ${{ inputs.os == 'macos-14' }}
         run: rm -f OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
+
       - name: Wait for resources to be freed
         if: ${{ inputs.os == 'macos-14' }}
         run: sleep 10
+
       - name: Create DMG without notary
         if: ${{ inputs.os == 'macos-14' }}
         working-directory: ${{ github.workspace }}
@@ -115,12 +127,14 @@ jobs:
             ln -s /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg/Applications
             hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg -ov -format UDZO OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           fi
+
       - name: Upload artifacts mac
         if: ${{ inputs.os == 'macos-14' }}
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Mac_universal_${{ env.ver }}
           path: ${{ github.workspace }}/OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
+
       - name: Upload OrcaSlicer_profile_validator DMG mac
         if: ${{ inputs.os == 'macos-14' }}
         uses: actions/upload-artifact@v4
@@ -128,6 +142,7 @@ jobs:
           name: OrcaSlicer_profile_validator_Mac_universal_DMG
           path: ${{ github.workspace }}/OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           if-no-files-found: ignore
+
       - name: Deploy Mac release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'macos-14' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -138,6 +153,7 @@ jobs:
           asset_name: OrcaSlicer_Mac_universal.dmg
           asset_content_type: application/octet-stream
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
         if: ${{ inputs.os == 'macos-14' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -148,15 +164,18 @@ jobs:
           asset_name: OrcaSlicer_profile_validator_Mac_universal.dmg
           asset_content_type: application/octet-stream
           max_releases: 1
-          # Windows
+
+# Windows
       - name: setup MSVC
         if: ${{ inputs.os == 'windows-latest' }}
         uses: microsoft/setup-msbuild@v2
+
       - name: Install nsis
         if: ${{ inputs.os == 'windows-latest' }}
         run: |
           dir "C:/Program Files (x86)/Windows Kits/10/Include"
           choco install nsis
+
       - name: Build slicer Win
         if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}
@@ -164,45 +183,53 @@ jobs:
           WindowsSdkDir: 'C:\Program Files (x86)\Windows Kits\10\'
           WindowsSDKVersion: '10.0.26100.0\'
         run: .\build_release_vs2022.bat slicer
+
       - name: Create installer Win
         if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}/build
         run: |
           cpack -G NSIS
+
       - name: Pack app
         if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}/build
         shell: cmd
         run: '"C:/Program Files/7-Zip/7z.exe" a -tzip OrcaSlicer_Windows_${{ env.ver }}_portable.zip ${{ github.workspace }}/build/OrcaSlicer'
+
       - name: Pack PDB
         if: ${{ inputs.os == 'windows-latest' }}
         working-directory: ${{ github.workspace }}/build/src/Release
         shell: cmd
         run: '"C:/Program Files/7-Zip/7z.exe" a -m0=lzma2 -mx9 Debug_PDB_${{ env.ver }}_for_developers_only.7z  *.pdb'
+
       - name: Upload artifacts Win zip
         if: ${{ inputs.os == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Windows_${{ env.ver }}_${{ inputs.os }}_portable
           path: ${{ github.workspace }}/build/OrcaSlicer
+
       - name: Upload artifacts Win installer
         if: ${{ inputs.os == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_Windows_${{ env.ver }}_${{ inputs.os }}
           path: ${{ github.workspace }}/build/OrcaSlicer*.exe
+
       - name: Upload artifacts Win PDB
         if: ${{ inputs.os == 'windows-latest' }}
         uses: actions/upload-artifact@v4
         with:
           name: PDB
           path: ${{ github.workspace }}/build/src/Release/Debug_PDB_${{ env.ver }}_for_developers_only.7z
+
       - name: Upload OrcaSlicer_profile_validator Win
         if: inputs.os == 'windows-latest'
         uses: actions/upload-artifact@v4
         with:
           name: OrcaSlicer_profile_validator_Windows_${{ env.ver }}
           path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
+
       - name: Deploy Windows release portable
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -213,6 +240,7 @@ jobs:
           asset_name: OrcaSlicer_Windows_portable.zip
           asset_content_type: application/x-zip-compressed
           max_releases: 1
+
       - name: Deploy Windows release installer
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -223,6 +251,7 @@ jobs:
           asset_name: OrcaSlicer_Windows_Installer.exe
           asset_content_type: application/x-msdownload
           max_releases: 1
+
       - name: Deploy Windows OrcaSlicer_profile_validator release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -233,7 +262,8 @@ jobs:
           asset_name: OrcaSlicer_profile_validator_Windows.exe
           asset_content_type: application/x-msdownload
           max_releases: 1
-          # Ubuntu
+
+# Ubuntu
       - name: Install dependencies
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         env:
@@ -247,14 +277,17 @@ jobs:
           libglu1-mesa-dev libgstreamer1.0-dev libgstreamerd-3-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev \
           libgtk-3-dev libgtk-3-dev libmspack-dev libsecret-1-dev libsoup2.4-dev libssl-dev libudev-dev libwayland-dev \
           libwebkit2gtk-${{ env.webkit-ver }}-dev libxkbcommon-dev locales locales-all m4 pkgconf sudo wayland-protocols wget ${{ env.libfuse2-pkg }}
+
       - name: Install dependencies from build_linux.sh
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         shell: bash
         run: sudo ./build_linux.sh -ur
+
       - name: Fix permissions
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         shell: bash
         run: sudo chown $USER -R ./
+
       - name: Build slicer
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         shell: bash
@@ -265,15 +298,6 @@ jobs:
           mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
           chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
 
-      - name: Upload OrcaSlicer_profile_validator Ubuntu
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
-        env:
-          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
-          path: './build/src/Release/OrcaSlicer_profile_validator'
       - name: Build orca_custom_preset_tests
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
         working-directory: ${{ github.workspace }}/build/src/Release
@@ -282,6 +306,7 @@ jobs:
           ./OrcaSlicer_profile_validator -p ${{ github.workspace }}/resources/profiles -g 1
           cd ${{ github.workspace }}/resources/profiles
           zip -r orca_custom_preset_tests.zip user/
+
       - name: Upload artifacts Ubuntu
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         env:
@@ -291,6 +316,17 @@ jobs:
         with:
           name: OrcaSlicer_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}_${{ inputs.os }}
           path: './build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage'
+
+      - name: Upload OrcaSlicer_profile_validator Ubuntu
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
+        env:
+          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
+          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
+          path: './build/src/Release/OrcaSlicer_profile_validator'
+
       - name: Deploy Ubuntu release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
         env:
@@ -303,6 +339,7 @@ jobs:
           asset_name: OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}.AppImage
           asset_content_type: application/octet-stream
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+
       - name: Deploy Ubuntu OrcaSlicer_profile_validator release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
         env:
@@ -315,6 +352,7 @@ jobs:
           asset_name: OrcaSlicer_profile_validator_Linux${{ env.ubuntu-ver-str }}
           asset_content_type: application/octet-stream
           max_releases: 1
+
       - name: Deploy orca_custom_preset_tests
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -325,6 +363,7 @@ jobs:
           asset_name: orca_custom_preset_tests.zip
           asset_content_type: application/octet-stream
           max_releases: 1
+
       - name: Update release tag
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-24.04') }}
         uses: NanashiTheNameless/action-create-tag@main
