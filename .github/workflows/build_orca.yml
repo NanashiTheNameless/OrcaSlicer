@@ -89,51 +89,6 @@ jobs:
         working-directory: ${{ github.workspace }}
         run: |
           ./build_release_macos.sh -s -n -x -a universal -t 10.15 -1
-        # # Thanks to RaySajuuk, it's working now
-        #       - name: Sign app and notary
-        #         if: (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) && inputs.os == 'macos-14'
-        #         working-directory: ${{ github.workspace }}
-        #         env:
-        #           BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
-        #           P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
-        #           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-        #           CERTIFICATE_ID: ${{ secrets.MACOS_CERTIFICATE_ID }}
-        #         run: |
-        #           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
-        #           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-        #           echo -n "$BUILD_CERTIFICATE_BASE64" | base64 --decode --output $CERTIFICATE_PATH
-        #           security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
-        #           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-        #           security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
-        #           security import $CERTIFICATE_PATH -P $P12_PASSWORD -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-        #           security list-keychain -d user -s $KEYCHAIN_PATH
-        #           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $P12_PASSWORD $KEYCHAIN_PATH
-        #           codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" ${{ github.workspace }}/build_${{inputs.arch}}/OrcaSlicer/OrcaSlicer.app
-        #           # Sign OrcaSlicer_profile_validator.app if it exists
-        #           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
-        #             codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app
-        #           fi
-        #           # Create main OrcaSlicer DMG
-        #           ln -s /Applications ${{ github.workspace }}/build_${{inputs.arch}}/OrcaSlicer/Applications
-        #           hdiutil create -volname "OrcaSlicer" -srcfolder ${{ github.workspace }}/build_${{inputs.arch}}/OrcaSlicer -ov -format UDZO OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
-        #           codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
-        #           # Create separate OrcaSlicer_profile_validator DMG if the app exists
-        #           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
-        #             mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg
-        #             cp -R ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg/
-        #             ln -s /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg/Applications
-        #             hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg -ov -format UDZO OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
-        #             codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
-        #           fi
-        #           # Notarize main DMG
-        #           xcrun notarytool store-credentials "notarytool-profile" --apple-id "${{ secrets.APPLE_DEV_ACCOUNT }}" --team-id "${{ secrets.TEAM_ID }}" --password "${{ secrets.APP_PWD }}"
-        #           xcrun notarytool submit "OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg" --keychain-profile "notarytool-profile" --wait
-        #           xcrun stapler staple OrcaSlicer_Mac_${{inputs.arch}}_${{ env.ver }}.dmg
-        #           # Notarize profile validator DMG if it exists
-        #           if [ -f "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg" ]; then
-        #             xcrun notarytool submit "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg" --keychain-profile "notarytool-profile" --wait
-        #             xcrun stapler staple OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
-        #           fi
       - name: Add some waiting Time to avoid issues when creating DMG
         if: ${{ inputs.os == 'macos-14' }}
         run: sleep 30
@@ -309,6 +264,16 @@ jobs:
           ./build_linux.sh -isr
           mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
           chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
+
+      - name: Upload OrcaSlicer_profile_validator Ubuntu
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
+        env:
+          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
+          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
+          path: './build/src/OrcaSlicer_profile_validator'
       - name: Build orca_custom_preset_tests
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
         working-directory: ${{ github.workspace }}/build/src
@@ -326,15 +291,6 @@ jobs:
         with:
           name: OrcaSlicer_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}_${{ inputs.os }}
           path: './build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage'
-      - name: Upload OrcaSlicer_profile_validator Ubuntu
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
-        env:
-          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
-          path: './build/src/OrcaSlicer_profile_validator'
       - name: Deploy Ubuntu release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
         env:
