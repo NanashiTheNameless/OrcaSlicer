@@ -11,7 +11,7 @@ on:
       - 'version.inc'
       - 'localization/**'
       - 'resources/**'
-      - ".github/workflows/build_*.yml"
+      - ".github/workflows/*.yml"
       - 'scripts/flatpak/**'
 
   pull_request:
