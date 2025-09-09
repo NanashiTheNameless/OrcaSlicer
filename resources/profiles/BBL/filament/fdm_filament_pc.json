@@ -4,6 +4,12 @@
     "inherits": "fdm_filament_common",
     "from": "system",
     "instantiation": "false",
+    "supertack_plate_temp": [
+        "0"
+    ],
+    "supertack_plate_temp_initial_layer": [
+        "0"
+    ],
     "cool_plate_temp": [
         "0"
     ],
@@ -36,9 +42,6 @@
     ],
     "filament_type": [
         "PC"
-    ],
-    "filament_adhesiveness_category": [
-        "500"
     ],
     "hot_plate_temp": [
         "110"
@@ -73,12 +76,6 @@
     "slow_down_min_speed": [
         "20"
     ],
-    "supertack_plate_temp": [
-        "0"
-    ],
-    "supertack_plate_temp_initial_layer": [
-        "0"
-    ],
     "temperature_vitrification": [
         "120"
     ],
@@ -87,8 +84,5 @@
     ],
     "textured_plate_temp_initial_layer": [
         "110"
-    ],
-    "filament_end_gcode": [
-        "; filament end gcode \n\n"
     ]
 }

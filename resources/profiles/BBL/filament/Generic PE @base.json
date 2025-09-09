@@ -14,9 +14,6 @@
     "filament_max_volumetric_speed": [
         "8"
     ],
-    "filament_adhesiveness_category": [
-        "901"
-    ],
     "nozzle_temperature": [
         "210"
     ],
