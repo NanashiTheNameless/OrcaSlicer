@@ -40,8 +40,5 @@
     ],
     "compatible_printers": [
         "Bambu Lab P1P 0.4 nozzle"
-    ],
-    "filament_end_gcode": [
-        "; filament end gcode \n\n"
     ]
 }
