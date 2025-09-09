@@ -60,6 +60,8 @@ def check_filament_compatible_printers(vendor_folder):
         return 0
     
     profiles = {}
+    # Track first-seen file/content per profile name to improve duplicate reporting
+    name_index = {}
 
     # Use rglob to recursively find .json files.
     for file_path in vendor_path.rglob("*.json"):
@@ -76,16 +78,46 @@ def check_filament_compatible_printers(vendor_folder):
             error += 1
             continue
 
-        profile_name = data['name']
-        if profile_name in profiles:
-            print_error(f"Duplicated profile {profile_name}: {file_path}")
+        # Require a valid top-level name
+        if not isinstance(data, dict) or 'name' not in data or not str(data['name']).strip():
+            print_error(f"Missing 'name' in {file_path}")
             error += 1
             continue
 
-        profiles[profile_name] = {
+        profile_name = str(data['name']).strip()
+
+        # If we've already seen this name, compare canonicalized content
+        prev = name_index.get(profile_name)
+        if prev:
+            # Canonical JSON (stable ordering, no whitespace) to compare real content
+            def _canon(obj):
+                return json.dumps(obj, sort_keys=True, separators=(',', ':')).encode('utf-8')
+            import hashlib
+            prev_hash = hashlib.sha256(_canon(prev['content'])).hexdigest()
+            cur_hash  = hashlib.sha256(_canon(data)).hexdigest()
+
+            if prev_hash == cur_hash:
+                # Same name, same content -> warn and skip duplicate
+                print_warning(
+                    f"Duplicate profile name with identical content '{profile_name}': "
+                    f"{prev['file_path']} and {file_path}"
+                )
+                # Do not add another entry; keep the first one deterministically
+            else:
+                # Same name, different content -> error with both paths
+                print_error(f"Duplicate profile name with different content '{profile_name}':")
+                print_error(f"  - {prev['file_path']}")
+                print_error(f"  - {file_path}")
+                error += 1
+            continue
+
+        # First time we see this name
+        record = {
             'file_path': file_path,
             'content': data,
         }
+        name_index[profile_name] = record
+        profiles[profile_name] = record
     
     def get_inherit_property(profile, key):
         content = profile['content']
