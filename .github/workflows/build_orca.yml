@@ -111,7 +111,7 @@ jobs:
 
       - name: Wait for resources to be freed
         if: ${{ inputs.os == 'macos-14' }}
-        run: sleep 10
+        run: sleep 30
 
       - name: Create DMG without notary
         if: ${{ inputs.os == 'macos-14' }}
