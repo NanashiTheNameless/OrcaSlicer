@@ -1,4 +1,5 @@
 name: Build all
+
 on:
   push:
     branches:
@@ -29,12 +30,20 @@ on:
       - 'build_release_macos.sh'
       - 'scripts/flatpak/**'
 
+  schedule:
+      - cron: '35 7 * * *' # run once a day near midnight US Pacific time
+
   workflow_dispatch: # allows for manual dispatch
     inputs:
       build-deps-only:
         description: 'Only build dependencies (bypasses caching)'
         type: boolean
         default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build_all:
     name: Build All
@@ -52,6 +61,7 @@ jobs:
       os: ${{ matrix.os }}
       arch: ${{ matrix.arch }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
+      force-build: ${{ github.event_name == 'schedule' }}
     secrets: inherit
   flatpak:
     name: "Flatpak"
