@@ -16,7 +16,7 @@ jobs:
       pull-requests: write
       contents: write # only for delete-branch option
     steps:
-      - uses: actions/stale@v9
+      - uses: actions/stale@v10
         with:
           # PAT for GitHub API authentication
           repo-token: ${{ secrets.GITHUB_TOKEN }}
