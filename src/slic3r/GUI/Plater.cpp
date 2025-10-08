@@ -20,7 +20,6 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
-#include <wx/display.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
