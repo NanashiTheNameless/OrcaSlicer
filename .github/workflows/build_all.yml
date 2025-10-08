@@ -37,12 +37,6 @@ on:
         type: boolean
         default: false
 
-concurrency:
-  group: ${{ github.event_name == 'pull_request'
-           && format('{0}-{1}', github.workflow, github.run_id)
-           || format('{0}-{1}', github.workflow, github.ref) }}
-  cancel-in-progress: true
-
 jobs:
   build_all:
     name: Build All
