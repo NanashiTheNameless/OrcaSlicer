@@ -92,7 +92,7 @@ jobs:
           df -hI /dev/disk3s1s1
 
       - name: Build slicer mac
-        if: ${{ inputs.os == 'macos-14' }}
+        if: ${{ inputs.os == 'macos-14' && !cancelled() && success() }}
         working-directory: ${{ github.workspace }}
         run: |
           ./build_release_macos.sh -s -n -x -a universal -t 10.15 -1
@@ -148,7 +148,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Deploy Mac release
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'macos-14' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'macos-14') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -159,7 +159,7 @@ jobs:
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
-        if: ${{ inputs.os == 'macos-14' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'macos-14') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -235,7 +235,7 @@ jobs:
           path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
 
       - name: Deploy Windows release portable
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -246,7 +246,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows release installer
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -257,7 +257,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows OrcaSlicer_profile_validator release
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'windows-latest') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -293,7 +293,7 @@ jobs:
         run: sudo chown $USER -R ./
 
       - name: Build slicer
-        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
+        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') && !cancelled() && success() }}
         shell: bash
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
@@ -303,7 +303,7 @@ jobs:
           chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
 
       - name: Build orca_custom_preset_tests
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04') && !cancelled() && success() }}
         working-directory: ${{ github.workspace }}/build/src/Release
         shell: bash
         run: |
@@ -332,7 +332,7 @@ jobs:
           path: './build/src/Release/OrcaSlicer_profile_validator'
 
       - name: Deploy Ubuntu release
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04')) && !cancelled() && success() }}
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -347,7 +347,7 @@ jobs:
       - name: Deploy Ubuntu OrcaSlicer_profile_validator release
         if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
         env:
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+          ubuntu-ver-str: ${{ ((inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -358,7 +358,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy orca_custom_preset_tests
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04') && !cancelled() && success() }}
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -369,7 +369,7 @@ jobs:
           max_releases: 1
 
       - name: Update release tag
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-24.04') }}
+        if: ${{ ((github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-24.04')) && !cancelled() && success() }}
         uses: NanashiTheNameless/action-create-tag@main
         with:
           tag: "Nightly-Rolling"
