@@ -104,7 +104,6 @@ jobs:
         echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
       shell: bash
     - uses: flathub-infra/flatpak-github-actions/flatpak-builder@master
-      if: ${{ !cancelled() && success() }}
       with:
         bundle: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
         manifest-path: scripts/flatpak/io.github.softfever.OrcaSlicer.yml
@@ -117,7 +116,7 @@ jobs:
         name: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
         path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
     - name: Deploy Flatpak to nightly release
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && !cancelled() && success() }}
+      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
       uses: WebFreak001/deploy-nightly@v3.2.0
       with:
         upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
