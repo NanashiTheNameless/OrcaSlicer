@@ -342,7 +342,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
 	if (!is_plate_config &&
         config->opt_bool("staggered_perimeters") &&
         (abs(config->opt_float("initial_layer_print_height") - config->opt_float("layer_height")) > EPSILON  ||
-        !(config->option<ConfigOptionFloatOrPercent>("top_surface_line_width") == config->option<ConfigOptionFloatOrPercent>("outer_wall_line_width")) ||
+        !(*config->option<ConfigOptionFloatOrPercent>("top_surface_line_width") == *config->option<ConfigOptionFloatOrPercent>("outer_wall_line_width")) ||
             !have_arachne ||
             config->opt_bool("spiral_mode")))
     {
