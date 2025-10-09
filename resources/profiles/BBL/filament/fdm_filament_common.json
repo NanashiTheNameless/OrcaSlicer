@@ -96,9 +96,6 @@
     "filament_max_volumetric_speed": [
         "0"
     ],
-    "filament_ramming_volumetric_speed": [
-        "-1"
-    ],
     "filament_minimal_purge_on_wipe_tower": [
         "15"
     ],
@@ -146,9 +143,6 @@
     ],
     "filament_wipe_distance": [
         "nil"
-    ],
-    "filament_prime_volume": [
-        "45"
     ],
     "filament_z_hop": [
         "nil"
@@ -260,9 +254,6 @@
     ],
     "textured_plate_temp_initial_layer": [
         "60"
-    ],
-    "filament_velocity_adaptation_factor":[
-        "1"
     ],
     "compatible_printers": [],
     "filament_start_gcode": [

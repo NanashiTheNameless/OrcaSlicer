@@ -6,13 +6,16 @@
     "setting_id": "GFSG02_09",
     "instantiation": "true",
     "counter_coef_2": [
-        "0.007"
+        "0.0065"
     ],
     "counter_coef_3": [
-        "0.003"
+        "-0.032"
     ],
     "counter_limit_max": [
-        "0.1"
+        "0.33"
+    ],
+    "counter_limit_min": [
+        "-0.35"
     ],
     "fan_cooling_layer_time": [
         "20"
@@ -109,13 +112,16 @@
         "0"
     ],
     "hole_coef_2": [
-        "-0.006"
+        "-0.008"
     ],
     "hole_coef_3": [
-        "0.1"
+        "0.135"
+    ],
+    "hole_limit_max": [
+        "2.2"
     ],
     "hole_limit_min": [
-        "0.1"
+        "0.88"
     ],
     "long_retractions_when_ec": [
         "1",
