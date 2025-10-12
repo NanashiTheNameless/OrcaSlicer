@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - release/*
     paths:
       - 'deps/**'
       - 'src/**'
@@ -18,7 +17,6 @@ on:
   pull_request:
     branches:
       - main
-      - release/*
     paths:
       - 'deps/**'
       - 'src/**'
@@ -115,7 +113,7 @@ jobs:
         name: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}_${{ matrix.variant.runner }}.flatpak
         path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
     - name: Deploy Flatpak to nightly release
-      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') }}
+      if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && github.ref == 'refs/heads/main' }}
       uses: WebFreak001/deploy-nightly@v3.2.0
       with:
         upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
