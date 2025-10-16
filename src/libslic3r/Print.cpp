@@ -1755,8 +1755,8 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
             // }
 
             // check wall sequence and precise outer wall
-            if (m_default_region_config.precise_outer_wall && 
-                    (m_default_region_config.wall_sequence == WallSequence::InnerOuter ||
+            if (m_default_region_config.precise_outer_wall &&
+                    (m_default_region_config.wall_sequence == WallSequence::OuterInner ||
                      m_default_region_config.wall_sequence == WallSequence::InnerOuterInner ||
                      (m_default_region_config.wall_sequence == WallSequence::OddEven && !m_default_region_config.outermost_wall_control))) {
                 warning->string  = L("The precise wall option will be ignored for outer-inner, inner-outer-inner or odd-even (without outermost control) wall sequences. ");
