@@ -7,6 +7,7 @@
 #include "ShortestPath.hpp"
 #include "libslic3r.h"
 #include "PrintConfig.hpp"
+#include "MaterialType.hpp"
 #include "Model.hpp"
 #include <algorithm>
 #include <numeric>
@@ -590,13 +591,10 @@ double getadhesionCoeff(const PrintObject* printObject)
         for (auto iter = extrudersFirstLayer.begin(); iter != extrudersFirstLayer.end(); iter++) {
             if (modelVolume->extruder_id() == *iter) {
                 if (Model::extruderParamsMap.find(modelVolume->extruder_id()) != Model::extruderParamsMap.end()) {
-                    if (Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName == "PETG" ||
-                        Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName == "PCTG") {
-                        adhesionCoeff = 2;
-                    }
-                    else if (Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName == "TPU") {
-                        adhesionCoeff = 0.5;
-                    }
+                    std::string filament_type = Model::extruderParamsMap.at(modelVolume->extruder_id()).materialName;
+                    double adhesion_coefficient = 1.0; // Default value
+                    MaterialType::get_adhesion_coefficient(filament_type, adhesion_coefficient);
+                    adhesionCoeff = adhesion_coefficient;
                 }
             }
         }
@@ -1095,11 +1093,10 @@ static ExPolygons outer_inner_brim_area(const Print& print,
     }
 
     int  extruder_nums = print.config().nozzle_diameter.values.size();
-    std::vector<Polygons> extruder_unprintable_area;
-    if (extruder_nums == 1)
-        extruder_unprintable_area.emplace_back(Polygons{Model::getBedPolygon()});
-    else {
-        extruder_unprintable_area = print.get_extruder_printable_polygons();
+    std::vector<Polygons> extruder_unprintable_area = print.get_extruder_printable_polygons();
+    // Orca: if per-extruder print area is not specified, use the whole bed as printable area for all extruders
+    if (extruder_unprintable_area.empty()) {
+        extruder_unprintable_area.resize(extruder_nums, Polygons{Model::getBedPolygon()});
     }
     std::vector<int> filament_map = print.get_filament_maps();
 
