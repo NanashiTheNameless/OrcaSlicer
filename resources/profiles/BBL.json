@@ -894,10 +894,6 @@
     ],
     "filament_list": [
         {
-            "name": "fdm_filament_common",
-            "sub_path": "filament/fdm_filament_common.json"
-        },
-        {
             "name": "COEX PCTG PRIME @BBL X1C",
             "sub_path": "filament/COEX/COEX PCTG PRIME @BBL X1C.json"
         },
@@ -932,6 +928,10 @@
         {
             "name": "COEX PLA @BBL X1C",
             "sub_path": "filament/COEX/COEX PLA @BBL X1C.json"
+        },
+        {
+            "name": "fdm_filament_common",
+            "sub_path": "filament/fdm_filament_common.json"
         },
         {
             "name": "COEX PCTG PRIME @BBL A1M 0.4 nozzle",
