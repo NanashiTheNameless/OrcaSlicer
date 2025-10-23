@@ -4,10 +4,9 @@
 #include "GUI_Utils.hpp"
 #include "wxExtensions.hpp"
 #include "Widgets/ComboBox.hpp"
-#include "Widgets/SwitchButton.hpp"
 #include "DeviceManager.hpp"
 
-namespace Slic3r {
+namespace Slic3r { 
 namespace GUI {
 
 class HistoryWindow : public DPIDialog {
@@ -16,7 +15,6 @@ public:
     ~HistoryWindow();
     void on_dpi_changed(const wxRect& suggested_rect) {}
     void on_select_nozzle(wxCommandEvent& evt);
-    void on_switch_extruder(wxCommandEvent &evt);
     void reqeust_history_result(MachineObject* obj);
     void sync_history_result(MachineObject* obj);
     void on_device_connected(MachineObject* obj);
@@ -26,13 +24,11 @@ protected:
     void sync_history_data();
     void enbale_action_buttons(bool enable);
     float get_nozzle_value();
-    int get_extruder_id();
 
     void on_click_new_button(wxCommandEvent &event);
 
     wxPanel*                   m_history_data_panel;
     ComboBox*                  m_comboBox_nozzle_dia;
-    SwitchButton*              m_extruder_switch_btn;
     Label*              m_tips;
 
     wxTimer*                   m_refresh_timer { nullptr };
@@ -45,7 +41,7 @@ protected:
 class EditCalibrationHistoryDialog : public DPIDialog
 {
 public:
-    EditCalibrationHistoryDialog(wxWindow *parent, const PACalibResult &result, const MachineObject *obj, const std::vector<PACalibResult> history_results);
+    EditCalibrationHistoryDialog(wxWindow* parent, const PACalibResult& result);
     ~EditCalibrationHistoryDialog();
     void on_dpi_changed(const wxRect& suggested_rect) override;
     PACalibResult get_result();
@@ -55,10 +51,7 @@ protected:
     virtual void on_cancel(wxCommandEvent& event);
 
 protected:
-    std::string m_old_name;
     PACalibResult m_new_result;
-    std::vector<PACalibResult> m_history_results;
-    const MachineObject * curr_obj;
 
     TextInput* m_name_value{ nullptr };
     TextInput* m_k_value{ nullptr };
@@ -77,7 +70,6 @@ protected:
 
 
     wxArrayString get_all_filaments(const MachineObject *obj);
-    int get_extruder_id(int extruder_index);  // extruder_index 0 : left, 1 : right
 
 protected:
     PACalibResult m_new_result;
@@ -89,8 +81,6 @@ protected:
 
     ComboBox *m_comboBox_nozzle_diameter;
     ComboBox *m_comboBox_filament;
-    ComboBox *m_comboBox_extruder;
-    ComboBox *m_comboBox_nozzle_type;
 
     struct FilamentInfos
     {

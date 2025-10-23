@@ -43,8 +43,7 @@ private:
     wxWindow* select_bed_leveling { nullptr };
     wxWindow* select_vibration { nullptr };
     wxWindow* select_motor_noise { nullptr };
-    wxWindow* select_nozzle_cali{ nullptr };
-    wxWindow* select_heatbed_cali{ nullptr };
+
     wxWindow* create_check_option(wxString title, wxWindow *parent, wxString tooltip, std::string param);
 
 public:
@@ -54,7 +53,7 @@ public:
 
     StepIndicator *m_calibration_flow;
     Button *       m_calibration_btn;
-    MachineObject *m_obj = nullptr;
+    MachineObject *m_obj;
 
     std::vector<int> last_stage_list_info; 
     int              m_state{0};

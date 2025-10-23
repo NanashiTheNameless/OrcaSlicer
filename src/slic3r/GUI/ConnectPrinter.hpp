@@ -25,6 +25,7 @@ class ConnectPrinterDialog : public DPIDialog
 {
 private:
 protected:
+    bool            m_need_connect{true};
     wxStaticText *  m_staticText_connection_code;
     TextInput *     m_textCtrl_code;
     Button *        m_button_confirm;
@@ -45,11 +46,12 @@ public:
 
     ~ConnectPrinterDialog();
 
+    void go_connect_printer(bool need) {m_need_connect = need;};
     void end_modal(wxStandardID id);
     void init_bitmap();
     void set_machine_object(MachineObject* obj);
     void on_input_enter(wxCommandEvent& evt);
-    void on_button_confirm(wxCommandEvent &event);
+    void on_button_confirm(wxCommandEvent &event); 
     void on_dpi_changed(const wxRect &suggested_rect) override;
 };
 }} // namespace Slic3r::GUI

@@ -2,7 +2,6 @@
 #define slic3r_MultiSendMachineModel_hpp_
 
 #include "DeviceManager.hpp"
-#include "wx/dataview.h"
 
 namespace Slic3r { 
 namespace GUI {

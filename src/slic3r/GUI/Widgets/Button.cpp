@@ -2,10 +2,7 @@
 #include "Label.hpp"
 
 #include <wx/dcgraph.h>
-#include <wx/tipwin.h>
-#ifdef __APPLE__
-#include "libslic3r/MacUtils.hpp"
-#endif
+
 BEGIN_EVENT_TABLE(Button, StaticBox)
 
 EVT_LEFT_DOWN(Button::mouseDown)
@@ -32,10 +29,10 @@ Button::Button()
         std::make_pair(0xF0F0F1, (int) StateColor::Disabled),
         std::make_pair(0x52c7b8, (int) StateColor::Hovered | StateColor::Checked),
         std::make_pair(0x009688, (int) StateColor::Checked),
-        std::make_pair(*wxLIGHT_GREY, (int) StateColor::Hovered),
+        std::make_pair(*wxLIGHT_GREY, (int) StateColor::Hovered), 
         std::make_pair(*wxWHITE, (int) StateColor::Normal));
     text_color       = StateColor(
-        std::make_pair(*wxLIGHT_GREY, (int) StateColor::Disabled),
+        std::make_pair(*wxLIGHT_GREY, (int) StateColor::Disabled), 
         std::make_pair(*wxBLACK, (int) StateColor::Normal));
 }
 
@@ -78,19 +75,15 @@ bool Button::SetFont(const wxFont& font)
 
 void Button::SetIcon(const wxString& icon)
 {
-    auto tmpBitmap = ScalableBitmap(this, icon.ToStdString(), this->active_icon.px_cnt());
     if (!icon.IsEmpty()) {
         //BBS set button icon default size to 20
-        if (!tmpBitmap.bmp().IsSameAs(this->active_icon.bmp())) {
-            this->active_icon = tmpBitmap;
-            Refresh();
-        }
+        this->active_icon = ScalableBitmap(this, icon.ToStdString(), this->active_icon.px_cnt());
     }
     else
     {
         this->active_icon = ScalableBitmap();
-        Refresh();
     }
+    Refresh();
 }
 
 void Button::SetInactiveIcon(const wxString &icon)
@@ -107,12 +100,6 @@ void Button::SetInactiveIcon(const wxString &icon)
 void Button::SetMinSize(const wxSize& size)
 {
     minSize = size;
-    messureSize();
-}
-
-void Button::SetMaxSize(const wxSize& size)
-{
-    wxWindow::SetMaxSize(size);
     messureSize();
 }
 
@@ -161,12 +148,7 @@ bool Button::GetValue() const { return state_handler.states() & StateHandler::Ch
 
 void Button::SetCenter(bool isCenter)
 {
-    this->isCenter = isCenter; }
-
-void Button::SetVertical(bool vertical)
-{
-    this->vertical = vertical;
-    messureSize();
+    this->isCenter = isCenter;
 }
 
 //                           Background                                             Foreground                       Border on focus
@@ -254,8 +236,6 @@ void Button::Rescale()
 
     if(m_has_style)
         SetStyle(m_style, m_type);
-
-    Refresh();
 }
 
 void Button::paintEvent(wxPaintEvent& evt)
@@ -278,45 +258,26 @@ void Button::render(wxDC& dc)
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
     // calc content size
     wxSize szIcon;
-    wxSize textSize = this->textSize.GetSize();
+    wxSize szContent = textSize.GetSize();
 
     ScalableBitmap icon;
     if (m_selected || ((states & (int)StateColor::State::Hovered) != 0))
         icon = active_icon;
     else
         icon = inactive_icon;
-    wxSize padding = this->paddingSize;
-    int spacing = 5;
-    // Wrap text
-    auto text = GetLabel();
-    if (vertical && textSize.x + padding.x * 2 > size.x) {
-        Label::split_lines(dc, size.x - padding.x * 2, text, text, 2);
-        textSize = dc.GetMultiLineTextExtent(text);
-        if (padding.x * 2 + textSize.x > size.x) {
-            text = wxControl::Ellipsize(text, dc, wxELLIPSIZE_END, size.x - padding.x * 2);
-            textSize = dc.GetMultiLineTextExtent(text);
-        }
-    }
-    auto szContent = textSize;
+    int padding = 5;
     if (icon.bmp().IsOk()) {
         if (szContent.y > 0) {
             //BBS norrow size between text and icon
-            if (vertical)
-                szContent.y += spacing;
-            else
-                szContent.x += spacing;
+            szContent.x += padding;
         }
         szIcon = icon.GetBmpSize();
-        if (vertical) {
-            szContent.y += szIcon.y;
-            if (szIcon.x > szContent.x) szContent.x = szIcon.x;
-        } else {
-            szContent.x += szIcon.x;
-            if (szIcon.y > szContent.y) szContent.y = szIcon.y;
-        }
+        szContent.x += szIcon.x;
+        if (szIcon.y > szContent.y)
+            szContent.y = szIcon.y;
         if (szContent.x > size.x) {
-            int d = std::min(padding.x, (szContent.x - size.x) / 2);
-            padding.x -= d;
+            int d = std::min(padding, szContent.x - size.x);
+            padding -= d;
             szContent.x -= d;
         }
     }
@@ -330,28 +291,17 @@ void Button::render(wxDC& dc)
     // start draw
     wxPoint pt = rcContent.GetLeftTop();
     if (icon.bmp().IsOk()) {
-        if (vertical)
-            pt.x += (rcContent.width - szIcon.x) / 2;
-        else
-            pt.y += (rcContent.height - szIcon.y) / 2;
+        pt.y += (rcContent.height - szIcon.y) / 2;
         dc.DrawBitmap(icon.bmp(), pt);
         //BBS norrow size between text and icon
-        if (vertical) {
-            pt.y += szIcon.y + spacing;
-            pt.x = rcContent.x;
-        } else {
-            pt.x += szIcon.x + spacing;
-            pt.y = rcContent.y;
-        }
+        pt.x += szIcon.x + padding;
+        pt.y = rcContent.y;
     }
+    auto text = GetLabel();
     if (!text.IsEmpty()) {
-        if (vertical) {
-            pt.x += (rcContent.width - textSize.x) / 2;
-        } else {
-            if (pt.x + textSize.x > size.x)
-                text = wxControl::Ellipsize(text, dc, wxELLIPSIZE_END, size.x - pt.x);
-            pt.y += (rcContent.height - textSize.y) / 2;
-        }
+        if (pt.x + textSize.width > size.x)
+            text = wxControl::Ellipsize(text, dc, wxELLIPSIZE_END, size.x - pt.x);
+        pt.y += (rcContent.height - textSize.height) / 2;
         dc.SetTextForeground(text_color.colorForStates(states));
 #if 0
         dc.SetBrush(*wxLIGHT_GREY);
@@ -359,12 +309,7 @@ void Button::render(wxDC& dc)
         dc.DrawRectangle(pt, textSize.GetSize());
 #endif
 #ifdef __WXOSX__
-        pt.y -= this->textSize.x / 2;
-#endif
-#ifdef __APPLE__
-        if (Slic3r::is_mac_version_15()) {
-        pt.y -= FromDIP(1);
-    }
+        pt.y -= textSize.x / 2;
 #endif
         dc.DrawText(text, pt);
     }
@@ -378,32 +323,16 @@ void Button::messureSize()
     if (this->active_icon.bmp().IsOk()) {
         if (szContent.y > 0) {
             //BBS norrow size between text and icon
-            if (vertical)
-                szContent.y += 5;
-            else
-                szContent.x += 5;
+            szContent.x += 5;
         }
         wxSize szIcon = this->active_icon.GetBmpSize();
-        if (vertical) {
-            szContent.y += szIcon.y;
-            if (szIcon.x > szContent.x) szContent.x = szIcon.x;
-        } else {
-            szContent.x += szIcon.x;
-            if (szIcon.y > szContent.y) szContent.y = szIcon.y;
-        }
+        szContent.x += szIcon.x;
+        if (szIcon.y > szContent.y)
+            szContent.y = szIcon.y;
     }
     wxSize size = szContent + paddingSize * 2;
     if (minSize.GetHeight() > 0)
         size.SetHeight(minSize.GetHeight());
-
-    if (auto w = GetMaxWidth(); w > 0 && size.GetWidth() > w) {
-        size.SetWidth(GetMaxWidth());
-
-        const wxString& tip_str = GetToolTipText();
-        if (tip_str.IsEmpty()) {
-            SetToolTip(GetLabel());
-        }
-    }
 
     if (minSize.GetWidth() > size.GetWidth())
         wxWindow::SetMinSize(minSize);
@@ -448,7 +377,7 @@ void Button::keyDownUp(wxKeyEvent &event)
         return;
     }
     if (event.GetEventType() == wxEVT_KEY_DOWN &&
-        (event.GetKeyCode() == WXK_TAB || event.GetKeyCode() == WXK_LEFT || event.GetKeyCode() == WXK_RIGHT
+        (event.GetKeyCode() == WXK_TAB || event.GetKeyCode() == WXK_LEFT || event.GetKeyCode() == WXK_RIGHT 
         || event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_DOWN))
         HandleAsNavigationKey(event);
     else
@@ -482,73 +411,3 @@ WXLRESULT Button::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 #endif
 
 bool Button::AcceptsFocus() const { return canFocus; }
-
-void Button::EnableTooltipEvenDisabled()
-{
-#if defined(_MSC_VER) || defined(_WIN32)
-    auto parent = this->GetParent();
-    if (parent)
-    {
-        parent->Bind(wxEVT_MOTION, &Button::OnParentMotion, this);
-        parent->Bind(wxEVT_LEAVE_WINDOW, &Button::OnParentLeave, this);
-    };
-#endif
-};
-
-void Button::OnParentMotion(wxMouseEvent& event)
-{
-    auto parent = this->GetParent();
-    if (!parent) return event.Skip();
-
-    wxPoint pos = parent->ClientToScreen(event.GetPosition());
-    wxRect screen_rect = this->GetScreenRect();
-    wxString tip = this->GetToolTipText();
-    if (!tip.IsEmpty() && !this->IsEnabled() && screen_rect.Contains(pos))
-    {
-        if (!tipWindow)
-        {
-            tipWindow = new wxTipWindow(this, tip);
-            tipWindow->Bind(wxEVT_DESTROY, [this](wxEvent& event) { this->tipWindow = nullptr;});
-            tipWindow->Enable(false);
-        }
-
-        if (tipWindow->GetLabel() != tip)
-        {
-            tipWindow->SetLabel(tip);
-        }
-
-        tipWindow->Position(wxGetMousePosition(), wxSize(0, 0));
-        tipWindow->Popup();
-    }
-    else
-    {
-        if (tipWindow)
-        {
-            delete tipWindow;
-            tipWindow = nullptr;
-        }
-    }
-
-    event.Skip();
-}
-
-void Button::OnParentLeave(wxMouseEvent& event)
-{
-    auto parent = this->GetParent();
-    if (!parent) return event.Skip();
-
-    if (tipWindow)
-    {
-        wxPoint pos = parent->ClientToScreen(event.GetPosition());
-        wxRect screen_rect = this->GetScreenRect();
-        wxString tip = this->GetToolTipText();
-        if (!screen_rect.Contains(pos))
-        {
-            tipWindow->Dismiss();
-            delete tipWindow;
-            tipWindow = nullptr;
-        }
-    }
-
-    event.Skip();
-}

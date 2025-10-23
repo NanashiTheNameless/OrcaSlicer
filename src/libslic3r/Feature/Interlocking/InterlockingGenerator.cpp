@@ -2,8 +2,6 @@
 // CuraEngine is released under the terms of the AGPLv3 or higher.
 
 #include "InterlockingGenerator.hpp"
-#include "libslic3r/ClipperUtils.hpp"
-#include "Layer.hpp"
 
 namespace std {
 template<> struct hash<Slic3r::GridPoint3>

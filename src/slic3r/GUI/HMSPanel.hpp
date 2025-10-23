@@ -9,16 +9,13 @@
 #include <slic3r/GUI/StatusPanel.hpp>
 #include <wx/html/htmlwin.h>
 
-#include "DeviceCore/DevHMS.h"
-
 namespace Slic3r {
 namespace GUI {
 
 class HMSNotifyItem : public wxPanel
 {
-    DevHMSItem &   m_hms_item;
+    HMSItem &   m_hms_item;
     std::string m_url;
-    std::string dev_id;
     std::string long_error_code;
 
     wxPanel *       m_panel_hms;
@@ -37,7 +34,7 @@ class HMSNotifyItem : public wxPanel
     wxBitmap &    get_notify_bitmap();
 
 public:
-     HMSNotifyItem(const std::string& dev_id, wxWindow *parent, DevHMSItem& item);
+     HMSNotifyItem(wxWindow *parent, HMSItem& item);
     ~HMSNotifyItem();
 
      void msw_rescale() {}
@@ -49,13 +46,13 @@ class HMSPanel : public wxPanel
 protected:
     wxScrolledWindow *m_scrolledWindow;
     wxBoxSizer *      m_top_sizer;
-
+    HMSNotifyItem *   m_notify_item;
     int last_status;
 
-    void append_hms_panel(const std::string& dev_id, DevHMSItem &item);
+    void append_hms_panel(HMSItem &item);
     void delete_hms_panels();
 
-
+    
 public:
     HMSPanel(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxTAB_TRAVERSAL);
     ~HMSPanel();
@@ -71,7 +68,7 @@ public:
     void clear_hms_tag();
 
     MachineObject *obj { nullptr };
-    std::map<std::string, DevHMSItem>    temp_hms_list;
+    std::map<std::string, HMSItem>    temp_hms_list;
 };
 
 wxDECLARE_EVENT(EVT_ALREADY_READ_HMS, wxCommandEvent);

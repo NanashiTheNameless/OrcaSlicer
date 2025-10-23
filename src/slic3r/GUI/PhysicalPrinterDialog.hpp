@@ -69,7 +69,6 @@ public:
 protected:
     void on_dpi_changed(const wxRect& suggested_rect) override;
     void on_sys_color_changed() override {};
-    void check_host_key_valid();
 };
 
 

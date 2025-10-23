@@ -15,7 +15,6 @@
 #include "Widgets/ComboBox.hpp"
 #include "Widgets/TextInput.hpp"
 #include "slic3r/Utils/CalibUtils.hpp"
-#include <wx/hyperlink.h>
 
 #define AMS_MATERIALS_SETTING_DEF_COLOUR wxColour(255, 255, 255)
 #define AMS_MATERIALS_SETTING_GREY900 wxColour(38, 46, 48)
@@ -103,12 +102,14 @@ public:
     void input_min_finish();
     void input_max_finish();
     void update();
+    void enable_confirm_button(bool en);
     bool Show(bool show) override;
     void Popup(wxString filament = wxEmptyString, wxString sn = wxEmptyString,
                wxString temp_min = wxEmptyString, wxString temp_max = wxEmptyString,
                wxString k = wxEmptyString, wxString n = wxEmptyString);
 
     void post_select_event(int index);
+    void msw_rescale();
     void set_color(wxColour color);
     void set_empty_color(wxColour color);
     void set_colors(std::vector<wxColour> colors);
@@ -130,7 +131,6 @@ public:
     std::string    m_filament_type;
     ColorPickerPopup m_color_picker_popup;
     ColorPicker *       m_clr_picker;
-    Label*                 m_clr_name;
     std::vector<PACalibResult>  m_pa_profile_items;
 
 protected:
@@ -145,8 +145,6 @@ protected:
     void on_clr_picker(wxMouseEvent &event);
     bool is_virtual_tray();
     void update_widgets();
-
-    void update_filament_editing(bool is_printing);
 
 protected:
     StateColor          m_btn_bg_green;
@@ -173,7 +171,6 @@ protected:
 
     wxPanel *           m_panel_kn;
     wxStaticText*       m_ratio_text;
-    wxHyperlinkCtrl *   m_wiki_ctrl;
     wxStaticText*       m_k_param;
     TextInput*          m_input_k_val;
     wxStaticText*       m_n_param;

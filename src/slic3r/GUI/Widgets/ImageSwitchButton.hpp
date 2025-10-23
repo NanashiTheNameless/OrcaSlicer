@@ -64,9 +64,6 @@ public:
     void Rescale();
     void setFanValue(int val);
 
-    void UseTextFan();
-    void UseTextAirCondition();
-
 private:
     void messureSize();
     void paintEvent(wxPaintEvent& evt);
@@ -76,8 +73,6 @@ private:
     void mouseEnterWindow(wxMouseEvent& event);
     void mouseLeaveWindow(wxMouseEvent& event);
     void sendButtonEvent();
-
-    void SetText(const wxString &text);
 
     DECLARE_EVENT_TABLE()
 
@@ -94,8 +89,6 @@ private:
     int          m_speed;
 
     wxString labels[2];
-
-    wxString     m_text;
     StateColor   text_color;
 };
 

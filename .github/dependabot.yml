@@ -15,4 +15,4 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
-# no support for c/cpp
+  # no support for c/cpp

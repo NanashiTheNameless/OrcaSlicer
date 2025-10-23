@@ -108,8 +108,8 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 	try{
 
         if (config.def()->get(opt_key)->type == coBools && config.def()->get(opt_key)->nullable) {
-            auto vec_new = std::make_unique<ConfigOptionBoolsNullable>(1, boost::any_cast<unsigned char>(value) );
-            config.option<ConfigOptionBoolsNullable>(opt_key)->set_at(vec_new.get(), opt_index, 0);
+            ConfigOptionBoolsNullable* vec_new = new ConfigOptionBoolsNullable{ boost::any_cast<unsigned char>(value) };
+            config.option<ConfigOptionBoolsNullable>(opt_key)->set_at(vec_new, opt_index, 0);
             return;
         }
 
@@ -125,17 +125,6 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
             double val = std::stod(str); // locale-dependent (on purpose - the input is the actual content of the field)
 			config.set_key_value(opt_key, new ConfigOptionFloatOrPercent(val, percent));
 			break;}
-		case coFloatsOrPercents:{
-			std::string str = boost::any_cast<std::string>(value);
-			bool percent = false;
-			if (str.back() == '%') {
-				str.pop_back();
-				percent = true;
-			}
-            double val = std::stod(str); // locale-dependent (on purpose - the input is the actual content of the field)
-            auto   vec_new = std::make_unique<ConfigOptionFloatOrPercent>(val, percent);
-            config.option<ConfigOptionFloatsOrPercents>(opt_key)->set_at(vec_new.get(), opt_index, opt_index);
-			break;}
 		case coPercent:
 			config.set_key_value(opt_key, new ConfigOptionPercent(boost::any_cast<double>(value)));
 			break;
@@ -145,13 +134,13 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 			break;
 		}
 		case coPercents:{
-            auto vec_new = std::make_unique <ConfigOptionPercent>(boost::any_cast<double>(value));
-			config.option<ConfigOptionPercents>(opt_key)->set_at(vec_new.get(), opt_index, opt_index);
+			ConfigOptionPercents* vec_new = new ConfigOptionPercents{ boost::any_cast<double>(value) };
+			config.option<ConfigOptionPercents>(opt_key)->set_at(vec_new, opt_index, opt_index);
 			break;
 		}
 		case coFloats:{
-            auto vec_new = std::make_unique<ConfigOptionFloat>(boost::any_cast<double>(value));
-			config.option<ConfigOptionFloats>(opt_key)->set_at(vec_new.get(), opt_index, opt_index);
+			ConfigOptionFloats* vec_new = new ConfigOptionFloats{ boost::any_cast<double>(value) };
+			config.option<ConfigOptionFloats>(opt_key)->set_at(vec_new, opt_index, opt_index);
  			break;
 		}
 		case coString:
@@ -176,8 +165,8 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 				config.option<ConfigOptionStrings>(opt_key)->values = values;
 			}
 			else{
-                auto vec_new = std::make_unique<ConfigOptionString>(boost::any_cast<std::string>(value));
-				config.option<ConfigOptionStrings>(opt_key)->set_at(vec_new.get(), opt_index, 0);
+				ConfigOptionStrings* vec_new = new ConfigOptionStrings{ boost::any_cast<std::string>(value) };
+				config.option<ConfigOptionStrings>(opt_key)->set_at(vec_new, opt_index, 0);
 			}
 			}
 			break;
@@ -185,15 +174,15 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 			config.set_key_value(opt_key, new ConfigOptionBool(boost::any_cast<bool>(value)));
 			break;
 		case coBools:{
-            auto vec_new = std::make_unique<ConfigOptionBool>(boost::any_cast<unsigned char>(value) != 0);
-			config.option<ConfigOptionBools>(opt_key)->set_at(vec_new.get(), opt_index, 0);
+			ConfigOptionBools* vec_new = new ConfigOptionBools{ boost::any_cast<unsigned char>(value) != 0 };
+			config.option<ConfigOptionBools>(opt_key)->set_at(vec_new, opt_index, 0);
 			break;}
 		case coInt:
 			config.set_key_value(opt_key, new ConfigOptionInt(boost::any_cast<int>(value)));
 			break;
 		case coInts:{
-            auto vec_new = std::make_unique<ConfigOptionInt>(boost::any_cast<int>(value));
-			config.option<ConfigOptionInts>(opt_key)->set_at(vec_new.get(), opt_index, 0);
+			ConfigOptionInts* vec_new = new ConfigOptionInts{ boost::any_cast<int>(value) };
+			config.option<ConfigOptionInts>(opt_key)->set_at(vec_new, opt_index, 0);
 			}
 			break;
 		case coEnum:{
@@ -204,9 +193,9 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 			break;
 		// BBS
 		case coEnums:{
-            auto vec_new = std::make_unique<ConfigOptionEnumsGeneric>(std::vector<int>{boost::any_cast<int>(value)});
+			ConfigOptionEnumsGeneric* vec_new = new ConfigOptionEnumsGeneric{ boost::any_cast<int>(value) };
 			if (config.has(opt_key))
-				config.option<ConfigOptionEnumsGeneric>(opt_key)->set_at(vec_new.get(), opt_index, 0);
+				config.option<ConfigOptionEnumsGeneric>(opt_key)->set_at(vec_new, opt_index, 0);
 			}
 			break;
 		case coPoint:{
@@ -214,12 +203,12 @@ void change_opt_value(DynamicPrintConfig& config, const t_config_option_key& opt
 			}
 			break;
 		case coPoints:{
-			if (opt_key == "printable_area" || opt_key == "bed_exclude_area" || opt_key == "thumbnails" || opt_key == "wrapping_exclude_area" ) {
+			if (opt_key == "printable_area" || opt_key == "bed_exclude_area" || opt_key == "thumbnails") {
 				config.option<ConfigOptionPoints>(opt_key)->values = boost::any_cast<std::vector<Vec2d>>(value);
 				break;
 			}
-            auto vec_new = std::make_unique<ConfigOptionPoint>(boost::any_cast<Vec2d>(value));
-			config.option<ConfigOptionPoints>(opt_key)->set_at(vec_new.get(), opt_index, 0);
+			ConfigOptionPoints* vec_new = new ConfigOptionPoints{ boost::any_cast<Vec2d>(value) };
+			config.option<ConfigOptionPoints>(opt_key)->set_at(vec_new, opt_index, 0);
 			}
 			break;
 		case coNone:
@@ -326,14 +315,6 @@ static void add_config_substitutions(const ConfigSubstitutions& conf_substitutio
 			}
 			else
 				new_val = wxString("\"") + values[val] + "\"" + " (" + from_u8(_utf8(labels[val])) + ")";
-			break;
-		}
-		case coEnums:
-		{
-			const std::vector<std::string>& labels = def->enum_labels;
-			const std::vector<std::string>& values = def->enum_values;
-			std::string val = conf_substitution.new_value->serialize();
-			new_val = wxString("\"") + from_u8(_utf8(val)) + "\"";
 			break;
 		}
 		case coBool:

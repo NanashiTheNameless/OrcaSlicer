@@ -6,10 +6,10 @@ body:
     attributes:
       value: |
         **Thank you for using Orca Slicer and wanting to report a bug.**
-
+        
         Please note that this is not the place to make feature requests or ask for help.
         For this, please use the [Feature request](https://github.com/SoftFever/OrcaSlicer/issues/new?assignees=&labels=&projects=&template=feature_request.yml) issue type or you can discuss your idea on our [Discord server](https://discord.gg/P4VE9UY9gJ) with others.
-
+        
         Before filing, please check if the issue already exists (either open or closed) by using the search bar on the issues page. If it does, comment there. Even if it's closed, we can reopen it based on your comment.
   - type: checkboxes
     attributes:
@@ -81,7 +81,7 @@ body:
     id: actual_results
     attributes:
       label: Actual results
-      description: What happens after the above steps? Please, enclose a screenshot whenever possible (even when you think the description is clear).
+      description: What happens after the above steps? Please, enclose a screenshot whenever possible (even when you think the description is clear). 
     validations:
       required: true
   - type: textarea
@@ -109,7 +109,7 @@ body:
     id: file_uploads
     attributes:
       label: Project file & Debug log uploads
-      description: Drop the project file and debug log here
+      description:  Drop the project file and debug log here
       placeholder: |
         Project File: `File` -> `Save project as...` then zip it & drop it here
         Log File:  `Help` -> `Show Configuration Folder`, then zip the log directory, or just select the newest logs in `log` when this issue happens and zip them, then drop the zip file here

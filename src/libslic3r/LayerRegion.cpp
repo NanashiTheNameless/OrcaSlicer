@@ -99,8 +99,7 @@ void LayerRegion::make_perimeters(const SurfaceCollection &slices, const LayerRe
         &this->thin_fills,
         fill_surfaces,
         //BBS
-        fill_no_overlap, 
-        this->layer()->object()->layer_count()
+        fill_no_overlap
     );
     
     if (this->layer()->lower_layer != nullptr)

@@ -9,14 +9,9 @@ class TextInput : public wxNavigationEnabled<StaticBox>
 
     wxSize labelSize;
     ScalableBitmap icon;
-    ScalableBitmap icon_1;
     StateColor     label_color;
     StateColor     text_color;
     wxTextCtrl * text_ctrl;
-
-    wxString  static_tips;
-    wxSize    static_tips_size;
-    wxBitmap  static_tips_icon;
 
     static const int TextInputWidth = 200;
     static const int TextInputHeight = 50;
@@ -45,12 +40,9 @@ public:
 
     void SetLabel(const wxString& label);
 
-    void SetStaticTips(const wxString& tips, const wxBitmap& bitmap);
-
     void SetIcon(const wxBitmap & icon);
-    void SetIcon(const wxString & icon);
 
-    void SetIcon_1(const wxString &icon);
+    void SetIcon(const wxString & icon);
 
     void SetLabelColor(StateColor const &color);
 

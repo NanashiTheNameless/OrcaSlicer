@@ -3,57 +3,58 @@
   ],
   "blacklist": [
     {
+      "vendor": "Third Party",
       "type": "TPU",
       "action": "prohibition",
-      "slot": "ams",
-      "description": "TPU is not supported by AMS."
+      "description": "TPU: not supported"
     },
     {
+      "vendor": "Bambulab",
+      "type": "TPU",
+      "action": "prohibition",
+      "description": "TPU: not supported"
+    },
+    {
+      "vendor": "Third Party",
       "type": "PVA",
       "action": "warning",
-      "slot": "ams",
-      "description": "Damp PVA will become flexible and get stuck inside AMS, please take care to dry it before use."
+      "description": "PVA: flexible"
     },
     {
-      "type": "PVA",
+      "vendor": "Third Party",
+      "type": "PLA-CF",
       "action": "warning",
-      "slot": "ext",
-      "description": "Damp PVA is flexible and may get stuck in extruder. Dry it before use."
+      "description": "CF/GF: hard and brittle"
     },
     {
-      "type": "PPS-CF",
-      "model_id":["O1S"],
+      "vendor": "Third Party",
+      "type": "PETG-CF",
       "action": "warning",
-      "description": "PPS-CF is brittle and could break in bended PTFE tube above Toolhead.",
-      "wiki": "https://e.bambulab.com/t?c=UC64kdlpHxN3Mb15"
+      "description": "CF/GF: hard and brittle"
     },
     {
-      "type": "PPA-CF",
-      "model_id":["O1S"],
+      "vendor": "Third Party",
+      "type": "PA-CF",
       "action": "warning",
-      "description": "PPA-CF is brittle and could break in bended PTFE tube above Toolhead.",
-      "wiki": "https://e.bambulab.com/t?c=UC64kdlpHxN3Mb15"
+      "description": "CF/GF: hard and brittle"
     },
     {
-      "type_suffix": "CF",
+      "vendor": "Third Party",
+      "type": "PAHT-CF",
       "action": "warning",
-      "slot": "ams",
-      "description": "CF/GF filaments are hard and brittle, it's easy to break or get stuck in AMS, please use with caution."
+      "description": "CF/GF: hard and brittle"
     },
     {
-      "type_suffix": "GF",
-      "action": "warning",
-	  "slot": "ams",
-      "description": "CF/GF filaments are hard and brittle, it's easy to break or get stuck in AMS, please use with caution."
+      "vendor": "Bambulab",
+      "type": "PET-CF",
+      "action": "prohibition",
+      "description": "Bambu PET-CF/PA6-CF: not supported"
     },
     {
-      "vendor": "Bambu Lab",
-      "type": "PLA",
-      "name": "PLA Glow",
-	  "model_id":["N1","N2S"],
-      "action": "warning",
-      "slot": "ams",
-      "description": "The rough surface of PLA Glow can accelerate wear on the AMS system, particularly on the internal components of the AMS Lite."
+      "vendor": "Bambulab",
+      "type": "PA6-CF",
+      "action": "prohibition",
+      "description": "Bambu PET-CF/PA6-CF: not supported"
     }
   ]
 }

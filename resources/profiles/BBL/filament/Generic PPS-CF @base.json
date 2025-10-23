@@ -21,9 +21,6 @@
     "filament_type": [
         "PPS-CF"
     ],
-    "impact_strength_z": [
-        "5.7"
-    ],
     "nozzle_temperature_range_low": [
         "310"
     ],

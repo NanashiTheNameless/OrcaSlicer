@@ -3,9 +3,6 @@
 
 #include "GUI_Utils.hpp"
 #include "MultiMachine.hpp"
-#include "wxExtensions.hpp"
-#include "Widgets/Button.hpp"
-#include "Widgets/TextInput.hpp"
 
 namespace Slic3r { 
 namespace GUI {

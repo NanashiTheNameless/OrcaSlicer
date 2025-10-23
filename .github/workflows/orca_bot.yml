@@ -5,9 +5,10 @@ on:
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'
+        description: 'Log level'     
         required: true
         default: 'warning'
+        
 jobs:
   stale:
     runs-on: ubuntu-latest
@@ -24,6 +25,7 @@ jobs:
           operations-per-run: 1000
           # Order to get issues/PRs
           ascending: true
+
           # ISSUES
           # Do not auto-close an issue if it is assigned to a milestone
           exempt-all-issue-milestones: true
@@ -45,6 +47,7 @@ jobs:
           stale-issue-message: "Orca bot: this issue is stale because it has been open for 90 days with no activity."
           # Issue closure message
           close-issue-message: "Orca bot: This issue was closed because it has been inactive for 7 days since being marked as stale."
+
           # PRs
           # Do not auto-close a PR if it is assigned to a milestone
           exempt-all-pr-milestones: true

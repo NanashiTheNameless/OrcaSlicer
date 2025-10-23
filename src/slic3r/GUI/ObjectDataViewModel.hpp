@@ -38,7 +38,6 @@ enum ItemType {
 enum ColumnNumber
 {
     colName         = 0,    // item name
-    colHeight          ,    // variable height
     colPrint           ,    // printable property
     colFilament        ,    // extruder selection
     // BBS
@@ -54,12 +53,6 @@ enum PrintIndicator
     piUndef         = 0,    // no print indicator
     piPrintable        ,    // printable
     piUnprintable      ,    // unprintable
-};
-
-enum VaryHeightIndicator
-{
-    hiUnVariable,    // unvariable height
-    hiVariable,    // variable height
 };
 
 enum class InfoItemType
@@ -101,9 +94,6 @@ class ObjectDataViewModelNode
     wxBitmap                        m_sinking_icon;
     PrintIndicator                  m_printable {piUndef};
     wxBitmap                        m_printable_icon;
-
-    VaryHeightIndicator             m_variable_height{ hiUnVariable };
-    wxBitmap				        m_variable_height_icon;
     std::string                     m_warning_icon_name{ "" };
     bool                            m_has_lock{false};  // for cut object icon
 
@@ -254,7 +244,6 @@ public:
 	t_layer_height_range    GetLayerRange() const   { return m_layer_range; }
     wxString        GetExtruder()                   { return m_extruder; }
     PrintIndicator  IsPrintable() const             { return m_printable; }
-    VaryHeightIndicator  IsVaribaleHeight() const { return m_variable_height; }
     // BBS
     bool            HasColorPainting() const        { return m_color_enable; }
     bool            HasSupportPainting() const { return m_support_enable; }
@@ -296,12 +285,11 @@ public:
     void        set_extruder_icon();
 	// Set printable icon for node
     void        set_printable_icon(PrintIndicator printable);
-    void        set_variable_height_icon(VaryHeightIndicator vari_height);
     void        set_action_icon(bool enable);
     // BBS
-    void        set_color_icon(bool enable, bool force = false);
-    void        set_support_icon(bool enable,bool force = false);
-    void        set_sinking_icon(bool enable, bool force = false);
+    void        set_color_icon(bool enable);
+    void        set_support_icon(bool enable);
+    void        set_sinking_icon(bool enable);
 
     // Set warning icon for node
     void        set_warning_icon(const std::string& warning_icon);
@@ -352,30 +340,26 @@ class ObjectDataViewModel :public wxDataViewModel
     wxDataViewCtrl*                             m_ctrl { nullptr };
     std::vector<std::tuple<ObjectDataViewModelNode*, wxString, wxString>> assembly_name_list;
     std::vector<std::tuple<ObjectDataViewModelNode*, wxString, wxString>> search_found_list;
-    std::map<int,std::map<int, int>>                                      m_ui_and_3d_volume_maps;
+    std::map<int, int>                          m_ui_and_3d_volume_map;
 
 public:
     ObjectDataViewModel();
     ~ObjectDataViewModel();
 
     void Init();
-    std::map<int, std::map<int, int>> &get_ui_and_3d_volume_map() { return m_ui_and_3d_volume_maps; }
-    int   get_real_volume_index_in_3d(int ui_object_value, int ui_volume_value)
+    std::map<int, int> &get_ui_and_3d_volume_map() { return m_ui_and_3d_volume_map; }
+    int                 get_real_volume_index_in_3d(int ui_value)
     {
-        if (m_ui_and_3d_volume_maps.find(ui_object_value) != m_ui_and_3d_volume_maps.end()) {
-            auto cur_map = m_ui_and_3d_volume_maps[ui_object_value];
-            if (cur_map.find(ui_volume_value) != cur_map.end()) { return cur_map[ui_volume_value]; }
+        if (m_ui_and_3d_volume_map.find(ui_value) != m_ui_and_3d_volume_map.end()) { 
+            return m_ui_and_3d_volume_map[ui_value];
         }
-        return ui_volume_value;
+        return ui_value;
     }
-    int get_real_volume_index_in_ui(int ui_object_value, int _3d_value)
+    int get_real_volume_index_in_ui(int _3d_value)
     {
-        if (m_ui_and_3d_volume_maps.find(ui_object_value) != m_ui_and_3d_volume_maps.end()) {
-            auto cur_map = m_ui_and_3d_volume_maps[ui_object_value];
-            for (auto item : cur_map) {
-                if (item.second == _3d_value) {
-                    return item.first;
-                }
+        for (auto item: m_ui_and_3d_volume_map) {
+            if (item.second == _3d_value) {
+                return item.first;
             }
         }
         return _3d_value;
@@ -495,22 +479,19 @@ public:
     bool    IsPrintable(const wxDataViewItem &item) const;
     void    UpdateObjectPrintable(wxDataViewItem parent_item);
     void    UpdateInstancesPrintable(wxDataViewItem parent_item);
-    bool    IsVariableHeight(const wxDataViewItem& item) const;
-
     void    SetVolumeType(const wxDataViewItem &item, const Slic3r::ModelVolumeType type);
     ModelVolumeType GetVolumeType(const wxDataViewItem &item);
     wxDataViewItem SetPrintableState( PrintIndicator printable, int obj_idx,
                                       int subobj_idx = -1,
                                       ItemType subobj_type = itInstance);
     wxDataViewItem SetObjectPrintableState(PrintIndicator printable, wxDataViewItem obj_item);
-    wxDataViewItem SetObjectVariableHeightState(VaryHeightIndicator vari_height, wxDataViewItem obj_item);
     // BBS
     bool    IsColorPainted(wxDataViewItem& item) const;
     bool    IsSupportPainted(wxDataViewItem &item) const;
     bool    IsSinked(wxDataViewItem &item) const;
-    void    SetColorPaintState(const bool painted, wxDataViewItem obj_item,bool force = false);
-    void    SetSupportPaintState(const bool painted, wxDataViewItem obj_item,bool force = false);
-    void    SetSinkState(const bool painted, wxDataViewItem obj_item,bool force = false);
+    void    SetColorPaintState(const bool painted, wxDataViewItem obj_item);
+    void    SetSupportPaintState(const bool painted, wxDataViewItem obj_item);
+    void    SetSinkState(const bool painted, wxDataViewItem obj_item);
 
     void    SetAssociatedControl(wxDataViewCtrl* ctrl) { m_ctrl = ctrl; }
     // Rescale bitmaps for existing Items

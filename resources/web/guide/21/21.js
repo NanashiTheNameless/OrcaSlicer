@@ -1,7 +1,7 @@
 function OnInit()
 {
 	//let strInput=JSON.stringify(cData);
-	//HandleModelList(cData);
+	//HandleStudio(strInput);
 	
 	TranslatePage();
 	
@@ -46,21 +46,6 @@ function ShowPrinterThumb(pItem, strImg)
 	$(pItem).attr('onerror',null);
 }
 
-function ChooseModel( vendor, ModelName )
-{
-	let ChooseItem=$(".ModelCheckBox[vendor='"+vendor+"'][model='"+ModelName+"']");
-	
-	if(ChooseItem!=null)
-	{
-		if( $(ChooseItem).hasClass('ModelCheckBoxSelected') )
-			$(ChooseItem).removeClass('ModelCheckBoxSelected');
-		else
-			$(ChooseItem).addClass('ModelCheckBoxSelected');		
-
-		SetModelSelect(vendor, ModelName, $(ChooseItem).hasClass('ModelCheckBoxSelected'));
-	}		
-}
-
 function HandleModelList( pVal )
 {
 	if( !pVal.hasOwnProperty("model") )
@@ -89,11 +74,11 @@ function HandleModelList( pVal )
 
 			let HtmlNewVendor='<div class="OneVendorBlock" Vendor="'+strVendor+'">'+
 '<div class="BlockBanner">'+
-'	<a>'+sVV+'</a>'+				
 '	<div class="BannerBtns">'+
 '		<div class="SmallBtn_Green trans" tid="t11" onClick="SelectPrinterAll('+"\'"+strVendor+"\'"+')">all</div>'+
 '		<div class="SmallBtn trans" tid="t12" onClick="SelectPrinterNone('+"\'"+strVendor+"\'"+')">none</div>'+
 '	</div>'+
+'	<a>'+sVV+'</a>'+
 '</div>'+
 '<div class="PrinterArea">	'+
 '</div>'+
@@ -108,14 +93,19 @@ function HandleModelList( pVal )
 		if( !ModelHtml.hasOwnProperty(strVendor))
 			ModelHtml[strVendor]='';
 			
+		let NozzleArray=OneModel['nozzle_diameter'].split(';');
+		let HtmlNozzel='';
+		for(let m=0;m<NozzleArray.length;m++)
+		{
+			let nNozzel=NozzleArray[m];
+			/* ORCA use label tag to allow checkbox to toggle when user ckicked to text */
+			HtmlNozzel += '<label class="pNozzel TextS2"><input type="checkbox" model="' + OneModel['model'] + '" nozzel="' + nNozzel + '" vendor="' + strVendor +'" onclick="CheckBoxOnclick(this)" /><span>'+nNozzel+'</span><span class="trans" tid="t13">mm nozzle</span></label>';
+		}
+		
 		let CoverImage=OneModel['cover'];
-		ModelHtml[strVendor]+='<div class="PrinterBlock" onClick="ChooseModel(\''+strVendor+'\',\''+OneModel['model']+'\')">'+
-        '<div class="PImg">'+
-		    '<img class="ModelThumbnail" src="'+CoverImage+'" />'+
-			'<div class="ModelCheckBox" vendor="' +strVendor+ '" model="'+OneModel['model']+'"></div>'+
-		'</div>'+
-        '    <div class="PName">'+OneModel['name']+'</div>'+ 
-		'</div>';
+		ModelHtml[strVendor]+='<div class="PrinterBlock">'+
+'	<div class="PImg"><img src="'+CoverImage+'"  /></div>'+
+'    <div class="PName">'+OneModel['name']+'</div>'+ HtmlNozzel +'</div>';
 	}
 	
 	//Update Nozzel Html Append
@@ -126,6 +116,7 @@ function HandleModelList( pVal )
 	
 	
 	//Update Checkbox
+	$('input').prop("checked", false);
 	for(let m=0;m<nTotal;m++)
 	{
 		let OneModel=pModel[m];
@@ -133,21 +124,45 @@ function HandleModelList( pVal )
 		let SelectList=OneModel['nozzle_selected'];
 		if(SelectList!='')
 		{
-			ChooseModel(OneModel['vendor'], OneModel['model']);
+			SelectList=OneModel['nozzle_selected'].split(';');
+    		let nLen=SelectList.length;
+
+		    for(let a=0;a<nLen;a++)
+			{
+			    let nNozzel=SelectList[a];
+				$("input[vendor='" + OneModel['vendor'] + "'][model='" + OneModel['model'] + "'][nozzel='" + nNozzel + "']").prop("checked", true);
+
+				SetModelSelect(OneModel['vendor'], OneModel['model'], nNozzel, true);
+			}
+		}
+		else
+		{
+			$("input[vendor='"+OneModel['vendor']+"'][model='"+OneModel['model']+"']").prop("checked", false);
 		}
 	}	
 
-	// let AlreadySelect=$(".ModelCheckBoxSelected");
+	// let AlreadySelect=$("input:checked");
 	// let nSelect=AlreadySelect.length;
 	// if(nSelect==0)
 	// {
-	//	$("div.OneVendorBlock[vendor='"+BBL+"'] .ModelCheckBox").addClass('ModelCheckBoxSelected');
+	// 	$("input[nozzel='0.4'][vendor='Custom']").prop("checked", true);
 	// }
 	
 	TranslatePage();
 }
 
-function SetModelSelect(vendor, model, checked) {
+function CheckBoxOnclick(obj) {
+
+	let strModel = obj.getAttribute("model");
+
+	let strVendor = obj.getAttribute("vendor");
+	let strNozzel = obj.getAttribute("nozzel");
+
+	SetModelSelect(strVendor, strModel, strNozzel, obj.checked);
+
+}
+
+function SetModelSelect(vendor, model, nozzel, checked) {
 	if (!ModelNozzleSelected.hasOwnProperty(vendor) && !checked) {
 		return;
 	}
@@ -157,12 +172,17 @@ function SetModelSelect(vendor, model, checked) {
 	}
 
 	let oVendor = ModelNozzleSelected[vendor];
-	if (oVendor.hasOwnProperty(model) || checked) {
-		oVendor[model] = checked;
+	if (!oVendor.hasOwnProperty(model)) {
+		oVendor[model] = {};
+	}
+
+	let oModel = oVendor[model];
+	if (oModel.hasOwnProperty(nozzel) || checked) {
+		oVendor[model][nozzel] = checked;
 	}
 }
 
-function GetModelSelect(vendor, model) {
+function GetModelSelect(vendor, model, nozzel) {
 	if (!ModelNozzleSelected.hasOwnProperty(vendor)) {
 		return false;
 	}
@@ -172,21 +192,27 @@ function GetModelSelect(vendor, model) {
 		return false;
 	}
 
-	return oVendor[model];
+	let oModel = oVendor[model];
+	if (!oModel.hasOwnProperty(nozzel)) {
+		return false;
+	}
+
+	return oVendor[model][nozzel];
 }
 
 function FilterModelList(keyword) {
 
 	//Save checkbox state
-	let ModelSelect = $('.ModelCheckBox');
+	let ModelSelect = $('input[type=checkbox]');
 	for (let n = 0; n < ModelSelect.length; n++) {
 		let OneItem = ModelSelect[n];
 
 		let strModel = OneItem.getAttribute("model");
 
 		let strVendor = OneItem.getAttribute("vendor");
+		let strNozzel = OneItem.getAttribute("nozzel");
 
-		SetModelSelect(strVendor, strModel, $(OneItem).hasClass('ModelCheckBoxSelected'));
+		SetModelSelect(strVendor, strModel, strNozzel, OneItem.checked);
 	}
 
 	let nTotal = pModel.length;
@@ -215,11 +241,11 @@ function FilterModelList(keyword) {
 
 			let HtmlNewVendor = '<div class="OneVendorBlock" Vendor="' + strVendor + '">' +
 				'<div class="BlockBanner">' +
-				'	<a>' + sVV + '</a>' +
 				'	<div class="BannerBtns">' +
 				'		<div class="SmallBtn_Green trans" tid="t11" onClick="SelectPrinterAll(' + "\'" + strVendor + "\'" + ')">all</div>' +
 				'		<div class="SmallBtn trans" tid="t12" onClick="SelectPrinterNone(' + "\'" + strVendor + "\'" + ')">none</div>' +
 				'	</div>' +
+				'	<a>' + sVV + '</a>' +
 				'</div>' +
 				'<div class="PrinterArea">	' +
 				'</div>' +
@@ -232,14 +258,18 @@ function FilterModelList(keyword) {
 		if (!ModelHtml.hasOwnProperty(strVendor))
 			ModelHtml[strVendor] = '';
 
+		let NozzleArray = OneModel['nozzle_diameter'].split(';');
+		let HtmlNozzel = '';
+		for (let m = 0; m < NozzleArray.length; m++) {
+			let nNozzel = NozzleArray[m];
+			/* ORCA use label tag to allow checkbox to toggle when user ckicked to text */
+			HtmlNozzel += '<label class="pNozzel TextS2"><input type="checkbox" model="' + OneModel['model'] + '" nozzel="' + nNozzel + '" vendor="' + strVendor + '" onclick="CheckBoxOnclick(this)" /><span>' + nNozzel + '</span><span class="trans" tid="t13">mm nozzle</span></label>';
+		}
+
 		let CoverImage = OneModel['cover'];
-		ModelHtml[strVendor] += '<div class="PrinterBlock" onClick="ChooseModel(\''+strVendor+'\',\''+OneModel['model']+'\')">'+
-        '<div class="PImg">'+
-		    '<img class="ModelThumbnail" src="'+CoverImage+'" />'+
-			'<div class="ModelCheckBox" vendor="' +strVendor+ '" model="'+OneModel['model']+'"></div>'+
-		'</div>'+
-        '    <div class="PName">'+OneModel['name']+'</div>'+ 
-		'</div>';
+		ModelHtml[strVendor] += '<div class="PrinterBlock">' +
+			'	<div class="PImg"><img src="' + CoverImage + '"  /></div>' +
+			'    <div class="PName">' + OneModel['name'] + '</div>' + HtmlNozzel + '</div>';
 	}
 
 	//Update Nozzel Html Append
@@ -251,26 +281,24 @@ function FilterModelList(keyword) {
 
 
 	//Update Checkbox
-	ModelSelect = $('.ModelCheckBox');
+	ModelSelect = $('input[type=checkbox]');
 	for (let n = 0; n < ModelSelect.length; n++) {
 		let OneItem = ModelSelect[n];
 
 		let strModel = OneItem.getAttribute("model");
 		let strVendor = OneItem.getAttribute("vendor");
+		let strNozzel = OneItem.getAttribute("nozzel");
 
-		let checked = GetModelSelect(strVendor, strModel);
+		let checked = GetModelSelect(strVendor, strModel, strNozzel);
 
-		if (checked)
-			$(OneItem).addClass('ModelCheckBoxSelected');
-		else
-			$(OneItem).removeClass('ModelCheckBoxSelected');
+		OneItem.checked = checked;
 	}
 
-	// let AlreadySelect=$(".ModelCheckBoxSelected");
+	// let AlreadySelect=$("input:checked");
 	// let nSelect=AlreadySelect.length;
 	// if(nSelect==0)
 	// {
-	//	$("div.OneVendorBlock[vendor='"+BBL+"'] .ModelCheckBox").addClass('ModelCheckBoxSelected');
+	// 	$("input[nozzel='0.4'][vendor='Custom']").prop("checked", true);
 	// }
 
 	TranslatePage();
@@ -278,20 +306,18 @@ function FilterModelList(keyword) {
 
 function SelectPrinterAll( sVendor )
 {
-	$("div.OneVendorBlock[vendor='"+sVendor+"'] .ModelCheckBox").addClass('ModelCheckBoxSelected');
-	$("div.OneVendorBlock[vendor='"+sVendor+"'] .ModelCheckBox").each(function() {
-    	let strModel = this.getAttribute("model");
-		SetModelSelect(sVendor, strModel, true);
+	$("input[vendor='"+sVendor+"']").prop("checked", true);
+	$("input[vendor='"+sVendor+"']").each(function() {
+		CheckBoxOnclick(this);
 	});
 }
 
 
 function SelectPrinterNone( sVendor )
 {
-	$("div.OneVendorBlock[vendor='"+sVendor+"'] .ModelCheckBox").removeClass('ModelCheckBoxSelected');
-	$("div.OneVendorBlock[vendor='"+sVendor+"'] .ModelCheckBox").each(function() {
-    	let strModel = this.getAttribute("model");
-		SetModelSelect(sVendor, strModel, false);
+	$("input[vendor='"+sVendor+"']").prop("checked", false);
+	$("input[vendor='"+sVendor+"']").each(function() {
+		CheckBoxOnclick(this);
 	});
 }
 
@@ -310,18 +336,25 @@ function OnExitFilter() {
 	let ModelAll = {};
 	for (vendor in ModelNozzleSelected) {
 		for (model in ModelNozzleSelected[vendor]) {
-			if (!ModelNozzleSelected[vendor][model])
-				continue;
+			for (nozzel in ModelNozzleSelected[vendor][model]) {
+				if (!ModelNozzleSelected[vendor][model][nozzel])
+					continue;
 
-			if (!ModelAll.hasOwnProperty(model)) {
-				//alert("ADD: "+strModel);
+				if (!ModelAll.hasOwnProperty(model)) {
+					//alert("ADD: "+strModel);
 
-				ModelAll[model] = {};
+					ModelAll[model] = {};
 
-				ModelAll[model]["model"] = model;
+					ModelAll[model]["model"] = model;
+					ModelAll[model]["nozzle_diameter"] = '';
+					ModelAll[model]["vendor"] = vendor;
+				}
+
+				ModelAll[model]["nozzle_diameter"] += ModelAll[model]["nozzle_diameter"] == '' ? nozzel : ';' + nozzel;
+
+				nTotal++;
 			}
 
-			nTotal++;
 		}
 	}
 
@@ -341,7 +374,7 @@ function OnExit()
 {	
 	let ModelAll={};
 	
-	let ModelSelect=$(".ModelCheckBoxSelected");
+	let ModelSelect=$("input:checked");
 	let nTotal=ModelSelect.length;
 
 	if( nTotal==0 )
@@ -356,6 +389,8 @@ function OnExit()
 	    let OneItem=ModelSelect[n];
 		
 		let strModel=OneItem.getAttribute("model");
+		let strVendor=OneItem.getAttribute("vendor");
+		let strNozzel=OneItem.getAttribute("nozzel");
 			
 		//alert(strModel+strVendor+strNozzel);
 		
@@ -366,7 +401,11 @@ function OnExit()
 			ModelAll[strModel]={};
 		
 			ModelAll[strModel]["model"]=strModel;
+			ModelAll[strModel]["nozzle_diameter"]='';
+			ModelAll[strModel]["vendor"]=strVendor;
 		}
+		
+		ModelAll[strModel]["nozzle_diameter"]+=ModelAll[strModel]["nozzle_diameter"]==''?strNozzel:';'+strNozzel;
 	}
 		
 	var tSend={};

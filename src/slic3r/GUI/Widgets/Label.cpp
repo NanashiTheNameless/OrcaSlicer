@@ -117,12 +117,11 @@ public:
         Wrap(dc, text, widthMax);
     }
 
-    void Wrap(wxDC const &dc, const wxString &text, int widthMax, int maxCount = 0)
+    void Wrap(wxDC const & dc, const wxString &text, int widthMax)
     {
         const wxArrayString ls = wxSplit(text, '\n', '\0');
         for (wxArrayString::const_iterator i = ls.begin(); i != ls.end(); ++i) {
             wxString line = *i;
-            int count = 0;
 
             if (i != ls.begin()) {
                 // Do this even if the line is empty, except if it's the first one.
@@ -182,12 +181,6 @@ public:
                 // And redo the layout with the rest.
                 if (line[lastSpace] == ' ') ++lastSpace;
                 line = line.substr(lastSpace);
-
-                if (maxCount > 0 && ++count == maxCount - 1) {
-                    OnNewLine();
-                    DoOutputLine(line);
-                    break;
-                }
             }
         }
     }
@@ -253,10 +246,10 @@ private:
 };
 
 
-wxSize Label::split_lines(wxDC &dc, int width, const wxString &text, wxString &multiline_text, int max_count)
+wxSize Label::split_lines(wxDC &dc, int width, const wxString &text, wxString &multiline_text)
 {
     wxLabelWrapper2 wrap;
-    wrap.Wrap(dc, text, width, max_count);
+    wrap.Wrap(dc, text, width);
     multiline_text = wrap.GetText();
     return dc.GetMultiLineTextExtent(multiline_text);
 }

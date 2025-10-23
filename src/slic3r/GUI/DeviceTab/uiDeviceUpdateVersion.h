@@ -29,7 +29,7 @@ public:
     ~uiDeviceUpdateVersion() = default;
 
 public:
-    void  UpdateInfo(const DevFirmwareVersionInfo& info);
+    void  UpdateInfo(const MachineObject::ModuleVersionInfo& info);
 
 private:
     void  CreateWidgets();
