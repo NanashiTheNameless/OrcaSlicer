@@ -12802,10 +12802,10 @@ msgid ""
 "etc."
 msgstr ""
 
-msgid "Ignore small overhangs"
+msgid "Remove small overhangs"
 msgstr ""
 
-msgid "Ignore small overhangs that possibly don't require support."
+msgid "Remove small overhangs that possibly need no supports."
 msgstr ""
 
 msgid "Top Z distance"

@@ -39,6 +39,3 @@ src/OrcaSlicer-doc/
 resources/profiles/user/default
 *.code-workspace
 deps_src/build/
-test.js
-/.cache/
-.clangd
