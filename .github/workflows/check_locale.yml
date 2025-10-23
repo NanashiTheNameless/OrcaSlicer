@@ -1,26 +1,23 @@
 name: Check locale
-
-on: 
-    pull_request:
-      branches: 
-       - main 
-      paths:
-       - 'localization/**'
-       - ".github/workflows/check_locale.yml"
-
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'localization/**'
+      - ".github/workflows/check_locale.yml"
 jobs:
   check_translation:
     name: Check translation
     runs-on: ubuntu-latest
-    steps:  
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: Install gettext 
+      - name: Install gettext
         run: |
           sudo apt-get update
           sudo apt-get install -y gettext
-
       # don't call ./run_gentext.sh as most translators never sync with main branch...
       - name: Check translation format
         run: |
@@ -30,7 +27,7 @@ jobs:
           do
               dir=${dir%*/}      # remove the trailing "/"
               lang=${dir##*/}    # extract the language identifier
-          
+
               if [ -f "$dir/OrcaSlicer_${lang}.po" ]; then
                   mkdir -p ./resources/i18n/${lang}/
                   msgfmt --check-format -o ./resources/i18n/${lang}/OrcaSlicer.mo $dir/OrcaSlicer_${lang}.po
@@ -41,4 +38,3 @@ jobs:
                   fi
               fi
           done
-        

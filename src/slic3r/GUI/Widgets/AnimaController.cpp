@@ -9,9 +9,8 @@
 AnimaIcon::AnimaIcon(wxWindow *parent, wxWindowID id, std::vector<std::string> img_list, std::string img_enable, int ivt)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize), m_ivt(ivt)
 {
-    auto sizer = new wxBoxSizer(wxHORIZONTAL);
     SetBackgroundColour((wxColour(255, 255, 255)));
-    m_size = 25;
+    m_size = 20;
 
     //add ScalableBitmap
     for (const auto &filename : img_list) m_images.emplace_back(create_scaled_bitmap(filename, this, m_size));
@@ -48,13 +47,12 @@ AnimaIcon::AnimaIcon(wxWindow *parent, wxWindowID id, std::vector<std::string> i
        SetCursor(wxCursor(wxCURSOR_ARROW));
        e.Skip();
    });
-    sizer->Add(m_bitmap, 0, wxALIGN_CENTER, 0);
-    SetSizer(sizer);
+
 	SetSize(wxSize(FromDIP(m_size), FromDIP(m_size)));
     SetMaxSize(wxSize(FromDIP(m_size), FromDIP(m_size)));
     SetMinSize(wxSize(FromDIP(m_size), FromDIP(m_size)));
-    Layout();
-    Fit();
+    Refresh();
+
     Play();
 }
 
@@ -75,3 +73,5 @@ void AnimaIcon::Enable()
 {
     if (m_bitmap) { m_bitmap->SetBitmap(m_image_enable); }
 }
+
+

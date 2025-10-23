@@ -1,5 +1,4 @@
 name: Publish docs to Wiki
-
 # Trigger this action only if there are changes pushed to the doc/** directory under the main branch
 on:
   push:
@@ -7,25 +6,22 @@ on:
       - doc/** # This includes all sub folders
     branches:
       - main # This can be changed to any branch of your preference
-
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Log level'     
+        description: 'Log level'
         required: true
         default: 'warning'
-
 env:
   USER_TOKEN: ${{ secrets.GH_WIKI_PAT }} # This is the repository secret personal access token
   USER_NAME: ${{ vars.BOT_USER_NAME }} # Enter the username of your (bot) account
   OWNER: ${{ github.event.repository.owner.name }} # This is the repository owner
   REPOSITORY_NAME: ${{ github.event.repository.name }} # This is the repository name
-
 jobs:
   publish_docs_to_wiki:
     name: Publish docs to Wiki
     runs-on: ubuntu-latest
-    steps:  
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v5
 
@@ -42,5 +38,5 @@ jobs:
           rsync -av --delete doc/ tmp_wiki/ --exclude .git
           cd tmp_wiki
           git add .
-          git commit -m "Updated Wiki content" 
+          git commit -m "Updated Wiki content"
           git push origin master

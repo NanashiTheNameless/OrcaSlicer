@@ -22,7 +22,6 @@ wxDECLARE_EVENT(EVT_FILE_CHANGED, wxCommandEvent);
 wxDECLARE_EVENT(EVT_SELECT_CHANGED, wxCommandEvent);
 wxDECLARE_EVENT(EVT_THUMBNAIL, wxCommandEvent);
 wxDECLARE_EVENT(EVT_DOWNLOAD, wxCommandEvent);
-wxDECLARE_EVENT(EVT_RAMDOWNLOAD, wxCommandEvent);
 wxDECLARE_EVENT(EVT_MEDIA_ABILITY_CHANGED, wxCommandEvent);
 wxDECLARE_EVENT(EVT_UPLOADING, wxCommandEvent);
 wxDECLARE_EVENT(EVT_UPLOAD_CHANGED, wxCommandEvent);
@@ -170,6 +169,7 @@ public:
         std::unique_ptr<Upload> upload;
 
         bool IsUploading() const { return flags & FF_UPLOADING; }
+        ~UploadFile();
     };
 
     struct Void {};
@@ -209,7 +209,7 @@ public:
     size_t GetIndexAtTime(boost::uint32_t time);
 
     void ToggleSelect(size_t index);
-    
+
     void SelectAll(bool select);
 
     size_t GetSelectCount() const;
@@ -222,13 +222,13 @@ public:
 
     enum Status {
         Initializing,
-        Connecting, 
+        Connecting,
         ListSyncing,
         ListReady,
         Failed,
         Reconnecting,
     };
-    
+
     Status GetStatus() const { return m_status; }
     int GetLastError() const { return m_last_error; }
 
@@ -286,7 +286,7 @@ private:
 
     typedef std::function<int(std::string &msg)> callback_t3;
 
-    template<typename T> boost::uint32_t SendRequest(int type, json const &req, Translator<T> const &translator, Callback<T> const &callback, const std::string &param = "")
+    template<typename T> boost::uint32_t SendRequest(int type, json const &req, Translator<T> const &translator, Callback<T> const &callback)
     {
         auto c = [translator, callback, this](int result, json const &resp, unsigned char const *data) -> int
         {

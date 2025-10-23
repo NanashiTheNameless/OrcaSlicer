@@ -31,7 +31,7 @@ body:
       label: Which printers will be beneficial to this feature?
       description: Select affected printer firmware type.
       multiple: true
-      options: 
+      options:
         - Klipper
         - Marlin
         - Others
