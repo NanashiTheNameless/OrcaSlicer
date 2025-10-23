@@ -228,7 +228,7 @@ void AppConfig::set_defaults()
         set_bool("3mf_include_gcode", true);*/
 
     if (get("developer_mode").empty())
-        set_bool("developer_mode", false);
+        set_bool("developer_mode", true);
 
     if (get("enable_ssl_for_mqtt").empty())
         set_bool("enable_ssl_for_mqtt", true);
@@ -254,10 +254,10 @@ void AppConfig::set_defaults()
 
     // Orca
     if (get("stealth_mode").empty()) {
-        set_bool("stealth_mode", false);
+        set_bool("stealth_mode", true);
     }
     if (get("legacy_networking").empty()) {
-        set_bool("legacy_networking", true);
+        set_bool("legacy_networking", false);
     }
 
     if(get("check_stable_update_only").empty()) {
