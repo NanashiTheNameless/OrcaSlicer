@@ -551,7 +551,6 @@ private:
 
     // save and restore from config
     void load_option_vals(MachineObject* obj);
-    void save_option_vals();
     void save_option_vals(MachineObject *obj);
 
     // enbale or disable external change assist
