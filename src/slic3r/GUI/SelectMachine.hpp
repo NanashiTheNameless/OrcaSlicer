@@ -71,6 +71,41 @@ enum PrintPageMode {
     PrintPageModeFinish
 };
 
+enum PrintDialogStatus {
+    PrintStatusInit = 0,
+    PrintStatusNoUserLogin,
+    PrintStatusInvalidPrinter,
+    PrintStatusConnectingServer,
+    PrintStatusReading,
+    PrintStatusReadingFinished,
+    PrintStatusReadingTimeout,
+    PrintStatusInUpgrading,
+    PrintStatusNeedUpgradingAms,
+    PrintStatusInSystemPrinting,
+    PrintStatusInPrinting,
+    PrintStatusDisableAms,
+    PrintStatusAmsMappingSuccess,
+    PrintStatusAmsMappingInvalid,
+    PrintStatusAmsMappingU0Invalid,
+    PrintStatusAmsMappingValid,
+    PrintStatusAmsMappingByOrder,
+    PrintStatusRefreshingMachineList,
+    PrintStatusSending,
+    PrintStatusSendingCanceled,
+    PrintStatusLanModeNoSdcard,
+    PrintStatusNoSdcard,
+    PrintStatusTimelapseNoSdcard,
+    PrintStatusNotOnTheSameLAN,
+    PrintStatusNeedForceUpgrading,
+    PrintStatusNeedConsistencyUpgrading,
+    PrintStatusNotSupportedSendToSDCard,
+    PrintStatusNotSupportedPrintAll,
+    PrintStatusBlankPlate,
+    PrintStatusUnsupportedPrinter,
+    PrintStatusTimelapseWarning,
+    PrintStatusPublicInitFailed,
+    PrintStatusPublicUploadFiled
+};
 
 class Material
 {

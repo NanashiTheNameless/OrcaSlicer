@@ -42,6 +42,7 @@
 #include "Widgets/AnimaController.hpp"
 #include "Widgets/RadioBox.hpp"
 
+
 namespace Slic3r {
 namespace GUI {
 
@@ -137,8 +138,7 @@ private:
     bool                                  m_waiting_enable{ false };
     boost::shared_ptr<PrinterFileSystem>  m_file_sys;
     std::vector<std::string>              m_ability_list;
-
-public:
+   public:
 	SendToPrinterDialog(Plater* plater = nullptr);
     ~SendToPrinterDialog();
 
@@ -181,6 +181,11 @@ public:
     wxString format_text(wxString& m_msg);
     std::vector<std::string> sort_string(std::vector<std::string> strArray);
 
+    void update_storage_list(std::vector<std::string> storages);
+    std::string get_storage_selected();
+
+    wxString format_text(wxString& m_msg);
+	std::vector<std::string> sort_string(std::vector<std::string> strArray);
     void fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs);
 };
 

@@ -162,6 +162,12 @@ public:
 
     bool        local_use_ssl_for_mqtt { true };
     bool        local_use_ssl_for_ftp { true };
+    int         subscribe_counter{3};
+    std::string dev_connection_type;    /* lan | cloud */
+    std::string connection_type() { return dev_connection_type; }
+
+    std::string dev_connection_name;    /* lan | eth */
+    void set_dev_ip(std::string ip) {dev_ip = ip;}
     std::string get_ftp_folder();
 
     int         subscribe_counter{3};
@@ -189,6 +195,8 @@ public:
     void erase_user_access_code();
     std::string get_user_access_code() const;
 
+    bool is_lan_mode_printer() const;
+    std::string convertToIp(long long ip);
     //PRINTER_TYPE printer_type = PRINTER_3DPrinter_UKNOWN;
     std::string printer_type;       /* model_id */
     std::string   get_show_printer_type() const;
@@ -557,6 +565,9 @@ public:
     /*target from Studio-SwitchBoard, default to INVALID_NOZZLE_ID if no switching control from PC*/
     int targ_nozzle_id_from_pc = INVALID_EXTRUDER_ID;
 
+    // part skip
+    std::vector<int> m_partskip_ids;
+
     //supported features
 
     bool is_support_build_plate_marker_detect{false};
@@ -600,6 +611,9 @@ public:
     bool is_support_nozzleclumping_detection{false};
     bool is_support_airprinting_detection{false};
 
+    bool is_support_command_homing { false };// fun[32]
+    bool is_support_brtc{false};                 // fun[31], support tcp and upload protocol
+    bool is_support_partskip{false};
     bool installed_upgrade_kit{false};
     int  bed_temperature_limit = -1;
 
@@ -689,6 +703,7 @@ public:
 
     int command_task_abort();
     /* cancelled the job_id */
+    int command_task_partskip(std::vector<int> part_ids);
     int command_task_cancel(std::string job_id);
     int command_task_pause();
     int command_task_resume();

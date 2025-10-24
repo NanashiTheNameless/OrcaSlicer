@@ -37,6 +37,8 @@ namespace GUI {
 
 constexpr int timeout_period = 15000; // ms
 
+constexpr int timeout_period = 15000; // ms
+
 wxDEFINE_EVENT(EVT_UPDATE_USER_MACHINE_LIST, wxCommandEvent);
 wxDEFINE_EVENT(EVT_PRINT_JOB_CANCEL, wxCommandEvent);
 wxDEFINE_EVENT(EVT_SEND_JOB_SUCCESS, wxCommandEvent);
@@ -273,6 +275,7 @@ SendToPrinterDialog::SendToPrinterDialog(Plater *plater)
 
     m_sizer_printer->Add(m_button_refresh, 0, wxALL | wxLEFT, FromDIP(5));
 
+
     /*select storage*/
     m_storage_panel = new wxPanel(this);
     m_storage_panel->SetBackgroundColour(*wxWHITE);
@@ -281,6 +284,7 @@ SendToPrinterDialog::SendToPrinterDialog(Plater *plater)
     m_storage_panel->Layout();
 
     // try to connect
+
     m_statictext_printer_msg = new wxStaticText(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxALIGN_CENTER_HORIZONTAL);
     m_statictext_printer_msg->SetFont(::Label::Body_13);
     m_statictext_printer_msg->SetForegroundColour(*wxBLACK);
@@ -567,7 +571,7 @@ SendToPrinterDialog::SendToPrinterDialog(Plater *plater)
     m_sizer_main->Add(0, 0, 0, wxEXPAND | wxTOP, FromDIP(12));
     m_sizer_main->Add(m_sizer_printer, 0, wxEXPAND | wxLEFT | wxRIGHT, FromDIP(30));
     m_sizer_main->Add(m_storage_panel, 0, wxALIGN_CENTER | wxTOP, FromDIP(8));
-    m_sizer_main->Add(0, 0, 0, wxEXPAND | wxTOP, FromDIP(11));
+    m_sizer_main->Add(m_storage_panel, 0, wxALIGN_CENTER|wxTOP, FromDIP(8));    m_sizer_main->Add(0, 0, 0, wxEXPAND | wxTOP, FromDIP(11));
     m_sizer_main->Add(m_statictext_printer_msg, 0, wxALIGN_CENTER_HORIZONTAL, 0);
     m_sizer_main->Add(m_connecting_panel, 0, wxALIGN_CENTER_HORIZONTAL, 0);
     m_sizer_main->Add(0, 1, 0, wxTOP, FromDIP(22));
@@ -602,11 +606,14 @@ std::string SendToPrinterDialog::get_storage_selected()
 void SendToPrinterDialog::update_storage_list(const std::vector<std::string>& storages)
 {
     m_storage_sizer->Clear();
-    m_storage_radioBox.clear();
+
+void SendToPrinterDialog::update_storage_list(std::vector<std::string> storages)
+{    m_storage_radioBox.clear();
     m_storage_panel->DestroyChildren();
 
     for (int i=0; i < storages.size(); i++) {
         if (storages[i] == EMMC_STORAGE) continue;
+
         RadioBox* radiobox = new RadioBox(m_storage_panel);
         Label* storage_text = new Label(m_storage_panel, storages[i]);
         radiobox->SetLabel(storages[i]);
@@ -617,6 +624,11 @@ void SendToPrinterDialog::update_storage_list(const std::vector<std::string>& st
             radiobox->SetValue(true);
         });
 
+        if (m_storage_radioBox.size() > 0) {
+            m_storage_sizer->Add(0, 0, 0, wxEXPAND|wxLEFT, FromDIP(6));
+            auto radio = m_storage_radioBox.front();
+            radio->SetValue(true);
+        }
         m_storage_sizer->Add(radiobox, 0, wxALIGN_CENTER, 0);
         m_storage_sizer->Add(0, 0, 0, wxEXPAND|wxLEFT, FromDIP(6));
         m_storage_sizer->Add(storage_text, 0, wxALIGN_CENTER,0);
@@ -779,7 +791,9 @@ void SendToPrinterDialog::on_cancel(wxCloseEvent &event)
     m_tutk_try_connect = false;
     m_ftp_try_connect  = false;
     m_connect_try_times = 0;
-
+             m_task_timer.reset();
+        }
+    }
     this->EndModal(wxID_CANCEL);
 }
 
@@ -825,7 +839,9 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
             }
         }
 
-        m_is_canceled = true;
+        if (m_file_sys) {
+            m_file_sys->CancelUploadTask();
+        }        m_is_canceled = true;
         wxCommandEvent* event = new wxCommandEvent(EVT_PRINT_JOB_CANCEL);
         wxQueueEvent(this, event);
     });
@@ -887,6 +903,15 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
 		fs::path default_output_file_path = boost::filesystem::path(default_output_file.c_str());
 		file_name = default_output_file_path.filename().string();
     }*/
+    if (obj_->is_lan_mode_printer()) {
+        update_print_status_msg(wxEmptyString, false, false);
+        if (m_file_sys) {
+            PrintPrepareData print_data;
+            m_plater->get_print_job_data(&print_data);
+            std::string project_name = m_current_project_name.utf8_string() + ".3mf";
+            std::string _3mf_path    = print_data._3mf_path.string();
+            m_file_sys->SetUploadFile(_3mf_path, project_name, get_storage_selected());
+            m_file_sys->RequestUploadFile();
 
     if (obj_->is_support_brtc && (m_tcp_try_connect || m_tutk_try_connect))
     {
@@ -894,6 +919,11 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
         if (m_file_sys) {
             PrintPrepareData print_data;
 
+            // time out
+            if (m_task_timer && m_task_timer->IsRunning())
+                m_task_timer->Stop();
+            m_task_timer.reset(new wxTimer());
+            m_task_timer->SetOwner(this);
 
             m_plater->get_print_job_data(&print_data);
             std::string project_name = m_current_project_name.utf8_string() + ".gcode.3mf";
@@ -970,7 +1000,23 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
 
         BOOST_LOG_TRIVIAL(info) << "send_job: use ftp send job";
 
+            this->Bind(
+                wxEVT_TIMER,
+                [this, wfs = boost::weak_ptr(m_file_sys)](auto e) {
+                    show_status(PrintDialogStatus::PrintStatusPublicUploadFiled);
 
+                    boost::shared_ptr fs(wfs.lock());
+                    if (!fs) return;
+                    fs->CancelUploadTask(false);
+                    update_print_status_msg(_L("Upload file timeout, please check if the firmware version supports it."), false, true);
+                },
+                m_task_timer->GetId());
+            m_task_timer->StartOnce(timeout_period);
+        }
+    } else {
+    auto m_send_job                 = std::make_unique<SendJob>(m_printer_last_select);
+        m_send_job->m_dev_ip      = obj_->dev_ip;
+        m_send_job->m_access_code = obj_->get_access_code();
 
 #if !BBL_RELEASE_TO_PUBLIC
         m_send_job->m_local_use_ssl_for_ftp  = wxGetApp().app_config->get("enable_ssl_for_ftp") == "true" ? true : false;
@@ -978,7 +1024,6 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
 #else
         m_send_job->m_local_use_ssl_for_ftp  = obj_->local_use_ssl_for_ftp;
         m_send_job->m_local_use_ssl_for_mqtt = obj_->local_use_ssl_for_mqtt;
-
 #endif
         m_send_job->connection_type     = obj_->connection_type();
         m_send_job->cloud_print_only    = true;
@@ -1004,7 +1049,17 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
                     }
                 }
             });
-        });
+        m_send_job->connection_type     = obj_->connection_type();
+        m_send_job->cloud_print_only    = true;
+        m_send_job->has_sdcard          = obj_->get_sdcard_state() == MachineObject::SdcardState::HAS_SDCARD_NORMAL;
+        m_send_job->set_project_name(m_current_project_name.utf8_string());
+
+        enable_prepare_mode = false;
+
+        m_send_job->on_check_ip_address_fail([this](int result) {
+            wxCommandEvent *evt = new wxCommandEvent(EVT_CLEAR_IPADDRESS);
+            wxQueueEvent(this, evt);
+            wxGetApp().show_ip_address_enter_dialog();        });
 
         if (obj_->is_lan_mode_printer()) {
             m_send_job->set_check_mode();
@@ -1014,7 +1069,8 @@ void SendToPrinterDialog::on_ok(wxCommandEvent &event)
     }
 
 
-    BOOST_LOG_TRIVIAL(info) << "send_job: send print job";
+        replace_job(*m_worker, std::move(m_send_job));
+    }    BOOST_LOG_TRIVIAL(info) << "send_job: send print job";
 }
 
 void SendToPrinterDialog::clear_ip_address_config(wxCommandEvent& e)
@@ -1062,7 +1118,11 @@ void SendToPrinterDialog::on_refresh(wxCommandEvent &event)
         m_file_sys->Stop(true);
         m_file_sys.reset();
     }
-}
+
+    /* show_status(PrintDialogStatus::PrintStatusRefreshingMachineList);
+     update_user_machine_list();*/
+    /*todo refresh*/
+    if (m_file_sys) { m_file_sys->Retry(); }}
 
 void SendToPrinterDialog::on_print_job_cancel(wxCommandEvent &evt)
 {
@@ -1223,7 +1283,12 @@ void SendToPrinterDialog::on_selection_changed(wxCommandEvent &event)
             m_ability_list.clear();
             //update_storage_list(std::vector<std::string>());
             dev->set_selected_machine(m_printer_last_select);
+
+            dev->set_selected_machine(m_printer_last_select, true);
             if (m_file_sys) m_file_sys.reset();
+        }else if (dev->get_selected_machine()->dev_id != m_printer_last_select) {
+            update_storage_list(std::vector<std::string>());
+            dev->set_selected_machine(m_printer_last_select, true);            if (m_file_sys) m_file_sys.reset();
         }
     }
     else {
@@ -1330,7 +1395,18 @@ void SendToPrinterDialog::update_show_status()
                     return;
                 } else {
                     m_file_sys->Stop(true);
-                }
+
+        if (obj_->connection_type() == "lan") {
+            show_status(PrintDialogStatus::PrintStatusReadingFinished);
+            return;
+        } else if (obj_->connection_type() == "cloud") {
+            Enable(obj_ && obj_->is_connected() && obj_->m_push_count > 0);
+            std::string dev_id = obj_->dev_ip;
+            if (m_file_sys) {
+                if (dev_id == m_device_select) {
+                    if ((m_waiting_enable && IsEnabled()) || (m_waiting_support && obj_->file_remote))
+                        m_file_sys->Retry();
+                    return;                }
             }
 
             m_device_select.swap(dev_id);
@@ -1338,7 +1414,8 @@ void SendToPrinterDialog::update_show_status()
             m_file_sys->Attached();
 
             m_file_sys->Bind(EVT_STATUS_CHANGED, [this, wfs = boost::weak_ptr(m_file_sys),obj_](auto e) {
-                e.Skip();
+
+            m_file_sys->Bind(EVT_STATUS_CHANGED, [this, wfs = boost::weak_ptr(m_file_sys)](auto e) {                e.Skip();
                 boost::shared_ptr fs(wfs.lock());
                 if (!fs) return;
 
@@ -1350,7 +1427,9 @@ void SendToPrinterDialog::update_show_status()
                 case PrinterFileSystem::Initializing:
                 case PrinterFileSystem::Connecting: show_status(PrintDialogStatus::PrintStatusConnecting); break;
 
-                case PrinterFileSystem::ListSyncing: {
+                switch (status) {
+                case PrinterFileSystem::Initializing:
+                case PrinterFileSystem::Connecting: show_status(PrintDialogStatus::PrintStatusReading); break;                case PrinterFileSystem::ListSyncing: {
                     show_status(PrintDialogStatus::PrintStatusReading);
                     boost::uint32_t seq = fs->RequestMediaAbility(3);
 
@@ -1363,7 +1442,12 @@ void SendToPrinterDialog::update_show_status()
                     this->Bind(wxEVT_TIMER, [this, wfs_1 = boost::weak_ptr(fs), seq](auto e) {
                             show_status(PrintDialogStatus::PrintStatusPublicInitFailed);
                             update_print_status_msg(_L("Media capability acquisition timeout, please check if the firmware version supports it."), true, true);
-                        }, m_task_timer->GetId());
+
+                            show_status(PrintDialogStatus::PrintStatusPublicUploadFiled);
+                            boost::shared_ptr fs_1(wfs_1.lock());
+                            if (!fs_1) return;
+                            fs_1->CancelUploadTask(false);
+                            update_print_status_msg(_L("Media capability acquisition timeout, please check if the firmware version supports it."), false, true);                        }, m_task_timer->GetId());
                     m_task_timer->StartOnce(timeout_period);
 
                     break;
@@ -1403,7 +1487,7 @@ void SendToPrinterDialog::update_show_status()
 
                 case PrinterFileSystem::Reconnecting: show_status(PrintDialogStatus::PrintStatusReconnecting);
 
-                }
+                case PrinterFileSystem::Failed: msg = _L("Please check the network and try again, You can restart or update the printer if the issue persists."); break;                }
 
                 if (!msg.empty()) {
                     show_status(PrintDialogStatus::PrintStatusPublicInitFailed);
@@ -1486,7 +1570,70 @@ void SendToPrinterDialog::update_show_status()
             }
         });
         m_file_sys->Start();
-        }
+
+            m_file_sys->Bind(EVT_MEDIA_ABILITY_CHANGED, [this, wfs = boost::weak_ptr(m_file_sys)](auto e) {
+                boost::shared_ptr fs(wfs.lock());
+                if (!fs) return;
+
+                if (m_task_timer && m_task_timer->IsRunning()) {
+                    m_task_timer->Stop();
+                    m_task_timer.reset();
+                }
+
+                m_ability_list = fs->GetMediaAbilityList();
+
+                if (e.GetInt() == PrinterFileSystem::RequestMediaAbilityStatus::S_SUCCESS) {
+                    update_storage_list(m_ability_list);
+                    show_status(PrintDialogStatus::PrintStatusReadingFinished);
+                } else {
+                    show_status(PrintDialogStatus::PrintStatusPublicInitFailed);
+                    update_print_status_msg(e.GetString(), false, true);
+                }
+            });
+
+            m_file_sys->Bind(EVT_UPLOADING, [this, wfs = boost::weak_ptr(m_file_sys)](auto e) {
+                boost::shared_ptr fs(wfs.lock());
+                if (!fs) return;
+                int progress = e.GetInt();
+                m_status_bar->set_progress(10 + std::floor(progress * 0.9));
+
+               if (m_task_timer && m_task_timer->IsRunning()) m_task_timer->Stop();
+
+               if (progress == 99) {
+                   m_task_timer.reset(new wxTimer());
+                   m_task_timer->SetOwner(this);
+
+                   this->Bind(
+                       wxEVT_TIMER,
+                       [this, wfs = boost::weak_ptr(m_file_sys)](auto e) {
+                           show_status(PrintDialogStatus::PrintStatusPublicUploadFiled);
+                           boost::shared_ptr fs(wfs.lock());
+                           if (!fs) return;
+                           fs->CancelUploadTask(false);
+                           update_print_status_msg(_L("Upload file timeout, please check if the firmware version supports it."), false, true);
+                       },
+                       m_task_timer->GetId());
+                   m_task_timer->StartOnce(timeout_period);
+               }
+            });
+            m_file_sys->Bind(EVT_UPLOAD_CHANGED, [this, wfs = boost::weak_ptr(m_file_sys)](auto e) {
+                boost::shared_ptr fs(wfs.lock());
+                if (!fs) return;
+
+                if (e.GetInt() == PrinterFileSystem::FF_UPLOADDONE) {
+                    show_status(PrintDialogStatus::PrintStatusReadingFinished);
+                    wxCommandEvent *evt = new wxCommandEvent(m_plater->get_send_finished_event());
+                    evt->SetString(from_u8(m_current_project_name.utf8_string()));
+                    wxQueueEvent(m_plater, evt);
+                } else if (PrinterFileSystem::FF_UPLOADCANCEL) {
+                    show_status(PrintDialogStatus::PrintStatusPublicUploadFiled);
+                    wxString err_msg = e.GetString();
+                    if (err_msg.IsEmpty())
+                        err_msg = _u8L("Sending failed, please try again!");
+                    update_print_status_msg(err_msg, false, true);
+                }
+            });
+            m_file_sys->Start();        }
     }
 }
 
@@ -1579,7 +1726,7 @@ void SendToPrinterDialog::show_status(PrintDialogStatus status, std::vector<wxSt
 	if (status == PrintDialogStatus::PrintStatusInit) {
 		update_print_status_msg(wxEmptyString, false, false);
 		Enable_Send_Button(false);
-		Enable_Refresh_Button(true);
+		Enable_Refresh_Button(false);
 	}
 	else if (status == PrintDialogStatus::PrintStatusInvalidPrinter) {
 		update_print_status_msg(wxEmptyString, true, true);
@@ -1813,7 +1960,9 @@ bool SendToPrinterDialog::Show(bool show)
     if (show) {
         m_ability_list.clear();
         //update_storage_list(std::vector<std::string>());
-        set_default();
+
+        update_storage_list(std::vector<std::string>());
+        wxGetApp().reset_to_active();        set_default();
         update_user_machine_list();
     }
 
@@ -1837,6 +1986,9 @@ bool SendToPrinterDialog::Show(bool show)
     if (m_file_sys) {
         m_waiting_enable = false;
         m_waiting_support = false;
+        show ? m_file_sys->Start() : m_file_sys->Stop();
+    }
+
         show ? m_file_sys->Start() : m_file_sys->Stop();
     }
     return DPIDialog::Show(show);
@@ -1868,7 +2020,10 @@ void SendToPrinterDialog::fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs)
     std::string dev_ver = obj->get_ota_version();
     std::string dev_id = obj->get_dev_id();
     int remote_proto = obj->get_file_remote();
-    if (!remote_proto) {
+
+    std::string dev_ver = obj->get_ota_version();
+    std::string dev_id = obj->dev_id;
+    int remote_proto = obj->file_remote;    if (!remote_proto) {
         m_waiting_support = true;
         fs->SetUrl("0");
         return;
@@ -1926,7 +2081,31 @@ void SendToPrinterDialog::fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs)
                 }
             }
 
-
+    if (agent) {
+        std::string protocols[] = {"", "\"tutk\"", "\"agora\"", "\"tutk\",\"agora\""};
+        agent->get_camera_url(obj->dev_id + "|" + dev_ver + "|" + protocols[remote_proto],
+                              [this, wfs, m = dev_id, v = agent->get_version(), dv = dev_ver](std::string url) {
+                                  if (boost::algorithm::starts_with(url, "bambu:///")) {
+                                      url += "&device=" + m;
+                                      url += "&net_ver=" + v;
+                                      url += "&dev_ver=" + dv;
+                                      url += "&refresh_url=" + boost::lexical_cast<std::string>(&refresh_agora_url);
+                                      url += "&cli_id=" + wxGetApp().app_config->get("slicer_uuid");
+                                      url += "&cli_ver=" + std::string(SLIC3R_VERSION);
+                                  }
+                                  BOOST_LOG_TRIVIAL(info) << "SendToPrinter::fetchUrl: camera_url: " << hide_passwd(url, {"?uid=", "authkey=", "passwd="});
+                                  std::cout << "SendToPrinter::fetchUrl: camera_url: " << hide_passwd(url, {"?uid=", "authkey=", "passwd="});
+                                  CallAfter([=] {
+                                      boost::shared_ptr fs(wfs.lock());
+                                      if (!fs) return;
+                                      if (boost::algorithm::starts_with(url, "bambu:///")) {
+                                          fs->SetUrl(url);
+                                      } else {
+                                          fs->SetUrl("3");
+                                      }
+                                  });
+                              });
+    }
     return;
 }
 
