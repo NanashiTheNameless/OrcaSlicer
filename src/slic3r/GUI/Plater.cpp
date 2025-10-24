@@ -3283,7 +3283,7 @@ void Sidebar::sync_ams_list(bool is_from_big_sync_btn)
 
 bool Sidebar::should_show_SEMM_buttons()
 {
-    const PresetBundle &preset_bundle = *wxGetApp().preset_bundle;
+    PresetBundle &preset_bundle = *wxGetApp().preset_bundle;
     bool is_bbl_vendor = preset_bundle.is_bbl_vendor();
     auto cfg = preset_bundle.printers.get_edited_preset().config;
 
