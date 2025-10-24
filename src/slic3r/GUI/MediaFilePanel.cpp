@@ -11,7 +11,6 @@
 #include "Widgets/ProgressDialog.hpp"
 #include <libslic3r/Model.hpp>
 #include <libslic3r/Format/bbs_3mf.hpp>
-#include "DeviceCore/DevStorage.h"
 
 #ifdef __WXMSW__
 #include <shellapi.h>
@@ -205,51 +204,39 @@ MediaFilePanel::MediaFilePanel(wxWindow * parent)
     };
     Bind(wxEVT_SHOW, onShowHide);
     parent->GetParent()->Bind(wxEVT_SHOW, onShowHide);
-
-    m_lan_user = "bblp";
 }
 
 MediaFilePanel::~MediaFilePanel()
 {
-    UpdateByObj(nullptr);
+    SetMachineObject(nullptr);
 }
 
-void MediaFilePanel::UpdateByObj(MachineObject* obj)
+void MediaFilePanel::SetMachineObject(MachineObject* obj)
 {
-    bool sdcard_state_changed = false;
-    std::string machine = obj ? obj->get_dev_id() : "";
+    std::string machine = obj ? obj->dev_id : "";
     if (obj) {
         m_lan_mode     = obj->is_lan_mode_printer();
-        m_lan_ip       = obj->get_dev_ip();
+        m_lan_ip       = obj->dev_ip;
         m_lan_passwd   = obj->get_access_code();
         m_dev_ver      = obj->get_ota_version();
         m_device_busy  = obj->is_camera_busy_off();
+        m_sdcard_exist = obj->sdcard_state == MachineObject::SdcardState::HAS_SDCARD_NORMAL || obj->sdcard_state == MachineObject::SdcardState::HAS_SDCARD_READONLY;
         m_local_proto  = obj->file_local;
         m_remote_proto = obj->get_file_remote();
         m_model_download_support = obj->file_model_download;
-
-        if (m_sdcard_exist != (obj->GetStorage()->get_sdcard_state() == DevStorage::HAS_SDCARD_NORMAL)) {
-            m_sdcard_exist = obj->GetStorage()->get_sdcard_state() == DevStorage::HAS_SDCARD_NORMAL;
-            sdcard_state_changed = true;
-        }
     } else {
         m_lan_mode  = false;
         m_lan_ip.clear();
         m_lan_passwd.clear();
         m_dev_ver.clear();
+        m_sdcard_exist = false;
         m_device_busy = false;
         m_local_proto = 0;
         m_remote_proto = 0;
         m_model_download_support = false;
-
-        if (m_sdcard_exist) {
-            m_sdcard_exist = false; // reset sdcard state when no object
-            sdcard_state_changed = true;
-        }
     }
-
-    Enable(obj && obj->is_info_ready() && obj->m_push_count > 0);
-    if (machine == m_machine && !sdcard_state_changed) {
+    Enable(obj && obj->is_connected() && obj->m_push_count > 0);
+    if (machine == m_machine) {
         if ((m_waiting_enable && IsEnabled()) || (m_waiting_support && (m_local_proto || m_remote_proto))) {
             auto fs = m_image_grid->GetFileSystem();
             if (fs) fs->Retry();
@@ -453,7 +440,12 @@ void MediaFilePanel::fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs)
     m_waiting_enable = false;
     if (!m_local_proto && !m_remote_proto) {
         m_waiting_support = true;
-        m_image_grid->SetStatus(m_bmp_failed, _L("Browsing file in storage is not supported in current firmware. Please update the printer firmware."));
+        m_image_grid->SetStatus(m_bmp_failed, _L("Browsing file in SD card is not supported in current firmware. Please update the printer firmware."));
+        fs->SetUrl("0");
+        return;
+    }
+    if (!m_sdcard_exist) {
+        m_image_grid->SetStatus(m_bmp_failed, _L("Please check if the SD card is inserted into the printer.\nIf it still cannot be read, you can try formatting the SD card."));
         fs->SetUrl("0");
         return;
     }
@@ -462,7 +454,6 @@ void MediaFilePanel::fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs)
         fs->SetUrl("0");
         return;
     }
-    BOOST_LOG_TRIVIAL(info) << "MediaFilePanel::fetchUrl: " << m_local_proto << m_remote_proto;
     m_waiting_support = false;
     NetworkAgent *agent = wxGetApp().getAgent();
     std::string  agent_version = agent ? agent->get_version() : "";
@@ -480,14 +471,14 @@ void MediaFilePanel::fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs)
         m_image_grid->SetStatus(m_bmp_failed, _L("Please enter the IP of printer to connect."));
         fs->SetUrl("0");
         fs.reset();
-        if (wxGetApp().show_modal_ip_address_enter_dialog(false, _L("LAN Connection Failed (Failed to view sdcard)"))) {
+        if (wxGetApp().show_modal_ip_address_enter_dialog(_L("LAN Connection Failed (Failed to view sdcard)"))) {
             if (auto fs = wfs.lock())
                 fs->Retry();
         }
         return;
     }
     if (m_lan_mode) {
-        m_image_grid->SetStatus(m_bmp_failed, _L("Browsing file in storage is not supported in LAN Only Mode."));
+        m_image_grid->SetStatus(m_bmp_failed, _L("Browsing file in SD card is not supported in LAN Only Mode."));
         fs->SetUrl("0");
         return;
     }
@@ -511,13 +502,7 @@ void MediaFilePanel::fetchUrl(boost::weak_ptr<PrinterFileSystem> wfs)
                     fs->SetUrl(url);
                 } else {
                     m_image_grid->SetStatus(m_bmp_failed, _L("Connection Failed. Please check the network and try again"));
-                    std::string res = "3";
-                    if (boost::ends_with(url, "]")) {
-                        size_t n = url.find_last_of('[');
-                        if (n != std::string::npos)
-                            res = url.substr(n + 1, url.length() - n - 2);
-                    }
-                    fs->SetUrl(res);
+                    fs->SetUrl("3");
                 }
             });
         });
