@@ -164,15 +164,6 @@ public:
     bool        local_use_ssl_for_ftp { true };
     int         subscribe_counter{3};
     std::string dev_connection_type;    /* lan | cloud */
-    std::string connection_type() { return dev_connection_type; }
-
-    std::string dev_connection_name;    /* lan | eth */
-    void set_dev_ip(std::string ip) {dev_ip = ip;}
-    std::string get_ftp_folder();
-
-    int         subscribe_counter{3};
-
-    std::string dev_connection_type;    /* lan | cloud */
     std::string connection_type() const { return dev_connection_type; }
     bool is_lan_mode_printer() const { return dev_connection_type == "lan"; }
     bool is_cloud_mode_printer() const { return dev_connection_type == "cloud"; }
@@ -184,6 +175,7 @@ public:
     bool HasRecentLanMessage();
 
     std::string dev_connection_name;    /* lan | eth */
+    std::string get_ftp_folder();
 
     /*access code*/
     bool has_access_right() const { return !get_access_code().empty(); }
@@ -195,7 +187,6 @@ public:
     void erase_user_access_code();
     std::string get_user_access_code() const;
 
-    bool is_lan_mode_printer() const;
     std::string convertToIp(long long ip);
     //PRINTER_TYPE printer_type = PRINTER_3DPrinter_UKNOWN;
     std::string printer_type;       /* model_id */
@@ -601,7 +592,7 @@ public:
     bool is_support_upgrade_kit{false};
     bool is_support_filament_setting_inprinting{false};
     bool is_support_internal_timelapse { false };// fun[28], support timelapse without SD card
-    bool m_support_mqtt_homing { false };// fun[32]
+    bool is_support_command_homing { false };// fun[32]
     bool is_support_brtc{false};                 // fun[31], support tcp and upload protocol
     bool is_support_ext_change_assist{false};
 
@@ -611,8 +602,6 @@ public:
     bool is_support_nozzleclumping_detection{false};
     bool is_support_airprinting_detection{false};
 
-    bool is_support_command_homing { false };// fun[32]
-    bool is_support_brtc{false};                 // fun[31], support tcp and upload protocol
     bool is_support_partskip{false};
     bool installed_upgrade_kit{false};
     int  bed_temperature_limit = -1;
