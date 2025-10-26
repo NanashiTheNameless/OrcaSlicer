@@ -68,8 +68,8 @@ jobs:
       fail-fast: false
       matrix:
         variant:
-          - arch: x86_64
-            runner: ubuntu-22.04
+#           - arch: x86_64
+#             runner: ubuntu-22.04
           - arch: x86_64
             runner: ubuntu-24.04
           - arch: aarch64
