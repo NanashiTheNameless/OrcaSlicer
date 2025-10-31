@@ -225,7 +225,7 @@ if [[ "$CLEANUP" == true ]]; then
 
     echo -e "${YELLOW}Cleaning up flatpak build directories...${NC}"
     rm -rf "$BUILD_DIR"
-    
+
     # Only clean cache if force-clean is enabled
     if [[ "$FORCE_CLEAN" == true ]]; then
         echo -e "${YELLOW}Cleaning up flatpak build cache...${NC}"
@@ -233,7 +233,7 @@ if [[ "$CLEANUP" == true ]]; then
     else
         echo -e "${BLUE}Preserving build cache at: $CACHE_DIR${NC}"
     fi
-    
+
     echo -e "${BLUE}Note: Host build directories (deps/build, build) are preserved${NC}"
 fi
 

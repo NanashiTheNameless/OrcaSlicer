@@ -4,7 +4,7 @@ set WP=%CD%
 
 @REM Pack deps
 if "%1"=="pack" (
-    setlocal ENABLEDELAYEDEXPANSION 
+    setlocal ENABLEDELAYEDEXPANSION
     cd %WP%/deps/build
     for /f "tokens=2-4 delims=/ " %%a in ('date /t') do set build_date=%%c%%b%%a
     echo packing deps: OrcaSlicer_dep_win64_!build_date!_vs2022.zip
@@ -33,7 +33,7 @@ if "%debug%"=="ON" (
 )
 echo build type set to %build_type%
 
-setlocal DISABLEDELAYEDEXPANSION 
+setlocal DISABLEDELAYEDEXPANSION
 cd deps
 mkdir %build_dir%
 cd %build_dir%

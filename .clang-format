@@ -21,7 +21,7 @@ AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: false
 BinPackArguments: true
 BinPackParameters: false
-BraceWrapping:   
+BraceWrapping:
   AfterClass:      true
   AfterControlStatement: false
   AfterEnum:       false
@@ -57,13 +57,13 @@ DerivePointerAlignment: false
 DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 FixNamespaceComments: true
-ForEachMacros:   
+ForEachMacros:
   - forever
   - foreach
   - Q_FOREACH
   - BOOST_FOREACH
 IncludeBlocks:   Preserve
-IncludeCategories: 
+IncludeCategories:
   - Regex:           '^<Q.*'
     Priority:        200
   - Regex:           '^(<|"(gtest|gmock|isl|json)/)'
