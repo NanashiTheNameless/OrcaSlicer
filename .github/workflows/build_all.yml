@@ -4,15 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'deps/**'
-      - 'src/**'
-      - '**/CMakeLists.txt'
-      - 'version.inc'
-      - 'localization/**'
-      - 'resources/**'
-      - ".github/workflows/*.yml"
-      - 'scripts/flatpak/**'
 
   pull_request:
     branches:
