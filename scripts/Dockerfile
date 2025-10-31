@@ -7,7 +7,7 @@ RUN apt-get update && \
 
 # Add a deb-src
 RUN echo deb-src http://archive.ubuntu.com/ubuntu \
-    $(cat /etc/*release | grep VERSION_CODENAME | cut -d= -f2) main universe>> /etc/apt/sources.list 
+    $(cat /etc/*release | grep VERSION_CODENAME | cut -d= -f2) main universe>> /etc/apt/sources.list
 
 RUN apt-get update && apt-get install  -y \
     autoconf \
@@ -23,11 +23,11 @@ RUN apt-get update && apt-get install  -y \
     libcairo2-dev \
     libcurl4-openssl-dev \
     libdbus-1-dev \
-    libglew-dev \ 
+    libglew-dev \
     libglu1-mesa-dev \
     libglu1-mesa-dev \
     libgstreamer1.0-dev \
-    libgstreamerd-3-dev \ 
+    libgstreamerd-3-dev \
     libgstreamer-plugins-base1.0-dev \
     libgstreamer-plugins-good1.0-dev \
     libgtk-3-dev \
@@ -38,6 +38,7 @@ RUN apt-get update && apt-get install  -y \
     libssl-dev \
     libtool \
     libudev-dev \
+    libunwind-dev \
     libwayland-dev \
     libwebkit2gtk-4.1-dev \
     libxkbcommon-dev \
