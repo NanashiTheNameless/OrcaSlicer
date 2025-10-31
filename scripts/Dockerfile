@@ -26,6 +26,7 @@ RUN apt-get update && apt-get install  -y \
     libglew-dev \
     libglu1-mesa-dev \
     libglu1-mesa-dev \
+    libunwind-dev \
     libgstreamer1.0-dev \
     libgstreamerd-3-dev \
     libgstreamer-plugins-base1.0-dev \
@@ -38,7 +39,6 @@ RUN apt-get update && apt-get install  -y \
     libssl-dev \
     libtool \
     libudev-dev \
-    libunwind-dev \
     libwayland-dev \
     libwebkit2gtk-4.1-dev \
     libxkbcommon-dev \
