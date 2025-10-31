@@ -1,0 +1,46 @@
+root = true
+
+# Base settings applied to all files unless overridden below
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+# Default: do not trim trailing whitespace unless explicitly enabled by pattern or path
+trim_trailing_whitespace = false
+
+# Enable trimming for common source and configuration file types
+[*.{c,cc,cpp,cxx,h,hh,hpp,hxx,ipp,inl,ixx,cmake,txt,py,pyi,sh,bash,zsh,bat,ps1,json,jsonc,yml,yaml,ini,toml,glsl,vert,frag,js,jsx,ts,tsx,css,scss,svg,sql}]
+trim_trailing_whitespace = true
+
+# Markdown often uses trailing spaces for hard line breaks – keep them intact
+[*.{md,markdown,adoc,rdoc}]
+trim_trailing_whitespace = true
+
+# Makefiles require leading tabs but trimming trailing whitespace is safe
+[Makefile]
+trim_trailing_whitespace = true
+
+# Explicitly disable trimming in vendored or generated content
+[deps/**]
+trim_trailing_whitespace = false
+
+[deps_src/**]
+trim_trailing_whitespace = false
+
+[build/**]
+trim_trailing_whitespace = false
+
+[resources/**]
+trim_trailing_whitespace = false
+
+# Test fixtures may intentionally include whitespace
+[tests/data/**]
+trim_trailing_whitespace = false
+
+# Localization files can be sensitive to whitespace
+[localization/**]
+trim_trailing_whitespace = false
+
+# Experimental sandboxes – avoid churn
+[sandboxes/**]
+trim_trailing_whitespace = false
