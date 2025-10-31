@@ -309,10 +309,10 @@ jobs:
         run: ls -R build
 
       - name: Upload Test Artifact
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        if: inputs.os == 'ubuntu-24.04'
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.sha }}-tests-${{ env.ubuntu-ver-str }}
+          name: ${{ github.sha }}-tests
           overwrite: true
           path: build_tests.tar
           retention-days: 5
