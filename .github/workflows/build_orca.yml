@@ -292,6 +292,11 @@ jobs:
           chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage
           tar -cvpf build_tests.tar build/tests
 
+      - name: List Build Dir
+        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        shell: bash
+        run: ls -R build
+
       - name: Upload Test Artifact
         if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
         uses: actions/upload-artifact@v4
