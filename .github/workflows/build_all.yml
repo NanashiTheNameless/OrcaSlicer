@@ -58,7 +58,7 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-24.04
     needs: build_linux
-    if: ${{ success() }}
+    if: ${{ !cancelled() && success() }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
