@@ -162,7 +162,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Deploy Mac release
-        if: inputs.os == 'macos-14'
+        if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -173,7 +173,7 @@ jobs:
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
-        if: inputs.os == 'macos-14'
+        if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -255,7 +255,7 @@ jobs:
           path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
 
       - name: Deploy Windows release portable
-        if: inputs.os == 'windows-latest'
+        if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -266,7 +266,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows release installer
-        if: inputs.os == 'windows-latest'
+        if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -277,7 +277,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows OrcaSlicer_profile_validator release
-        if: inputs.os == 'windows-latest'
+        if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -347,7 +347,7 @@ jobs:
           path: './build/src/Release/OrcaSlicer_profile_validator'
 
       - name: Deploy Ubuntu release
-        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
+        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }} && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -360,7 +360,7 @@ jobs:
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
       - name: Deploy Ubuntu OrcaSlicer_profile_validator release
-        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }}
+        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') }} && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
         uses: WebFreak001/deploy-nightly@v3.2.0
@@ -373,7 +373,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy orca_custom_preset_tests
-        if: ${{ inputs.os == 'ubuntu-24.04' }}
+        if: ${{ inputs.os == 'ubuntu-24.04' }} && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: WebFreak001/deploy-nightly@v3.2.0
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -384,7 +384,7 @@ jobs:
           max_releases: 1
 
       - name: Update release tag
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && (inputs.os == 'ubuntu-24.04') }}
+        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' && github.ref == 'refs/heads/main' }}
         uses: NanashiTheNameless/action-create-tag@main
         with:
           tag: "Nightly-Rolling"
