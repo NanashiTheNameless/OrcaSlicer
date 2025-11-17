@@ -30,6 +30,7 @@ on:
 permissions:
   contents: write
   actions: write
+  checks: write
 
 jobs:
   build_linux:
