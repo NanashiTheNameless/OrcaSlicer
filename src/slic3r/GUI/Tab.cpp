@@ -1777,7 +1777,7 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
         bool       is_safe_to_rotate      = _sparse_infill_pattern == ipRectilinear || _sparse_infill_pattern == ipLine ||
                                  _sparse_infill_pattern == ipZigZag || _sparse_infill_pattern == ipCrossZag ||
                                  _sparse_infill_pattern == ipLockedZag;
-        
+
         auto new_value = boost::any_cast<std::string>(value);
         is_safe_to_rotate = is_safe_to_rotate || new_value.empty();
 
@@ -3800,7 +3800,7 @@ void TabFilament::update_filament_overrides_page(const DynamicPrintConfig* print
     if (og_ironing_it != page->m_optgroups.end())
     {
         ConfigOptionsGroupShp ironing_optgroup = *og_ironing_it;
-        
+
         std::vector<std::string> ironing_opt_keys = {
             "filament_ironing_flow",
             "filament_ironing_spacing",
@@ -3812,7 +3812,7 @@ void TabFilament::update_filament_overrides_page(const DynamicPrintConfig* print
         {
             if (m_overrides_options.find(opt_key) == m_overrides_options.end())
                 continue;
-                
+
             bool is_checked = !dynamic_cast<ConfigOptionVectorBase*>(m_config->option(opt_key))->is_nil(extruder_idx);
             m_overrides_options[opt_key]->Enable(true);
             m_overrides_options[opt_key]->SetValue(is_checked);
@@ -4069,7 +4069,7 @@ void TabFilament::build()
     page = add_options_page(L("Multimaterial"), "custom-gcode_multi_material"); // ORCA: icon only visible on placeholders
         optgroup = page->new_optgroup(L("Wipe tower parameters"), "param_tower");
         optgroup->append_single_option_line("filament_minimal_purge_on_wipe_tower");
-        
+
         optgroup = page->new_optgroup(L("Multi Filament"));
         // optgroup->append_single_option_line("filament_flush_temp", "", 0);
         // optgroup->append_single_option_line("filament_flush_volumetric_speed", "", 0);
@@ -4310,10 +4310,10 @@ void TabFilament::on_value_change(const std::string& opt_key, const boost::any& 
         auto percent_value_clamp = [](double percent_value) { return std::clamp(percent_value, 0., 100.); };
         double dvalue = boost::any_cast<double>(value);
 
-        double retract_before_wipe = percent_value_clamp(opt_key == "filament_retract_before_wipe" 
+        double retract_before_wipe = percent_value_clamp(opt_key == "filament_retract_before_wipe"
             ? dvalue : m_config->option<ConfigOptionPercents>("filament_retract_before_wipe")->get_at(extruder_idx));
 
-        double retract_after_wipe = percent_value_clamp(opt_key == "filament_retract_after_wipe" 
+        double retract_after_wipe = percent_value_clamp(opt_key == "filament_retract_after_wipe"
             ? dvalue : m_config->option<ConfigOptionPercents>("filament_retract_after_wipe")->get_at(extruder_idx));
 
         bool need_to_reload_config = false;
@@ -5319,7 +5319,7 @@ void TabPrinter::toggle_options()
             //BBS
             toggle_option(el, retraction && !use_firmware_retraction, i);
 
-        bool wipe = retraction && m_config->opt_bool("wipe", i);
+        bool wipe = retraction && m_config->opt_bool("wipe", variant_index);
 
         // Orca
         double retract_before_wipe = m_config->option<ConfigOptionPercents>("retract_before_wipe")->get_at(i);
@@ -5416,10 +5416,10 @@ void TabPrinter::on_value_change(const std::string& opt_key, const boost::any& v
             auto percent_value_clamp = [](double percent_value) { return std::clamp(percent_value, 0., 100.); };
             double dvalue = boost::any_cast<double>(value);
 
-            double retract_before_wipe = percent_value_clamp(opt_key_pure == "retract_before_wipe" 
+            double retract_before_wipe = percent_value_clamp(opt_key_pure == "retract_before_wipe"
                 ? dvalue : m_config->option<ConfigOptionPercents>("retract_before_wipe")->get_at(opt_idx));
 
-            double retract_after_wipe = percent_value_clamp(opt_key_pure == "retract_after_wipe" 
+            double retract_after_wipe = percent_value_clamp(opt_key_pure == "retract_after_wipe"
                 ? dvalue : m_config->option<ConfigOptionPercents>("retract_after_wipe")->get_at(opt_idx));
 
             bool need_to_reload_config = false;
