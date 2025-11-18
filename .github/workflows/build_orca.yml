@@ -19,9 +19,9 @@ jobs:
     name: Build OrcaSlicer
     runs-on: ${{ inputs.os }}
     env:
-      date:
-      ver:
-      ver_pure:
+      date: ""
+      ver: ""
+      ver_pure: ""
       ORCA_UPDATER_SIG_KEY: ${{ secrets.ORCA_UPDATER_SIG_KEY }}
 
     steps:
@@ -40,7 +40,7 @@ jobs:
       - uses: lukka/get-cmake@latest
         with:
           cmakeVersion: "~3.28.0"  # use most recent 3.28.x version
-          
+
       - name: Get the version and date on Ubuntu and macOS
         if: inputs.os != 'windows-latest'
         run: |
@@ -130,7 +130,7 @@ jobs:
           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
             codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app
           fi
-          
+
           # Create main OrcaSlicer DMG without the profile validator helper
           mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_dmg
           rm -rf ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/*
@@ -138,7 +138,7 @@ jobs:
           ln -sfn /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/Applications
           hdiutil create -volname "OrcaSlicer" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_dmg -ov -format UDZO OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
           codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
-          
+
           # Create separate OrcaSlicer_profile_validator DMG if the app exists
           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
             mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg
@@ -148,12 +148,12 @@ jobs:
             hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg -ov -format UDZO OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
             codesign --deep --force --verbose --options runtime --timestamp --entitlements ${{ github.workspace }}/scripts/disable_validation.entitlements --sign "$CERTIFICATE_ID" OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           fi
-          
+
           # Notarize main DMG
           xcrun notarytool store-credentials "notarytool-profile" --apple-id "${{ secrets.APPLE_DEV_ACCOUNT }}" --team-id "${{ secrets.TEAM_ID }}" --password "${{ secrets.APP_PWD }}"
           xcrun notarytool submit "OrcaSlicer_Mac_universal_${{ env.ver }}.dmg" --keychain-profile "notarytool-profile" --wait
           xcrun stapler staple OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
-          
+
           # Notarize profile validator DMG if it exists
           if [ -f "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg" ]; then
             xcrun notarytool submit "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg" --keychain-profile "notarytool-profile" --wait
@@ -169,7 +169,7 @@ jobs:
           cp -R ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer.app ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/
           ln -sfn /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/Applications
           hdiutil create -volname "OrcaSlicer" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_dmg -ov -format UDZO OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
-          
+
           # Create separate OrcaSlicer_profile_validator DMG if the app exists
           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
             mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg
