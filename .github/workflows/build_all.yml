@@ -73,7 +73,11 @@ jobs:
             .github
             scripts
       - name: Apt-Install Dependencies
-        uses: ./.github/actions/apt-install-deps
+        shell: bash
+        run: |
+          mkdir -p ${{ github.workspace }}/deps/build/destdir
+          sudo env "ORCA_UPDATER_SIG_KEY=$ORCA_UPDATER_SIG_KEY" ./build_linux.sh -ur
+          sudo chown $USER -R ./
       - name: Restore Test Artifact
         uses: actions/download-artifact@v6
         with:

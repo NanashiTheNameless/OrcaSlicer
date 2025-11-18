@@ -90,7 +90,11 @@ jobs:
 
       - name: Apt-Install Dependencies
         if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
-        uses: ./.github/actions/apt-install-deps
+        shell: bash
+        run: |
+          mkdir -p ${{ github.workspace }}/deps/build/destdir
+          sudo env "ORCA_UPDATER_SIG_KEY=$ORCA_UPDATER_SIG_KEY" ./build_linux.sh -ur
+          sudo chown $USER -R ./
 
       - name: Build on Ubuntu
         if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
