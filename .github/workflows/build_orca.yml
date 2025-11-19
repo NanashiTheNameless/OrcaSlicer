@@ -164,7 +164,7 @@ jobs:
 
       - name: Deploy Mac release
         if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -175,7 +175,7 @@ jobs:
 
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
         if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -257,7 +257,7 @@ jobs:
 
       - name: Deploy Windows release portable
         if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -268,7 +268,7 @@ jobs:
 
       - name: Deploy Windows release installer
         if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -279,7 +279,7 @@ jobs:
 
       - name: Deploy Windows OrcaSlicer_profile_validator release
         if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -355,7 +355,7 @@ jobs:
         if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -368,7 +368,7 @@ jobs:
         if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         env:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
@@ -379,7 +379,7 @@ jobs:
 
       - name: Deploy orca_custom_preset_tests
         if: ${{ inputs.os == 'ubuntu-24.04' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        uses: WebFreak001/deploy-nightly@v3.2.0
+        uses: NanashiTheNameless/deploy-nightly@master
         with:
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857

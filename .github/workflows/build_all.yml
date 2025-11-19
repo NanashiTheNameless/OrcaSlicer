@@ -27,11 +27,6 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write
-  actions: write
-  checks: write
-
 jobs:
   build_linux:
     name: Build Linux (${{ matrix.os }})
@@ -159,7 +154,7 @@ jobs:
         path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak'
     - name: Deploy Flatpak to nightly release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      uses: WebFreak001/deploy-nightly@v3.2.0
+      uses: NanashiTheNameless/deploy-nightly@master
       with:
         upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
         release_id: 242055857
