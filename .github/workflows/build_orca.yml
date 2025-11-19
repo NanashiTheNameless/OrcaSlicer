@@ -166,6 +166,7 @@ jobs:
         if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: ${{ github.workspace }}/OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
@@ -177,6 +178,7 @@ jobs:
         if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: ${{ github.workspace }}/OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
@@ -259,6 +261,7 @@ jobs:
         if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: ${{ github.workspace }}/build/OrcaSlicer_Windows_${{ env.ver }}_portable.zip
@@ -270,6 +273,7 @@ jobs:
         if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: ${{ github.workspace }}/build/OrcaSlicer_Windows_Installer_${{ env.ver }}.exe
@@ -281,6 +285,7 @@ jobs:
         if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
@@ -357,6 +362,7 @@ jobs:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: './build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage'
@@ -370,6 +376,7 @@ jobs:
           ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: ./build/src/Release/OrcaSlicer_profile_validator
@@ -381,6 +388,7 @@ jobs:
         if: ${{ inputs.os == 'ubuntu-24.04' && github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
+          token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
           asset_path: '${{ github.workspace }}/resources/profiles/orca_custom_preset_tests.zip'
