@@ -9,6 +9,8 @@ on:
 
 jobs:
   assign:
+    permissions:
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - name: Assign the user or unassign stale assignments
