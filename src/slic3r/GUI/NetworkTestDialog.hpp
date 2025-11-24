@@ -57,9 +57,9 @@ protected:
 	Button*     btn_link;
 	wxStaticText* text_link_title;
 	wxStaticText* text_link_val;
-	Button*     btn_bing;
-	wxStaticText* text_bing_title;
-	wxStaticText* text_bing_val;
+	Button*     btn_cloudflare;
+	wxStaticText* text_cloudflare_title;
+	wxStaticText* text_cloudflare_val;
 	Button*     btn_example;
 	wxStaticText* text_example_title;
 	wxStaticText* text_example_val;
