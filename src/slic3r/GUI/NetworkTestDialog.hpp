@@ -30,12 +30,13 @@
 #include <vector>
 #include <algorithm>
 
-namespace Slic3r { 
+namespace Slic3r {
 namespace GUI {
 
 enum TestJob {
-	TEST_BING_JOB = 0,
+	TEST_CLOUDFLARE_JOB = 0,
 	TEST_ORCA_JOB = 1,
+	TEST_EXAMPLE_JOB = 2,
 	TEST_PING_JOB,
 	TEST_JOB_MAX
 };
@@ -59,6 +60,9 @@ protected:
 	Button*     btn_bing;
 	wxStaticText* text_bing_title;
 	wxStaticText* text_bing_val;
+	Button*     btn_example;
+	wxStaticText* text_example_title;
+	wxStaticText* text_example_val;
 	wxStaticText* text_ping_title;
 	wxStaticText* text_ping_value;
 	wxStaticText* text_result;
@@ -91,8 +95,9 @@ public:
 
 	void start_all_job();
 	void start_all_job_sequence();
-	void start_test_bing_thread();
+	void start_test_cloudflare_thread();
 	void start_test_github_thread();
+	void start_test_example_thread();
 	void start_test_ping_thread();
 
 	void start_test_url(TestJob job, wxString name, wxString url);

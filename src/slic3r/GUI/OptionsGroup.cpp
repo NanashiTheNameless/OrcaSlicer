@@ -495,7 +495,7 @@ bool OptionsGroup::activate(std::function<void()> throw_if_canceled/* = [](){}*/
 			// BBS: new layout
 			::StaticLine* stl = new ::StaticLine(m_parent, false, _(title), icon);
             stl->SetFont(Label::Head_14);
-            stl->SetForegroundColour("#363636"); // ORCA Match Parameters title color with tab title color 
+            stl->SetForegroundColour("#363636"); // ORCA Match Parameters title color with tab title color
             sizer = new wxBoxSizer(wxVERTICAL);
             if (title.IsEmpty()) {
                 stl->Hide();
@@ -1312,7 +1312,7 @@ wxString OptionsGroup::get_url(const std::string& path_end)
         str = str.Left(pos) + anchor;
     }
     // Orca: point to sf wiki for seam parameters
-    return wxString::Format(L"https://github.com/OrcaSlicer/OrcaSlicer/wiki/%s", from_u8(path_end));
+    return wxString::Format(L"https://github.com/NanashiTheNameless/OrcaSlicer/wiki/%s", from_u8(path_end));
 
 }
 
