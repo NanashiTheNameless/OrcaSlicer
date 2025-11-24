@@ -162,18 +162,18 @@ wxBoxSizer* NetworkTestDialog::create_content_sizer(wxWindow* parent)
 	text_cloudflare_val->Wrap(-1);
 	grid_sizer->Add(text_cloudflare_val, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 
-	btn_example = new Button(this, _L("Test example.com"));
-    btn_example->SetStyle(ButtonStyle::Regular, ButtonType::Window);
-	grid_sizer->Add(btn_example, 0, wxEXPAND | wxALL, 5);
+	btn_cloudflare_trace = new Button(this, _L("Cloudflare Trace"));
+	    btn_cloudflare_trace->SetStyle(ButtonStyle::Regular, ButtonType::Window);
+		grid_sizer->Add(btn_cloudflare_trace, 0, wxEXPAND | wxALL, 5);
 
-    text_example_title = new wxStaticText(this, wxID_ANY, _L("Test example.com:"), wxDefaultPosition, wxDefaultSize, 0);
+	    text_cloudflare_trace_title = new wxStaticText(this, wxID_ANY, _L("Cloudflare Trace:"), wxDefaultPosition, wxDefaultSize, 0);
 
-	text_example_title->Wrap(-1);
-	grid_sizer->Add(text_example_title, 0, wxALIGN_RIGHT | wxALL | wxALIGN_CENTER_VERTICAL, 5);
+		text_cloudflare_trace_title->Wrap(-1);
+		grid_sizer->Add(text_cloudflare_trace_title, 0, wxALIGN_RIGHT | wxALL | wxALIGN_CENTER_VERTICAL, 5);
 
-	text_example_val = new wxStaticText(this, wxID_ANY, _L("N/A"), wxDefaultPosition, wxDefaultSize, 0);
-	text_example_val->Wrap(-1);
-	grid_sizer->Add(text_example_val, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+		text_cloudflare_trace_val = new wxStaticText(this, wxID_ANY, _L("N/A"), wxDefaultPosition, wxDefaultSize, 0);
+		text_cloudflare_trace_val->Wrap(-1);
+		grid_sizer->Add(text_cloudflare_trace_val, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 	sizer->Add(grid_sizer, 1, wxEXPAND, 5);
 
 	btn_link->Bind(wxEVT_BUTTON, [this](wxCommandEvent& evt) {
@@ -184,8 +184,8 @@ wxBoxSizer* NetworkTestDialog::create_content_sizer(wxWindow* parent)
 		start_test_cloudflare_thread();
 	});
 
-	btn_example->Bind(wxEVT_BUTTON, [this](wxCommandEvent& evt) {
-		start_test_example_thread();
+	btn_cloudflare_trace->Bind(wxEVT_BUTTON, [this](wxCommandEvent& evt) {
+		start_test_cloudflare_trace_thread();
 	});
 
 	return sizer;
@@ -214,8 +214,8 @@ void NetworkTestDialog::init_bind()
 			text_link_val->SetLabelText(evt.GetString());
 		} else if (evt.GetInt() == TEST_CLOUDFLARE_JOB) {
 			text_cloudflare_val->SetLabelText(evt.GetString());
-		} else if (evt.GetInt() == TEST_EXAMPLE_JOB) {
-			text_example_val->SetLabelText(evt.GetString());
+		} else if (evt.GetInt() == TEST_CLOUDFLARE_TRACE_JOB) {
+			text_cloudflare_trace_val->SetLabelText(evt.GetString());
 		}
 
 		std::time_t t = std::time(0);
@@ -259,7 +259,7 @@ void NetworkTestDialog::start_all_job()
 {
 	start_test_github_thread();
 	start_test_cloudflare_thread();
-	start_test_example_thread();
+	start_test_cloudflare_trace_thread();
 }
 
 void NetworkTestDialog::start_all_job_sequence()
@@ -270,7 +270,7 @@ void NetworkTestDialog::start_all_job_sequence()
         if (m_closing) return;
 		start_test_url(TEST_ORCA_JOB, "OrcaSlicer(GitHub)", "https://github.com/NanashiTheNameless/OrcaSlicer");
 		if (m_closing) return;
-		start_test_url(TEST_EXAMPLE_JOB, "Example.com", "http://example.com");
+		start_test_url(TEST_CLOUDFLARE_TRACE_JOB, "Cloudflare Trace", "https://www.cloudflare.com/cdn-cgi/trace");
 		if (m_closing) return;
 		update_status(-1, "end_test_sequence");
 	});
@@ -337,11 +337,11 @@ void NetworkTestDialog::start_test_cloudflare_thread()
         start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare DNS", "https://1.1.1.1");
     });
 }
-void NetworkTestDialog::start_test_example_thread()
+void NetworkTestDialog::start_test_cloudflare_trace_thread()
 {
-    test_job[TEST_EXAMPLE_JOB] = new boost::thread([this] {
-        start_test_url(TEST_EXAMPLE_JOB, "Example.com", "http://example.com");
-    });
+	test_job[TEST_CLOUDFLARE_TRACE_JOB] = new boost::thread([this] {
+		start_test_url(TEST_CLOUDFLARE_TRACE_JOB, "Cloudflare Trace", "https://www.cloudflare.com/cdn-cgi/trace");
+	});
 }
 
 void NetworkTestDialog::on_close(wxCloseEvent& event)
