@@ -130,6 +130,10 @@ jobs:
       run:
         rm -rf /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*" /opt/hostedtoolcache1/*
     - uses: actions/checkout@v6
+    - name: Get sha7
+      run: echo "SHA7=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+      env:
+        GITHUB_SHA: ${{ github.sha }}
     - name: Get the version and date
       run: |
         ver_pure=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
