@@ -139,6 +139,7 @@ jobs:
         GITHUB_SHA: ${{ github.sha }}
     - name: Get the version and date
       run: |
+        git config --global --add safe.directory /__w/OrcaSlicer/OrcaSlicer
         ver_pure=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           ver="PR-${{ github.event.number }}"
