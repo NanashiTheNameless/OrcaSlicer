@@ -131,7 +131,10 @@ jobs:
         rm -rf /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*" /opt/hostedtoolcache1/*
     - uses: actions/checkout@v6
     - name: Get sha7
-      run: echo "SHA7=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+      run: |
+        echo "SHA7=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+        echo "GIT_COMMIT_HASH_OVERRIDE=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+        echo "git_commit_hash=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
       env:
         GITHUB_SHA: ${{ github.sha }}
     - name: Get the version and date
