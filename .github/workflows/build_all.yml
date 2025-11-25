@@ -130,24 +130,15 @@ jobs:
       run:
         rm -rf /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*" /opt/hostedtoolcache1/*
     - uses: actions/checkout@v6
-    - name: Get sha7
-      run: |
-        echo "SHA7=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-        echo "GIT_COMMIT_HASH_OVERRIDE=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-        echo "git_commit_hash=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
-      env:
-        GITHUB_SHA: ${{ github.sha }}
     - name: Get the version and date
       run: |
-        git config --global --add safe.directory /__w/OrcaSlicer/OrcaSlicer
         ver_pure=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
           ver="PR-${{ github.event.number }}"
           git_commit_hash="${{ github.event.pull_request.head.sha }}"
         else
           ver=V$ver_pure
-          # Capture current commit for non-PR builds (needed where .git not packaged)
-          git_commit_hash="$(git rev-parse HEAD)"
+          git_commit_hash=""
         fi
         echo "ver=$ver" >> $GITHUB_ENV
         echo "ver_pure=$ver_pure" >> $GITHUB_ENV
