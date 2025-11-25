@@ -6,14 +6,14 @@
         <id>io.github.softfever.OrcaSlicer.desktop</id>
     </provides>
     <name>OrcaSlicer</name>
-    <!-- hehe hadess @ppd
+    <!-- hehe hadess @ppd 
     ... seriously though, thanks -->
     <summary>Get even more perfect prints!</summary>
     <developer_name>SoftFever</developer_name>
-    <url type="homepage">https://github.com/NanashiTheNameless/OrcaSlicer</url>
-    <url type="help">https://github.com/NanashiTheNameless/OrcaSlicer/wiki</url>
-    <url type="bugtracker">https://github.com/NanashiTheNameless/OrcaSlicer/issues/</url>
-    <url type="donation">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/.github/FUNDING.yml</url>
+    <url type="homepage">https://github.com/OrcaSlicer/OrcaSlicer</url>
+    <url type="help">https://github.com/OrcaSlicer/OrcaSlicer/wiki</url>
+    <url type="bugtracker">https://github.com/OrcaSlicer/OrcaSlicer/issues/</url>
+    <url type="donation">https://ko-fi.com/SoftFever</url>
     <metadata_license>0BSD</metadata_license>
     <project_license>AGPL-3.0-only</project_license>
     <content_rating type="oars-1.1" />

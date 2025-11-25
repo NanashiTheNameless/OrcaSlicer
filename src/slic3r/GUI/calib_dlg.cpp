@@ -176,12 +176,12 @@ PA_Calibration_Dlg::PA_Calibration_Dlg(wxWindow* parent, wxWindowID id, Plater* 
     // Help links
     auto help_sizer = new wxBoxSizer(wxVERTICAL);
     auto help_link_pa = new wxHyperlinkCtrl(this, wxID_ANY, _L("Pressure Advance Guide"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/pressure-advance-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/pressure-advance-calib");
     help_link_pa->SetForegroundColour(wxColour("#1890FF"));
     help_sizer->Add(help_link_pa, 0, wxALL, FromDIP(5));
 
     auto help_link_apa = new wxHyperlinkCtrl(this, wxID_ANY, _L("Adaptive Pressure Advance Guide"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/adaptive-pressure-advance-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/adaptive-pressure-advance-calib");
     help_link_apa->SetForegroundColour(wxColour("#1890FF"));
     help_sizer->Add(help_link_apa, 0, wxALL, FromDIP(5));
 
@@ -198,7 +198,7 @@ PA_Calibration_Dlg::PA_Calibration_Dlg(wxWindow* parent, wxWindowID id, Plater* 
     m_rbExtruderType->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(PA_Calibration_Dlg::on_extruder_type_changed), NULL, this);
     m_rbMethod->Connect(wxEVT_COMMAND_RADIOBOX_SELECTED, wxCommandEventHandler(PA_Calibration_Dlg::on_method_changed), NULL, this);
     this->Connect(wxEVT_SHOW, wxShowEventHandler(PA_Calibration_Dlg::on_show));
-
+    
     wxGetApp().UpdateDlgDarkUI(this);
 
     Layout();
@@ -387,7 +387,7 @@ Temp_Calibration_Dlg::Temp_Calibration_Dlg(wxWindow* parent, wxWindowID id, Plat
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: Temperature Calibration"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/temp-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/temp-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 
@@ -566,7 +566,7 @@ MaxVolumetricSpeed_Test_Dlg::MaxVolumetricSpeed_Test_Dlg(wxWindow* parent, wxWin
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: Volumetric Speed Calibration"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/volumetric-speed-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/volumetric-speed-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 
@@ -672,7 +672,7 @@ VFA_Test_Dlg::VFA_Test_Dlg(wxWindow* parent, wxWindowID id, Plater* plater)
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: VFA"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/vfa-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/vfa-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 
@@ -779,7 +779,7 @@ Retraction_Test_Dlg::Retraction_Test_Dlg(wxWindow* parent, wxWindowID id, Plater
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: Retraction Calibration"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/retraction-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/retraction-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 
@@ -902,7 +902,7 @@ Input_Shaping_Freq_Test_Dlg::Input_Shaping_Freq_Test_Dlg(wxWindow* parent, wxWin
     m_tiFreqStartX->GetTextCtrl()->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
     m_tiFreqEndX   = new TextInput(this, std::to_string(110), _L("Hz"), "", wxDefaultPosition, ti_size);
     m_tiFreqEndX->GetTextCtrl()->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
-
+    
     x_freq_sizer->Add(start_x_text  , 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
     x_freq_sizer->Add(m_tiFreqStartX, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
     x_freq_sizer->Add(m_tiFreqEndX  , 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
@@ -939,11 +939,11 @@ Input_Shaping_Freq_Test_Dlg::Input_Shaping_Freq_Test_Dlg(wxWindow* parent, wxWin
     auto damping_factor_text = new wxStaticText(this, wxID_ANY, damping_factor_str, wxDefaultPosition, st_size, wxALIGN_LEFT);
     m_tiDampingFactor = new TextInput(this, wxString::Format("%.3f", 0.15), "", "", wxDefaultPosition, ti_size);
     m_tiDampingFactor->GetTextCtrl()->SetValidator(wxTextValidator(wxFILTER_NUMERIC));
-
+    
     damping_factor_sizer->Add(damping_factor_text, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
     damping_factor_sizer->Add(m_tiDampingFactor  , 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(2));
     settings_sizer->Add(damping_factor_sizer, 0, wxLEFT, FromDIP(3));
-
+    
     settings_sizer->AddSpacer(FromDIP(5));
 
     auto note_text = new wxStaticText(this, wxID_ANY, _L("Recommended: Set Damp to 0.\nThis will use the printer's default or saved value."), wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT);
@@ -956,7 +956,7 @@ Input_Shaping_Freq_Test_Dlg::Input_Shaping_Freq_Test_Dlg(wxWindow* parent, wxWin
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: Input Shaping Calibration"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/input-shaping-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/input-shaping-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 
@@ -1024,10 +1024,10 @@ void Input_Shaping_Freq_Test_Dlg::on_start(wxCommandEvent& event) {
     }
 
     m_params.mode = CalibMode::Calib_Input_shaping_freq;
-
+    
     // Set model type based on selection
     m_params.test_model = m_rbModel->GetSelection() == 0 ? 0 : 1; // 0 = Ringing Tower, 1 = Fast Tower
-
+    
     m_plater->calib_input_shaping_freq(m_params);
     EndModal(wxID_OK);
 }
@@ -1153,7 +1153,7 @@ Input_Shaping_Damp_Test_Dlg::Input_Shaping_Damp_Test_Dlg(wxWindow* parent, wxWin
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: Input Shaping Calibration"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/input-shaping-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/input-shaping-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 
@@ -1216,10 +1216,10 @@ void Input_Shaping_Damp_Test_Dlg::on_start(wxCommandEvent& event) {
     }
 
     m_params.mode = CalibMode::Calib_Input_shaping_damp;
-
+    
     // Set model type based on selection
     m_params.test_model = m_rbModel->GetSelection() == 0 ? 0 : 1; // 0 = Ringing Tower, 1 = Fast Tower
-
+    
     m_plater->calib_input_shaping_damp(m_params);
     EndModal(wxID_OK);
 }
@@ -1344,7 +1344,7 @@ Cornering_Test_Dlg::Cornering_Test_Dlg(wxWindow* parent, wxWindowID id, Plater* 
     v_sizer->AddSpacer(FromDIP(5));
 
     auto help_link = new wxHyperlinkCtrl(this, wxID_ANY, _L("Wiki Guide: Cornering Calibration"),
-        "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/cornering-calib");
+        "https://github.com/OrcaSlicer/OrcaSlicer/wiki/cornering-calib");
     help_link->SetForegroundColour(wxColour("#1890FF"));
     v_sizer->Add(help_link, 0, wxALL, FromDIP(10));
 

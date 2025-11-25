@@ -8,7 +8,7 @@
 
 [![GitHub Repo stars](https://img.shields.io/github/stars/OrcaSlicer/OrcaSlicer)](https://github.com/OrcaSlicer/OrcaSlicer/stargazers) [![Build all](https://github.com/OrcaSlicer/OrcaSlicer/actions/workflows/build_all.yml/badge.svg?branch=main)](https://github.com/OrcaSlicer/OrcaSlicer/actions/workflows/build_all.yml)
 
-OrcaSlicer: an open source Next-Gen Slicing Software for Precision 3D Prints.
+OrcaSlicer: an open source Next-Gen Slicing Software for Precision 3D Prints.  
 Optimize your prints with ultra-fast slicing, intelligent support generation, and seamless printer compatibility—engineered for perfection.
 <h3>
 
@@ -44,25 +44,25 @@ If you come across any of these in search results, please <b>report them</b> as 
 
 # Main features
 
-- **[Advanced Calibration Tools](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/Calibration)**
+- **[Advanced Calibration Tools](https://github.com/OrcaSlicer/OrcaSlicer/wiki/Calibration)**  
   Comprehensive suite: temperature towers, flow rate, retraction & more for optimal performance.
-- **[Precise Wall](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/quality_settings_precision#precise-wall) and [Seam Control](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/quality_settings_seam)**
+- **[Precise Wall](https://github.com/OrcaSlicer/OrcaSlicer/wiki/quality_settings_precision#precise-wall) and [Seam Control](https://github.com/OrcaSlicer/OrcaSlicer/wiki/quality_settings_seam)**  
   Adjust outer wall spacing and apply scarf seams to enhance print accuracy.
-- **[Sandwich Mode](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/quality_settings_wall_and_surfaces#innerouterinner) and [Polyholes](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/quality_settings_precision#polyholes) Support**
-  Use varied infill [patterns](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/strength_settings_patterns) and accurate hole shapes for improved clarity.
-- **[Overhang](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/quality_settings_overhangs) and [Support Optimization](https://github.com/NanashiTheNameless/OrcaSlicer/wiki#support-settings)**
+- **[Sandwich Mode](https://github.com/OrcaSlicer/OrcaSlicer/wiki/quality_settings_wall_and_surfaces#innerouterinner) and [Polyholes](https://github.com/OrcaSlicer/OrcaSlicer/wiki/quality_settings_precision#polyholes) Support**  
+  Use varied infill [patterns](https://github.com/OrcaSlicer/OrcaSlicer/wiki/strength_settings_patterns) and accurate hole shapes for improved clarity.
+- **[Overhang](https://github.com/OrcaSlicer/OrcaSlicer/wiki/quality_settings_overhangs) and [Support Optimization](https://github.com/OrcaSlicer/OrcaSlicer/wiki#support-settings)**  
   Modify geometry for printable overhangs with precise support placement.
-- **[Granular Controls](https://github.com/NanashiTheNameless/OrcaSlicer/wiki#process-settings) and Customization**
+- **[Granular Controls](https://github.com/OrcaSlicer/OrcaSlicer/wiki#process-settings) and Customization**  
   Fine-tune print speed, layer height, pressure, and temperature with precision.
-- **Network Printer Support**
+- **Network Printer Support**  
   Seamless integration with Klipper, PrusaLink, and OctoPrint for remote control.
-- **[Mouse Ear Brims](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/others_settings_brim) & Adaptive Bed Mesh**
+- **[Mouse Ear Brims](https://github.com/OrcaSlicer/OrcaSlicer/wiki/others_settings_brim) & Adaptive Bed Mesh**  
   Automatic brims and adaptive mesh calibration ensure consistent adhesion.
-- **User-Friendly Interface**
+- **User-Friendly Interface**  
   Intuitive drag-and-drop design with pre-made profiles for popular printers.
-- **[Open-Source](https://github.com/OrcaSlicer/OrcaSlicer) & [Community Driven](https://discord.gg/P4VE9UY9gJ)**
+- **[Open-Source](https://github.com/OrcaSlicer/OrcaSlicer) & [Community Driven](https://discord.gg/P4VE9UY9gJ)**  
   Regular updates fueled by continuous community contributions.
-- **Wide Printer Compatibility**
+- **Wide Printer Compatibility**  
   Supports a broad range of printers: Bambu Lab, Prusa, Creality, Voron, and more.
 - Additional features can be found in the [change notes](https://github.com/OrcaSlicer/OrcaSlicer/releases/).
 
@@ -72,19 +72,19 @@ The wiki below aims to provide a detailed explanation of the slicer settings, in
 
 Please note that the wiki is a work in progress. We appreciate your patience as we continue to develop and improve it!
 
-- **[Access the wiki here](https://github.com/NanashiTheNameless/OrcaSlicer/wiki)**
-- **[Contribute to the wiki](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/How-to-wiki)**
+- **[Access the wiki here](https://github.com/OrcaSlicer/OrcaSlicer/wiki)**
+- **[Contribute to the wiki](https://github.com/OrcaSlicer/OrcaSlicer/wiki/How-to-wiki)**
 
 # Download
 
 ## Stable Release
 
-📥 **[Download the Latest Stable Release](https://github.com/OrcaSlicer/OrcaSlicer/releases/latest)**
+📥 **[Download the Latest Stable Release](https://github.com/OrcaSlicer/OrcaSlicer/releases/latest)**  
 Visit our GitHub Releases page for the latest stable version of OrcaSlicer, recommended for most users.
 
 ## Nightly Builds
 
-🌙 **[Download the Latest Nightly Build](https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/nightly-builds)**
+🌙 **[Download the Latest Nightly Build](https://github.com/OrcaSlicer/OrcaSlicer/releases/tag/nightly-builds)**  
 Explore the latest developments in OrcaSlicer with our nightly builds. Feedback on these versions is highly appreciated.
 
 # How to install
@@ -133,9 +133,9 @@ winget install --id=SoftFever.OrcaSlicer -e
       ```
 
     - Option 3:
-        - Step 1: open the app, a warning window will pop up
+        - Step 1: open the app, a warning window will pop up  
             ![mac_cant_open](./SoftFever_doc/mac_cant_open.png)
-        - Step 2: in `System Settings` -> `Privacy & Security`, click `Open Anyway`:
+        - Step 2: in `System Settings` -> `Privacy & Security`, click `Open Anyway`:  
             ![mac_security_setting](./SoftFever_doc/mac_security_setting.png)
     </details>
 
@@ -146,7 +146,7 @@ winget install --id=SoftFever.OrcaSlicer -e
 
 # How to Compile
 
-All updated build instructions for Windows, macOS, and Linux are now available on the official [OrcaSlicer Wiki - How to build](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/How-to-build) page.
+All updated build instructions for Windows, macOS, and Linux are now available on the official [OrcaSlicer Wiki - How to build](https://github.com/OrcaSlicer/OrcaSlicer/wiki/How-to-build) page.
 
 Please refer to the wiki to ensure you're following the latest and most accurate steps for your platform.
 
@@ -165,8 +165,8 @@ resolution: 0.1
 
 # Supports
 
-**OrcaSlicer** is an open-source project and I'm deeply grateful to all my sponsors and backers.
-Their generous support enables me to purchase filaments and other essential 3D printing materials for the project.
+**OrcaSlicer** is an open-source project and I'm deeply grateful to all my sponsors and backers.  
+Their generous support enables me to purchase filaments and other essential 3D printing materials for the project.  
 Thank you! :)
 
 ## Sponsors:
