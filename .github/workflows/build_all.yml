@@ -138,7 +138,8 @@ jobs:
           git_commit_hash="${{ github.event.pull_request.head.sha }}"
         else
           ver=V$ver_pure
-          git_commit_hash=""
+          # Capture current commit for non-PR builds (needed where .git not packaged)
+          git_commit_hash="$(git rev-parse HEAD)"
         fi
         echo "ver=$ver" >> $GITHUB_ENV
         echo "ver_pure=$ver_pure" >> $GITHUB_ENV

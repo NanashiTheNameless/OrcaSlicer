@@ -79,28 +79,48 @@ else ()
 endif ()
 
 find_package(Git)
-if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
-    if(DEFINED ENV{git_commit_hash} AND NOT "$ENV{git_commit_hash}" STREQUAL "")
-        message(STATUS "Specified git commit hash: $ENV{git_commit_hash}")
 
-        # Convert the given hash to short hash
+# Allow manual override (useful for source archives / Flatpak builds)
+set(GIT_COMMIT_HASH_OVERRIDE "" CACHE STRING "Manually override short git commit hash")
+
+unset(_GIT_HASH)
+
+if (NOT "${GIT_COMMIT_HASH_OVERRIDE}" STREQUAL "")
+    set(_GIT_HASH "${GIT_COMMIT_HASH_OVERRIDE}")
+    message(STATUS "GIT_COMMIT_HASH_OVERRIDE used: ${_GIT_HASH}")
+elseif(DEFINED ENV{git_commit_hash} AND NOT "$ENV{git_commit_hash}" STREQUAL "")
+    # Environment supplied hash (CI). Ensure short form if git available.
+    if (GIT_FOUND)
         execute_process(
             COMMAND ${GIT_EXECUTABLE} rev-parse --short "$ENV{git_commit_hash}"
             WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            OUTPUT_VARIABLE GIT_COMMIT_HASH
+            OUTPUT_VARIABLE _GIT_HASH
             OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-        add_definitions("-DGIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
     else()
-        # Check current Git commit hash
-        execute_process(
-            COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            OUTPUT_VARIABLE GIT_COMMIT_HASH
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        add_definitions("-DGIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\"")
+        string(SUBSTRING "$ENV{git_commit_hash}" 0 7 _GIT_HASH)
     endif()
+    message(STATUS "git_commit_hash env used: ${_GIT_HASH}")
+elseif(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    # Standard git checkout
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} log -1 --format=%h
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE _GIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    message(STATUS "Detected git commit hash: ${_GIT_HASH}")
+elseif(EXISTS "${CMAKE_SOURCE_DIR}/build_hash.txt")
+    # Fallback file produced by packaging pipeline
+    file(READ "${CMAKE_SOURCE_DIR}/build_hash.txt" _RAW_HASH)
+    string(STRIP "${_RAW_HASH}" _GIT_HASH)
+    message(STATUS "Using build_hash.txt commit: ${_GIT_HASH}")
+else()
+    message(WARNING "Git commit hash unavailable; falling back to 0000000")
+endif()
+
+if(DEFINED _GIT_HASH AND NOT "${_GIT_HASH}" STREQUAL "")
+    add_definitions("-DGIT_COMMIT_HASH=\"${_GIT_HASH}\"")
 endif()
 
 if(DEFINED ENV{SLIC3R_STATIC})

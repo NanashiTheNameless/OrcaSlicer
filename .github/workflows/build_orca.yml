@@ -51,7 +51,8 @@ jobs:
             git_commit_hash="${{ github.event.pull_request.head.sha }}"
           else
             ver=V$ver_pure
-            git_commit_hash=""
+            # Always record current commit for non-PR builds (needed for Flatpak / archives)
+            git_commit_hash="$(git rev-parse HEAD)"
           fi
           echo "ver=$ver" >> $GITHUB_ENV
           echo "ver_pure=$ver_pure" >> $GITHUB_ENV
@@ -67,17 +68,18 @@ jobs:
           $eventName = "${{ github.event_name }}"
           $prNumber = "${{ github.event.number }}"
 
-          if ($eventName -eq 'pull_request') {
+            if ($eventName -eq 'pull_request') {
               $ver = "PR" + $prNumber
               $git_commit_hash = "${{ github.event.pull_request.head.sha }}"
-          } else {
+            } else {
               $versionContent = Get-Content version.inc -Raw
               if ($versionContent -match 'set\(SoftFever_VERSION "(.*?)"\)') {
-                  $ver = $matches[1]
+                $ver = $matches[1]
               }
               $ver = "V$ver"
-              $git_commit_hash = ""
-          }
+              # Always record current commit for non-PR builds
+              $git_commit_hash = (git rev-parse HEAD)
+            }
 
           echo "ver=$ver" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
           echo "date=$date" | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
