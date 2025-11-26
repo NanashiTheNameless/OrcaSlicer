@@ -200,17 +200,20 @@ if (NOT IS_CROSS_COMPILE OR NOT APPLE)
         # note for future devs: shared libs may actually create a size reduction
         # but orcaslicer_deps tends to get really funny regarding linking after that (notably boost)
         # so, as much as I would like to use that, it's not happening
+        
+        # Use absolute paths and wrap in shell to avoid build failures
+        # These cleanup steps are best-effort and should not fail the build
         ExternalProject_Add_Step(dep_${projectname} free_download_space
                 DEPENDEES download # do after download
                 COMMENT "Freeing Space: Removing source archive"
-                WORKING_DIRECTORY ${DEP_DOWNLOAD_DIR}
-                COMMAND ${CMAKE_COMMAND} -E rm -r ${projectname}
+                COMMAND sh -c "${CMAKE_COMMAND} -E rm -rf ${DEP_DOWNLOAD_DIR}/${projectname} || exit 0"
+                ALWAYS FALSE
         )
         ExternalProject_Add_Step(dep_${projectname} free_build_space
                 DEPENDEES install # do after install
                 COMMENT "Freeing Space: Removing source and build files"
-                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/dep_${projectname}-prefix/src
-                COMMAND ${CMAKE_COMMAND} -E rm -rf dep_${projectname} dep_${projectname}-build
+                COMMAND sh -c "${CMAKE_COMMAND} -E rm -rf ${CMAKE_BINARY_DIR}/dep_${projectname}-prefix/src/dep_${projectname} ${CMAKE_BINARY_DIR}/dep_${projectname}-prefix/src/dep_${projectname}-build || exit 0"
+                ALWAYS FALSE
         )
     endif ()
 else()
