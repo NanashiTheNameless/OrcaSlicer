@@ -4,15 +4,10 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "monthly"
-    ignore: # Only suggest major updates for built-in actions
-      - dependency-name: "github/*"
-        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
-      - dependency-name: "actions/*"
-        update-types: ["version-update:semver-patch", "version-update:semver-minor"]
+      interval: "daily"
   # Docker dependencies
   - package-ecosystem: "docker"
     directory: "/scripts"
     schedule:
-      interval: "monthly"
+      interval: "daily"
 # no support for c/cpp
