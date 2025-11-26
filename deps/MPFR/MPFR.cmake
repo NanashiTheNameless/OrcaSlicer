@@ -3,7 +3,7 @@ set(_srcdir ${CMAKE_CURRENT_LIST_DIR}/mpfr)
 if (MSVC)
     set(_output  ${DESTDIR}/include/mpfr.h
                  ${DESTDIR}/include/mpf2mpfr.h
-                 ${DESTDIR}/lib/libmpfr-4.lib 
+                 ${DESTDIR}/lib/libmpfr-4.lib
                  ${DESTDIR}/bin/libmpfr-4.dll)
 
     add_custom_command(
@@ -24,12 +24,17 @@ else ()
         set(_cross_compile_arg --host=${TOOLCHAIN_PREFIX})
     endif ()
 
+    # Provide multiple mirrors. CMake will try each URL in order until one succeeds.
+    # mpfr.org occasionally presents a cert chain missing an intermediate in older base images.
+    # ftp.gnu.org has a broadly trusted chain and acts as a reliable fallback.
     ExternalProject_Add(dep_MPFR
-        URL https://www.mpfr.org/mpfr-4.2.2/mpfr-4.2.2.tar.bz2
+        URL
+            https://www.mpfr.org/mpfr-4.2.2/mpfr-4.2.2.tar.bz2
+            https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.bz2
         URL_HASH SHA256=9ad62c7dc910303cd384ff8f1f4767a655124980bb6d8650fe62c815a231bb7b
         DOWNLOAD_DIR ${DEP_DOWNLOAD_DIR}/MPFR
         BUILD_IN_SOURCE ON
-        CONFIGURE_COMMAND autoreconf -f -i && 
+        CONFIGURE_COMMAND autoreconf -f -i &&
                           env "CFLAGS=${_gmp_ccflags}" "CXXFLAGS=${_gmp_ccflags}" ./configure ${_cross_compile_arg} --prefix=${DESTDIR} --enable-shared=no --enable-static=yes --with-gmp=${DESTDIR} ${_gmp_build_tgt}
         BUILD_COMMAND make -j
         INSTALL_COMMAND make install
