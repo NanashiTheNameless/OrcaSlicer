@@ -30,11 +30,11 @@
 #include <vector>
 #include <algorithm>
 
-namespace Slic3r { 
+namespace Slic3r {
 namespace GUI {
 
 enum TestJob {
-	TEST_BING_JOB = 0,
+	TEST_CLOUDFLARE_JOB = 0,
 	TEST_ORCA_JOB = 1,
 	TEST_PING_JOB,
 	TEST_JOB_MAX
@@ -91,7 +91,7 @@ public:
 
 	void start_all_job();
 	void start_all_job_sequence();
-	void start_test_bing_thread();
+	void start_test_cloudflare_thread();
 	void start_test_github_thread();
 	void start_test_ping_thread();
 

@@ -149,11 +149,11 @@ wxBoxSizer* NetworkTestDialog::create_content_sizer(wxWindow* parent)
 	text_link_val->Wrap(-1);
 	grid_sizer->Add(text_link_val, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 
-	btn_bing = new Button(this, _L("Test bing.com"));
+	btn_bing = new Button(this, _(L("Test cloudflare.com")));
     btn_bing->SetStyle(ButtonStyle::Regular, ButtonType::Window);
 	grid_sizer->Add(btn_bing, 0, wxEXPAND | wxALL, 5);
 
-    text_bing_title = new wxStaticText(this, wxID_ANY, _L("Test bing.com:"), wxDefaultPosition, wxDefaultSize, 0);
+    text_bing_title = new wxStaticText(this, wxID_ANY, _(L("Test cloudflare.com:")), wxDefaultPosition, wxDefaultSize, 0);
 
 	text_bing_title->Wrap(-1);
 	grid_sizer->Add(text_bing_title, 0, wxALIGN_RIGHT | wxALL | wxALIGN_CENTER_VERTICAL, 5);
@@ -168,7 +168,7 @@ wxBoxSizer* NetworkTestDialog::create_content_sizer(wxWindow* parent)
 	});
 
 	btn_bing->Bind(wxEVT_BUTTON, [this](wxCommandEvent& evt) {
-		start_test_bing_thread();
+		start_test_cloudflare_thread();
 	});
 
 	return sizer;
@@ -195,7 +195,7 @@ void NetworkTestDialog::init_bind()
 	Bind(EVT_UPDATE_RESULT, [this](wxCommandEvent& evt) {
 		if (evt.GetInt() == TEST_ORCA_JOB) {
 			text_link_val->SetLabelText(evt.GetString());
-		} else if (evt.GetInt() == TEST_BING_JOB) {
+		} else if (evt.GetInt() == TEST_CLOUDFLARE_JOB) {
 			text_bing_val->SetLabelText(evt.GetString());
 		}
 
@@ -239,16 +239,16 @@ wxString NetworkTestDialog::get_dns_info()
 void NetworkTestDialog::start_all_job()
 {
 	start_test_github_thread();
-	start_test_bing_thread();
+	start_test_cloudflare_thread();
 }
 
 void NetworkTestDialog::start_all_job_sequence()
 {
 	m_sequence_job = new boost::thread([this] {
 		update_status(-1, "start_test_sequence");
-        start_test_url(TEST_BING_JOB, "Bing", "http://www.bing.com");
+        start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare", "https://www.cloudflare.com/cdn-cgi/trace");
         if (m_closing) return;
-		start_test_url(TEST_ORCA_JOB, "OrcaSlicer(GitHub)", "https://github.com/OrcaSlicer/OrcaSlicer");
+		start_test_url(TEST_ORCA_JOB, "OrcaSlicer(GitHub)", "https://github.com/NanashiTheNameless/OrcaSlicer");
 		if (m_closing) return;
 		update_status(-1, "end_test_sequence");
 	});
@@ -306,13 +306,13 @@ void NetworkTestDialog::start_test_github_thread()
     if (m_in_testing[TEST_ORCA_JOB])
         return;
     test_job[TEST_ORCA_JOB] = new boost::thread([this] {
-        start_test_url(TEST_ORCA_JOB, "OrcaSlicer(GitHub)", "https://github.com/OrcaSlicer/OrcaSlicer");
+        start_test_url(TEST_ORCA_JOB, "OrcaSlicer(GitHub)", "https://github.com/NanashiTheNameless/OrcaSlicer");
     });
 }
-void NetworkTestDialog::start_test_bing_thread()
+void NetworkTestDialog::start_test_cloudflare_thread()
 {
-    test_job[TEST_BING_JOB] = new boost::thread([this] {
-        start_test_url(TEST_BING_JOB, "Bing", "http://www.bing.com");
+    test_job[TEST_CLOUDFLARE_JOB] = new boost::thread([this] {
+        start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare", "https://www.cloudflare.com/cdn-cgi/trace");
     });
 }
 

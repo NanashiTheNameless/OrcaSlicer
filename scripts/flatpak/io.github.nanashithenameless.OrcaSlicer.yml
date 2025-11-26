@@ -1,4 +1,4 @@
-app-id: io.github.softfever.OrcaSlicer
+app-id: io.github.nanashithenameless.OrcaSlicer
 runtime: org.gnome.Platform
 runtime-version: "48"
 sdk: org.gnome.Sdk
@@ -16,7 +16,7 @@ finish-args:
   - --filesystem=/media
   - --filesystem=/run/spnav.sock:ro
   # Allow OrcaSlicer to talk to other instances
-  - --talk-name=io.github.softfever.OrcaSlicer.InstanceCheck.*
+  - --talk-name=io.github.nanashithenameless.OrcaSlicer.InstanceCheck.*
   - --system-talk-name=org.freedesktop.UDisks2
   - --env=SPNAV_SOCKET=/run/spnav.sock
 
@@ -155,7 +155,7 @@ modules:
 
       # AppData metainfo for Gnome Software & Co.
       - type: file
-        path: io.github.softfever.OrcaSlicer.metainfo.xml
+        path: io.github.nanashithenameless.OrcaSlicer.metainfo.xml
 
       # start-up script
       - type: file
