@@ -70,6 +70,8 @@ modules:
         - --share=network # allow cmake to download the needed deps
       env:
         BUILD_DIR: deps/build_flatpak
+        # Cap concurrency to reduce disk pressure in CI
+        FLATPAK_BUILDER_N_JOBS: "4"
     buildsystem: simple
     build-commands:
       # start build
@@ -80,8 +82,8 @@ modules:
           -DCMAKE_PREFIX_PATH=/app \
           -DDESTDIR=/app \
           -DCMAKE_INSTALL_PREFIX=/app
-      - cmake --build $BUILD_DIR --parallel --target dep_wxWidgets
-      - cmake --build $BUILD_DIR --parallel
+      - cmake --build $BUILD_DIR --parallel -j$FLATPAK_BUILDER_N_JOBS --target dep_wxWidgets
+      - cmake --build $BUILD_DIR --parallel -j$FLATPAK_BUILDER_N_JOBS
       - rm -rf /run/build/orca_deps/external-packages
 
     cleanup:
