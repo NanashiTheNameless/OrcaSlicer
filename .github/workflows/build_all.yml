@@ -112,6 +112,12 @@ jobs:
         - /opt/ghc:/opt/ghc1
         - /usr/local/share/boost:/usr/local/share/boost1
         - /opt/hostedtoolcache:/opt/hostedtoolcache1
+        - /opt/az:/opt/az1
+        - /usr/local/share/powershell:/usr/local/share/powershell1
+        - /usr/local/share/chromium:/usr/local/share/chromium1
+        - /opt/google/chrome:/opt/google/chrome1
+        - /usr/local/lib/node_modules:/usr/local/lib/node_modules1
+        - /home/linuxbrew/.linuxbrew:/linuxbrew1
     strategy:
       fail-fast: false
       matrix:
@@ -133,6 +139,11 @@ jobs:
         rm -rfv /opt/ghc1/* || true
         rm -rfv /usr/local/share/boost1/* || true
         rm -rfv /opt/hostedtoolcache1/* || true
+        rm -rfv /usr/local/share/powershell1/* || true
+        rm -rfv /usr/local/share/chromium1/* || true
+        rm -rfv /opt/google/chrome1/* || true
+        rm -rfv /usr/local/lib/node_modules1/* || true
+        rm -rfv /linuxbrew1/* || true
     - uses: actions/checkout@v6
     - name: Get the version and date
       run: |
