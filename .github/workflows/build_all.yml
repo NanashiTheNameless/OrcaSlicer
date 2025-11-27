@@ -104,7 +104,7 @@ jobs:
   flatpak:
     name: "Flatpak"
     container:
-      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-48
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-49
       options: --privileged
       volumes:
         - /usr/local/lib/android:/usr/local/lib/android
@@ -127,8 +127,8 @@ jobs:
       ver_pure: ""
     steps:
     - name: "Remove unneeded stuff to free disk space (non-blocking on fail/error)"
-      run:
-        rm -rfv "/usr/local/lib/android/*" "/usr/share/dotnet/*" "/opt/ghc1/*" "/usr/local/share/boost1/*" "/opt/hostedtoolcache1/*" || true
+      run: |
+        rm -rfv /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*" /opt/hostedtoolcache1/* || true
     - uses: actions/checkout@v6
     - name: Get the version and date
       run: |
@@ -149,7 +149,7 @@ jobs:
       with:
         bundle: OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak
         manifest-path: scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml
-        cache: false  # Disable action-managed cache to keep disk usage below runner limits
+        cache: true
         arch: ${{ matrix.variant.arch }}
         upload-artifact: false
     - name: Upload artifacts Flatpak
