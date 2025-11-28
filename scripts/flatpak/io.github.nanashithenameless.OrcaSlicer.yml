@@ -142,6 +142,9 @@ modules:
       - type: dir
         path: ../../src
         dest: src
+      - type: dir
+        path: ../../.git
+        dest: .git
 
       - type: file
         path: ../../CMakeLists.txt
