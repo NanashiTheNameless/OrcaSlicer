@@ -246,7 +246,7 @@ void NetworkTestDialog::start_all_job_sequence()
 {
 	m_sequence_job = new boost::thread([this] {
 		update_status(-1, "start_test_sequence");
-        start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare", "https://www.cloudflare.com/cdn-cgi/trace");
+        start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare", "https://www.cloudflare.com");
         if (m_closing) return;
 		start_test_url(TEST_ORCA_JOB, "OrcaSlicer(GitHub)", "https://github.com/NanashiTheNameless/OrcaSlicer");
 		if (m_closing) return;
@@ -312,7 +312,7 @@ void NetworkTestDialog::start_test_github_thread()
 void NetworkTestDialog::start_test_cloudflare_thread()
 {
     test_job[TEST_CLOUDFLARE_JOB] = new boost::thread([this] {
-        start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare", "https://www.cloudflare.com/cdn-cgi/trace");
+        start_test_url(TEST_CLOUDFLARE_JOB, "Cloudflare", "https://www.cloudflare.com");
     });
 }
 
