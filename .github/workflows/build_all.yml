@@ -4,6 +4,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'resources/**'
+      - 'deps/**'
+      - 'src/**'
+      - '**/CMakeLists.txt'
+      - 'version.inc'
+      - ".github/workflows/build_*.yml"
+      - 'build_linux.sh'
+      - 'build_release_vs2022.bat'
+      - 'build_release_macos.sh'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'tools/**'
 
   pull_request:
     branches:
@@ -18,7 +31,9 @@ on:
       - 'build_linux.sh'
       - 'build_release_vs2022.bat'
       - 'build_release_macos.sh'
-      - 'scripts/flatpak/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'tools/**'
 
   workflow_dispatch: # allows for manual dispatch
     inputs:
