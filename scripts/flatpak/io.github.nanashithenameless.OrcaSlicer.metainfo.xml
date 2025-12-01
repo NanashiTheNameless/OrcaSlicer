@@ -42,7 +42,10 @@
 	  <color type="primary" scheme_preference="light">#009688</color>
 	</branding>
     <releases>
-	    <release version="Nightly" date="2025-11-25"> <url>https://github.com/NanashiTheNameless/OrcaSlicer/</url>
+	    <release version="nightly"> <url>https://github.com/NanashiTheNameless/OrcaSlicer</url>
+            <description>
+                <p>Nightly rolling build. See in-app About dialog for exact version information.</p>
+            </description>
         </release>
     </releases>
 </component>
