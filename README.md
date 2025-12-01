@@ -21,7 +21,7 @@ If you come across any of these in search results, please <b>report them</b> as 
 
 </div>
 
-# **THIS FORK IS UNSTABLE, HERE BE DRAGONS!**
+# **THIS VERSION IS AN UNOFFICIAL UNSTABLE FORKED VERSION, HERE BE DRAGONS!**
 
 See <https://github.com/OrcaSlicer/OrcaSlicer> for the official version.
 
@@ -31,15 +31,15 @@ The wiki below aims to provide a detailed explanation of the slicer settings, in
 
 Please note that the wiki is a work in progress. We appreciate your patience as we continue to develop and improve it!
 
-- **[Access the wiki here](https://github.com/NanahsiTheNameless/OrcaSlicer/wiki)**
+- **[Access the unofficial wiki here](https://github.com/NanahsiTheNameless/OrcaSlicer/wiki)**
 
 # Download
 
 ## Stable Release
 
-This fork does not publish stable builds, for stability and sanity go to the official version <https://github.com/OrcaSlicer/OrcaSlicer>
+This fork **does not publish stable builds**, for stability and sanity **go to the official version** <https://github.com/OrcaSlicer/OrcaSlicer>
 
-**ONCE AGAIN THIS FORK IS UNSTABLE, HERE BE DRAGONS!**
+**ONCE AGAIN THIS FORK IS UNOFFICIAL AND UNSTABLE, HERE BE DRAGONS!**
 
 ## Nightly Builds
 
@@ -49,17 +49,16 @@ This fork does not publish stable builds, for stability and sanity go to the off
 
 ## Windows
 
-Download the **Windows Installer exe**  for your preferred version from the [releases page](https://github.com/NanashiTheNameless/OrcaSlicer/releases/latest).
+Download the **Windows Installer exe** for your preferred version from the [releases page](https://github.com/NanashiTheNameless/OrcaSlicer/releases/latest).
 
  - *For convenience there is also a portable build available.*
     <details>
     <summary>Troubleshooting</summary>
-
-If you need this use the official version, this version is for people who are experienced!
+      If you need a torubleshooting guide you should use the official version, this version is for people who are experienced!
 
 ## Mac
 
-1. Download the DMG for your computer: `arm64` version for Apple Silicon and `x86_64` for Intel CPU.
+1. Download the DMG for your computer (All mac builds are universal now).
 2. Drag OrcaSlicer.app to Application folder.
 3. *If you want to run a build from a PR, you also need to follow the instructions below:*
 
@@ -110,7 +109,7 @@ resolution: 0.1
 
 OrcaSlicer was originally forked from Bambu Studio, it was previously known as BambuStudio-SoftFever.
 
-**THIS VERSION IS AN UNSTABLE FORKED VERSION, HERE BE DRAGONS!**
+**THIS VERSION IS AN UNOFFICIAL UNSTABLE FORKED VERSION, HERE BE DRAGONS!**
 
 [Bambu Studio](https://github.com/bambulab/BambuStudio) is forked from [PrusaSlicer](https://github.com/prusa3d/PrusaSlicer) by Prusa Research, which is from [Slic3r](https://github.com/Slic3r/Slic3r) by Alessandro Ranellucci and the RepRap community.
 OrcaSlicer incorporates a lot of features from [SuperSlicer](https://github.com/supermerill/SuperSlicer) by @supermerill
