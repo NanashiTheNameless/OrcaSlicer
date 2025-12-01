@@ -31,7 +31,7 @@ The wiki below aims to provide a detailed explanation of the slicer settings, in
 
 Please note that the wiki is a work in progress. We appreciate your patience as we continue to develop and improve it!
 
-- **[Access the unofficial wiki here](https://github.com/NanahsiTheNameless/OrcaSlicer/wiki)**
+- **[Access the unofficial wiki here](https://github.com/NanashiTheNameless/OrcaSlicer/wiki)**
 
 # Download
 
@@ -90,7 +90,7 @@ Download the **Windows Installer exe** for your preferred version from the [rele
 
 # How to Compile
 
-All updated build instructions for Windows, macOS, and Linux are now available on the official [OrcaSlicer Wiki - How to build](https://github.com/NanahsiTheNameless/OrcaSlicer/wiki/How-to-build) page.
+All updated build instructions for Windows, macOS, and Linux are now available on the unofficial [OrcaSlicer Wiki - How to build](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/How-to-build) page.
 
 Please refer to the wiki to ensure you're following the latest and most accurate steps for your platform.
 
