@@ -3636,6 +3636,15 @@ void PrintConfigDef::init_fff_params()
     def->mode     = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(0.4));
 
+    def           = this->add("infill_reset_shift_after_bridge", coBool);
+    def->label    = L("Reset infill shift after bridges");
+    def->category = L("Strength");
+    def->tooltip  = L("When enabled, the brick layer pattern (CrossZag/LockedZag infill) will be reset after bridge layers "
+                      "to improve layer adhesion. The pattern will be temporarily aligned for 2 layers after a bridge before "
+                      "resuming the normal staggered pattern.");
+    def->mode     = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(true));
+
     //Orca
     def           = this->add("sparse_infill_rotate_template", coString);
     def->label    = L("Sparse infill rotation template");

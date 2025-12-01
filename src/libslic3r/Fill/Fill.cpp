@@ -1296,16 +1296,21 @@ void Layer::make_fills(FillAdaptive::Octree* adaptive_fill_octree, FillAdaptive:
             f->set_lock_region_param(lock_param);
 		}
         if (surface_fill.params.pattern == ipCrossZag || surface_fill.params.pattern == ipLockedZag) {
-            // Check if we're within recovery layers after a bridge
-            // Recovery layers after bridges should have aligned infill (no stagger)
-            // to ensure proper adhesion before resuming the brick pattern
-            const int recovery_layers = 2; // Number of aligned layers after a bridge
-            int distance_to_bridge = bridge_layer_distance(this, recovery_layers + 1);
+            bool reset_after_bridge = region_config.infill_reset_shift_after_bridge.value;
+            bool in_recovery = false;
             
-            // Only apply stagger if we're beyond the recovery window after a bridge
-            // distance_to_bridge == -1 means no bridge found (normal case)
-            // distance_to_bridge >= 0 and <= recovery_layers means we're in recovery
-            bool in_recovery = (distance_to_bridge >= 0 && distance_to_bridge <= recovery_layers);
+            if (reset_after_bridge) {
+                // Check if we're within recovery layers after a bridge
+                // Recovery layers after bridges should have aligned infill (no stagger)
+                // to ensure proper adhesion before resuming the brick pattern
+                const int recovery_layers = 2; // Number of aligned layers after a bridge
+                int distance_to_bridge = bridge_layer_distance(this, recovery_layers + 1);
+                
+                // Only apply stagger if we're beyond the recovery window after a bridge
+                // distance_to_bridge == -1 means no bridge found (normal case)
+                // distance_to_bridge >= 0 and <= recovery_layers means we're in recovery
+                in_recovery = (distance_to_bridge >= 0 && distance_to_bridge <= recovery_layers);
+            }
             
             if (!in_recovery) {
                 // Normal stagger pattern
