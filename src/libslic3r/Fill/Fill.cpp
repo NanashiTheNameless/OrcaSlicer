@@ -807,6 +807,36 @@ void split_solid_surface(size_t layer_id, const SurfaceFill &fill, ExPolygons &n
 #endif
 }
 
+// Helper function to check if a layer has any bridge surfaces
+// Returns true if the layer contains any bridge surfaces (stBottomBridge or stInternalBridge)
+static bool layer_has_bridge(const Layer* layer)
+{
+    if (layer == nullptr)
+        return false;
+    
+    for (const LayerRegion* region : layer->regions()) {
+        for (const Surface& surface : region->fill_surfaces.surfaces) {
+            if (surface.is_bridge())
+                return true;
+        }
+    }
+    return false;
+}
+
+// Counts the number of layers since the last bridge layer
+// Returns 0 if the current layer has a bridge, 1 if the previous layer had a bridge, etc.
+// Returns -1 if no bridge was found within max_layers_to_check
+static int layers_since_bridge(const Layer* current_layer, int max_layers_to_check = 3)
+{
+    const Layer* layer = current_layer;
+    for (int i = 0; i <= max_layers_to_check && layer != nullptr; ++i) {
+        if (layer_has_bridge(layer))
+            return i;
+        layer = layer->lower_layer;
+    }
+    return -1; // No bridge found
+}
+
 std::vector<SurfaceFill> group_fills(const Layer &layer, LockRegionParam &lock_param)
 {
 	std::vector<SurfaceFill> surface_fills;
@@ -1265,11 +1295,26 @@ void Layer::make_fills(FillAdaptive::Octree* adaptive_fill_octree, FillAdaptive:
             f->set_lock_region_param(lock_param);
 		}
         if (surface_fill.params.pattern == ipCrossZag || surface_fill.params.pattern == ipLockedZag) {
-            if (f->layer_id % 2 == 0) {
-                params.horiz_move -= scale_(region_config.infill_shift_step) * (f->layer_id / 2);
-            } else {
-                params.horiz_move += scale_(region_config.infill_shift_step) * (f->layer_id / 2);
+            // Check if we're within recovery layers after a bridge
+            // Recovery layers after bridges should have aligned infill (no stagger)
+            // to ensure proper adhesion before resuming the brick pattern
+            const int recovery_layers = 2; // Number of aligned layers after a bridge
+            int layers_since_last_bridge = layers_since_bridge(this, recovery_layers + 1);
+            
+            // Only apply stagger if we're beyond the recovery window after a bridge
+            // layers_since_last_bridge == -1 means no bridge found (normal case)
+            // layers_since_last_bridge >= 0 and <= recovery_layers means we're in recovery
+            bool in_recovery = (layers_since_last_bridge >= 0 && layers_since_last_bridge <= recovery_layers);
+            
+            if (!in_recovery) {
+                // Normal stagger pattern
+                if (f->layer_id % 2 == 0) {
+                    params.horiz_move -= scale_(region_config.infill_shift_step) * (f->layer_id / 2);
+                } else {
+                    params.horiz_move += scale_(region_config.infill_shift_step) * (f->layer_id / 2);
+                }
             }
+            // else: in_recovery is true, so no stagger is applied (horiz_move stays at 0)
 
             params.symmetric_infill_y_axis = surface_fill.params.symmetric_infill_y_axis;
 
