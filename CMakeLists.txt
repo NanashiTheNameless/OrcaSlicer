@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 
-# Verify that your CMake version is exactly 3.5 series or higher on windows
-if ( (MSVC OR WIN32) AND (${CMAKE_VERSION} VERSION_LESS "3.5") )
-    message(FATAL_ERROR "CMake current version ${CMAKE_VERSION} is too old. Minimum required is 3.5.")
+# Verify that your CMake version is exactly 3.13 series or higher on windows
+if ( (MSVC OR WIN32) AND (${CMAKE_VERSION} VERSION_LESS "3.13") )
+    message(FATAL_ERROR "CMake current version ${CMAKE_VERSION} is too old. Minimum required is 3.13.")
 endif()
 
 if (WIN32)
