@@ -41,8 +41,4 @@
     <branding>
 	  <color type="primary" scheme_preference="light">#009688</color>
 	</branding>
-    <releases>
-	    <release version="Nightly" date="2025-11-25"> <url>https://github.com/NanashiTheNameless/OrcaSlicer/</url>
-        </release>
-    </releases>
 </component>
