@@ -6,14 +6,15 @@
 		<id>io.github.nanashithenameless.OrcaSlicer.desktop</id>
 	</provides>
 	<name>OrcaSlicer</name>
-	<!-- hehe hadess @ppd
-	... seriously though, thanks -->
 	<summary>Get even more perfect prints!</summary>
-	<developer_name>SoftFever</developer_name>
+	<developer_name>NanashiTheNameless (Upstream: SoftFever)</developer_name>
+	<url type="bugtracker">https://github.com/NanashiTheNameless/issues</url>
 	<url type="homepage">https://github.com/NanashiTheNameless/OrcaSlicer</url>
-	<url type="help">https://github.com/NanashiTheNameless/OrcaSlicer/wiki</url>
-	<url type="bugtracker">https://github.com/NanashiTheNameless/issues/</url>
 	<url type="donation">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/.github/FUNDING.yml</url>
+	<url type="contact">https://github.com/NanashiTheNameless/OrcaSlicer/discussions</url>
+	<url type="faq">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/README.md</url>
+	<url type="contribute">https://github.com/NanashiTheNameless/OrcaSlicer</url>
+	<url type="vcs-browser">https://github.com/NanashiTheNameless/OrcaSlicer</url>
 	<metadata_license>0BSD</metadata_license>
 	<project_license>AGPL-3.0-only</project_license>
 	<content_rating type="oars-1.1" />
@@ -42,10 +43,14 @@
 		<color type="primary" scheme_preference="light">#009688</color>
 	</branding>
 	<releases>
-		<release version="unofficial-nightly"> <url>https://github.com/NanashiTheNameless/OrcaSlicer</url>
+		<release version="unofficial-nightly">
+			<url type="details">https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling</url>
 			<description>
-				<p>Unofficial nightly release: See Help > About Orca SLicer dialog for exact version information.</p>
-			</description>
+      			<p>Unofficial nightly release:</p>
+        		<ul>
+          			<li>See Help > About Orca SLicer dialog for exact version information.</li>
+        		</ul>
+    		</description>
 		</release>
 	</releases>
 </component>
