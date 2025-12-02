@@ -43,7 +43,7 @@
 		<color type="primary" scheme_preference="light">#009688</color>
 	</branding>
 	<releases>
-		<release version="unofficial-nightly">
+		<release version="unofficial">
 			<url type="details">https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling</url>
 			<description>
       			<p>Unofficial nightly release:</p>
