@@ -96,6 +96,28 @@ jobs:
               }
             }
 
+            async function deleteOutdatedComments({ removeVersionWarnings = false, removeTemplateWarnings = false } = {}) {
+              const comments = await github.paginate(github.rest.issues.listComments, { owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, per_page: 100 });
+              for (const c of comments) {
+                const fromBot = c.user && c.user.login === 'github-actions[bot]';
+                if (!fromBot) continue;
+                if (removeVersionWarnings && c.body && c.body.includes('short Build SHA7')) {
+                  try {
+                    await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: c.id });
+                  } catch (error) {
+                    if (error.status !== 404) throw error;
+                  }
+                }
+                if (removeTemplateWarnings && c.body && c.body.includes('provided issue templates')) {
+                  try {
+                    await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: c.id });
+                  } catch (error) {
+                    if (error.status !== 404) throw error;
+                  }
+                }
+              }
+            }
+
             async function warnAndCloseForTemplate() {
               if (assignedToOwner) {
                 core.info('Owner assigned; skipping template closure.');
@@ -186,16 +208,27 @@ jobs:
               return;
             }
 
+            if (isBug && !looksLikeBugForm) {
+              await warnAndCloseForTemplate();
+              return;
+            }
+
+            if (isFeature && !looksLikeFeatureForm) {
+              await warnAndCloseForTemplate();
+              return;
+            }
+
             if (isBug) {
               if (!hasVersion) {
                 await ensureLabel(needsVersionLabel.name, needsVersionLabel.color, needsVersionLabel.description);
                 await addLabelIfMissing(needsVersionLabel.name);
                 await ensureSingleComment();
                 await syncOsLabels();
-                core.setFailed('Missing OrcaSlicer Build SHA7');
+                core.info('Missing OrcaSlicer Build SHA7');
               } else {
                 await removeLabelIfPresent(needsVersionLabel.name);
                 await syncOsLabels();
+                await deleteOutdatedComments({ removeVersionWarnings: true });
                 core.info('Build SHA7 detected.');
               }
               return;
@@ -203,6 +236,7 @@ jobs:
 
             if (isFeature) {
               await syncFeatureLabels();
+              await deleteOutdatedComments({ removeTemplateWarnings: true });
               core.info('Feature labels synced.');
               return;
             }
