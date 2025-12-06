@@ -20,6 +20,8 @@ body:
           required: true
         - label: I understand this is an unofficial fork and will not report this issue to the official OrcaSlicer
           required: true
+        - label: I included the short Build SHA7 from Help > About Orca Slicer into the version field (e.g., abc1234)
+          required: true
 
   - type: textarea
     id: description
@@ -65,8 +67,8 @@ body:
     id: version
     attributes:
       label: OrcaSlicer Version
-      description: What version of OrcaSlicer are you running? (Check Help > About Orca Slicer)
-      placeholder: "e.g., 2.3.2-Nanashi+abc1234, Build abc1234"
+      description: Paste only the short Build SHA7 from Help > About Orca Slicer (e.g., `abc1234`).
+      placeholder: "abc1234"
     validations:
       required: true
 

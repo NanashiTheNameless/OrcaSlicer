@@ -1,0 +1,208 @@
+name: Issue Guard
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  validate:
+    if: github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check issue metadata
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const labels = issue.labels || [];
+            const assignees = issue.assignees || [];
+
+            const isBugLabel = labels.some(l => (l.name || '').toLowerCase() === 'bug');
+            const isBugTitle = (issue.title || '').toLowerCase().includes('[bug]');
+            const looksLikeBugForm = /###\s*Bug Description/i.test(body);
+            const isBug = isBugLabel || isBugTitle || looksLikeBugForm;
+
+            const isFeatureLabel = labels.some(l => (l.name || '').toLowerCase() === 'enhancement');
+            const isFeatureTitle = (issue.title || '').toLowerCase().includes('[feature]');
+            const looksLikeFeatureForm = /###\s*Problem Statement/i.test(body);
+            const isFeature = isFeatureLabel || isFeatureTitle || looksLikeFeatureForm;
+
+            const assignedToOwner = assignees.some(a => (a.login || '').toLowerCase() === context.repo.owner.toLowerCase());
+            if (assignedToOwner) {
+              core.info('Owner is assigned; skipping tag automation.');
+              return;
+            }
+
+            const versionSection = body.match(/###\s*OrcaSlicer Version\s+([\s\S]*?)(?=###|$)/i);
+            const versionText = (versionSection ? versionSection[1] : '').trim();
+            const hasShortShaOnly = /^[0-9a-f]{7}$/i.test(versionText);
+            const hasVersion = hasShortShaOnly;
+
+            const needsVersionLabel = { name: 'needs-version', color: 'd73a4a', description: 'Missing OrcaSlicer Build SHA7 (short hash)' };
+
+            const featureAreas = [
+              { match: /ui\/ux/i, label: 'feature: ui/ux', color: 'c2e0c6', description: 'Feature area: UI/UX' },
+              { match: /slicing|print quality/i, label: 'feature: slicing', color: 'c2e0c6', description: 'Feature area: Slicing/Print Quality' },
+              { match: /printer profiles/i, label: 'feature: printer profiles', color: 'c2e0c6', description: 'Feature area: Printer Profiles' },
+              { match: /filament profiles/i, label: 'feature: filament profiles', color: 'c2e0c6', description: 'Feature area: Filament Profiles' },
+              { match: /g-code|gcode/i, label: 'feature: g-code', color: 'c2e0c6', description: 'Feature area: G-code' },
+              { match: /multi-material|ams/i, label: 'feature: multi-material/ams', color: 'c2e0c6', description: 'Feature area: Multi-material/AMS' },
+              { match: /network|connectivity/i, label: 'feature: network/connectivity', color: 'c2e0c6', description: 'Feature area: Network/Connectivity' },
+              { match: /performance/i, label: 'feature: performance', color: 'c2e0c6', description: 'Feature area: Performance' },
+              { match: /other/i, label: 'feature: other', color: 'c2e0c6', description: 'Feature area: Other' },
+            ];
+
+            async function ensureLabel(name, color, description) {
+              try {
+                await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name });
+              } catch (error) {
+                if (error.status === 404) {
+                  await github.rest.issues.createLabel({ owner: context.repo.owner, repo: context.repo.repo, name, color, description });
+                } else {
+                  throw error;
+                }
+              }
+            }
+
+            async function addLabelIfMissing(labelName) {
+              const hasLabel = labels.some(l => (l.name || '').toLowerCase() === labelName.toLowerCase());
+              if (!hasLabel) {
+                await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, labels: [labelName] });
+              }
+            }
+
+            async function removeLabelIfPresent(labelName) {
+              const toRemove = labels.filter(l => (l.name || '').toLowerCase() === labelName.toLowerCase());
+              if (toRemove.length) {
+                try {
+                  await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, name: labelName });
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                }
+              }
+            }
+
+            async function ensureSingleComment() {
+              const warningText = 'please paste ONLY the short Build SHA7 from Help > About in the format `abc1234` (exactly 7 hex chars, no other text).';
+              const comments = await github.paginate(github.rest.issues.listComments, { owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, per_page: 50 });
+              const alreadyWarned = comments.some(c => c.user && c.user.login === 'github-actions[bot]' && c.body && c.body.includes('Build SHA7'));
+              if (!alreadyWarned) {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, body: `Hi @${issue.user.login}, ${warningText}\n\nPlease edit the issue to include it; once updated, the \`${needsVersionLabel.name}\` label will be removed automatically.` });
+              }
+            }
+
+            async function warnAndCloseForTemplate() {
+              if (assignedToOwner) {
+                core.info('Owner assigned; skipping template closure.');
+                return;
+              }
+              const warningText = 'Please use one of the provided issue templates (Bug Report or Feature Request). This issue will be closed; feel free to open a new one using a template.';
+              const comments = await github.paginate(github.rest.issues.listComments, { owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, per_page: 50 });
+              const alreadyWarned = comments.some(c => c.user && c.user.login === 'github-actions[bot]' && c.body && c.body.includes('use one of the provided issue templates'));
+              if (!alreadyWarned) {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, body: `Hi @${issue.user.login}, ${warningText}` });
+              }
+              await github.rest.issues.update({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, state: 'closed', state_reason: 'not_planned' });
+              core.info('Closed issue for missing template.');
+            }
+
+            const osSection = body.match(/###\s*Operating System\s+([\s\S]*?)(?=###|$)/i);
+            const osText = (osSection ? osSection[1] : '').trim().toLowerCase();
+            const osOptions = [
+              { match: /windows 10|windows 11/, label: 'os: windows', color: '0e8a16', description: 'Windows desktop' },
+              { match: /macos \(intel\)|macos \(apple silicon\)|macos/, label: 'os: macos', color: '5319e7', description: 'macOS' },
+              { match: /linux \(ubuntu\/debian\)/, label: 'os: linux ubuntu/debian', color: '1d76db', description: 'Linux Ubuntu/Debian' },
+              { match: /linux \(fedora\)/, label: 'os: linux fedora', color: '1d76db', description: 'Linux Fedora' },
+              { match: /linux \(arch\)/, label: 'os: linux arch', color: '1d76db', description: 'Linux Arch' },
+              { match: /linux \(flatpak\)/, label: 'os: linux flatpak', color: '1d76db', description: 'Linux Flatpak build' },
+              { match: /linux \(other\)|linux/, label: 'os: linux other', color: '1d76db', description: 'Linux (other)' },
+            ];
+
+            const matchedOs = osOptions.find(o => o.match.test(osText));
+
+            const existingOsLabels = labels.filter(l => (l.name || '').toLowerCase().startsWith('os:'));
+            async function syncOsLabels() {
+              if (!matchedOs) {
+                core.info('No OS match found; leaving OS labels unchanged.');
+                return;
+              }
+
+              await ensureLabel(matchedOs.label, matchedOs.color, matchedOs.description);
+              const hasTarget = existingOsLabels.some(l => (l.name || '').toLowerCase() === matchedOs.label.toLowerCase());
+              if (!hasTarget) {
+                await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, labels: [matchedOs.label] });
+              }
+
+              for (const lbl of existingOsLabels) {
+                if ((lbl.name || '').toLowerCase() !== matchedOs.label.toLowerCase()) {
+                  try {
+                    await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, name: lbl.name });
+                  } catch (error) {
+                    if (error.status !== 404) throw error;
+                  }
+                }
+              }
+            }
+
+            async function syncFeatureLabels() {
+              const areaSection = body.match(/###\s*Feature Area\s+([\s\S]*?)(?=###|$)/i);
+              const areaText = (areaSection ? areaSection[1] : '').trim();
+              if (!areaText) {
+                core.info('No feature area provided; leaving feature labels unchanged.');
+                return;
+              }
+
+              const matchedArea = featureAreas.find(a => a.match.test(areaText));
+              if (!matchedArea) {
+                core.info('No feature area match; leaving feature labels unchanged.');
+                return;
+              }
+
+              const existingFeatureLabels = labels.filter(l => (l.name || '').toLowerCase().startsWith('feature:'));
+              await ensureLabel(matchedArea.label, matchedArea.color, matchedArea.description);
+              const hasTarget = existingFeatureLabels.some(l => (l.name || '').toLowerCase() === matchedArea.label.toLowerCase());
+              if (!hasTarget) {
+                await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, labels: [matchedArea.label] });
+              }
+
+              for (const lbl of existingFeatureLabels) {
+                if ((lbl.name || '').toLowerCase() !== matchedArea.label.toLowerCase()) {
+                  try {
+                    await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, name: lbl.name });
+                  } catch (error) {
+                    if (error.status !== 404) throw error;
+                  }
+                }
+              }
+            }
+
+            if (!(isBug || isFeature)) {
+              await warnAndCloseForTemplate();
+              return;
+            }
+
+            if (isBug) {
+              if (!hasVersion) {
+                await ensureLabel(needsVersionLabel.name, needsVersionLabel.color, needsVersionLabel.description);
+                await addLabelIfMissing(needsVersionLabel.name);
+                await ensureSingleComment();
+                await syncOsLabels();
+                core.setFailed('Missing OrcaSlicer Build SHA7');
+              } else {
+                await removeLabelIfPresent(needsVersionLabel.name);
+                await syncOsLabels();
+                core.info('Build SHA7 detected.');
+              }
+              return;
+            }
+
+            if (isFeature) {
+              await syncFeatureLabels();
+              core.info('Feature labels synced.');
+              return;
+            }
