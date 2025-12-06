@@ -1,0 +1,185 @@
+name: PR Guard
+
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, ready_for_review]
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR template and labels
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            const labels = pr.labels || [];
+            const actor = (pr.user && pr.user.login) || '';
+            const isBotAuthor = (pr.user && pr.user.type === 'Bot') || actor.endsWith('[bot]');
+            const isRepoOwner = actor.toLowerCase() === context.repo.owner.toLowerCase();
+
+            if (isBotAuthor || isRepoOwner) {
+              core.info('Skipping PR guard for bots or repo owner.');
+              return;
+            }
+
+            const templateHeadings = ['Summary', 'Testing', 'Testing extra info', 'Contributor Checklist'];
+            const hasHeading = (name) => new RegExp(`##\\s*${name}\\b`, 'i').test(body);
+            const templateOk = templateHeadings.every(hasHeading);
+
+            const sectionText = (name) => {
+              const match = body.match(new RegExp(`##\\s*${name}\\s*\\n([\\s\\S]*?)(?=\\n##\\s|$)`, 'i'));
+              if (!match) return '';
+              return match[1].replace(/<!--[\s\S]*?-->/g, '').trim();
+            };
+
+            const testingSection = sectionText('Testing');
+            const checkedBox = (text, phrase) => new RegExp(`- \\[x\\]\\s+${phrase}\\b`, 'i').test(text);
+            const isNotTested = checkedBox(testingSection, 'Not tested');
+            const isManual = checkedBox(testingSection, 'Manual');
+            const isAutomated = checkedBox(testingSection, 'Automated');
+
+            const summaryFilled = sectionText('Summary').length > 0;
+            const testingFilled = testingSection.length > 0 && (isNotTested || isManual || isAutomated);
+            const testingInfoFilled = sectionText('Testing extra info').length > 0;
+            const checklistChecked = /- \[x\]/i.test(sectionText('Contributor Checklist'));
+
+            const needsTemplateLabel = { name: 'needs-template', color: 'd73a4a', description: 'PR is missing the required template sections' };
+            const prLabel = { name: 'pr', color: '0e8a16', description: 'Pull request' };
+            const draftLabel = { name: 'status: draft', color: 'c2e0c6', description: 'PR is a draft' };
+            const readyLabel = { name: 'status: ready', color: '5319e7', description: 'PR is ready for review' };
+            const testingLabels = [
+              { name: 'testing: not tested', color: 'd73a4a', description: 'PR not tested' },
+              { name: 'testing: manual', color: 'fbca04', description: 'PR manually tested' },
+              { name: 'testing: automated', color: '0e8a16', description: 'PR has automated tests' },
+            ];
+
+            async function ensureLabel(label) {
+              try {
+                await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name: label.name });
+              } catch (error) {
+                if (error.status === 404) {
+                  await github.rest.issues.createLabel({ owner: context.repo.owner, repo: context.repo.repo, name: label.name, color: label.color, description: label.description });
+                } else {
+                  throw error;
+                }
+              }
+            }
+
+            async function syncTestingLabels() {
+              // Sync labels from the Testing section selections.
+              const selected = [
+                isNotTested && 'testing: not tested',
+                isManual && 'testing: manual',
+                isAutomated && 'testing: automated',
+              ].filter(Boolean);
+
+              for (const lbl of testingLabels) {
+                await ensureLabel(lbl);
+              }
+
+              if (selected.length) {
+                await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, labels: selected });
+              }
+
+              const existingTesting = await github.paginate(github.rest.issues.listLabelsOnIssue, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                per_page: 100,
+              });
+
+              for (const lbl of existingTesting) {
+                if (!lbl.name || !lbl.name.toLowerCase().startsWith('testing:')) continue;
+                const keep = selected.some(s => s.toLowerCase() === lbl.name.toLowerCase());
+                if (!keep) {
+                  try {
+                    await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, name: lbl.name });
+                  } catch (error) {
+                    if (error.status !== 404) throw error;
+                  }
+                }
+              }
+            }
+
+            async function addLabelIfMissing(name) {
+              const hasLabel = labels.some(l => (l.name || '').toLowerCase() === name.toLowerCase());
+              if (!hasLabel) {
+                await github.rest.issues.addLabels({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, labels: [name] });
+              }
+            }
+
+            async function removeLabelIfPresent(name) {
+              const toRemove = labels.filter(l => (l.name || '').toLowerCase() === name.toLowerCase());
+              for (const lbl of toRemove) {
+                try {
+                  await github.rest.issues.removeLabel({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, name: lbl.name });
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                }
+              }
+            }
+
+            async function ensureSingleComment(bodyText) {
+              const comments = await github.paginate(github.rest.issues.listComments, { owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, per_page: 50 });
+              const already = comments.some(c => c.user && c.user.login === 'github-actions[bot]' && c.body && c.body.includes(bodyText.slice(0, 40)));
+              if (!already) {
+                await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, body: bodyText });
+              }
+            }
+
+            async function deleteTemplateWarnings() {
+              const comments = await github.paginate(github.rest.issues.listComments, { owner: context.repo.owner, repo: context.repo.repo, issue_number: pr.number, per_page: 100 });
+              for (const c of comments) {
+                const fromBot = c.user && c.user.login === 'github-actions[bot]';
+                if (fromBot && c.body && c.body.includes('Use the pull request template')) {
+                  try {
+                    await github.rest.issues.deleteComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: c.id });
+                  } catch (error) {
+                    if (error.status !== 404) throw error;
+                  }
+                }
+              }
+            }
+
+            // Ensure base labels exist.
+            for (const lbl of [needsTemplateLabel, prLabel, draftLabel, readyLabel, ...testingLabels]) {
+              await ensureLabel(lbl);
+            }
+
+            await addLabelIfMissing(prLabel.name);
+
+            if (pr.draft) {
+              await addLabelIfMissing(draftLabel.name);
+              await removeLabelIfPresent(readyLabel.name);
+            } else {
+              await addLabelIfMissing(readyLabel.name);
+              await removeLabelIfPresent(draftLabel.name);
+            }
+
+            await syncTestingLabels();
+
+            const missing = [];
+            if (!templateOk) missing.push('required headings');
+            if (!summaryFilled) missing.push('Summary content');
+            if (!testingFilled) missing.push('Testing content');
+            if (!testingInfoFilled) missing.push('Testing extra info content');
+            if (!checklistChecked) missing.push('Contributor Checklist (check the boxes)');
+
+            if (missing.length) {
+              const warning = `Hi @${pr.user.login}, please complete the PR template sections: ${missing.join(', ')}.`;
+              await addLabelIfMissing(needsTemplateLabel.name);
+              await ensureSingleComment(warning);
+              core.info('Pull request is missing required template content.');
+              return;
+            }
+
+            await removeLabelIfPresent(needsTemplateLabel.name);
+            await deleteTemplateWarnings();
+            core.info('Template verified.');
