@@ -65,8 +65,8 @@ body:
     id: version
     attributes:
       label: OrcaSlicer Version
-      description: What version of OrcaSlicer are you running? (Check Help > About)
-      placeholder: "e.g., 2.3.2-Nanashi+abc1234"
+      description: What version of OrcaSlicer are you running? (Check Help > About Orca Slicer)
+      placeholder: "e.g., 2.3.2-Nanashi+abc1234, Build abc1234"
     validations:
       required: true
 
