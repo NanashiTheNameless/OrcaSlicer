@@ -23,7 +23,7 @@ If you wish to disclose any vulnerabilities you have found privately you may use
 
 - Repro steps and expected vs actual behavior.
 - Affected OS and build SHA7 and install binary used.
-- Minimal files (3MF/G-code/config) with secrets removed.
+- Minimal files (3MF/G-code/config) with secrets removed (if present).
 
 ## Disclosure channel
 
