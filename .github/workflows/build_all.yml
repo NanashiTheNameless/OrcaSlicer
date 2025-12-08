@@ -91,6 +91,7 @@ jobs:
           sparse-checkout: |
             .github
             scripts
+            tests
       - name: Apt-Install Dependencies
         shell: bash
         run: |
