@@ -105,6 +105,13 @@ If you're running Klipper, it's recommended to add the following configuration t
 # Enable arcs support
 [gcode_arcs]
 resolution: 0.1
+
+# Fix BambuLab filament_colour_type breaking Klipper
+[gcode_macro FILAMENT_COLOUR_TYPE]
+description: Ignore slicer-generated filament_colour_type command
+gcode:
+  {% set _ = params|default({}) %}
+  # Do nothing, just swallow the command quietly
 ```
 
 OrcaSlicer was originally forked from Bambu Studio, it was previously known as BambuStudio-SoftFever.
