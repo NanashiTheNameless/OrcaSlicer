@@ -88,7 +88,7 @@ jobs:
             }
 
             async function ensureSingleComment() {
-              const warningText = 'please paste ONLY the short Build SHA7 from Help > About in the format `abc1234` (exactly 7 hex chars, no other text).';
+              const warningText = 'please paste ONLY the short Build SHA7 from Help > About Orca Slicer in the format `abc1234` (exactly 7 hex chars, no other text).';
               const comments = await github.paginate(github.rest.issues.listComments, { owner: context.repo.owner, repo: context.repo.repo, issue_number: issue.number, per_page: 50 });
               const alreadyWarned = comments.some(c => c.user && c.user.login === 'github-actions[bot]' && c.body && c.body.includes('Build SHA7'));
               if (!alreadyWarned) {
