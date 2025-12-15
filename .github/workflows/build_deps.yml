@@ -108,7 +108,7 @@ jobs:
 
       - name: Upload Windows artifacts
         if: inputs.os == 'windows-latest'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: OrcaSlicer_dep_win64_${{ env.date }}
           path: ${{ github.workspace }}/deps/build/OrcaSlicer_dep*.zip
@@ -117,7 +117,7 @@ jobs:
         if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
         env:
           ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: OrcaSlicer_dep_ubuntu_${{ env.ubuntu-ver }}_${{ env.date }}
           path: ${{ github.workspace }}/deps/build/OrcaSlicer_dep_ubuntu_*.tar.gz
