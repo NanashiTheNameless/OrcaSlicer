@@ -111,7 +111,7 @@ jobs:
           tar -xvf build_tests.tar
           scripts/run_unit_tests.sh
       - name: Upload Test Logs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: ${{ failure() }}
         with:
           name: unit-test-logs
@@ -189,7 +189,7 @@ jobs:
         upload-artifact: false
         repository-name: OrcaSlicer-NanashiTheNameless
     - name: Upload artifacts Flatpak
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: OrcaSlicer-Linux-flatpak_nightly_${{ matrix.variant.arch }}.flatpak
         path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak'
