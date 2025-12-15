@@ -99,7 +99,7 @@ jobs:
           sudo env "ORCA_UPDATER_SIG_KEY=$ORCA_UPDATER_SIG_KEY" ./build_linux.sh -ur
           sudo chown $USER -R ./
       - name: Restore Test Artifact
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ github.sha }}-tests
       - uses: lukka/get-cmake@latest
