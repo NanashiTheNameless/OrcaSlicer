@@ -6596,7 +6596,7 @@ msgstr "Toàn cục"
 msgid "Objects"
 msgstr "Đối tượng"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Nâng cao"
 
 msgid "Compare presets"
@@ -7850,7 +7850,7 @@ msgstr "Liên kết liên kết web với OrcaSlicer"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Chế độ phát triển"
 
 msgid "Skip AMS blacklist check"

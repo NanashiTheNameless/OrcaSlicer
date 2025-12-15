@@ -6672,7 +6672,7 @@ msgstr "Genel"
 msgid "Objects"
 msgstr "Nesneler"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Gelişmiş"
 
 msgid "Compare presets"
@@ -7954,7 +7954,7 @@ msgstr "Web bağlantılarını OrcaSlicer ile ilişkilendirin"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Geliştirici Modu"
 
 msgid "Skip AMS blacklist check"

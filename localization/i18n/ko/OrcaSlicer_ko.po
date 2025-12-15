@@ -6567,7 +6567,7 @@ msgstr "전역"
 msgid "Objects"
 msgstr "객체"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "전문가 모드"
 
 msgid "Compare presets"
@@ -7814,7 +7814,7 @@ msgstr "OrcaSlicer에 웹 링크 연결"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "개발자 모드"
 
 msgid "Skip AMS blacklist check"

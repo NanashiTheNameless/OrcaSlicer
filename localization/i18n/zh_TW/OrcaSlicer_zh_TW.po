@@ -6483,7 +6483,7 @@ msgstr "全域"
 msgid "Objects"
 msgstr "物件"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "進階"
 
 msgid "Compare presets"
@@ -7693,7 +7693,7 @@ msgstr "將網頁連結關聯到 OrcaSlicer"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "開發者模式"
 
 msgid "Skip AMS blacklist check"

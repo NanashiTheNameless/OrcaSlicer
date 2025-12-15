@@ -6469,7 +6469,7 @@ msgstr "全局"
 msgid "Objects"
 msgstr "对象"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "高级"
 
 msgid "Compare presets"
@@ -7678,7 +7678,7 @@ msgstr "将网页链接关联到OrcaSlicer"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "开发者模式"
 
 msgid "Skip AMS blacklist check"

@@ -6711,7 +6711,7 @@ msgstr "Bendras"
 msgid "Objects"
 msgstr "Objektai"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Detaliau"
 
 msgid "Compare presets"
@@ -7993,7 +7993,7 @@ msgstr "Susieti interneto nuorodas su Orca Slicer"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Kūrėjo režimas"
 
 msgid "Skip AMS blacklist check"

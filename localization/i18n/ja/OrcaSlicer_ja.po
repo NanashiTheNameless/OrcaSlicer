@@ -6433,7 +6433,7 @@ msgstr "全般"
 msgid "Objects"
 msgstr "OBJ"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "高度な設定"
 
 msgid "Compare presets"
@@ -7644,7 +7644,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "開発者モード"
 
 msgid "Skip AMS blacklist check"

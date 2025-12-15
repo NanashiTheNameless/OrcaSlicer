@@ -6683,7 +6683,7 @@ void PrintConfigDef::init_fff_params()
         def->enum_values   = it_opt->second.enum_values;
         def->min        = it_opt->second.min;
         def->max        = it_opt->second.max;
-        //BBS: shown specific filament retract config because we hide the machine retract into comDevelop mode
+        //BBS: shown specific filament retract config because we hide the machine retract into comDeveloper mode
         if (opt_key =="filament_retraction_length"||
             opt_key=="filament_z_hop" ||
             opt_key== "filament_long_retractions_when_cut" ||

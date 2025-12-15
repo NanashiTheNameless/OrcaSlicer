@@ -6611,7 +6611,7 @@ msgstr "Globální"
 msgid "Objects"
 msgstr "Objekty"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Pokročilé"
 
 msgid "Compare presets"
@@ -7857,7 +7857,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Režim vývojáře"
 
 msgid "Skip AMS blacklist check"

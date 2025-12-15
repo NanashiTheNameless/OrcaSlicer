@@ -6529,7 +6529,7 @@ msgstr "Globális"
 msgid "Objects"
 msgstr "Tárgyak"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Haladó"
 
 msgid "Compare presets"
@@ -7765,7 +7765,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Fejlesztői mód"
 
 msgid "Skip AMS blacklist check"

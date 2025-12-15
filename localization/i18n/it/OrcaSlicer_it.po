@@ -6726,7 +6726,7 @@ msgstr "Globale"
 msgid "Objects"
 msgstr "Oggetti"
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Avanzato"
 
 msgid "Compare presets"
@@ -8010,7 +8010,7 @@ msgstr "Associa i collegamenti web ad OrcaSlicer"
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Modalità sviluppatore"
 
 msgid "Skip AMS blacklist check"

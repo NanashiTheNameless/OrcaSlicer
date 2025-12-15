@@ -736,7 +736,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
     wxBoxSizer *m_sizer_checkbox  = new wxBoxSizer(wxHORIZONTAL);
 
     m_sizer_checkbox->AddSpacer(FromDIP(DESIGN_LEFT_MARGIN));
-    
+
     auto tip = tooltip.IsEmpty() ? title : tooltip; // auto fill tooltips with title if its empty
 
     auto checkbox_title = new wxStaticText(m_parent, wxID_ANY, title, wxDefaultPosition, DESIGN_TITLE_SIZE, wxST_NO_AUTORESIZE);
@@ -842,7 +842,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
         if (param == "enable_high_low_temp_mixed_printing") {
             if (checkbox->GetValue()) {
                 const wxString warning_title = _L("Bed Temperature Difference Warning");
-                const wxString warning_message = 
+                const wxString warning_message =
                     _L("Using filaments with significantly different temperatures may cause:\n"
                         "• Extruder clogging\n"
                         "• Nozzle damage\n"
@@ -882,7 +882,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
     //// for debug mode
     if (param == "developer_mode") { m_developer_mode_ckeckbox = checkbox; }
     if (param == "internal_developer_mode") { m_internal_developer_mode_ckeckbox = checkbox; }
-    if (param == "legacy_networking") { 
+    if (param == "legacy_networking") {
         m_legacy_networking_ckeckbox = checkbox;
         bool pbool = app_config->get_bool("installed_networking");
         checkbox->Enable(pbool);
@@ -900,7 +900,7 @@ wxBoxSizer* PreferencesDialog::create_item_button(wxString title, wxString title
     m_staticTextPath->SetForegroundColour(DESIGN_GRAY900_COLOR);
     m_staticTextPath->SetFont(::Label::Body_14);
     m_staticTextPath->Wrap(DESIGN_TITLE_SIZE.x);
-    
+
     m_staticTextPath->SetToolTip(tooltip.IsEmpty() ? tooltip2 : tooltip); // use button tooltip if label tooltip empty
 
     auto m_button_download = new Button(m_parent, title2);
@@ -1143,7 +1143,7 @@ void PreferencesDialog::create_items()
     auto v_gap = FromDIP(4);
 
     //////////////////////////
-    //// GENERAL TAB 
+    //// GENERAL TAB
     /////////////////////////////////////
     m_pref_tabs->AppendItem(_L("General"));
     f_sizers.push_back(new wxFlexGridSizer(1, 1, v_gap, 0));
@@ -1213,7 +1213,7 @@ void PreferencesDialog::create_items()
     g_sizer->Add(item_step_dialog);
 
     auto item_backup           = create_item_backup(_L("Auto backup"), _L("Backup your project periodically for restoring from the occasional crash."));
-    g_sizer->Add(item_backup); 
+    g_sizer->Add(item_backup);
 
     //// GENERAL > Preset
     g_sizer->Add(create_item_title(_L("Preset")), 1, wxEXPAND);
@@ -1239,7 +1239,7 @@ void PreferencesDialog::create_items()
     sizer_page->Add(g_sizer, 0, wxEXPAND);
 
     //////////////////////////
-    //// CONTROL TAB 
+    //// CONTROL TAB
     /////////////////////////////////////
     m_pref_tabs->AppendItem(_L("Control"));
     f_sizers.push_back(new wxFlexGridSizer(1, 1, v_gap, 0));
@@ -1256,7 +1256,7 @@ void PreferencesDialog::create_items()
 
     auto item_auto_arrange     = create_item_checkbox(_L("Auto arrange plate after cloning"), "", "auto_arrange");
     g_sizer->Add(item_auto_arrange);
- 
+
     //// CONTROL > Camera
     g_sizer->Add(create_item_title(_L("Camera")), 1, wxEXPAND);
 
@@ -1301,7 +1301,7 @@ void PreferencesDialog::create_items()
     sizer_page->Add(g_sizer, 0, wxEXPAND);
 
     //////////////////////////
-    //// ONLINE TAB 
+    //// ONLINE TAB
     /////////////////////////////////////
     m_pref_tabs->AppendItem(_L("Online"));
     f_sizers.push_back(new wxFlexGridSizer(1, 1, v_gap, 0));
@@ -1313,7 +1313,7 @@ void PreferencesDialog::create_items()
 
     auto item_region           = create_item_region_combobox(_L("Login region"), "");
     g_sizer->Add(item_region);
- 
+
     auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This stops the transmission of data to Bambu's cloud services. Users who don't use BBL machines or use LAN mode only can safely turn on this function."), "stealth_mode");
     g_sizer->Add(item_stealth_mode);
 
@@ -1340,7 +1340,7 @@ void PreferencesDialog::create_items()
 
     auto item_enable_plugin    = create_item_checkbox(_L("Enable network plugin"), "", "installed_networking");
     g_sizer->Add(item_enable_plugin);
-    
+
     auto item_legacy_network   = create_item_checkbox(_L("Use legacy network plugin"), _L("Disable to use latest network plugin that supports new BambuLab firmwares."), "legacy_networking", _L("(Requires restart)"));
     g_sizer->Add(item_legacy_network);
 
@@ -1348,7 +1348,7 @@ void PreferencesDialog::create_items()
     sizer_page->Add(g_sizer, 0, wxEXPAND);
 
     //////////////////////////
-    //// ASSOCIATE TAB 
+    //// ASSOCIATE TAB
     /////////////////////////////////////
 #ifdef _WIN32
     m_pref_tabs->AppendItem(_L("Associate"));
@@ -1395,7 +1395,7 @@ void PreferencesDialog::create_items()
     //// DEVELOPER > Settings
     g_sizer->Add(create_item_title(_L("Settings")), 1, wxEXPAND);
 
-    auto item_develop_mode     = create_item_checkbox(_L("Develop mode"), "", "developer_mode");
+    auto item_develop_mode     = create_item_checkbox(_L("Developer mode"), "", "developer_mode");
     g_sizer->Add(item_develop_mode);
 
     auto item_ams_blacklist    = create_item_checkbox(_L("Skip AMS blacklist check"), "", "skip_ams_blacklist_check");

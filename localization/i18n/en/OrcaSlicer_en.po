@@ -6399,7 +6399,7 @@ msgstr ""
 msgid "Objects"
 msgstr ""
 
-msgid "Advance"
+msgid "Advanced"
 msgstr "Advanced"
 
 msgid "Compare presets"
@@ -7603,7 +7603,7 @@ msgstr ""
 msgid "Developer"
 msgstr ""
 
-msgid "Develop mode"
+msgid "Developer mode"
 msgstr "Developer mode"
 
 msgid "Skip AMS blacklist check"
