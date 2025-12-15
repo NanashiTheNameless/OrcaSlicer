@@ -6772,9 +6772,6 @@ msgstr "Общие"
 msgid "Objects"
 msgstr "Модели"
 
-msgid "Advanced"
-msgstr "Расширенный"
-
 msgid "Compare presets"
 msgstr "Сравнение профилей"
 

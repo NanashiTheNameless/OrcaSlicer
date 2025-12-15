@@ -6864,9 +6864,6 @@ msgstr "Global"
 msgid "Objects"
 msgstr "Objetos"
 
-msgid "Advanced"
-msgstr "Avançado"
-
 msgid "Compare presets"
 msgstr "Comparar predefinições"
 

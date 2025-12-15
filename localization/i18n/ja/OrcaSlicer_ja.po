@@ -6433,9 +6433,6 @@ msgstr "全般"
 msgid "Objects"
 msgstr "OBJ"
 
-msgid "Advanced"
-msgstr "高度な設定"
-
 msgid "Compare presets"
 msgstr "プリセットを比較"
 

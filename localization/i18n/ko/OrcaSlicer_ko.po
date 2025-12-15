@@ -6567,9 +6567,6 @@ msgstr "전역"
 msgid "Objects"
 msgstr "객체"
 
-msgid "Advanced"
-msgstr "전문가 모드"
-
 msgid "Compare presets"
 msgstr "사전 설정 비교"
 

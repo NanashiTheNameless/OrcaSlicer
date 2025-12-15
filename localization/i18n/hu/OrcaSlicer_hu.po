@@ -6529,9 +6529,6 @@ msgstr "Globális"
 msgid "Objects"
 msgstr "Tárgyak"
 
-msgid "Advanced"
-msgstr "Haladó"
-
 msgid "Compare presets"
 msgstr "Beállítások összehasonlítása"
 

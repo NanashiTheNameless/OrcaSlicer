@@ -6727,9 +6727,6 @@ msgstr "Global"
 msgid "Objects"
 msgstr "Objetos"
 
-msgid "Advanced"
-msgstr "Avanzado"
-
 msgid "Compare presets"
 msgstr "Comparar perfiles"
 

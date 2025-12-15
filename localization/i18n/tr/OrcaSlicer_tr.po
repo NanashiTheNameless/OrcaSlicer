@@ -6672,9 +6672,6 @@ msgstr "Genel"
 msgid "Objects"
 msgstr "Nesneler"
 
-msgid "Advanced"
-msgstr "Gelişmiş"
-
 msgid "Compare presets"
 msgstr "Ön ayarları karşılaştır"
 

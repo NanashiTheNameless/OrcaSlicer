@@ -6582,9 +6582,6 @@ msgstr "Globale"
 msgid "Objects"
 msgstr "Objecten"
 
-msgid "Advanced"
-msgstr "Geavanceerd"
-
 msgid "Compare presets"
 msgstr "Instellingen vergelijken"
 

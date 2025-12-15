@@ -6399,9 +6399,6 @@ msgstr ""
 msgid "Objects"
 msgstr ""
 
-msgid "Advanced"
-msgstr "Advanced"
-
 msgid "Compare presets"
 msgstr ""
 

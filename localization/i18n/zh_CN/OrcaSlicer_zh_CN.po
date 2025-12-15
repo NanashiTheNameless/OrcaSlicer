@@ -6469,9 +6469,6 @@ msgstr "全局"
 msgid "Objects"
 msgstr "对象"
 
-msgid "Advanced"
-msgstr "高级"
-
 msgid "Compare presets"
 msgstr "比较预设"
 

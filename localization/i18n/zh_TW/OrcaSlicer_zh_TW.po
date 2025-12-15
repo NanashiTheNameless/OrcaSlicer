@@ -6483,9 +6483,6 @@ msgstr "全域"
 msgid "Objects"
 msgstr "物件"
 
-msgid "Advanced"
-msgstr "進階"
-
 msgid "Compare presets"
 msgstr "比較設定"
 

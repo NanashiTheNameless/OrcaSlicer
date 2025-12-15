@@ -6742,9 +6742,6 @@ msgstr "Global"
 msgid "Objects"
 msgstr "Objets"
 
-msgid "Advanced"
-msgstr "Avancé"
-
 msgid "Compare presets"
 msgstr "Comparer les Préréglages"
 

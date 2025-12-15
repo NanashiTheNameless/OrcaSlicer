@@ -6596,9 +6596,6 @@ msgstr "Toàn cục"
 msgid "Objects"
 msgstr "Đối tượng"
 
-msgid "Advanced"
-msgstr "Nâng cao"
-
 msgid "Compare presets"
 msgstr "So sánh preset"
 

@@ -6946,9 +6946,6 @@ msgstr "Allgemein"
 msgid "Objects"
 msgstr "Objekte"
 
-msgid "Advanced"
-msgstr "Erweitert"
-
 msgid "Compare presets"
 msgstr "Profile vergleichen"
 

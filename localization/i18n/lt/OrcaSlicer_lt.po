@@ -6711,9 +6711,6 @@ msgstr "Bendras"
 msgid "Objects"
 msgstr "Objektai"
 
-msgid "Advanced"
-msgstr "Detaliau"
-
 msgid "Compare presets"
 msgstr "Palyginti išankstinius nustatymus"
 

@@ -6611,9 +6611,6 @@ msgstr "Globální"
 msgid "Objects"
 msgstr "Objekty"
 
-msgid "Advanced"
-msgstr "Pokročilé"
-
 msgid "Compare presets"
 msgstr "Porovnání přednastavení"
 
