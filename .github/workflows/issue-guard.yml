@@ -38,7 +38,7 @@ jobs:
               return;
             }
 
-            const versionSection = body.match(/###\s*OrcaSlicer Version\s+([\s\S]*?)(?=###|$)/i);
+            const versionSection = body.match(/###\s*OrcaSlicer Build Number\s+([\s\S]*?)(?=###|$)/i);
             const versionText = (versionSection ? versionSection[1] : '').trim();
             const hasShortShaOnly = /^[0-9a-f]{7}$/i.test(versionText);
             const hasVersion = hasShortShaOnly;
