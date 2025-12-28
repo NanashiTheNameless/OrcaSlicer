@@ -77,7 +77,7 @@ Download the **Windows Installer exe** for your preferred version from the [rele
       ```
 
     - Option 3:
-        - Step 1: open the app, a warning window will pop up
+        - Step 1: open the app, a warning window will pop up\
             ![mac_cant_open](./SoftFever_doc/mac_cant_open.png)
         - Step 2: in `System Settings` -> `Privacy & Security`, click `Open Anyway`:
             ![mac_security_setting](./SoftFever_doc/mac_security_setting.png)
