@@ -953,11 +953,6 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
     //// for debug mode
     if (param == "developer_mode") { m_developer_mode_ckeckbox = checkbox; }
     if (param == "internal_developer_mode") { m_internal_developer_mode_ckeckbox = checkbox; }
-    if (param == "legacy_networking") {
-        m_legacy_networking_ckeckbox = checkbox;
-        bool pbool = app_config->get_bool("installed_networking");
-        checkbox->Enable(pbool);
-    }
 
     return m_sizer_checkbox;
 }
