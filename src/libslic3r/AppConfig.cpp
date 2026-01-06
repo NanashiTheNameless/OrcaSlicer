@@ -160,7 +160,7 @@ void AppConfig::set_defaults()
 #endif
 
         if (get("single_instance").empty())
-            set_bool("single_instance", false);
+            set_bool("single_instance", true);
 
 #ifdef SUPPORT_REMEMBER_OUTPUT_PATH
         if (get("remember_output_path").empty())
@@ -239,7 +239,7 @@ void AppConfig::set_defaults()
 
     if (get("show_outline").empty())
         set_bool("show_outline", false);
-    
+
     if (get("show_axes").empty())
         set_bool("show_axes", true);
 
