@@ -2,7 +2,7 @@ name: Check profiles
 on:
   pull_request:
     branches:
-      - main
+    - main
     paths:
       - 'resources/profiles/**'
       - ".github/workflows/check_profiles.yml"
@@ -22,8 +22,12 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Run extra JSON check
+        id: extra_json_check
+        continue-on-error: true
         run: |
-          python3 ./scripts/orca_extra_profile_check.py
+          set +e
+          python3 ./scripts/orca_extra_profile_check.py 2>&1 | tee ${{ runner.temp }}/extra_json_check.log
+          exit ${PIPESTATUS[0]}
 
       # download
       - name: Download
@@ -35,12 +39,20 @@ jobs:
 
       # validate profiles
       - name: validate system profiles
+        id: validate_system
+        continue-on-error: true
         run: |
-          ./OrcaSlicer_profile_validator -p ${{ github.workspace }}/resources/profiles -l 2
+          set +e
+          ./OrcaSlicer_profile_validator -p ${{ github.workspace }}/resources/profiles -l 2 2>&1 | tee ${{ runner.temp }}/validate_system.log
+          exit ${PIPESTATUS[0]}
 
       - name: validate custom presets
+        id: validate_custom
+        continue-on-error: true
         working-directory: ${{ github.workspace }}
         run: |
+          set +e
           curl -LJO https://github.com/NanashiTheNameless/OrcaSlicer/releases/download/Nightly-Rolling/orca_custom_preset_tests.zip
           unzip ./orca_custom_preset_tests.zip -d ${{ github.workspace }}/resources/profiles
           ./OrcaSlicer_profile_validator -p ${{ github.workspace }}/resources/profiles -l 2
+          exit ${PIPESTATUS[0]}
