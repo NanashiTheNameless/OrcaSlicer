@@ -1,6 +1,4 @@
 name: Check profiles
-permissions:
-  contents: read
 on:
   pull_request:
     branches:
@@ -18,7 +16,6 @@ on:
 permissions:
   pull-requests: write
   contents: read
-
 
 jobs:
   check_translation:
