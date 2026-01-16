@@ -176,7 +176,8 @@ static t_config_enum_values s_keys_map_FuzzySkinType {
     { "none",           int(FuzzySkinType::None) },
     { "external",       int(FuzzySkinType::External) },
     { "all",            int(FuzzySkinType::All) },
-    { "allwalls",       int(FuzzySkinType::AllWalls)}
+    { "allwalls",       int(FuzzySkinType::AllWalls)},
+    { "disabled_fuzzy", int(FuzzySkinType::Disabled_fuzzy)}
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(FuzzySkinType)
 
@@ -3290,12 +3291,14 @@ void PrintConfigDef::init_fff_params()
     def->enum_values.push_back("external");
     def->enum_values.push_back("all");
     def->enum_values.push_back("allwalls");
-    def->enum_labels.push_back(L("None"));
+    def->enum_values.push_back("disabled_fuzzy");
+    def->enum_labels.push_back(L("None (allow paint)"));
     def->enum_labels.push_back(L("Contour"));
     def->enum_labels.push_back(L("Contour and hole"));
     def->enum_labels.push_back(L("All walls"));
+    def->enum_labels.push_back(L("Disabled"));
     def->mode = comSimple;
-    def->set_default_value(new ConfigOptionEnum<FuzzySkinType>(FuzzySkinType::None));
+    def->set_default_value(new ConfigOptionEnum<FuzzySkinType>(FuzzySkinType::Disabled_fuzzy));
 
     def = this->add("fuzzy_skin_thickness", coFloat);
     def->label = L("Fuzzy skin thickness");
@@ -9790,12 +9793,6 @@ CLIActionsConfigDef::CLIActionsConfigDef()
     def->tooltip = L("Update the config values of 3MF to latest.");
     def->cli = "uptodate";
     def->set_default_value(new ConfigOptionBool(false));
-
-    def = this->add("downward_check", coStrings);
-    def->label = L("downward machines check");
-    def->tooltip = L("check whether current machine downward compatible with the machines in the list.");
-    def->cli_params = "\"machine1.json;machine2.json;...\"";
-    def->set_default_value(new ConfigOptionStrings());
 
     def = this->add("load_defaultfila", coBool);
     def->label = L("Load default filaments");
