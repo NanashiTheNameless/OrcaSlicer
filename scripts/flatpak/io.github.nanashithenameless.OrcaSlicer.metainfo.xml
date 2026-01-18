@@ -5,7 +5,7 @@
 	<provides>
 		<id>io.github.nanashithenameless.OrcaSlicer.desktop</id>
 	</provides>
-	<name>OrcaSlicer (UNOFFICIAL)</name>
+	<name>OrcaSlicer</name>
 	<summary>(UNOFFICIAL) Get even more perfect prints!</summary>
 	<developer_name>NanashiTheNameless (Upstream: SoftFever)</developer_name>
 	<url type="bugtracker">https://github.com/NanashiTheNameless/issues</url>
