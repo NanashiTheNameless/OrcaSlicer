@@ -551,7 +551,8 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
             }
 
 			if (perimeter_generator.layer_id != perimeter_generator.number_of_layers - 2 &&
-			perimeter_generator.number_of_layers >= 4) // i.e. last layer
+			    perimeter_generator.layer_id != perimeter_generator.number_of_layers - 1 &&
+			    perimeter_generator.number_of_layers >= 4) // i.e. not second-to-last or last layer
             {
                 cur_path.z_offset = 0.5;
                 was_staggered     = true;
