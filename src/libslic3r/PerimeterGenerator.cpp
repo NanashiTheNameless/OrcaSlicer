@@ -588,7 +588,10 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
                     for (size_t path_idx = 0; path_idx < extrusion_loop.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = extrusion_loop.paths[path_idx];
-                        check_and_stagger_path(cur_path);
+                        // Don't stagger overhang perimeters - they need special extrusion properties
+                        if (cur_path.role() != erOverhangPerimeter) {
+                            check_and_stagger_path(cur_path);
+                        }
                     }
                 }
                 extrusion_coll.append(std::move(extrusion_loop));
@@ -618,7 +621,10 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
                     for (size_t path_idx = 0; path_idx < multi_path.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = multi_path.paths[path_idx];
-                        check_and_stagger_path(cur_path);
+                        // Don't stagger overhang perimeters - they need special extrusion properties
+                        if (cur_path.role() != erOverhangPerimeter) {
+                            check_and_stagger_path(cur_path);
+                        }
                     }
                 }
 
