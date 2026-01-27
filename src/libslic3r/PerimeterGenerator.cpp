@@ -585,7 +585,19 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
 
 				//This is for staggered layers.
 				//All odd perimeters are staggerd up by half the layer height
-                if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
+                // Also stagger if any path is an overhang perimeter (they can be on even-indexed perimeters)
+                bool should_stagger = extrusion->inset_idx % 2 == 1;
+                if (!should_stagger && perimeter_generator.config->staggered_perimeters) {
+                    // Check if any path is an overhang perimeter - these should be staggered regardless of inset_idx
+                    for (const ExtrusionPath& path : extrusion_loop.paths) {
+                        if (path.role() == erOverhangPerimeter) {
+                            should_stagger = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (should_stagger && perimeter_generator.config->staggered_perimeters) {
                     for (size_t path_idx = 0; path_idx < extrusion_loop.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = extrusion_loop.paths[path_idx];
                         check_and_stagger_path(cur_path);
@@ -615,7 +627,19 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
 
 				//This is for staggered layers.
 				//All odd perimeters are staggerd up by half the layer height
-                if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
+                // Also stagger if any path is an overhang perimeter (they can be on even-indexed perimeters)
+                bool should_stagger = extrusion->inset_idx % 2 == 1;
+                if (!should_stagger && perimeter_generator.config->staggered_perimeters) {
+                    // Check if any path is an overhang perimeter - these should be staggered regardless of inset_idx
+                    for (const ExtrusionPath& path : multi_path.paths) {
+                        if (path.role() == erOverhangPerimeter) {
+                            should_stagger = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (should_stagger && perimeter_generator.config->staggered_perimeters) {
                     for (size_t path_idx = 0; path_idx < multi_path.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = multi_path.paths[path_idx];
                         check_and_stagger_path(cur_path);
