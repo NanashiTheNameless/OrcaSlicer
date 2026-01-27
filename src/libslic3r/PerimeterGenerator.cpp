@@ -584,23 +584,25 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 assert(extrusion_loop.paths.front().first_point() == extrusion_loop.paths.back().last_point());
 
 				//This is for staggered layers.
-				//All odd perimeters are staggerd up by half the layer height
+				//All odd perimeters are staggered up by half the layer height
                 // Also stagger if any path is an overhang perimeter (they can be on even-indexed perimeters)
-                bool should_stagger = extrusion->inset_idx % 2 == 1;
-                if (!should_stagger && perimeter_generator.config->staggered_perimeters) {
-                    // Check if any path is an overhang perimeter - these should be staggered regardless of inset_idx
-                    for (const ExtrusionPath& path : extrusion_loop.paths) {
-                        if (path.role() == erOverhangPerimeter) {
-                            should_stagger = true;
-                            break;
+                if (perimeter_generator.config->staggered_perimeters) {
+                    bool should_stagger = extrusion->inset_idx % 2 == 1;
+                    if (!should_stagger) {
+                        // Check if any path is an overhang perimeter - these should be staggered regardless of inset_idx
+                        for (const ExtrusionPath& path : extrusion_loop.paths) {
+                            if (path.role() == erOverhangPerimeter) {
+                                should_stagger = true;
+                                break;
+                            }
                         }
                     }
-                }
-                
-                if (should_stagger && perimeter_generator.config->staggered_perimeters) {
-                    for (size_t path_idx = 0; path_idx < extrusion_loop.paths.size(); path_idx++) {
-                        ExtrusionPath& cur_path = extrusion_loop.paths[path_idx];
-                        check_and_stagger_path(cur_path);
+                    
+                    if (should_stagger) {
+                        for (size_t path_idx = 0; path_idx < extrusion_loop.paths.size(); path_idx++) {
+                            ExtrusionPath& cur_path = extrusion_loop.paths[path_idx];
+                            check_and_stagger_path(cur_path);
+                        }
                     }
                 }
                 extrusion_coll.append(std::move(extrusion_loop));
@@ -626,23 +628,25 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 }
 
 				//This is for staggered layers.
-				//All odd perimeters are staggerd up by half the layer height
+				//All odd perimeters are staggered up by half the layer height
                 // Also stagger if any path is an overhang perimeter (they can be on even-indexed perimeters)
-                bool should_stagger = extrusion->inset_idx % 2 == 1;
-                if (!should_stagger && perimeter_generator.config->staggered_perimeters) {
-                    // Check if any path is an overhang perimeter - these should be staggered regardless of inset_idx
-                    for (const ExtrusionPath& path : multi_path.paths) {
-                        if (path.role() == erOverhangPerimeter) {
-                            should_stagger = true;
-                            break;
+                if (perimeter_generator.config->staggered_perimeters) {
+                    bool should_stagger = extrusion->inset_idx % 2 == 1;
+                    if (!should_stagger) {
+                        // Check if any path is an overhang perimeter - these should be staggered regardless of inset_idx
+                        for (const ExtrusionPath& path : multi_path.paths) {
+                            if (path.role() == erOverhangPerimeter) {
+                                should_stagger = true;
+                                break;
+                            }
                         }
                     }
-                }
-                
-                if (should_stagger && perimeter_generator.config->staggered_perimeters) {
-                    for (size_t path_idx = 0; path_idx < multi_path.paths.size(); path_idx++) {
-                        ExtrusionPath& cur_path = multi_path.paths[path_idx];
-                        check_and_stagger_path(cur_path);
+                    
+                    if (should_stagger) {
+                        for (size_t path_idx = 0; path_idx < multi_path.paths.size(); path_idx++) {
+                            ExtrusionPath& cur_path = multi_path.paths[path_idx];
+                            check_and_stagger_path(cur_path);
+                        }
                     }
                 }
 
