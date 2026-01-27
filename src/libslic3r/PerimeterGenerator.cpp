@@ -544,7 +544,7 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 cur_path.extrusion_multiplier = 1.5;
                 was_staggered                 = true;
             } else if (perimeter_generator.layer_id == perimeter_generator.number_of_layers - 2 &&
-                       perimeter_generator.number_of_layers >= 4) // i.e. last layer before the last one (transition layer)
+                       perimeter_generator.number_of_layers >= 4) // Transition layer for staggered perimeters: half material AND half-height
             {
                 cur_path.extrusion_multiplier = 0.5;
                 cur_path.z_offset = 0.5;  // Make this an actual half-height layer
@@ -552,7 +552,7 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
             }
 
             if (perimeter_generator.layer_id != perimeter_generator.number_of_layers - 2 &&
-                perimeter_generator.number_of_layers >= 4) // i.e. all layers except second-to-last
+                perimeter_generator.number_of_layers >= 4) // Apply brick pattern offset to all other layers
             {
                 cur_path.z_offset = 0.5;
                 was_staggered     = true;
