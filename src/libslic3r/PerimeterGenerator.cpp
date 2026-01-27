@@ -544,9 +544,10 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 cur_path.extrusion_multiplier = 1.5;
                 was_staggered                 = true;
             } else if (perimeter_generator.layer_id == perimeter_generator.number_of_layers - 2 &&
-                       perimeter_generator.number_of_layers >= 4) // i.e. last layer before the last one
+                       perimeter_generator.number_of_layers >= 4) // i.e. last layer before the last one (transition layer)
             {
                 cur_path.extrusion_multiplier = 0.5;
+                cur_path.z_offset = 0.5;  // Make this an actual half-height layer
                 was_staggered                 = true;
             }
 
