@@ -558,8 +558,8 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 was_staggered     = true;
             }
 
-			return was_staggered;
-		};
+            return was_staggered;
+        };
 
         // Append paths to collection.
         if (!paths.empty()) {
