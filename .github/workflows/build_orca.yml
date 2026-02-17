@@ -36,7 +36,7 @@ jobs:
         with:
           path: ${{ inputs.cache-path }}
           key: ${{ inputs.cache-key }}
-          fail-on-cache-miss: true
+          fail-on-cache-miss: ${{ inputs.os != 'macos-14' }}
 
       - uses: lukka/get-cmake@latest
         with:
