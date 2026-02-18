@@ -4025,6 +4025,52 @@ void PrintConfigDef::init_fff_params()
     def->mode     = comDevelop;
     def->set_default_value(new ConfigOptionBool(false));
 
+    // Z Anti-aliasing (Z-contouring) settings
+    def = this->add("zaa_enabled", coBool);
+    def->label = L("Enable Z anti-aliasing");
+    def->category = L("Quality");
+    def->tooltip = L("Enable Z-layer contouring (aka Z-layer anti-aliasing). "
+                     "This feature dynamically adjusts the Z height of extrusion points to better match "
+                     "the actual mesh surface, reducing stair-stepping artifacts on sloped surfaces.");
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(false));
+
+    def = this->add("zaa_min_z", coFloat);
+    def->label = L("Z anti-aliasing minimum height");
+    def->category = L("Quality");
+    def->tooltip = L("Minimum Z layer height adjustment for anti-aliasing. "
+                     "Also controls the slicing plane offset.");
+    def->sidetext = L("mm");
+    def->min = 0;
+    def->max = 1.0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(0.05));
+
+    def = this->add("zaa_region_disable", coBool);
+    def->label = L("Disable Z anti-aliasing for region");
+    def->category = L("Quality");
+    def->tooltip = L("Disable Z contouring for this specific region");
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(false));
+
+    def = this->add("zaa_minimize_perimeter_height", coFloat);
+    def->label = L("Minimize wall height angle");
+    def->category = L("Quality");
+    def->tooltip = L("Reduce top surface perimeter heights to match height of edge for perimeters "
+                     "less than this angle. Set 0 to disable.");
+    def->sidetext = u8"°";
+    def->min = 0;
+    def->max = 90;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(35));
+
+    def = this->add("zaa_dont_alternate_fill_direction", coBool);
+    def->label = L("Don't alternate fill direction");
+    def->category = L("Quality");
+    def->tooltip = L("When Z anti-aliasing is enabled, don't alternate the fill direction between layers");
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("ironing_type", coEnum);
     def->label = L("Ironing Type");
     def->category = L("Quality");

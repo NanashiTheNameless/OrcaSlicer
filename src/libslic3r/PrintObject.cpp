@@ -8,6 +8,7 @@
 #include "Layer.hpp"
 #include "MutablePolygon.hpp"
 #include "PrintConfig.hpp"
+#include "SLA/IndexedMesh.hpp"
 #include "Support/SupportMaterial.hpp"
 #include "Support/SupportSpotsGenerator.hpp"
 #include "Support/TreeSupport.hpp"
@@ -708,6 +709,59 @@ void PrintObject::ironing()
         this->set_done(posIroning);
     }
 }
+
+void PrintObject::apply_z_antialiasing()
+{
+    // Check if Z anti-aliasing is enabled
+    if (!m_config.zaa_enabled) {
+        return;
+    }
+    
+    BOOST_LOG_TRIVIAL(debug) << "Applying Z anti-aliasing - start";
+    
+    // Create IndexedMesh from the model mesh for ray-casting
+    // We need to use the first mesh from the model for simplicity
+    if (this->model_object()->volumes.empty()) {
+        BOOST_LOG_TRIVIAL(warning) << "No volumes in model object, skipping Z anti-aliasing";
+        return;
+    }
+    
+    // Get the mesh from the first printable volume
+    const ModelVolume *volume = nullptr;
+    for (const ModelVolume *v : this->model_object()->volumes) {
+        if (v->is_model_part()) {
+            volume = v;
+            break;
+        }
+    }
+    
+    if (!volume || !volume->mesh_ptr()) {
+        BOOST_LOG_TRIVIAL(warning) << "No valid mesh found, skipping Z anti-aliasing";
+        return;
+    }
+    
+    try {
+        // Create an IndexedMesh for efficient ray-casting
+        sla::IndexedMesh mesh(volume->mesh().its);
+        
+        // Apply Z-contouring to each layer
+        tbb::parallel_for(
+            tbb::blocked_range<size_t>(0, m_layers.size()),
+            [this, &mesh](const tbb::blocked_range<size_t>& range) {
+                for (size_t layer_idx = range.begin(); layer_idx < range.end(); ++ layer_idx) {
+                    m_print->throw_if_canceled();
+                    m_layers[layer_idx]->make_contour_z(mesh);
+                }
+            }
+        );
+        
+        m_print->throw_if_canceled();
+        BOOST_LOG_TRIVIAL(debug) << "Applying Z anti-aliasing - end";
+    } catch (const std::exception &ex) {
+        BOOST_LOG_TRIVIAL(error) << "Z anti-aliasing failed: " << ex.what();
+    }
+}
+
 
 // BBS
 void PrintObject::clear_overhangs_for_lift()

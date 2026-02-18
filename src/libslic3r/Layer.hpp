@@ -26,6 +26,10 @@ namespace FillLightning {
     class Generator;
 };
 
+namespace sla {
+    class IndexedMesh;
+};
+
 class LayerRegion
 {
 public:
@@ -191,6 +195,8 @@ public:
                                                                            FillAdaptive::Octree *support_fill_octree,
                                                                            FillLightning::Generator* lightning_generator) const;
     void 					make_ironing();
+    // Z Anti-aliasing: Apply Z-contouring to extrusion paths
+    void                    make_contour_z(const sla::IndexedMesh &mesh);
 
     void                    export_region_slices_to_svg(const char *path) const;
     void                    export_region_fill_surfaces_to_svg(const char *path) const;

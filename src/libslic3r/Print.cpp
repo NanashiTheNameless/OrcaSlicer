@@ -2175,6 +2175,7 @@ void Print::process(long long *time_cost_with_cache, bool use_cache)
         for (PrintObject *obj : m_objects) {
             if (need_slicing_objects.count(obj) != 0) {
                 obj->ironing();
+                obj->apply_z_antialiasing();
             }
             else {
                 if (obj->set_started(posIroning))
@@ -2229,6 +2230,7 @@ void Print::process(long long *time_cost_with_cache, bool use_cache)
                 obj->make_perimeters();
                 obj->infill();
                 obj->ironing();
+                obj->apply_z_antialiasing();
                 obj->generate_support_material();
                 obj->detect_overhangs_for_lift();
                 obj->estimate_curled_extrusions();

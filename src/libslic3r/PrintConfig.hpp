@@ -1038,6 +1038,10 @@ PRINT_CONFIG_CLASS_DEFINE(
 
     // Orca: internal use only
     ((ConfigOptionBool,  calib_flowrate_topinfill_special_order)) // ORCA: special flag for flow rate calibration
+    
+    // Z Anti-aliasing (Z-contouring) settings
+    ((ConfigOptionBool,  zaa_enabled))
+    ((ConfigOptionFloat, zaa_min_z))
 )
 
 // This object is mapped to Perl as Slic3r::Config::PrintRegion.
@@ -1204,6 +1208,11 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloatOrPercent,       scarf_joint_speed))
     ((ConfigOptionFloat,                scarf_joint_flow_ratio))
     ((ConfigOptionPercent,              scarf_overhang_threshold))
+    
+    // Z Anti-aliasing region-specific settings
+    ((ConfigOptionBool,                 zaa_region_disable))
+    ((ConfigOptionFloat,                zaa_minimize_perimeter_height))
+    ((ConfigOptionBool,                 zaa_dont_alternate_fill_direction))
 )
 
 PRINT_CONFIG_CLASS_DEFINE(

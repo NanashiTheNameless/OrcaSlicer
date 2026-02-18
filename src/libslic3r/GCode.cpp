@@ -6139,24 +6139,34 @@ std::string GCode::_extrude(const ExtrusionPath &path, std::string description, 
     };
 
     bool slope_need_z_travel = false;
+    bool z_contour_need_z_travel = false;
     if (sloped != nullptr && !sloped->is_flat()) {
         auto target_z = get_sloped_z(sloped->slope_begin.z_ratio);
         slope_need_z_travel = m_writer.will_move_z(target_z);
+    } else if (path.z_contoured && !path.polyline3.points.empty()) {
+        auto target_z = m_nominal_z + unscale_(path.polyline3.points.front().z());
+        z_contour_need_z_travel = m_writer.will_move_z(target_z);
     }
     // Move to first point of extrusion path
     // path is 2D. But in slope lift case, lift z is done in travel_to function.
     // Add m_need_change_layer_lift_z when change_layer in case of no lift if m_last_pos is equal to path.first_point() by chance
-    if (!m_last_pos_defined || m_last_pos != path.first_point() || m_need_change_layer_lift_z || slope_need_z_travel) {
+    if (!m_last_pos_defined || m_last_pos != path.first_point() || m_need_change_layer_lift_z || slope_need_z_travel || z_contour_need_z_travel) {
         const bool _last_pos_undefined = !m_last_pos_defined;
+        double travel_z = m_nominal_z + path.z_offset * path.height;
+        if (sloped != nullptr) {
+            travel_z = get_sloped_z(sloped->slope_begin.z_ratio);
+        } else if (path.z_contoured && !path.polyline3.points.empty()) {
+            travel_z = m_nominal_z + unscale_(path.polyline3.points.front().z());
+        }
         gcode += this->travel_to(
             path.first_point(),
             path.role(),
             "move to first " + description + " point",
-            sloped == nullptr ? m_nominal_z + path.z_offset * path.height : get_sloped_z(sloped->slope_begin.z_ratio)
+            travel_z
         );
         m_need_change_layer_lift_z = false;
         // Orca: ensure Z matches planned layer height
-        if (_last_pos_undefined && !slope_need_z_travel) {
+        if (_last_pos_undefined && !slope_need_z_travel && !z_contour_need_z_travel) {
             gcode += this->writer().travel_to_z(m_nominal_z, "ensure Z matches planned layer height", true);
         }
     }
@@ -6718,10 +6728,49 @@ std::string GCode::_extrude(const ExtrusionPath &path, std::string description, 
             }
             // BBS: use G1 if not enable arc fitting or has no arc fitting result or in spiral_mode mode or we are doing sloped extrusion
             // Attention: G2 and G3 is not supported in spiral_mode mode
-            if (!m_config.enable_arc_fitting || path.polyline.fitting_result.empty() || m_config.spiral_mode || sloped != nullptr) {
+            if (!m_config.enable_arc_fitting || path.polyline.fitting_result.empty() || m_config.spiral_mode || sloped != nullptr || path.z_contoured) {
                 double path_length = 0.;
                 double total_length = sloped == nullptr ? 0. : path.polyline.length() * SCALING_FACTOR;
-                for (const Line& line : path.polyline.lines()) {
+                
+                // Handle Z-contoured paths (Z anti-aliasing)
+                if (path.z_contoured && !path.polyline3.points.empty()) {
+                    for (const Line3& line : path.polyline3.lines()) {
+                        std::string tempDescription = description;
+                        const double line_length = line.length() * SCALING_FACTOR;
+                        if (line_length < EPSILON)
+                            continue;
+                        path_length += line_length;
+                        
+                        // Calculate extrusion amount
+                        auto dE = e_per_mm * line_length;
+                        
+                        // Adjust extrusion for Z-height change (more plastic when going up, less when going down)
+                        double z_diff = unscale_(line.b.z());
+                        double extrusion_ratio = 1.0;
+                        if (path.role() != erIroning) {
+                            extrusion_ratio = (path.height + z_diff) / path.height;
+                        }
+                        dE *= extrusion_ratio;
+                        
+                        if (_needSAFC(path)) {
+                            auto oldE = dE;
+                            dE = m_small_area_infill_flow_compensator->modify_flow(line_length, dE, path.role());
+                            if (m_config.gcode_comments && oldE > 0 && oldE != dE) {
+                                tempDescription += Slic3r::format(" | Old Flow Value: %0.5f Length: %0.5f",oldE, line_length);
+                            }
+                        }
+                        
+                        // Output XYZ coordinates for Z-contoured path
+                        Vec2d dest2d = this->point_to_gcode(Vec2crd(line.b.x(), line.b.y()));
+                        Vec3d dest3d(dest2d(0), dest2d(1), m_nominal_z + unscale_(line.b.z()));
+                        gcode += m_writer.extrude_to_xyz(
+                            dest3d,
+                            dE,
+                            GCodeWriter::full_gcode_comment ? tempDescription : "", path.is_force_no_extrusion());
+                    }
+                } else {
+                    // Normal 2D extrusion (original code)
+                    for (const Line& line : path.polyline.lines()) {
                     std::string tempDescription = description;
                     const double line_length = line.length() * SCALING_FACTOR;
                     if (line_length < EPSILON)
@@ -6751,6 +6800,7 @@ std::string GCode::_extrude(const ExtrusionPath &path, std::string description, 
                             dest3d,
                             dE * e_ratio,
                             GCodeWriter::full_gcode_comment ? tempDescription : "", path.is_force_no_extrusion());
+                    }
                     }
                 }
             } else {

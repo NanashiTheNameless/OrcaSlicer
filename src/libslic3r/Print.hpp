@@ -496,6 +496,7 @@ private:
     void prepare_infill();
     void infill();
     void ironing();
+    void apply_z_antialiasing();
     void generate_support_material();
     void estimate_curled_extrusions();
     void simplify_extrusion_path();

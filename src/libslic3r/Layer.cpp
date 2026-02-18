@@ -1,5 +1,6 @@
 #include "Layer.hpp"
 #include "ClipperUtils.hpp"
+#include "ContourZ.hpp"
 #include "Print.hpp"
 #include "Fill/Fill.hpp"
 #include "ShortestPath.hpp"
@@ -450,6 +451,12 @@ BoundingBox get_extents(const LayerRegionPtrs &layer_regions)
             bbox.merge(get_extents(**it));
     }
     return bbox;
+}
+
+void Layer::make_contour_z(const sla::IndexedMesh &mesh)
+{
+    // Call the standalone function from ContourZ.cpp
+    Slic3r::make_contour_z(this, mesh);
 }
 
 }

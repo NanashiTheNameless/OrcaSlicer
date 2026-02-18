@@ -154,6 +154,11 @@ class ExtrusionPath : public ExtrusionEntity
 {
 public:
     Polyline polyline;
+    // 3D polyline for Z-contoured paths (Z anti-aliasing)
+    Polyline3 polyline3;
+    // Flag indicating whether this path has been Z-contoured
+    bool z_contoured = false;
+    
     // Volumetric velocity. mm^3 of plastic per mm of linear head motion. Used by the G-code generator.
     double mm3_per_mm;
     // Width of the extrusion, used for visualization purposes.
@@ -179,6 +184,8 @@ public:
 
     ExtrusionPath(const ExtrusionPath &rhs)
         : polyline(rhs.polyline)
+        , polyline3(rhs.polyline3)
+        , z_contoured(rhs.z_contoured)
         , mm3_per_mm(rhs.mm3_per_mm)
         , width(rhs.width)
         , height(rhs.height)
@@ -191,6 +198,8 @@ public:
     {}
     ExtrusionPath(ExtrusionPath &&rhs)
         : polyline(std::move(rhs.polyline))
+        , polyline3(std::move(rhs.polyline3))
+        , z_contoured(rhs.z_contoured)
         , mm3_per_mm(rhs.mm3_per_mm)
         , width(rhs.width)
         , height(rhs.height)
@@ -203,6 +212,8 @@ public:
     {}
     ExtrusionPath(const Polyline &polyline, const ExtrusionPath &rhs)
         : polyline(polyline)
+        , polyline3(rhs.polyline3)
+        , z_contoured(rhs.z_contoured)
         , mm3_per_mm(rhs.mm3_per_mm)
         , width(rhs.width)
         , height(rhs.height)
@@ -215,6 +226,8 @@ public:
     {}
     ExtrusionPath(Polyline &&polyline, const ExtrusionPath &rhs)
         : polyline(std::move(polyline))
+        , polyline3(rhs.polyline3)
+        , z_contoured(rhs.z_contoured)
         , mm3_per_mm(rhs.mm3_per_mm)
         , width(rhs.width)
         , height(rhs.height)
@@ -234,6 +247,8 @@ public:
         this->width = rhs.width;
         this->height = rhs.height;
         this->polyline = rhs.polyline;
+        this->polyline3 = rhs.polyline3;
+        this->z_contoured = rhs.z_contoured;
         this->z_offset = rhs.z_offset;
         this->extrusion_multiplier = rhs.extrusion_multiplier;
         this->is_even = rhs.is_even;
@@ -247,6 +262,8 @@ public:
         this->width = rhs.width;
         this->height = rhs.height;
         this->polyline = std::move(rhs.polyline);
+        this->polyline3 = std::move(rhs.polyline3);
+        this->z_contoured = rhs.z_contoured;
         this->z_offset = rhs.z_offset;
         this->extrusion_multiplier = rhs.extrusion_multiplier;
         this->is_even = rhs.is_even;
