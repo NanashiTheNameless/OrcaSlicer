@@ -6761,7 +6761,8 @@ std::string GCode::_extrude(const ExtrusionPath &path, std::string description, 
                         }
                         
                         // Output XYZ coordinates for Z-contoured path
-                        Vec2d dest2d = this->point_to_gcode(Vec2crd(line.b.x(), line.b.y()));
+                        Point pt2d(line.b.x(), line.b.y());
+                        Vec2d dest2d = this->point_to_gcode(pt2d);
                         Vec3d dest3d(dest2d(0), dest2d(1), m_nominal_z + unscale_(line.b.z()));
                         gcode += m_writer.extrude_to_xyz(
                             dest3d,
