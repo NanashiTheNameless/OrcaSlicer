@@ -2322,6 +2322,13 @@ void TabPrint::build()
         optgroup->append_single_option_line("ironing_angle", "quality_settings_ironing#angle-offset");
         optgroup->append_single_option_line("ironing_angle_fixed", "quality_settings_ironing#fixed-angle");
 
+        optgroup = page->new_optgroup(L("Z Anti-aliasing"), L"param_zaa");
+        optgroup->append_single_option_line("zaa_enabled", "quality_settings_zaa#enabled");
+        optgroup->append_single_option_line("zaa_min_z", "quality_settings_zaa#min_z");
+        optgroup->append_single_option_line("zaa_minimize_perimeter_height", "quality_settings_zaa#minimize_perimeter_height");
+        optgroup->append_single_option_line("zaa_region_disable", "quality_settings_zaa#region_disable");
+        optgroup->append_single_option_line("zaa_dont_alternate_fill_direction", "quality_settings_zaa#dont_alternate_fill_direction");
+
         optgroup = page->new_optgroup(L("Wall generator"), L"param_wall_generator");
         optgroup->append_single_option_line("wall_generator", "quality_settings_wall_generator");
         optgroup->append_single_option_line("wall_transition_angle", "quality_settings_wall_generator#arachne");
