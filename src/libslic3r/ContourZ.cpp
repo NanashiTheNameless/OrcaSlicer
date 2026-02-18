@@ -5,6 +5,7 @@
 #include "Layer.hpp"
 #include "Line.hpp"
 #include "Point.hpp"
+#include "Print.hpp"
 #include "libslic3r.h"
 #include "SLA/IndexedMesh.hpp"
 #include <cfloat>
@@ -55,9 +56,9 @@ static bool contour_extrusion_path(LayerRegion *region, const sla::IndexedMesh &
         Vec2d p2d(unscale_((it+1)->x()), unscale_((it+1)->y()));
         Linef line(p1d, p2d);
         
-        double length_mm = line.length();
+        Vec2d delta = line.b - line.a;
+        double length_mm = delta.norm();
         int num_segments = int(std::ceil(length_mm / resolution_mm));
-        Vec2d delta = line.vector();
         
         for (int i = 0; i < num_segments+1; i++) {
             Vec2d p = p1d + delta*i/num_segments;
