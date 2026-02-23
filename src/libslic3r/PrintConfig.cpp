@@ -2657,7 +2657,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_tower_interface_pre_extrusion_dist", coFloats);
     def->label = L("Interface layer pre-extrusion distance");
     def->tooltip = L("Pre-extrusion distance for prime tower interface layer (where different materials meet).");
-    def->sidetext = L("mm");
+    def->sidetext = L("mm");	// milimeters, CIS languages need translation
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloats { 10. });
@@ -2665,7 +2665,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_tower_interface_pre_extrusion_length", coFloats);
     def->label = L("Interface layer pre-extrusion length");
     def->tooltip = L("Pre-extrusion length for prime tower interface layer (where different materials meet).");
-    def->sidetext = L("mm");
+    def->sidetext = L("mm");	// milimeters, CIS languages need translation
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloats { 0. });
@@ -2673,7 +2673,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_tower_ironing_area", coFloats);
     def->label = L("Tower ironing area");
     def->tooltip = L("Ironing area for prime tower interface layer (where different materials meet).");
-    def->sidetext = L("mm²");
+    def->sidetext = L(u8"mm²");	// square milimeters, CIS languages need translation
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloats { 4. });
@@ -2681,7 +2681,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_tower_interface_purge_volume", coFloats);
     def->label = L("Interface layer purge length");
     def->tooltip = L("Purge length for prime tower interface layer (where different materials meet).");
-    def->sidetext = L("mm");
+    def->sidetext = L("mm");	// milimeters, CIS languages need translation
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloats { 20. });
@@ -2689,7 +2689,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_tower_interface_print_temp", coInts);
     def->label = L("Interface layer print temperature");
     def->tooltip = L("Print temperature for prime tower interface layer (where different materials meet). If set to -1, use max recommended nozzle temperature.");
-    def->sidetext = L("°C");
+    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = -1;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInts { -1 });
@@ -3316,7 +3316,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Quality");
     def->tooltip = L("Filament-specific override for ironing line spacing. This allows you to customize the spacing "
                      "between ironing lines for each filament type.");
-    def->sidetext = "mm";
+    def->sidetext = L("mm");	// milimeters, CIS languages need translation
     def->min = 0;
     def->max = 1;
     def->mode = comAdvanced;
@@ -3328,7 +3328,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Quality");
     def->tooltip = L("Filament-specific override for ironing inset. This allows you to customize the distance to keep "
                      "from the edges when ironing for each filament type.");
-    def->sidetext = "mm";
+    def->sidetext = L("mm");	// milimeters, CIS languages need translation
     def->min = 0;
     def->max = 100;
     def->mode = comAdvanced;
@@ -3340,7 +3340,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Speed");
     def->tooltip = L("Filament-specific override for ironing speed. This allows you to customize the print speed "
                      "of ironing lines for each filament type.");
-    def->sidetext = "mm/s";
+    def->sidetext = L("mm/s");	// milimeters per second, CIS languages need translation
     def->min = 1;
     def->mode = comAdvanced;
     def->nullable = true;
