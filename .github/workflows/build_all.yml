@@ -195,6 +195,11 @@ jobs:
         path: .flatpak-builder
         key: flatpak-builder-${{ matrix.variant.arch }}-${{ github.sha }}
         restore-keys: flatpak-builder-${{ matrix.variant.arch }}-
+    - name: Disable debug info for faster CI builds
+      run: |
+        sed -i '0,/^finish-args:/s//build-options:\n  no-debuginfo: true\n  strip: true\nfinish-args:/' \
+          scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml
+      shell: bash
     - uses: flatpak/flatpak-github-actions/flatpak-builder@master
       with:
         bundle: OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak

@@ -1,44 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-	<id>io.github.nanashithenameless.OrcaSlicer</id>
-	<launchable type="desktop-id">io.github.nanashithenameless.OrcaSlicer.desktop</launchable>
-	<provides>
-		<id>io.github.nanashithenameless.OrcaSlicer.desktop</id>
-	</provides>
-	<name>OrcaSlicer</name>
-	<summary>(UNOFFICIAL) Get even more perfect prints!</summary>
-	<developer_name>NanashiTheNameless (Upstream: SoftFever)</developer_name>
-	<url type="bugtracker">https://github.com/NanashiTheNameless/issues</url>
-	<url type="homepage">https://github.com/NanashiTheNameless/OrcaSlicer</url>
-	<url type="donation">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/.github/FUNDING.yml</url>
-	<url type="contact">https://github.com/NanashiTheNameless/OrcaSlicer/discussions</url>
-	<url type="faq">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/README.md</url>
-	<url type="contribute">https://github.com/NanashiTheNameless/OrcaSlicer</url>
-	<url type="vcs-browser">https://github.com/NanashiTheNameless/OrcaSlicer</url>
-	<metadata_license>0BSD</metadata_license>
-	<project_license>AGPL-3.0-only</project_license>
-	<content_rating type="oars-1.1" />
-	<requires>
-		<display_length compare="gt">768</display_length>
-	</requires>
-	<recommends>
-		<control>keyboard</control>
-		<control>pointing</control>
-	</recommends>
-	<screenshots>
-		<screenshot type="default">
-			<image>https://raw.githubusercontent.com/NanashiTheNameless/OrcaSlicer/main/scripts/flatpak/images/1.png</image>
-			<caption>A model ready to be sliced on a buildplate.</caption>
-		</screenshot>
-		<screenshot>
-			<image>https://raw.githubusercontent.com/NanashiTheNameless/OrcaSlicer/main/scripts/flatpak/images/2.png</image>
-			<caption>A calibration test ready to be printed out.</caption>
-		</screenshot>
-	</screenshots>
-	<description>
-		<p>(UNOFFICIAL) A powerful, free and open-source 3D printer slicer that features cutting-edge technology.</p>
-	</description>
-	<branding>
-		<color type="primary" scheme_preference="dark">#2d2d30</color>
-	</branding>
+    <id>io.github.nanashithenameless.OrcaSlicer</id>
+    <launchable type="desktop-id">io.github.nanashithenameless.OrcaSlicer.desktop</launchable>
+    <provides>
+        <id>io.github.nanashithenameless.OrcaSlicer.desktop</id>
+    </provides>
+    <name>OrcaSlicer</name>
+    <summary>(UNOFFICIAL) Get even more perfect prints!</summary>
+    <developer_name>NanashiTheNameless (Upstream: SoftFever)</developer_name>
+    <developer id="io.github.nanashithenameless.OrcaSlicer">
+        <name>NanashiTheNameless (Upstream: SoftFever)</name>
+    </developer>
+    <url type="bugtracker">https://github.com/NanashiTheNameless/issues</url>
+    <url type="homepage">https://github.com/NanashiTheNameless/OrcaSlicer</url>
+    <url type="donation">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/.github/FUNDING.yml</url>
+    <url type="contact">https://github.com/NanashiTheNameless/OrcaSlicer/discussions</url>
+    <url type="faq">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/README.md</url>
+    <url type="contribute">https://github.com/NanashiTheNameless/OrcaSlicer</url>
+    <url type="vcs-browser">https://github.com/NanashiTheNameless/OrcaSlicer</url>
+    <metadata_license>0BSD</metadata_license>
+    <project_license>AGPL-3.0-only</project_license>
+    <content_rating type="oars-1.1" />
+    <requires>
+        <display_length compare="gt">768</display_length>
+    </requires>
+    <recommends>
+        <control>keyboard</control>
+        <control>pointing</control>
+    </recommends>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/NanashiTheNameless/OrcaSlicer/main/scripts/flatpak/images/1.png</image>
+            <caption>A model ready to be sliced on a buildplate.</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/NanashiTheNameless/OrcaSlicer/main/scripts/flatpak/images/2.png</image>
+            <caption>A calibration test ready to be printed out.</caption>
+        </screenshot>
+    </screenshots>
+    <description>
+        <p>THIS IS AN UNOFFICIAL FORKED VERSION</p>
+        <p>OrcaSlicer is a powerful, free and open-source 3D printer slicer with cutting-edge
+            features for FDM printing. It supports a wide range of printers from manufacturers
+            including Bambu Lab, Prusa, Voron, Creality, and many more.</p>
+        <p>Key features include advanced calibration tools, adaptive layer heights, tree supports,
+            multi-material support, and an intuitive interface for both beginners and experts.
+            OrcaSlicer also provides built-in network printing capabilities for compatible printers.</p>
+        <p>Originally forked from Bambu Studio and PrusaSlicer, OrcaSlicer builds on a strong
+            foundation with community-driven improvements and optimizations for print quality
+            and reliability.</p>
+    </description>
+    <branding>
+        <color type="primary" scheme_preference="dark">#2d2d30</color>
+    </branding>
 </component>
