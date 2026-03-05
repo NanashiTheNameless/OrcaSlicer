@@ -102,8 +102,8 @@ modules:
     sources:
       - type: git
         url: https://github.com/NanashiTheNameless/Orca-deps-wxWidgets
-        tag: orca-3.1.5-1
-        commit: 139e4f2a62a9d1c40bdcf36523d94a517b14ca79
+        tag: master
+        commit: a06e3a2d36ba2b39729a98cc8720c8a296d13c9a
 
   # OrcaSlicer C++ dependencies (built offline with pre-downloaded archives)
   - name: orca_deps
