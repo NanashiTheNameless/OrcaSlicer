@@ -474,7 +474,7 @@ void MoonrakerPrinterAgent::build_ams_payload(int ams_count, int max_lane_index,
 
         nlohmann::json ams_unit = nlohmann::json::object();
         ams_unit["id"] = std::to_string(ams_id);
-        ams_unit["info"] = "0002";  // treat as AMS_LITE 
+        ams_unit["info"] = "0002";  // treat as AMS_LITE
 
         nlohmann::json tray_array = nlohmann::json::array();
         int max_slot_in_this_ams = std::min(3, max_lane_index - ams_id * 4);
@@ -1488,7 +1488,7 @@ void MoonrakerPrinterAgent::run_status_stream(std::string dev_id, std::string ba
             identify["params"]["client_name"] = "OrcaSlicer";
             identify["params"]["version"]     = MoonrakerPrinterAgent_VERSION;
             identify["params"]["type"]        = "agent";
-            identify["params"]["url"]         = "https://github.com/SoftFever/OrcaSlicer";
+            identify["params"]["url"]         = "https://github.com/NanashiTheNameless/OrcaSlicer";
             identify["id"]                    = 0;
             ws.write(net::buffer(identify.dump()));
 
