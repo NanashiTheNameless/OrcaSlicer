@@ -212,7 +212,7 @@ jobs:
         cache: false
         arch: ${{ matrix.variant.arch }}
         upload-artifact: false
-        repository-name: OrcaSlicer-NanashiTheNameless
+        repository-name: io.github.nanashithenameless.OrcaSlicer
     - name: Upload artifacts Flatpak
       uses: actions/upload-artifact@v7
       with:
