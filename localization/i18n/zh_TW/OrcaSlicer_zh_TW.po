@@ -4158,7 +4158,7 @@ msgid ""
 "Reset to 50% of skin depth."
 msgstr ""
 "鎖定深度必須小於表面深度。\n"
-"已重設為表面深度的 50%。"
+"已重設為表面深度的 50%%。"
 
 msgid ""
 "Both [Extrusion] and [Combined] modes of Fuzzy Skin require the Arachne Wall "
