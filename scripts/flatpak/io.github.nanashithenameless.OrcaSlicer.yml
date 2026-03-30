@@ -97,7 +97,6 @@ modules:
       - -DBUILD_SHARED_LIBS=ON
       - -DwxUSE_MEDIACTRL=ON
       - -DwxUSE_DETECT_SM=OFF
-      - -DwxUSE_UNICODE=ON
       - -DwxUSE_PRIVATE_FONTS=ON
       - -DwxUSE_OPENGL=ON
       - -DwxUSE_GLCANVAS_EGL=OFF
@@ -119,10 +118,12 @@ modules:
       - -DCMAKE_SHARED_LINKER_FLAGS=-fuse-ld=lld
       - -DCMAKE_MODULE_LINKER_FLAGS=-fuse-ld=lld
     sources:
+      # Use git instead of archive: wxWidgets 3.3 relies on multiple git
+      # submodules (PCRE2, etc.) that are not included in GitHub tarballs.
       - type: git
-        url: https://github.com/NanashiTheNameless/Orca-deps-wxWidgets
-        tag: master
-        commit: a06e3a2d36ba2b39729a98cc8720c8a296d13c9a
+        url: https://github.com/SoftFever/Orca-deps-wxWidgets.git
+        tag: orca-3.3.2
+        commit: db1005db3dea2c37a46fb455a9a02e37aa360751
 
   # OrcaSlicer C++ dependencies (built offline with pre-downloaded archives)
   - name: orca_deps
