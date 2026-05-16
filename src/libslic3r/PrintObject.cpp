@@ -1834,7 +1834,7 @@ void PrintObject::process_external_surfaces()
     // over voids, which are supported by the layer below.
     bool 				  has_voids = false;
 	for (size_t region_id = 0; region_id < this->num_printing_regions(); ++ region_id)
-		if (this->printing_region(region_id).config().sparse_infill_density == 0) {
+		if (this->printing_region(region_id).config().sparse_infill_density.value == 0) {
 			has_voids = true;
 			break;
 		}
