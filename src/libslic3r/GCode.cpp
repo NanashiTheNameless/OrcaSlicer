@@ -5746,7 +5746,7 @@ std::string GCode::extrude_loop(const ExtrusionLoop&        loop_ref,
     // SoftFever: check loop lenght for small perimeter. 
     double small_peri_speed = -1;
     if (speed == -1 && loop.length() <= SMALL_PERIMETER_LENGTH(m_config.small_perimeter_threshold.value)) {
-        if(m_config.small_perimeter_speed == 0)
+        if (m_config.small_perimeter_speed.value <= 0)
             small_peri_speed = m_config.outer_wall_speed * 0.5;
         else
             small_peri_speed = m_config.small_perimeter_speed.get_abs_value(m_config.outer_wall_speed);
