@@ -136,7 +136,7 @@ OrcaSlicer was originally forked from Bambu Studio, it was previously known as B
 
 **THIS VERSION IS AN UNOFFICIAL UNSTABLE FORKED VERSION, HERE BE DRAGONS!**
 
-The OrcaSlicer logo was designed by community member Justin Levine (@freejstnalxndr).
+The OrcaSlicer logo was designed by community member [Justin Levine](https://github.com/jal-co).
 
 # License
 - **OrcaSlicer** is licensed under the GNU Affero General Public License, version 3.
