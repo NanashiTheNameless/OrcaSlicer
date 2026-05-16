@@ -125,7 +125,7 @@ StepMeshDialog::StepMeshDialog(wxWindow* parent, Slic3r::Step& file, double line
     info->Wrap(FromDIP(450));
 
     // ORCA standardized HyperLink
-    HyperLink *tips = new HyperLink(tip_frame, _L("Wiki Guide"), ""https://github.com/NanashiTheNameless/OrcaSlicer/wiki/import_export#step");
+    HyperLink *tips = new HyperLink(tip_frame, _L("Wiki Guide"), "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/import_export#step");
     tips->SetBackgroundColour(StateColor::darkModeColorFor(wxColour("#F1F1F1")));
 
     tips_sizer->Add(info, 0, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, FromDIP(10));
