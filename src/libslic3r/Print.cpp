@@ -1759,12 +1759,12 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
             std::string warning_key;
 
             // check jerk
-            if (m_default_object_config.default_jerk == 1 || m_default_object_config.outer_wall_jerk == 1 ||
-                m_default_object_config.inner_wall_jerk == 1) {
+            if (m_default_object_config.default_jerk.value == 1 || m_default_object_config.outer_wall_jerk.value == 1 ||
+                m_default_object_config.inner_wall_jerk.value == 1) {
                warning->string = L("Setting the jerk speed too low could lead to artifacts on curved surfaces");
-               if (m_default_object_config.outer_wall_jerk == 1)
+               if (m_default_object_config.outer_wall_jerk.value == 1)
                     warning_key = "outer_wall_jerk";
-               else if (m_default_object_config.inner_wall_jerk == 1)
+               else if (m_default_object_config.inner_wall_jerk.value == 1)
                     warning_key = "inner_wall_jerk";
                else
                     warning_key = "default_jerk";
