@@ -114,7 +114,8 @@ wxBoxSizer *PreferencesDialog::create_item_combobox(wxString title, wxString too
     if (!current_setting.empty()) {
         auto compare  = [current_setting](string possible_setting) { return current_setting == possible_setting; };
         auto iterator = find_if(config_name_index.begin(), config_name_index.end(), compare);
-        current_index = iterator - config_name_index.begin();
+        if (iterator != config_name_index.end())
+            current_index = static_cast<unsigned int>(iterator - config_name_index.begin());
     }
 
     auto [sizer, combobox] = create_item_combobox_base(title, tooltip, param, vlist, current_index);
@@ -968,7 +969,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
             if (m_bambu_cloud_checkbox)      m_bambu_cloud_checkbox->Enable(!enabled);
         }
 
-        #ifdef __WXMSW__
+#ifdef __WXMSW__
         if (param == "associate_3mf") {
              bool pbool = app_config->get("associate_3mf") == "true" ? true : false;
              if (pbool) {
@@ -1426,7 +1427,7 @@ void PreferencesDialog::create_items()
     });
     auto item_filament_area_height = create_item_spinctrl(_L("Optimize filaments area height for..."), "", _L("filaments"), _L("Optimizes filament area maximum height by chosen filament count."),
         "filaments_area_preferred_count", 8, 99, [this](int value) {m_filament_height_timer.StartOnce(500);});
-    g_sizer->Add(item_filament_area_height); 
+    g_sizer->Add(item_filament_area_height);
 
     //// GENERAL > Features
     g_sizer->Add(create_item_title(_L("Features")), 1, wxEXPAND);
@@ -1527,6 +1528,64 @@ void PreferencesDialog::create_items()
     sizer_page->Add(g_sizer, 0, wxEXPAND);
 
     //////////////////////////
+    //// GRAPHICS TAB
+    /////////////////////////////////////
+    m_pref_tabs->AppendItem(_L("Graphics"));
+    f_sizers.push_back(new wxFlexGridSizer(1, 1, v_gap, 0));
+    g_sizer = f_sizers.back();
+    g_sizer->AddGrowableCol(0, 1);
+
+    //// GRAPHICS > Anti-aliasing
+    g_sizer->Add(create_item_title(_L("Anti-aliasing")), 1, wxEXPAND);
+
+    auto item_antialiasing = create_item_combobox(
+        _L("MSAA Multiplier"),
+        _L("Set the Multi-Sample Anti-Aliasing level.\n"
+           "Higher values result in smoother edges, but the impact on performance is exponential.\n"
+           "Lower values improve performance, at the cost of jagged edges.\n"
+           "If disabled, its recommended to enable FXAA to reduce jagged edges with minimal performance impact.\n\n"
+           "Requires application restart."),
+        SETTING_OPENGL_AA_SAMPLES,
+        {_L("Disabled"), "2x", "4x", "8x", "16x"},
+        {"0", "2", "4", "8", "16"}
+    );
+    g_sizer->Add(item_antialiasing);
+
+    auto item_fxaa = create_item_checkbox(
+        _L("FXAA post-processing"),
+        _L("Applies Fast Approximate Anti-Aliasing as a screen-space pass.\n"
+           "Useful for disabling or reducing the MSAA setting to improve performance.\n\n"
+           "Takes effect immediately."),
+        SETTING_OPENGL_FXAA_ENABLED
+    );
+    g_sizer->Add(item_fxaa);
+
+    //// GRAPHICS > FPS
+    g_sizer->Add(create_item_title(_L("FPS")), 1, wxEXPAND);
+
+    auto item_fps_cap = create_item_spinctrl(
+        _L("FPS cap"),
+        _L("(0 = unlimited)"),
+        _L("FPS"),
+        _L("Limits viewport frame rate to reduce GPU load and power usage.\n"
+           "Set to 0 for unlimited frame rate."),
+        SETTING_OPENGL_FPS_CAP,
+        0,
+        240
+    );
+    g_sizer->Add(item_fps_cap);
+
+    auto item_fps_overlay = create_item_checkbox(
+        _L("Show FPS overlay"),
+        _L("Displays current viewport FPS in the top-right corner."),
+        SETTING_OPENGL_SHOW_FPS_OVERLAY
+    );
+    g_sizer->Add(item_fps_overlay);
+
+    g_sizer->AddSpacer(FromDIP(10));
+    sizer_page->Add(g_sizer, 0, wxEXPAND);
+
+    //////////////////////////
     //// ONLINE TAB
     /////////////////////////////////////
     m_pref_tabs->AppendItem(_L("Online"));
@@ -1539,7 +1598,7 @@ void PreferencesDialog::create_items()
 
     auto item_region           = create_item_region_combobox(_L("Login region"), "");
     g_sizer->Add(item_region);
- 
+
     auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This disables all cloud services e.g. Orca Cloud and Bambu Cloud. This stops the transmission of data to Bambu's cloud services too. Users who don't use BBL machines or use LAN mode only can safely turn on this function."), "stealth_mode");
     g_sizer->Add(item_stealth_mode);
 
@@ -1793,6 +1852,9 @@ void PreferencesDialog::create_items()
 
     auto item_ams_blacklist    = create_item_checkbox(_L("Skip AMS blacklist check"), "", "skip_ams_blacklist_check");
     g_sizer->Add(item_ams_blacklist);
+
+    auto item_keep_painting    = create_item_checkbox(_L("(Experimental) Keep painted feature after mesh change"), _L("Attempt to keep painted features (color/seam/support/fuzzy etc.) after changing the object mesh (such as cut/reload from disk/simplify/fix etc.)\nHighly experimental! Slow and may create artifact."), "keep_painting");
+    g_sizer->Add(item_keep_painting);
 
     g_sizer->Add(create_item_title(_L("Storage")), 1, wxEXPAND);
     auto item_allow_abnormal_storage = create_item_checkbox(_L("Allow Abnormal Storage"), _L("This allows the use of Storage that is marked as abnormal by the Printer.\nUse at your own risk, can cause issues!"), "allow_abnormal_storage");
