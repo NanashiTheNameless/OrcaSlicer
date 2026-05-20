@@ -787,9 +787,20 @@ void GUI_App::post_init()
         mainframe->select_tab(size_t(MainFrame::tp3DEditor));
         plater_->select_view_3D("3D");
         //BBS init the opengl resource here
-//#ifdef __linux__
-        if (plater_->canvas3D()->get_wxglcanvas()->IsShownOnScreen()&&plater_->canvas3D()->make_current_for_postinit()) {
-//#endif
+        if (!plater_->canvas3D()->get_wxglcanvas()->IsShownOnScreen() ||
+            !plater_->canvas3D()->make_current_for_postinit()) {
+            BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << ": glcontext not ready, postpone init";
+            plater_->canvas3D()->enable_render(true);
+            plater_->canvas3D()->set_as_dirty();
+#ifdef __linux__
+            // Wayland/EGL may not have committed the GL surface yet; ask the
+            // idle loop to retry post_init when the canvas is actually mapped.
+            // Without this, GL function pointers stay null and the first
+            // Preview focus crashes in Camera::apply_viewport.
+            m_post_initialized = false;
+            return;
+#endif
+        } else {
             Size canvas_size = plater_->canvas3D()->get_canvas_size();
             wxGetApp().imgui()->set_display_size(static_cast<float>(canvas_size.get_width()), static_cast<float>(canvas_size.get_height()));
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ", start to init opengl";
@@ -809,14 +820,7 @@ void GUI_App::post_init()
                 plater_->canvas3D()->render(false);
                 BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ", finished rendering a first frame for test";
             }
-//#ifdef __linux__
         }
-        else {
-            BOOST_LOG_TRIVIAL(warning) << __FUNCTION__ << "Found glcontext not ready, postpone the init";
-            plater_->canvas3D()->enable_render(true);
-            plater_->canvas3D()->set_as_dirty();
-        }
-//#endif
         if (is_editor())
             mainframe->select_tab(size_t(0));
         if (app_config->get("default_page") == "1")
@@ -6576,8 +6580,8 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
                 dlg->Update(percent, _L("Loading user preset"));
             });
         };
-        cancelFn = [this, dlg]() {
-            return is_closing() || dlg->WasCanceled();
+        cancelFn = [this, dlg, t = std::weak_ptr<int>(m_user_sync_token)]() {
+            return is_closing() || dlg->WasCanceled() || t.expired();
         };
         finishFn = [this, dlg](bool) {
             CallAfter([=]{ dlg->Destroy(); });
@@ -6585,8 +6589,8 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
     }
     else {
         finishFn = [](bool) {}; // reload_settings() is now triggered from the background thread
-        cancelFn = [this]() {
-            return is_closing();
+        cancelFn = [this, t = std::weak_ptr<int>(m_user_sync_token)]() {
+            return is_closing() || t.expired();
         };
     }
 
@@ -6816,6 +6820,37 @@ void GUI_App::stop_sync_user_preset()
         else
             m_sync_update_thread.detach();
     }
+}
+
+void GUI_App::restart_sync_user_preset()
+{
+    if (!m_user_sync_token) {
+        // No sync running. If a restart helper is already in flight it will
+        // start the new sync once the old thread is joined — don't race it.
+        if (!m_restart_sync_pending)
+            start_sync_user_preset(true);
+        return;
+    }
+
+    // Resetting the token signals the old thread to stop (cancelFn checks
+    // t.expired(), so it exits after its current HTTP request completes).
+    // A helper thread joins the old thread off the UI thread — no freeze —
+    // then starts the new sync via CallAfter once the old one is fully done.
+    m_user_sync_token.reset();
+    m_restart_sync_pending = true;
+
+    auto old_thread = std::move(m_sync_update_thread);
+
+    std::thread([this, old_thread = std::move(old_thread)]() mutable {
+        if (old_thread.joinable())
+            old_thread.join();
+        m_restart_sync_pending = false;
+        if (!is_closing())
+            CallAfter([this]() {
+                if (!is_closing())
+                    start_sync_user_preset(true);
+            });
+    }).detach();
 }
 
 void GUI_App::on_stealth_mode_enter()
