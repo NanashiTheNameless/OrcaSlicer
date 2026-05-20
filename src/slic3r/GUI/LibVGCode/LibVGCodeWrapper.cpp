@@ -662,6 +662,13 @@ private:
     }
 };
 
+static size_t get_infill_extruder_id(const Slic3r::PrintRegionConfig& cfg, bool is_solid_infill)
+{
+    return is_solid_infill ?
+        static_cast<size_t>(std::max(cfg.solid_infill_filament.value - 1, 0)) :
+        static_cast<size_t>(std::max(cfg.sparse_infill_filament.value - 1, 0));
+}
+
 static void convert_infill_entity_to_vertices(const Slic3r::ExtrusionEntity& extrusion_entity, float print_z, size_t layer_id,
     size_t extruder_id, const ObjectHelper& object_helper, const Slic3r::Point& shift, std::vector<PathVertex>& vertices)
 {
@@ -738,14 +745,10 @@ static void convert_object_to_vertices(const Slic3r::PrintObject& object, const 
                             size_t infill_extruder_id = 0;
                             if (const auto* infill_collection = dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(ee)) {
                                 const bool collection_has_solid_infill = infill_collection->has_solid_infill();
-                                infill_extruder_id = collection_has_solid_infill ?
-                                    static_cast<size_t>(std::max(cfg.solid_infill_filament.value - 1, 0)) :
-                                    static_cast<size_t>(std::max(cfg.sparse_infill_filament.value - 1, 0));
+                                infill_extruder_id = get_infill_extruder_id(cfg, collection_has_solid_infill);
                             } else {
                                 const bool is_solid_infill = Slic3r::is_solid_infill(ee->role());
-                                infill_extruder_id = is_solid_infill ?
-                                    static_cast<size_t>(std::max(cfg.solid_infill_filament.value - 1, 0)) :
-                                    static_cast<size_t>(std::max(cfg.sparse_infill_filament.value - 1, 0));
+                                infill_extruder_id = get_infill_extruder_id(cfg, is_solid_infill);
                             }
                             convert_infill_entity_to_vertices(*ee, layer_z, layer_id, infill_extruder_id, object_helper, copy, data.vertices);
                         }
