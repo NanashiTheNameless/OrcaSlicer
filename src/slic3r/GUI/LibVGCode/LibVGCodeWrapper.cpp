@@ -360,8 +360,6 @@ static void convert_to_vertices(const Slic3r::ExtrusionLoop& extrusion_loop, flo
     convert_lines_to_vertices(lines, widths, heights, print_z, layer_id, extruder_id, color_id, extrusion_role, true, vertices);
 }
 
-// forward declaration
-class ObjectHelper;
 static void convert_to_vertices(const Slic3r::ExtrusionEntityCollection& extrusion_entity_collection, float print_z, size_t layer_id,
     size_t extruder_id, size_t color_id, EGCodeExtrusionRole extrusion_role, const Slic3r::Point& shift, std::vector<PathVertex>& vertices);
 
@@ -397,28 +395,6 @@ static void convert_to_vertices(const Slic3r::ExtrusionEntityCollection& extrusi
         if (extrusion_entity != nullptr)
             convert_to_vertices(*extrusion_entity, print_z, layer_id, extruder_id, color_id, extrusion_role, shift, vertices);
     }
-}
-
-static void convert_infill_entity_to_vertices(const Slic3r::ExtrusionEntity& extrusion_entity, float print_z, size_t layer_id,
-    const Slic3r::PrintRegionConfig& cfg, ObjectHelper& object_helper, const Slic3r::Point& shift, std::vector<PathVertex>& vertices)
-{
-    if (extrusion_entity.is_collection()) {
-        const auto& collection = dynamic_cast<const Slic3r::ExtrusionEntityCollection&>(extrusion_entity);
-        for (const Slic3r::ExtrusionEntity* child : collection.entities) {
-            if (child != nullptr)
-                convert_infill_entity_to_vertices(*child, print_z, layer_id, cfg, object_helper, shift, vertices);
-        }
-        return;
-    }
-
-    const Slic3r::ExtrusionRole role = extrusion_entity.role();
-    const bool is_solid_infill = Slic3r::is_solid_infill(role);
-    const size_t extruder_id = is_solid_infill ?
-        static_cast<size_t>(std::max(cfg.solid_infill_filament.value - 1, 0)) :
-        static_cast<size_t>(std::max(cfg.sparse_infill_filament.value - 1, 0));
-
-    convert_to_vertices(extrusion_entity, print_z, layer_id, extruder_id,
-                        object_helper.color_id(print_z, extruder_id), convert(role), shift, vertices);
 }
 
 struct VerticesData
@@ -686,6 +662,33 @@ private:
     }
 };
 
+static void convert_infill_entity_to_vertices(const Slic3r::ExtrusionEntity& extrusion_entity, float print_z, size_t layer_id,
+    const Slic3r::PrintRegionConfig& cfg, const ObjectHelper& object_helper, const Slic3r::Point& shift, std::vector<PathVertex>& vertices)
+{
+    if (extrusion_entity.is_collection()) {
+        const auto* collection = dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(&extrusion_entity);
+        if (collection == nullptr) {
+            return;
+        }
+
+        for (const Slic3r::ExtrusionEntity* child : collection->entities) {
+            if (child != nullptr) {
+                convert_infill_entity_to_vertices(*child, print_z, layer_id, cfg, object_helper, shift, vertices);
+            }
+        }
+        return;
+    }
+
+    const Slic3r::ExtrusionRole role = extrusion_entity.role();
+    const bool is_solid_infill = Slic3r::is_solid_infill(role);
+    const size_t extruder_id = is_solid_infill ?
+        static_cast<size_t>(std::max(cfg.solid_infill_filament.value - 1, 0)) :
+        static_cast<size_t>(std::max(cfg.sparse_infill_filament.value - 1, 0));
+
+    convert_to_vertices(extrusion_entity, print_z, layer_id, extruder_id,
+                        object_helper.color_id(print_z, extruder_id), convert(role), shift, vertices);
+}
+
 static void convert_object_to_vertices(const Slic3r::PrintObject& object, const std::vector<std::string>& str_tool_colors,
     const std::vector<std::string>& str_color_print_colors, const std::vector<Slic3r::CustomGCode::Item>& color_print_values,
     size_t extruders_count, VerticesData& data)
@@ -735,11 +738,20 @@ static void convert_object_to_vertices(const Slic3r::PrintObject& object, const 
                 }
                 if (has_infill) {
                     for (const Slic3r::ExtrusionEntity* ee : layerm->fills) {
+                        const auto* fill = dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(ee);
+                        if (fill == nullptr) {
+                            if (ee != nullptr) {
+                                convert_infill_entity_to_vertices(*ee, layer_z, layer_id, cfg, object_helper, copy, data.vertices);
+                            }
+                            continue;
+                        }
+
                         // fill represents infill extrusions of a single island.
-                        const auto& fill = *dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(ee);
-                        for (const Slic3r::ExtrusionEntity* fill_entity : fill.entities)
-                            if (fill_entity != nullptr)
+                        for (const Slic3r::ExtrusionEntity* fill_entity : fill->entities) {
+                            if (fill_entity != nullptr) {
                                 convert_infill_entity_to_vertices(*fill_entity, layer_z, layer_id, cfg, object_helper, copy, data.vertices);
+                            }
+                        }
                     }
                 }
             }
