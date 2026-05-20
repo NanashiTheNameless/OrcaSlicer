@@ -668,7 +668,7 @@ static void convert_infill_entity_to_vertices(const Slic3r::ExtrusionEntity& ext
     if (extrusion_entity.is_collection()) {
         const auto* collection = dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(&extrusion_entity);
         if (collection == nullptr) {
-            return;
+            throw Slic3r::RuntimeError("Expected ExtrusionEntityCollection for collection infill entity");
         }
 
         for (const Slic3r::ExtrusionEntity* child : collection->entities) {
@@ -738,19 +738,20 @@ static void convert_object_to_vertices(const Slic3r::PrintObject& object, const 
                 }
                 if (has_infill) {
                     for (const Slic3r::ExtrusionEntity* ee : layerm->fills) {
-                        const auto* fill = dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(ee);
-                        if (fill == nullptr) {
-                            if (ee != nullptr) {
-                                convert_infill_entity_to_vertices(*ee, layer_z, layer_id, cfg, object_helper, copy, data.vertices);
-                            }
+                        if (ee == nullptr) {
                             continue;
                         }
 
-                        // fill represents infill extrusions of a single island.
-                        for (const Slic3r::ExtrusionEntity* fill_entity : fill->entities) {
-                            if (fill_entity != nullptr) {
-                                convert_infill_entity_to_vertices(*fill_entity, layer_z, layer_id, cfg, object_helper, copy, data.vertices);
+                        const auto* fill = dynamic_cast<const Slic3r::ExtrusionEntityCollection*>(ee);
+                        if (fill != nullptr) {
+                            // fill represents infill extrusions of a single island.
+                            for (const Slic3r::ExtrusionEntity* fill_entity : fill->entities) {
+                                if (fill_entity != nullptr) {
+                                    convert_infill_entity_to_vertices(*fill_entity, layer_z, layer_id, cfg, object_helper, copy, data.vertices);
+                                }
                             }
+                        } else {
+                            convert_infill_entity_to_vertices(*ee, layer_z, layer_id, cfg, object_helper, copy, data.vertices);
                         }
                     }
                 }
