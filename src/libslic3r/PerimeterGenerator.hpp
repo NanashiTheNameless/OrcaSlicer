@@ -153,6 +153,15 @@ public:
     double      smaller_width_ext_mm3_per_mm()   const { return m_ext_mm3_per_mm_smaller_width; }
     Polygons    lower_slices_polygons() const { return m_lower_slices_polygons; }
 
+    // Returns true if the current layer is within the range where staggered perimeters are active,
+    // accounting for the first/last layer exclusion counts.
+    bool        is_layer_in_stagger_range() const {
+        const int first_layers = config->staggered_perimeter_first_layers;
+        const int last_layers  = config->staggered_perimeter_last_layers;
+        return layer_id >= first_layers &&
+               !(last_layers > 0 && layer_id >= ((int) number_of_layers - last_layers));
+    }
+
 private:
     std::vector<Polygons>     generate_lower_polygons_series(float width);
     void split_top_surfaces(const ExPolygons &orig_polygons, ExPolygons &top_fills, ExPolygons &non_top_polygons, ExPolygons &fill_clip) const;

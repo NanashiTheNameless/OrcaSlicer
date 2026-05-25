@@ -6605,6 +6605,24 @@ void PrintConfigDef::init_fff_params()
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(1));
 
+    def = this->add("staggered_perimeter_first_layers", coInt);
+    def->label = L("Brick walls first layers");
+    def->category = L("Strength");
+    def->tooltip = L("Number of layers at the bottom of the print where staggered perimeters are not applied. "
+                     "This can help improve adhesion and surface quality on the first layers.");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionInt(0));
+
+    def = this->add("staggered_perimeter_last_layers", coInt);
+    def->label = L("Brick walls last layers");
+    def->category = L("Strength");
+    def->tooltip = L("Number of layers at the top of the print where staggered perimeters are not applied. "
+                     "This can help improve surface quality on the top layers.");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionInt(0));
+
     def = this->add("change_filament_gcode", coString);
     def->label = L("Change filament G-code");
     def->tooltip = L("This G-code is inserted when filament is changed, including T commands to trigger tool change.");

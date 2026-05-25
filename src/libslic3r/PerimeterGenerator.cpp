@@ -554,6 +554,11 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
 
         auto check_and_stagger_path = [perimeter_generator](ExtrusionPath& cur_path) {
             bool was_staggered = false;
+
+            // Skip staggering if outside the active stagger layer range
+            if (!perimeter_generator.is_layer_in_stagger_range())
+                return was_staggered;
+
             if (perimeter_generator.layer_id == 1 && perimeter_generator.number_of_layers >= 4) // i.e. layer after the first one
             {
                 cur_path.extrusion_multiplier = 1.5;
@@ -2509,10 +2514,12 @@ void PerimeterGenerator::process_arachne()
         }
 
         if (this->config->staggered_perimeters) { // If staggered layers are on, all odd perimeters will be staggered and should be printed after the non staggered perimeters
-            std::sort(ordered_extrusions.begin(), ordered_extrusions.end(),
-                [](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
-                return extrusion_1.extrusion->inset_idx % 2 <= extrusion_2.extrusion->inset_idx % 2;
-                });
+            if (this->is_layer_in_stagger_range()) {
+                std::sort(ordered_extrusions.begin(), ordered_extrusions.end(),
+                    [](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
+                    return extrusion_1.extrusion->inset_idx % 2 <= extrusion_2.extrusion->inset_idx % 2;
+                    });
+            }
         }
 
        // printf("New Layer: Layer ID %d\n",layer_id); //debug - new layer

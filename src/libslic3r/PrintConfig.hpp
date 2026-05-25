@@ -1175,6 +1175,8 @@ PRINT_CONFIG_CLASS_DEFINE(
     //staggered layer checking
     ((ConfigOptionBool,               staggered_perimeters))
     ((ConfigOptionFloat,              staggered_perimeter_flow_ratio))
+    ((ConfigOptionInt,                staggered_perimeter_first_layers))
+    ((ConfigOptionInt,                staggered_perimeter_last_layers))
     ((ConfigOptionFloatOrPercent, top_surface_line_width))
     ((ConfigOptionInt, top_shell_layers))
     ((ConfigOptionFloat, top_shell_thickness))
