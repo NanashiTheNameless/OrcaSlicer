@@ -2511,7 +2511,7 @@ void PerimeterGenerator::process_arachne()
         if (this->config->staggered_perimeters) { // If staggered layers are on, staggered perimeters should be printed after the non-staggered perimeters
             bool reverse = this->config->staggered_perimeters_reverse;
             std::sort(ordered_extrusions.begin(), ordered_extrusions.end(),
-                [reverse](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
+                [&reverse](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
                 // Without reverse: odd walls are staggered (printed last), so even <= odd keeps even first.
                 // With reverse: even walls are staggered (printed last), so odd first means we flip the comparison.
                 if (reverse)
