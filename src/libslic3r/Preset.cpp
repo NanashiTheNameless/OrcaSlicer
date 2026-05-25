@@ -1006,7 +1006,7 @@ static std::vector<std::string> s_Preset_print_options{
     "lateral_lattice_angle_2",
     "infill_overhang_angle",
     "top_surface_pattern",
-    "bottom_surface_pattern", "staggered_perimeters", "staggered_perimeter_flow_ratio",
+    "bottom_surface_pattern", "staggered_perimeters", "staggered_perimeters_reverse", "staggered_perimeter_flow_ratio",
     "infill_direction",
     "solid_infill_direction",
     "counterbore_hole_bridging",

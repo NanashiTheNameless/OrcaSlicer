@@ -603,7 +603,7 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
 
 				//This is for staggered layers.
 				//All odd perimeters are staggerd up by half the layer height
-                if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
+                if (extrusion->inset_idx % 2 == (perimeter_generator.config->staggered_perimeters_reverse ? 0 : 1) && perimeter_generator.config->staggered_perimeters) {
                     for (size_t path_idx = 0; path_idx < extrusion_loop.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = extrusion_loop.paths[path_idx];
                         check_and_stagger_path(cur_path);
@@ -637,7 +637,7 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
 
 				//This is for staggered layers.
 				//All odd perimeters are staggerd up by half the layer height
-                if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
+                if (extrusion->inset_idx % 2 == (perimeter_generator.config->staggered_perimeters_reverse ? 0 : 1) && perimeter_generator.config->staggered_perimeters) {
                     for (size_t path_idx = 0; path_idx < multi_path.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = multi_path.paths[path_idx];
                         check_and_stagger_path(cur_path);
@@ -2508,10 +2508,16 @@ void PerimeterGenerator::process_arachne()
             }
         }
 
-        if (this->config->staggered_perimeters) { // If staggered layers are on, all odd perimeters will be staggered and should be printed after the non staggered perimeters
+        if (this->config->staggered_perimeters) { // If staggered layers are on, staggered perimeters should be printed after the non-staggered perimeters
+            bool reverse = this->config->staggered_perimeters_reverse;
             std::sort(ordered_extrusions.begin(), ordered_extrusions.end(),
-                [](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
-                return extrusion_1.extrusion->inset_idx % 2 <= extrusion_2.extrusion->inset_idx % 2;
+                [reverse](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
+                // Without reverse: odd walls are staggered (printed last), so even <= odd keeps even first.
+                // With reverse: even walls are staggered (printed last), so odd first means we flip the comparison.
+                if (reverse)
+                    return extrusion_1.extrusion->inset_idx % 2 >= extrusion_2.extrusion->inset_idx % 2;
+                else
+                    return extrusion_1.extrusion->inset_idx % 2 <= extrusion_2.extrusion->inset_idx % 2;
                 });
         }
 

@@ -1174,6 +1174,7 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionBool, detect_thin_wall))
     //staggered layer checking
     ((ConfigOptionBool,               staggered_perimeters))
+    ((ConfigOptionBool,               staggered_perimeters_reverse))
     ((ConfigOptionFloat,              staggered_perimeter_flow_ratio))
     ((ConfigOptionFloatOrPercent, top_surface_line_width))
     ((ConfigOptionInt, top_shell_layers))

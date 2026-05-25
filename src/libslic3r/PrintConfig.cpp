@@ -6595,6 +6595,14 @@ void PrintConfigDef::init_fff_params()
     def->mode    = comAdvanced;
     def->set_default_value(new ConfigOptionBool(false));
 
+    def          = this->add("staggered_perimeters_reverse", coBool);
+    def->label   = L("Reverse stagger direction");
+    def->category = L("Strength");
+    def->tooltip = L("When enabled, even-indexed walls (outer wall, 2nd inner wall, etc.) are staggered up by half the layer height instead of the default odd-indexed walls. "
+                     "This allows the outer wall to be printed on top of the adjacent inner wall for better overhang support.");
+    def->mode    = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("staggered_perimeter_flow_ratio", coFloat);
     def->label = L("Staggered wall flow ratio");
     def->category = L("Strength");
