@@ -6610,6 +6610,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Strength");
     def->tooltip = L("Number of layers at the bottom of the print where staggered perimeters are not applied. "
                      "This can help improve adhesion and surface quality on the first layers.");
+    def->sidetext = L("layers");
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInt(0));
@@ -6619,6 +6620,7 @@ void PrintConfigDef::init_fff_params()
     def->category = L("Strength");
     def->tooltip = L("Number of layers at the top of the print where staggered perimeters are not applied. "
                      "This can help improve surface quality on the top layers.");
+    def->sidetext = L("layers");
     def->min = 0;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInt(0));

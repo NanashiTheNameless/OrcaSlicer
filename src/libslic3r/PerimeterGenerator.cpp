@@ -552,7 +552,7 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
             extrusion_paths_append(paths, *extrusion, role, is_external ? perimeter_generator.ext_perimeter_flow : perimeter_generator.perimeter_flow);
         }
 
-        auto check_and_stagger_path = [perimeter_generator](ExtrusionPath& cur_path) {
+        auto check_and_stagger_path = [&perimeter_generator](ExtrusionPath& cur_path) {
             bool was_staggered = false;
 
             // Skip staggering if outside the active stagger layer range

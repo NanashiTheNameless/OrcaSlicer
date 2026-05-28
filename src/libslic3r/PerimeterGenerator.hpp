@@ -159,7 +159,7 @@ public:
         const int first_layers = config->staggered_perimeter_first_layers;
         const int last_layers  = config->staggered_perimeter_last_layers;
         return layer_id >= first_layers &&
-               !(last_layers > 0 && layer_id >= ((int) number_of_layers - last_layers));
+               !(last_layers > 0 && layer_id >= (static_cast<int>(number_of_layers) - last_layers));
     }
 
 private:
