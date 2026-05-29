@@ -4088,10 +4088,10 @@ void PrintConfigDef::init_fff_params()
     def->gui_type = ConfigOptionDef::GUIType::i_enum_open;
     def->label = L("Infill");
     def->category = L("Extruders");
-    def->tooltip = L("Filament to print internal sparse infill.");
-    def->min = 1;
+    def->tooltip = L("Filament to print internal sparse infill.\n\"Default\" uses the active object/part filament.");
+    def->min = 0;
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionInt(1));
+    def->set_default_value(new ConfigOptionInt(0));
 
     def = this->add("sparse_infill_line_width", coFloatOrPercent);
     def->label = L("Sparse infill");
@@ -4968,10 +4968,10 @@ void PrintConfigDef::init_fff_params()
     def->gui_type = ConfigOptionDef::GUIType::i_enum_open;
     def->label = L("Walls");
     def->category = L("Extruders");
-    def->tooltip = L("Filament to print walls.");
-    def->min = 1;
+    def->tooltip = L("Filament to print walls.\n\"Default\" uses the active object/part filament.");
+    def->min = 0;
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionInt(1));
+    def->set_default_value(new ConfigOptionInt(0));
 
     def = this->add("inner_wall_line_width", coFloatOrPercent);
     def->label = L("Inner wall");
@@ -5737,10 +5737,10 @@ void PrintConfigDef::init_fff_params()
     def->gui_type = ConfigOptionDef::GUIType::i_enum_open;
     def->label = L("Solid infill");
     def->category = L("Extruders");
-    def->tooltip = L("Filament to print solid infill.");
-    def->min = 1;
+    def->tooltip = L("Filament to print solid infill.\n\"Default\" uses the active object/part filament.");
+    def->min = 0;
     def->mode = comAdvanced;
-    def->set_default_value(new ConfigOptionInt(1));
+    def->set_default_value(new ConfigOptionInt(0));
 
     def = this->add("internal_solid_infill_line_width", coFloatOrPercent);
     def->label = L("Internal solid infill");
@@ -6116,7 +6116,7 @@ void PrintConfigDef::init_fff_params()
     def->gui_type = ConfigOptionDef::GUIType::i_enum_open;
     def->label    = L("Support/raft base");
     def->category = L("Support");
-    def->tooltip = L("Filament to print support base and raft. \"Default\" means no specific filament for support and current filament is used.");
+    def->tooltip = L("Filament to print support base and raft.\n\"Default\" means no specific filament for support and current filament is used.");
     def->min = 0;
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionInt(0));
@@ -6151,7 +6151,7 @@ void PrintConfigDef::init_fff_params()
     def->gui_type = ConfigOptionDef::GUIType::i_enum_open;
     def->label    = L("Support/raft interface");
     def->category = L("Support");
-    def->tooltip = L("Filament to print support interface. \"Default\" means no specific filament for support interface and current filament is used.");
+    def->tooltip = L("Filament to print support interface.\n\"Default\" means no specific filament for support interface and current filament is used.");
     def->min = 0;
     // BBS
     def->mode = comSimple;
@@ -8448,9 +8448,9 @@ void DynamicPrintConfig::normalize_fdm(int used_filaments)
         int extruder = this->option("extruder")->getInt();
         this->erase("extruder");
         if (extruder != 0) {
-            if (!this->has("sparse_infill_filament"))
+            if (!this->has("sparse_infill_filament") || this->option("sparse_infill_filament")->getInt() == 0)
                 this->option("sparse_infill_filament", true)->setInt(extruder);
-            if (!this->has("wall_filament"))
+            if (!this->has("wall_filament") || this->option("wall_filament")->getInt() == 0)
                 this->option("wall_filament", true)->setInt(extruder);
             // Don't propagate the current extruder to support.
             // For non-soluble supports, the default "0" extruder means to use the active extruder,
@@ -8462,8 +8462,11 @@ void DynamicPrintConfig::normalize_fdm(int used_filaments)
         }
     }
 
-    if (!this->has("solid_infill_filament") && this->has("sparse_infill_filament"))
-        this->option("solid_infill_filament", true)->setInt(this->option("sparse_infill_filament")->getInt());
+    if (this->has("sparse_infill_filament")) {
+        int sparse_infill_filament = this->option("sparse_infill_filament")->getInt();
+        if (sparse_infill_filament > 0 && (!this->has("solid_infill_filament") || this->option("solid_infill_filament")->getInt() == 0))
+            this->option("solid_infill_filament", true)->setInt(sparse_infill_filament);
+    }
 
     if (this->has("spiral_mode") && this->opt<ConfigOptionBool>("spiral_mode", true)->value) {
         {
@@ -8521,9 +8524,9 @@ void DynamicPrintConfig::normalize_fdm_1()
         int extruder = this->option("extruder")->getInt();
         this->erase("extruder");
         if (extruder != 0) {
-            if (!this->has("sparse_infill_filament"))
+            if (!this->has("sparse_infill_filament") || this->option("sparse_infill_filament")->getInt() == 0)
                 this->option("sparse_infill_filament", true)->setInt(extruder);
-            if (!this->has("wall_filament"))
+            if (!this->has("wall_filament") || this->option("wall_filament")->getInt() == 0)
                 this->option("wall_filament", true)->setInt(extruder);
             // Don't propagate the current extruder to support.
             // For non-soluble supports, the default "0" extruder means to use the active extruder,
@@ -8535,8 +8538,11 @@ void DynamicPrintConfig::normalize_fdm_1()
         }
     }
 
-    if (!this->has("solid_infill_filament") && this->has("sparse_infill_filament"))
-        this->option("solid_infill_filament", true)->setInt(this->option("sparse_infill_filament")->getInt());
+    if (this->has("sparse_infill_filament")) {
+        int sparse_infill_filament = this->option("sparse_infill_filament")->getInt();
+        if (sparse_infill_filament > 0 && (!this->has("solid_infill_filament") || this->option("solid_infill_filament")->getInt() == 0))
+            this->option("solid_infill_filament", true)->setInt(sparse_infill_filament);
+    }
 
     if (this->has("spiral_mode") && this->opt<ConfigOptionBool>("spiral_mode", true)->value) {
         {
