@@ -51,7 +51,7 @@ This fork **does not publish stable builds**, for stability and sanity **go to t
 
 Download the **Windows Installer exe** for your preferred version from the [releases page]([https://github.com/NanashiTheNameless/OrcaSlicer/releases/latest](https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling)).
 
- - *For convenience there is also a portable build available.*
+- *For convenience there is also a portable build available.*
     <details>
     <summary>Troubleshooting</summary>
       If you need a torubleshooting guide you should use the official version, this version is for people who are experienced!
@@ -83,7 +83,7 @@ Download the **Windows Installer exe** for your preferred version from the [rele
             ![mac_security_setting](./SoftFever_doc/mac_security_setting.png)
     </details>
 
-## Linux         
+## Linux
 
 ### Flathub (Recommended)
 This OrcaSlicer fork is **NOT** available through FlatHub!
@@ -139,6 +139,7 @@ OrcaSlicer was originally forked from Bambu Studio, it was previously known as B
 The OrcaSlicer logo was designed by community member [Justin Levine](https://github.com/jal-co).
 
 # License
+
 - **OrcaSlicer** is licensed under the GNU Affero General Public License, version 3.
 - The **GNU Affero General Public License**, version 3 ensures that if you use any part of this software in any way (even behind a web server), your software must be released under the same license.
 - OrcaSlicer includes a **pressure advance calibration pattern test** adapted from Andrew Ellis' generator, which is licensed under GNU General Public License, version 3. Ellis' generator is itself adapted from a generator developed by Sineos for Marlin, which is licensed under GNU General Public License, version 3.
