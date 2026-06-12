@@ -5,37 +5,45 @@ on:
     branches:
       - main
     paths:
+      - ".github/workflows/build_*.yml"
+      - '**/CMakeLists.txt'
+      - 'build_linux.sh'
+      - 'build_release_macos.sh'
+      - 'build_release_vs2022.bat'
+      - 'deps/**'
       - 'localization/**'
       - 'resources/**'
       - 'scripts/**'
+      - 'scripts/msix/**'
+      - 'src/**'
       - 'tests/**'
       - 'tools/**'
-      - 'deps/**'
-      - 'src/**'
-      - ".github/workflows/build_*.yml"
-      - 'build_release_vs2022.bat'
-      - 'build_release_macos.sh'
-      - '**/CMakeLists.txt'
-      - 'build_linux.sh'
       - 'version.inc'
 
   pull_request:
     branches:
       - main
     paths:
+      - ".github/workflows/build_*.yml"
+      - '**/CMakeLists.txt'
+      - 'build_linux.sh'
+      - 'build_release_macos.sh'
+      - 'build_release_vs2022.bat'
+      - 'deps/**'
+      - 'deps_src/**'
       - 'localization/**'
       - 'resources/**'
       - 'scripts/**'
+      - 'scripts/flatpak/**'
+      - 'scripts/msix/**'
+      - 'src/**'
       - 'tests/**'
       - 'tools/**'
-      - 'deps/**'
-      - 'src/**'
-      - ".github/workflows/build_*.yml"
-      - 'build_release_vs2022.bat'
-      - 'build_release_macos.sh'
-      - '**/CMakeLists.txt'
-      - 'build_linux.sh'
       - 'version.inc'
+
+
+  schedule:
+      - cron: '0 17 * * *' # run once a day at 1 AM Singapore time (UTC+8)
 
   workflow_dispatch: # allows for manual dispatch
     inputs:
