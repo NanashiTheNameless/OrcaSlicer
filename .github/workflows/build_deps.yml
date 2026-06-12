@@ -69,7 +69,7 @@ jobs:
         env:
           SELF_HOSTED: ${{ vars.SELF_HOSTED }}
         run: |
-            if not defined SELF_HOSTED choco install strawberryperl
+            if "%SELF_HOSTED%"=="" choco install strawberryperl
             for /f "usebackq delims=" %%i in (`"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALLDIR=%%i"
             if not defined VSINSTALLDIR exit /b 1
             call "%VSINSTALLDIR%\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
