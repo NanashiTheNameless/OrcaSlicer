@@ -1141,7 +1141,9 @@ bool PrintObject::invalidate_state_by_config_options(
             || opt_key == "seam_gap"
             || opt_key == "role_based_wipe_speed"
             || opt_key == "wipe_on_loops"
-            || opt_key == "wipe_speed") {
+            || opt_key == "wipe_speed"
+            || opt_key == "staggered_perimeter_first_layers"
+            || opt_key == "staggered_perimeter_last_layers") {
             steps.emplace_back(posPerimeters);
         } else if (
             opt_key == "small_area_infill_flow_compensation_model") {

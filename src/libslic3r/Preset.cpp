@@ -1010,6 +1010,7 @@ static std::vector<std::string> s_Preset_print_options{
     "lightning_straightening_angle",
     "top_surface_pattern",
     "bottom_surface_pattern", "staggered_perimeters", "staggered_perimeter_flow_ratio",
+    "staggered_perimeter_first_layers", "staggered_perimeter_last_layers",
     "infill_direction",
     "solid_infill_direction",
     "counterbore_hole_bridging",
