@@ -51,10 +51,6 @@ jobs:
           useLocalCache: true         # <--= Use the local cache (default is 'false').
           useCloudCache: true
 
-      - name: setup dev on Windows
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Get the date on Ubuntu and macOS
         if: runner.os != 'Windows'
         run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
@@ -71,12 +67,14 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: ${{ github.workspace }}
         run: |
-            if (-not "${{ vars.SELF_HOSTED }}") {
-              choco install strawberryperl
-            }
-            .\build_release_vs.bat deps -x
-            .\build_release_vs.bat pack -x
-        shell: pwsh
+            if /I not "${{ vars.SELF_HOSTED }}"=="true" choco install strawberryperl
+            for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALLDIR=%%i"
+            if not defined VSINSTALLDIR exit /b 1
+            call "%VSINSTALLDIR%\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
+            if errorlevel 1 exit /b %errorlevel%
+            call .\build_release_vs.bat deps -x
+            call .\build_release_vs.bat pack -x
+        shell: cmd
 
       - name: Build on Mac ${{ inputs.arch }}
         if: inputs.os == 'macos-14'

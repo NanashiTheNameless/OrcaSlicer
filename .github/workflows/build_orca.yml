@@ -191,10 +191,6 @@ jobs:
           max_releases: 1
 
 # Windows
-      - name: setup MSVC
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Install nsis
         if: runner.os == 'Windows' && !vars.SELF_HOSTED
         run: |
@@ -208,7 +204,13 @@ jobs:
         # env:
         #   WindowsSdkDir: 'C:\Program Files (x86)\Windows Kits\10\'
         #   WindowsSDKVersion: '10.0.26100.0\'
-        run: .\build_release_vs.bat slicer -x
+        run: |
+          for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALLDIR=%%i"
+          if not defined VSINSTALLDIR exit /b 1
+          call "%VSINSTALLDIR%\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
+          if errorlevel 1 exit /b %errorlevel%
+          call .\build_release_vs.bat slicer -x
+        shell: cmd
 
       - name: Create installer Win
         if: runner.os == 'Windows' && !vars.SELF_HOSTED
