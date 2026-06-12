@@ -49,15 +49,15 @@ if "%VS_MAJOR%"=="" (
 if "%VS_MAJOR%"=="16" (
     set VS_VERSION=2019
     set CMAKE_GENERATOR="Visual Studio 16 2019"
-) else if "%VS_MAJOR%"=="17" (
+) else if %VS_MAJOR% GEQ 17 (
     set VS_VERSION=2022
     set CMAKE_GENERATOR="Visual Studio 17 2022"
-) else if "%VS_MAJOR%"=="18" (
-    set VS_VERSION=2026
-    set CMAKE_GENERATOR="Visual Studio 18 2026"
+    if not "%VS_MAJOR%"=="17" (
+        echo Warning: MSBuild major version %VS_MAJOR% detected. Falling back to Visual Studio 17 2022 CMake generator.
+    )
 ) else (
     echo Error: Unsupported Visual Studio version: %VS_MAJOR%
-    echo Supported versions: VS2019 (16.x^), VS2022 (17.x^), VS2026 (18.x^)
+    echo Supported versions: VS2019 (16.x^) and VS2022-compatible MSBuild (17.x^ and newer^)
     exit /b 1
 )
 
