@@ -66,9 +66,11 @@ jobs:
       - name: Build on Windows
         if: runner.os == 'Windows'
         working-directory: ${{ github.workspace }}
+        env:
+          SELF_HOSTED: ${{ vars.SELF_HOSTED }}
         run: |
-            if "${{ vars.SELF_HOSTED }}"=="" choco install strawberryperl
-            for /f "usebackq delims=" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALLDIR=%%i"
+            if "%SELF_HOSTED%"=="" choco install strawberryperl
+            for /f "usebackq delims=" %%i in (`"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath`) do set "VSINSTALLDIR=%%i"
             if not defined VSINSTALLDIR exit /b 1
             call "%VSINSTALLDIR%\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64
             if errorlevel 1 exit /b %errorlevel%
