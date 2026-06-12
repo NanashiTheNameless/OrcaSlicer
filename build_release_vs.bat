@@ -57,7 +57,7 @@ if "%VS_MAJOR%"=="16" (
     )
 ) else (
     echo Error: Unsupported Visual Studio version: %VS_MAJOR%
-    echo Supported versions: VS2019 (16.x^) and VS2022-compatible MSBuild (17.x^ and newer)
+    echo Supported versions: VS2019 (16.x^) and VS2022-compatible MSBuild (17.x^ and newer^)
     exit /b 1
 )
 
