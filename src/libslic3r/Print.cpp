@@ -1912,12 +1912,12 @@ StringObjectException Print::validate(std::vector<StringObjectException> *warnin
                     (m_default_region_config.wall_sequence == WallSequence::OddEven ||
                     m_default_region_config.wall_sequence == WallSequence::InnerOuterInner)) {
                 WallSequence _wall_sequence = m_default_region_config.wall_sequence;
-                warning->string = format(L("The number of perimeters is %d, which is not enough for a full-fledged generation in the %s order.\n"
+                motion_warning.string = format(L("The number of perimeters is %d, which is not enough for a full-fledged generation in the %s order.\n"
                                          "Minimum is 3. %s"
                                          "Otherwise, make sure that the order of the walls matches the desired result. "), m_default_region_config.wall_loops,
                                          _wall_sequence == WallSequence::InnerOuterInner ? L("Inner/Outer/Inner") : L("Odd-Even"),
                                          _wall_sequence == WallSequence::InnerOuterInner ? "" : L("To ensure rigidity and solidity, it is recommended to use 5 or more perimeters. "));
-                warning->opt_key = "wall_loops";
+                motion_warning.opt_key = "wall_loops";
             }
 
             // check speed
