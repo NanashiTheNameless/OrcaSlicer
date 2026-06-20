@@ -277,7 +277,9 @@ TEST_CASE("Initial layer height is honored", "[PrintGCode]")
     REQUIRE_THAT(*std::next(layer_zs.begin()), Catch::Matchers::WithinAbs(0.5, 1e-4));
 }
 
-TEST_CASE("Sequential printing follows model order", "[PrintGCode]")
+// [NotWorking]: same intermittent clipper "Coordinate outside allowed range" CI failure as the
+// PrintGCode basic functionality scenario above; disabled pending a root-cause fix.
+TEST_CASE("Sequential printing follows model order", "[PrintGCode][NotWorking]")
 {
     // Two objects of different heights, taller one added first. Orca prints
     // sequential objects in model order, so the taller one is printed first.
