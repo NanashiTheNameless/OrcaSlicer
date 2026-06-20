@@ -277,9 +277,8 @@ TEST_CASE("Initial layer height is honored", "[PrintGCode]")
     REQUIRE_THAT(*std::next(layer_zs.begin()), Catch::Matchers::WithinAbs(0.5, 1e-4));
 }
 
-// [NotWorking]: slice() intermittently throws clipper's "Coordinate outside allowed
-// range" in CI (Linux) while passing locally. Disabled pending a root-cause fix in a
-// follow-up PR.
+// [NotWorking]: same intermittent clipper "Coordinate outside allowed range" CI failure as the
+// PrintGCode basic functionality scenario above; disabled pending a root-cause fix.
 TEST_CASE("Sequential printing follows model order", "[PrintGCode][NotWorking]")
 {
     // Two objects of different heights, taller one added first. Orca prints
