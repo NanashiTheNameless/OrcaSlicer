@@ -1,0 +1,61 @@
+name: 'Apt Install Dependencies'
+description: 'Install system dependencies for building OrcaSlicer on Ubuntu/Debian'
+
+runs:
+  using: composite
+  steps:
+    - name: Install apt dependencies
+      shell: bash
+      run: |
+        source /etc/os-release
+        sudo apt-get update -qq
+
+        PACKAGES=(
+          autoconf
+          build-essential
+          clang
+          eglexternalplatform-dev
+          extra-cmake-modules
+          file
+          g++
+          gettext
+          git
+          gstreamer1.0-gtk3
+          libcurl4-openssl-dev
+          libdbus-1-dev
+          libglew-dev
+          libgtk-3-dev
+          libmspack-dev
+          libsecret-1-dev
+          libspnav-dev
+          libssl-dev
+          libtool
+          libudev-dev
+          lld
+          ninja-build
+          texinfo
+          wget
+        )
+
+        # Ubuntu 22.x / 23.x need a few extras
+        if [ "${ID}" == "ubuntu" ] && [ -n "${VERSION_ID}" ]; then
+          if dpkg --compare-versions "${VERSION_ID}" ge 22 && dpkg --compare-versions "${VERSION_ID}" lt 24; then
+            PACKAGES+=(curl libfuse-dev m4 libunwind-dev)
+          fi
+        fi
+
+        # Choose the appropriate GStreamer dev package based on availability
+        if apt-cache show libgstreamerd-3-dev &>/dev/null; then
+          PACKAGES+=(libgstreamerd-3-dev)
+        else
+          PACKAGES+=(libgstreamer1.0-dev)
+        fi
+
+        # Choose the appropriate WebKit2GTK dev package based on availability
+        if apt-cache show libwebkit2gtk-4.0-dev &>/dev/null; then
+          PACKAGES+=(libwebkit2gtk-4.0-dev)
+        else
+          PACKAGES+=(libwebkit2gtk-4.1-dev)
+        fi
+
+        sudo apt-get install -y "${PACKAGES[@]}"
