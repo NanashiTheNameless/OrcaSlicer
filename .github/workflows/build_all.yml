@@ -3,43 +3,39 @@ name: Build all
 on:
   push:
     branches:
-      - main
+     - main
+     - release/*
+     - belt-printer
     paths:
-      - ".github/workflows/build_*.yml"
-      - '**/CMakeLists.txt'
-      - 'build_linux.sh'
-      - 'build_release_macos.sh'
-      - 'build_release_vs2022.bat'
-      - 'deps/**'
-      - 'localization/**'
-      - 'resources/**'
-      - 'scripts/**'
-      - 'scripts/msix/**'
-      - 'src/**'
-      - 'tests/**'
-      - 'tools/**'
-      - 'version.inc'
+     - 'deps/**'
+     - 'src/**'
+     - '**/CMakeLists.txt'
+     - 'version.inc'
+     - 'localization/**'
+     - 'resources/**'
+     - ".github/workflows/build_*.yml"
+     - 'scripts/flatpak/**'
+     - 'scripts/msix/**'
+     - 'tests/**'
 
   pull_request:
     branches:
-      - main
+     - main
+     - release/*
     paths:
-      - ".github/workflows/build_*.yml"
-      - '**/CMakeLists.txt'
-      - 'build_linux.sh'
-      - 'build_release_macos.sh'
-      - 'build_release_vs2022.bat'
-      - 'deps/**'
-      - 'deps_src/**'
-      - 'localization/**'
-      - 'resources/**'
-      - 'scripts/**'
-      - 'scripts/flatpak/**'
-      - 'scripts/msix/**'
-      - 'src/**'
-      - 'tests/**'
-      - 'tools/**'
-      - 'version.inc'
+     - 'deps/**'
+     - 'deps_src/**'
+     - 'src/**'
+     - '**/CMakeLists.txt'
+     - 'version.inc'
+     - ".github/workflows/build_*.yml"
+     - 'build_linux.sh'
+     - 'build_release_vs.bat'
+     - 'build_release_vs2022.bat'
+     - 'build_release_macos.sh'
+     - 'scripts/flatpak/**'
+     - 'scripts/msix/**'
+     - 'tests/**'
 
 
   schedule:
@@ -53,44 +49,85 @@ on:
         type: boolean
         default: false
 
-permissions:
-  pull-requests: write
-  contents: write
-  actions: write
-  checks: write
-  issues: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 
 jobs:
   build_linux:
-    name: Build Linux (${{ matrix.os }})
     strategy:
       fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
-    uses: ./.github/workflows/build_check_cache.yml
-    with:
-      os: ${{ matrix.os }}
-      build-deps-only: ${{ inputs.build-deps-only || false }}
-    secrets: inherit
-  build_all:
-    name: Build Non-Linux
-    strategy:
-      fail-fast: false
+      # Build both arches on every event (PRs included), through the same
+      # build_check_cache -> build_deps -> build_orca chain (the AppImage).
+      # aarch64 always uses the GitHub-hosted arm runner (there is no arm
+      # self-hosted server). amd64's empty arch is load-bearing: it keeps the
+      # historical 'linux-clang' deps cache key and the unsuffixed asset names.
       matrix:
         include:
-          - os: windows-latest
-          - os: macos-14
-            arch: arm64
+          - arch: ""
+            os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
+          - arch: "aarch64"
+            os: ubuntu-24.04-arm
+    # Don't run scheduled builds on forks:
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ matrix.os }}
       arch: ${{ matrix.arch }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
+    secrets: inherit
+  build_windows:
+    name: Build Windows ${{ matrix.arch }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            os: windows-latest
+          - arch: arm64
+            os: windows-11-arm
+    # Don't run scheduled builds on forks:
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    uses: ./.github/workflows/build_check_cache.yml
+    with:
+      # Self-hosted runner is x64-only; ARM64 always uses the GitHub-hosted runner.
+      os: ${{ (matrix.arch == 'x64' && vars.SELF_HOSTED) && 'orca-win-server' || matrix.os }}
+      arch: ${{ matrix.arch }}
+      build-deps-only: ${{ inputs.build-deps-only || false }}
       force-build: ${{ github.event_name == 'schedule' }}
+    secrets: inherit
+  build_macos_arch:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - arm64
+          - x86_64
+    # Don't run scheduled builds on forks:
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    uses: ./.github/workflows/build_check_cache.yml
+    with:
+      os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
+      arch: ${{ matrix.arch }}
+      build-deps-only: ${{ inputs.build-deps-only || false }}
+      force-build: ${{ github.event_name == 'schedule' }}
+    secrets: inherit
+  build_macos_universal:
+    name: Build macOS Universal
+    needs: build_macos_arch
+    if: ${{ !cancelled() && needs.build_macos_arch.result == 'success' && !inputs.build-deps-only && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    uses: ./.github/workflows/build_orca.yml
+    with:
+      os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
+      arch: universal
+      macos-combine-only: true
     secrets: inherit
   unit_tests:
     name: Unit Tests
-    runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
+    # Tests are built on the aarch64 leg by default (faster GitHub arm runner),
+    # so run them there; self-hosted builds them on the amd64 server instead.
+    runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04-arm' }}
     needs: build_linux
     if: ${{ !cancelled() && success() }}
     steps:
@@ -102,11 +139,8 @@ jobs:
             scripts
             tests
       - name: Apt-Install Dependencies
-        shell: bash
-        run: |
-          mkdir -p ${{ github.workspace }}/deps/build/destdir
-          sudo env "ORCA_UPDATER_SIG_KEY=$ORCA_UPDATER_SIG_KEY" ./build_linux.sh -ur
-          sudo chown $USER -R ./
+        if: ${{ !vars.SELF_HOSTED }}
+        uses: ./.github/actions/apt-install-deps
       - name: Restore Test Artifact
         uses: actions/download-artifact@v8
         with:
@@ -148,12 +182,6 @@ jobs:
         - /opt/ghc:/opt/ghc1
         - /usr/local/share/boost:/usr/local/share/boost1
         - /opt/hostedtoolcache:/opt/hostedtoolcache1
-        - /opt/az:/opt/az1
-        - /usr/local/share/powershell:/usr/local/share/powershell1
-        - /usr/local/share/chromium:/usr/local/share/chromium1
-        - /opt/google/chrome:/opt/google/chrome1
-        - /usr/local/lib/node_modules:/usr/local/lib/node_modules1
-        - /home/linuxbrew/.linuxbrew:/linuxbrew1
     strategy:
       fail-fast: false
       matrix:
@@ -162,24 +190,18 @@ jobs:
             runner: ubuntu-24.04
           - arch: aarch64
             runner: ubuntu-24.04-arm
+    # Don't run scheduled builds on forks; skip entirely on self-hosted runners
+    if: ${{ !cancelled() && !vars.SELF_HOSTED && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+
     runs-on: ${{ matrix.variant.runner }}
     env:
-      date: ""
-      ver: ""
-      ver_pure: ""
+      date:
+      ver:
+      ver_pure:
     steps:
-    - name: "Remove unneeded stuff to free disk space (non-blocking on fail/error)"
-      run: |
-        rm -rfv /usr/local/lib/android/* || true
-        rm -rfv /usr/share/dotnet/* || true
-        rm -rfv /opt/ghc1/* || true
-        rm -rfv /usr/local/share/boost1/* || true
-        rm -rfv /opt/hostedtoolcache1/* || true
-        rm -rfv /usr/local/share/powershell1/* || true
-        rm -rfv /usr/local/share/chromium1/* || true
-        rm -rfv /opt/google/chrome1/* || true
-        rm -rfv /usr/local/lib/node_modules1/* || true
-        rm -rfv /linuxbrew1/* || true
+    - name: "Remove unneeded stuff to free disk space"
+      run:
+        rm -rf /usr/local/lib/android/* /usr/share/dotnet/* /opt/ghc1/* "/usr/local/share/boost1/*" /opt/hostedtoolcache1/*
     - uses: actions/checkout@v6
     - name: Get the version and date
       run: |
@@ -214,17 +236,17 @@ jobs:
     - name: Disable debug info for faster CI builds
       run: |
         sed -i '/^build-options:/a\  no-debuginfo: true\n  strip: true' \
-          scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml
+          scripts/flatpak/com.orcaslicer.OrcaSlicer.yml
       shell: bash
     - name: Inject git commit hash into Flatpak manifest
       run: |
         sed -i "/name: OrcaSlicer/{n;s|buildsystem: simple|buildsystem: simple\n    build-options:\n      env:\n        git_commit_hash: \"$git_commit_hash\"|}" \
-          scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml
+          scripts/flatpak/com.orcaslicer.OrcaSlicer.yml
       shell: bash
     - uses: flatpak/flatpak-github-actions/flatpak-builder@master
       with:
-        bundle: OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak
-        manifest-path: scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml
+        bundle: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
+        manifest-path: scripts/flatpak/com.orcaslicer.OrcaSlicer.yml
         cache: false
         arch: ${{ matrix.variant.arch }}
         upload-artifact: false
@@ -240,8 +262,7 @@ jobs:
         token: ${{ secrets.GH_TOKEN }}
         upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
         release_id: 242055857
-        asset_path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak'
+        asset_path: /__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
         asset_name: OrcaSlicer-Linux-flatpak_nightly_${{ matrix.variant.arch }}.flatpak
         asset_content_type: application/octet-stream
         max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
-

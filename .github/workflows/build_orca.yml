@@ -1,12 +1,11 @@
-name: Build Orca
 on:
     workflow_call:
       inputs:
         cache-key:
-          required: true
+          required: false
           type: string
         cache-path:
-          required: true
+          required: false
           type: string
         os:
           required: true
@@ -14,15 +13,21 @@ on:
         arch:
           required: false
           type: string
+        macos-combine-only:
+          required: false
+          type: boolean
+          default: false
 
 jobs:
   build_orca:
     name: Build OrcaSlicer
     runs-on: ${{ inputs.os }}
     env:
-      date: ""
-      ver: ""
-      ver_pure: ""
+      date:
+      ver:
+      ver_pure:
+      ubuntu-ver: '2404'
+      ubuntu-ver-str: '_Ubuntu2404'
       ORCA_UPDATER_SIG_KEY: ${{ secrets.ORCA_UPDATER_SIG_KEY }}
 
     steps:
@@ -32,15 +37,35 @@ jobs:
           lfs: 'false'
 
       - name: load cached deps
+        if: ${{ !(runner.os == 'macOS' && inputs.macos-combine-only) }}
         uses: actions/cache@v5
         with:
           path: ${{ inputs.cache-path }}
           key: ${{ inputs.cache-key }}
-          fail-on-cache-miss: ${{ inputs.os != 'macos-14' }}
+          fail-on-cache-miss: true
 
       - uses: lukka/get-cmake@latest
+        # The windows-11-arm runner needs CMake <= 3.31 (handled in the next step).
+        if: ${{ !(runner.os == 'Windows' && inputs.arch == 'arm64') }}
         with:
           cmakeVersion: "~4.3.0"  # use most recent 4.3.x version
+          useLocalCache: true         # <--= Use the local cache (default is 'false').
+          useCloudCache: true
+
+      - name: Install CMake 3.31.x (Windows ARM64)
+        # windows-11-arm ships CMake 4.x, which removed pre-3.5 policy
+        # compatibility AND has incomplete ASM_ARMASM linker modules
+        # (breaks Boost.Context on ARM64). Pin to the last 3.x release.
+        if: runner.os == 'Windows' && inputs.arch == 'arm64'
+        shell: pwsh
+        run: |
+          $ver = "3.31.6"
+          $url = "https://github.com/Kitware/CMake/releases/download/v$ver/cmake-$ver-windows-arm64.zip"
+          Invoke-WebRequest -Uri $url -OutFile "$env:RUNNER_TEMP\cmake.zip"
+          Expand-Archive -Path "$env:RUNNER_TEMP\cmake.zip" -DestinationPath "$env:RUNNER_TEMP\cmake" -Force
+          $cmakeBin = "$env:RUNNER_TEMP\cmake\cmake-$ver-windows-arm64\bin"
+          if (-not (Test-Path "$cmakeBin\cmake.exe")) { throw "cmake.exe not found at $cmakeBin" }
+          Add-Content -Path $env:GITHUB_PATH -Value $cmakeBin
 
       - name: Get the version and date on Ubuntu and macOS
         if: runner.os != 'Windows'
@@ -57,6 +82,11 @@ jobs:
           echo "ver_pure=$ver_pure" >> $GITHUB_ENV
           echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
           echo "git_commit_hash=$git_commit_hash" >> $GITHUB_ENV
+          # Per-arch Linux AppImage naming: amd64 keeps the historical unsuffixed
+          # name (arch_suffix empty). Unused on macOS/Windows.
+          if [ '${{ inputs.arch }}' = 'aarch64' ]; then
+            echo "arch_suffix=_aarch64" >> $GITHUB_ENV
+          fi
         shell: bash
 
       - name: Get the version and date on Windows
@@ -87,14 +117,16 @@ jobs:
 
 #   Mac
       - name: Install tools mac
-        if: inputs.os == 'macos-14'
+        if: runner.os == 'macOS' && !inputs.macos-combine-only
         run: |
-          brew install libtool
-          brew list
-          mkdir -p ${{ github.workspace }}/deps/build
+          if [ -z "${{ vars.SELF_HOSTED }}" ]; then
+            brew install libtool
+            brew list
+          fi
+          mkdir -p ${{ github.workspace }}/deps/build/${{ inputs.arch }}
 
       - name: Free disk space
-        if: inputs.os == 'macos-14'
+        if: runner.os == 'macOS' && !inputs.macos-combine-only && !vars.SELF_HOSTED
         run: |
           df -hI /dev/disk3s1s1
           sudo find /Applications -maxdepth 1 -type d -name "Xcode_*.app" ! -name "Xcode_15.4.app" -exec rm -rf {} +
@@ -102,30 +134,23 @@ jobs:
           df -hI /dev/disk3s1s1
 
       - name: Build slicer mac
-        if: inputs.os == 'macos-14'
+        if: runner.os == 'macOS' && !inputs.macos-combine-only
         working-directory: ${{ github.workspace }}
         run: |
-          ./build_release_macos.sh -s -n -x -a universal -t 10.15 -1
+          ./build_release_macos.sh -s -n -x ${{ !vars.SELF_HOSTED && '-1' || '' }} -a ${{ inputs.arch }} -t 10.15
 
-      - name: Add some waiting Time to avoid issues when creating DMG
-        if: ${{ inputs.os == 'macos-14' }}
-        run: sleep 30
-
-      - name: Detach OrcaSlicer volume if mounted
-        if: ${{ inputs.os == 'macos-14' }}
+      - name: Pack macOS app bundle ${{ inputs.arch }}
+        if: runner.os == 'macOS' && !inputs.macos-combine-only
+        working-directory: ${{ github.workspace }}
         run: |
-          hdiutil info | grep "/Volumes/OrcaSlicer" | while read line; do
-            dev=$(echo $line | awk '{print $1}')
-            hdiutil detach $dev || true
-          done
+          tar -czvf OrcaSlicer_Mac_bundle_${{ inputs.arch }}_${{ github.sha }}.tar.gz -C build/${{ inputs.arch }} OrcaSlicer
 
-      - name: Remove existing DMG if present
-        if: ${{ inputs.os == 'macos-14' }}
-        run: rm -f OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
-
-      - name: Wait for resources to be freed
-        if: ${{ inputs.os == 'macos-14' }}
-        run: sleep 60
+      - name: Upload macOS app bundle ${{ inputs.arch }}
+        if: runner.os == 'macOS' && !inputs.macos-combine-only
+        uses: actions/upload-artifact@v7
+        with:
+          name: OrcaSlicer_Mac_bundle_${{ inputs.arch }}_${{ github.sha }}
+          path: ${{ github.workspace }}/OrcaSlicer_Mac_bundle_${{ inputs.arch }}_${{ github.sha }}.tar.gz
 
       - name: Download macOS app bundles
         if: runner.os == 'macOS' && inputs.macos-combine-only
@@ -151,7 +176,7 @@ jobs:
           ./build_release_macos.sh -u -x ${{ !vars.SELF_HOSTED && '-1' || '' }} -a universal -t 10.15
 
       - name: Create DMG without notary
-        if: inputs.os == 'macos-14'
+        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/belt-printer' && runner.os == 'macOS' && inputs.macos-combine-only
         working-directory: ${{ github.workspace }}
         run: |
           # Load the `retry` helper (retries flaky commands such as `hdiutil create`).
@@ -161,6 +186,7 @@ jobs:
           cp -R ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer.app ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/
           ln -sfn /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/Applications
           retry hdiutil create -volname "OrcaSlicer" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_dmg -ov -format UDZO OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
+
           # Create separate OrcaSlicer_profile_validator DMG if the app exists
           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
             mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg
@@ -170,7 +196,7 @@ jobs:
             retry hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg -ov -format UDZO OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           fi
 
-      # Delete the per-arch bundles only after signing/DMG creation succeeded, so a
+      # Delete the per-arch bundles only after DMG creation succeeded, so a
       # failed run keeps them available for a re-run instead of forcing a full rebuild.
       - name: Delete intermediate per-arch artifacts
         if: success() && runner.os == 'macOS' && inputs.macos-combine-only
@@ -181,17 +207,17 @@ jobs:
             OrcaSlicer_Mac_bundle_x86_64_${{ github.sha }}
 
       - name: Upload artifacts mac
-        if: inputs.os == 'macos-14'
+        if: runner.os == 'macOS' && inputs.macos-combine-only
         uses: actions/upload-artifact@v7
         with:
           name: OrcaSlicer_Mac_universal_${{ env.ver }}
           path: ${{ github.workspace }}/OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
 
       - name: Upload OrcaSlicer_profile_validator DMG mac
-        if: inputs.os == 'macos-14'
+        if: runner.os == 'macOS' && inputs.macos-combine-only && !vars.SELF_HOSTED
         uses: actions/upload-artifact@v7
         with:
-          name: OrcaSlicer_profile_validator_Mac_universal_DMG
+          name: OrcaSlicer_profile_validator_Mac_universal_DMG_${{ env.ver }}
           path: ${{ github.workspace }}/OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           if-no-files-found: ignore
 
@@ -220,6 +246,18 @@ jobs:
           max_releases: 1
 
 # Windows
+      - name: Set Windows build variables
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if ("${{ inputs.arch }}" -eq "arm64") {
+            "BUILD_DIR=build-arm64"  | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+            "ARCH_SUFFIX=_arm64"     | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+          } else {
+            "BUILD_DIR=build"        | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+            "ARCH_SUFFIX="           | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+          }
+
       - name: setup MSVC
         if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v3
@@ -237,56 +275,54 @@ jobs:
         # env:
         #   WindowsSdkDir: 'C:\Program Files (x86)\Windows Kits\10\'
         #   WindowsSDKVersion: '10.0.26100.0\'
-        run: .\build_release_vs.bat slicer
+        run: |
+          $arch = "${{ inputs.arch }}"
+          if ($arch -eq "arm64") { .\build_release_vs.bat slicer arm64 } else { .\build_release_vs.bat slicer }
+        shell: pwsh
 
+      # NSIS is x86-only; it runs (and the installer it emits runs) under ARM64's
+      # x86 emulation, packaging the native arm64 payload from build-arm64.
       - name: Create installer Win
         if: runner.os == 'Windows' && !vars.SELF_HOSTED
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ github.workspace }}/${{ env.BUILD_DIR }}
         run: |
           cpack -G NSIS
 
       - name: Pack app
         if: runner.os == 'Windows'
-        working-directory: ${{ github.workspace }}/build
+        working-directory: ${{ github.workspace }}/${{ env.BUILD_DIR }}
         shell: cmd
-        run: '"C:/Program Files/7-Zip/7z.exe" a -tzip OrcaSlicer_Windows_${{ env.ver }}_portable.zip ${{ github.workspace }}/build/OrcaSlicer'
+        run: '"C:/Program Files/7-Zip/7z.exe" a -tzip OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable.zip ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer'
 
       - name: Pack PDB
-        if: runner.os == 'Windows' && !vars.SELF_HOSTED
-        working-directory: ${{ github.workspace }}/build/src/Release
+        if: runner.os == 'Windows' && inputs.arch != 'arm64' && !vars.SELF_HOSTED
+        working-directory: ${{ github.workspace }}/${{ env.BUILD_DIR }}/src/Release
         shell: cmd
         run: '"C:/Program Files/7-Zip/7z.exe" a -m0=lzma2 -mx9 Debug_PDB_${{ env.ver }}_for_developers_only.7z  *.pdb'
 
-      - name: List Build Dir
-        if: inputs.os == 'windows-latest'
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Force "$Env:GITHUB_WORKSPACE\build" | Format-List -Property FullName,Length,LastWriteTime
-
       - name: Upload artifacts Win zip
-        if: inputs.os == 'windows-latest'
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
-          name: OrcaSlicer_Windows_${{ env.ver }}_portable
-          path: ${{ github.workspace }}/build/OrcaSlicer
+          name: OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable
+          path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer
 
       - name: Upload artifacts Win installer
-        if: inputs.os == 'windows-latest'
+        if: runner.os == 'Windows' && !vars.SELF_HOSTED
         uses: actions/upload-artifact@v7
         with:
-          name: OrcaSlicer_Windows_${{ env.ver }}
-          path: ${{ github.workspace }}/build/OrcaSlicer*.exe
+          name: OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}
+          path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer*.exe
 
       - name: Upload artifacts Win PDB
-        if: inputs.os == 'windows-latest'
+        if: runner.os == 'Windows' && inputs.arch != 'arm64' && !vars.SELF_HOSTED
         uses: actions/upload-artifact@v7
         with:
           name: PDB
           path: ${{ github.workspace }}/build/src/Release/Debug_PDB_${{ env.ver }}_for_developers_only.7z
-          if-no-files-found: warn
 
       - name: Upload OrcaSlicer_profile_validator Win
-        if: inputs.os == 'windows-latest'
+        if: runner.os == 'Windows' && inputs.arch != 'arm64' && !vars.SELF_HOSTED
         uses: actions/upload-artifact@v7
         with:
           name: OrcaSlicer_profile_validator_Windows_${{ env.ver }}
@@ -299,7 +335,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: ${{ github.workspace }}/build/OrcaSlicer_Windows_${{ env.ver }}_portable.zip
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable.zip
           asset_name: OrcaSlicer_Windows_portable_nightly.zip
           asset_content_type: application/x-zip-compressed
           max_releases: 1
@@ -311,7 +347,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: ${{ github.workspace }}/build/OrcaSlicer_Windows_Installer_${{ env.ver }}.exe
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_Installer_${{ env.ver }}.exe
           asset_name: OrcaSlicer_Windows_Installer_nightly.exe
           asset_content_type: application/x-msdownload
           max_releases: 1
@@ -334,8 +370,9 @@ jobs:
         shell: pwsh
         run: |
           ./scripts/msix/build_msix.ps1 `
-            -InstallDir "${{ github.workspace }}/build/OrcaSlicer" `
-            -OutputPath "${{ github.workspace }}/build/OrcaSlicer_Windows_MSIX_${{ env.ver }}.msix" `
+            -InstallDir "${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer" `
+            -OutputPath "${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_MSIX_${{ env.ver }}${{ env.ARCH_SUFFIX }}.msix" `
+            -Architecture "${{ inputs.arch }}" `
             -IdentityName "${{ vars.ORCA_MSIX_IDENTITY_NAME || 'OrcaSlicer.OrcaSlicer' }}" `
             -Publisher "${{ vars.ORCA_MSIX_PUBLISHER || 'CN=38F7EA55-C73B-4072-B3B2-C8E0EA15BB82' }}" `
             -PublisherDisplayName "${{ vars.ORCA_MSIX_PUBLISHER_DISPLAY_NAME || 'OrcaSlicer' }}"
@@ -344,37 +381,37 @@ jobs:
         if: runner.os == 'Windows' && !vars.SELF_HOSTED
         uses: actions/upload-artifact@v7
         with:
-          name: OrcaSlicer_Windows_MSIX_${{ env.ver }}
-          path: ${{ github.workspace }}/build/OrcaSlicer_Windows_MSIX_${{ env.ver }}.msix
+          name: OrcaSlicer_Windows_MSIX_${{ env.ver }}${{ env.ARCH_SUFFIX }}
+          path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_MSIX_${{ env.ver }}${{ env.ARCH_SUFFIX }}.msix
 
 # Ubuntu
       - name: Apt-Install Dependencies
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
-        shell: bash
-        run: |
-          mkdir -p ${{ github.workspace }}/deps/build/destdir
-          sudo env "ORCA_UPDATER_SIG_KEY=$ORCA_UPDATER_SIG_KEY" ./build_linux.sh -ur
-          sudo chown $USER -R ./
+        if: runner.os == 'Linux' && !vars.SELF_HOSTED
+        uses: ./.github/actions/apt-install-deps
 
+        # Tests must built at the same time as the slicer;
+        # if you untangle them feel free to separate them here too
       - name: Build slicer and tests
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
+        if: runner.os == 'Linux'
         shell: bash
-        env:
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
         run: |
-          ./build_linux.sh -istr
+          # Build + tar the unit tests (-t) only on the leg that runs them: the
+          # aarch64 leg by default (faster GitHub arm runner), or amd64 when using
+          # self-hosted runners (no arm self-hosted server). unit_tests downloads
+          # this tarball. The profile validator is built with -s, so amd64 keeps it.
+          tests=${{ (!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') }}
+          if $tests; then flags=-istrlL; else flags=-isrlL; fi
+          ./build_linux.sh "$flags"
           ./scripts/check_appimage_libs.sh ./build/package ./build/package/bin/orca-slicer
-          mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage
-          chmod +x ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage
-          tar -cvpf build_tests.tar build/tests
+          appimage=./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}${{ env.arch_suffix }}_${{ env.ver }}.AppImage
+          mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage "$appimage"
+          chmod +x "$appimage"
+          if $tests; then tar -cvpf build_tests.tar build/tests; fi
 
-      - name: List Build Dir
-        if: inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04'
-        shell: bash
-        run: ls -R build
-
+        # Use tar because upload-artifacts won't always preserve directory structure
+        # and doesn't preserve file permissions
       - name: Upload Test Artifact
-        if: inputs.os == 'ubuntu-24.04'
+        if: runner.os == 'Linux' && ((!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64'))
         uses: actions/upload-artifact@v7
         with:
           name: ${{ github.sha }}-tests
@@ -383,8 +420,18 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
+      - name: Run external slicer regression tests
+        if: runner.os == 'Linux' && inputs.arch != 'aarch64'
+        timeout-minutes: 20
+        shell: bash
+        run: |
+          test_repo_dir="${{ runner.temp }}/orca-test-repo"
+          rm -rf "$test_repo_dir"
+          git clone --depth 1 https://github.com/OrcaSlicer/orca-test-repo.git "$test_repo_dir"
+          python3 "$test_repo_dir/run_test.py" "${{ github.workspace }}/build/package/bin/orca-slicer"
+
       - name: Build orca_custom_preset_tests
-        if: (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04')
+        if: github.ref == 'refs/heads/main' && runner.os == 'Linux' && !vars.SELF_HOSTED && inputs.arch != 'aarch64'
         working-directory: ${{ github.workspace }}/build/src/Release
         shell: bash
         run: |
@@ -393,42 +440,42 @@ jobs:
           zip -r orca_custom_preset_tests.zip user/
 
       - name: Upload artifacts Ubuntu
-        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
-        env:
-          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+        if: ${{ ! env.ACT && runner.os == 'Linux' }}
         uses: actions/upload-artifact@v7
         with:
-          name: OrcaSlicer_Linux_ubuntu${{ env.ubuntu-ver }}_${{ env.ver }}
-          path: './build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage'
+          name: OrcaSlicer_Linux_ubuntu_${{ env.ubuntu-ver }}${{ env.arch_suffix }}_${{ env.ver }}
+          path: "./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}${{ env.arch_suffix }}_${{ env.ver }}.AppImage"
 
       - name: Upload OrcaSlicer_profile_validator Ubuntu
-        if: ${{ inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04' }}
-        env:
-          ubuntu-ver: ${{ (inputs.os == 'ubuntu-22.04' && '2204') || (inputs.os == 'ubuntu-24.04' && '2404') || '' }}
+        if: ${{ ! env.ACT && runner.os == 'Linux' && !vars.SELF_HOSTED && inputs.arch != 'aarch64' }}
         uses: actions/upload-artifact@v7
         with:
           name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
           path: './build/src/Release/OrcaSlicer_profile_validator'
 
       - name: Deploy Ubuntu release
-        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        env:
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+        if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: './build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage'
+          asset_path: ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}${{ env.arch_suffix }}_${{ env.ver }}.AppImage
           asset_name: OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage
           asset_content_type: application/octet-stream
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+      - name: Deploy Ubuntu release
+        if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
+        uses: NanashiTheNameless/action-create-tag@main
+        with:
+          tag: "Nightly-Rolling"
+          tag_exists_error: false
+          force_push_tag: true
+          message: "Nightly-Rolling"
+          github_token: ${{ secrets.GH_TOKEN }}
 
       - name: Deploy Ubuntu OrcaSlicer_profile_validator release
-        if: ${{ (inputs.os == 'ubuntu-22.04' || inputs.os == 'ubuntu-24.04') && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        env:
-          ubuntu-ver-str: ${{ (inputs.os == 'ubuntu-22.04' && '_Ubuntu2204') || (inputs.os == 'ubuntu-24.04' && '_Ubuntu2404') || '' }}
+        if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -446,17 +493,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: '${{ github.workspace }}/resources/profiles/orca_custom_preset_tests.zip'
+          asset_path: ${{ github.workspace }}/resources/profiles/orca_custom_preset_tests.zip
           asset_name: orca_custom_preset_tests.zip
           asset_content_type: application/octet-stream
           max_releases: 1
-
-      - name: Update release tag
-        if: ${{ (github.event_name == 'workflow_dispatch' || github.event_name == 'push') && inputs.os == 'ubuntu-24.04' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/action-create-tag@main
-        with:
-          tag: "Nightly-Rolling"
-          tag_exists_error: false
-          force_push_tag: true
-          message: "Nightly-Rolling"
-          github_token: ${{ secrets.GH_TOKEN }}
