@@ -56,21 +56,36 @@ then
         REQUIRED_DEV_PACKAGES+=(libgstreamer1.0-dev)
     fi
 
-    # check which version of libwebkit2gtk is available
-    if [ "$(apt show --quiet libwebkit2gtk-4.0-dev 2>/dev/null)" != "" ]
+    # choose the appropriate libwebkit2gtk dev package based on availability
+    # Try 4.1 first (newer), then fall back to 4.0
+    if [ "$(apt show --quiet libwebkit2gtk-4.1-dev 2>/dev/null)" != "" ]
+    then
+        REQUIRED_DEV_PACKAGES+=(libwebkit2gtk-4.1-dev)
+    elif [ "$(apt show --quiet libwebkit2gtk-4.0-dev 2>/dev/null)" != "" ]
     then
         REQUIRED_DEV_PACKAGES+=(libwebkit2gtk-4.0-dev)
-    else
-        REQUIRED_DEV_PACKAGES+=(libwebkit2gtk-4.1-dev)
     fi
 
-    # Ensure libsoup-3.0 is available (required by webkit2gtk-4.0)
-    if [ "$(apt show --quiet libsoup-3.0-dev 2>/dev/null)" != "" ]
-    then
-        REQUIRED_DEV_PACKAGES+=(libsoup-3.0-dev)
-    elif [ "$(apt show --quiet libsoup3-dev 2>/dev/null)" != "" ]
-    then
-        REQUIRED_DEV_PACKAGES+=(libsoup3-dev)
+    # Ensure libsoup version matches webkit2gtk version
+    # webkit2gtk-4.1 uses libsoup-3.0, webkit2gtk-4.0 can use either
+    webkit_lib_found=0
+    if [ "$(apt show --quiet libwebkit2gtk-4.1-dev 2>/dev/null)" != "" ]; then
+        # webkit2gtk-4.1 requires libsoup-3.0
+        if [ "$(apt show --quiet libsoup-3.0-dev 2>/dev/null)" != "" ]; then
+            REQUIRED_DEV_PACKAGES+=(libsoup-3.0-dev)
+        elif [ "$(apt show --quiet libsoup3-dev 2>/dev/null)" != "" ]; then
+            REQUIRED_DEV_PACKAGES+=(libsoup3-dev)
+        fi
+        webkit_lib_found=1
+    fi
+    
+    if [ "$webkit_lib_found" -eq 0 ] && [ "$(apt show --quiet libwebkit2gtk-4.0-dev 2>/dev/null)" != "" ]; then
+        # webkit2gtk-4.0 can use libsoup-2.4 or 3.0
+        if [ "$(apt show --quiet libsoup-3.0-dev 2>/dev/null)" != "" ]; then
+            REQUIRED_DEV_PACKAGES+=(libsoup-3.0-dev)
+        elif [ "$(apt show --quiet libsoup3-dev 2>/dev/null)" != "" ]; then
+            REQUIRED_DEV_PACKAGES+=(libsoup3-dev)
+        fi
     fi
 
     # install them all at once
