@@ -239,6 +239,7 @@ else ()
             VERBATIM)
     else ()
         add_custom_command(TARGET OrcaSlicer POST_BUILD
+            COMMAND ln -sf OrcaSlicer orca-slicer
             WORKING_DIRECTORY "$<TARGET_FILE_DIR:OrcaSlicer>"
             VERBATIM)
     endif ()

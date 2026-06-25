@@ -64,6 +64,15 @@ then
         REQUIRED_DEV_PACKAGES+=(libwebkit2gtk-4.1-dev)
     fi
 
+    # Ensure libsoup-3.0 is available (required by webkit2gtk-4.0)
+    if [ "$(apt show --quiet libsoup-3.0-dev 2>/dev/null)" != "" ]
+    then
+        REQUIRED_DEV_PACKAGES+=(libsoup-3.0-dev)
+    elif [ "$(apt show --quiet libsoup3-dev 2>/dev/null)" != "" ]
+    then
+        REQUIRED_DEV_PACKAGES+=(libsoup3-dev)
+    fi
+
     # install them all at once
     sudo apt update
     sudo apt install -y "${REQUIRED_DEV_PACKAGES[@]}"
