@@ -23,11 +23,11 @@ jobs:
     name: Build OrcaSlicer
     runs-on: ${{ inputs.os }}
     env:
-      date:
-      ver:
-      ver_pure:
-      ubuntu-ver: '2404'
-      ubuntu-ver-str: '_Ubuntu2404'
+      date: ""
+      ver: ""
+      ver_pure: ""
+      ubuntu-ver: ""
+      ubuntu-ver-str: ""
       ORCA_UPDATER_SIG_KEY: ${{ secrets.ORCA_UPDATER_SIG_KEY }}
 
     steps:
@@ -35,6 +35,26 @@ jobs:
         uses: actions/checkout@v6
         with:
           lfs: 'false'
+
+      - name: Detect Ubuntu version
+        if: runner.os == 'Linux' && !contains(inputs.os, 'arm')
+        run: |
+          ubuntu_version=$(lsb_release -rs | tr -d '.')
+          case "$ubuntu_version" in
+            2204)
+              echo "ubuntu-ver=2204" >> $GITHUB_ENV
+              echo "ubuntu-ver-str=_Ubuntu2204" >> $GITHUB_ENV
+              ;;
+            2404)
+              echo "ubuntu-ver=2404" >> $GITHUB_ENV
+              echo "ubuntu-ver-str=_Ubuntu2404" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "ubuntu-ver=$ubuntu_version" >> $GITHUB_ENV
+              echo "ubuntu-ver-str=_Ubuntu${ubuntu_version}" >> $GITHUB_ENV
+              ;;
+          esac
+        shell: bash
 
       - name: load cached deps
         if: ${{ !(runner.os == 'macOS' && inputs.macos-combine-only) }}
@@ -222,7 +242,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Deploy Mac release
-        if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -234,7 +254,7 @@ jobs:
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
-        if: inputs.os == 'macos-14' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -328,20 +348,32 @@ jobs:
           name: OrcaSlicer_profile_validator_Windows_${{ env.ver }}
           path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
 
-      - name: Deploy Windows release portable
-        if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+      - name: Deploy Windows release portable (x64)
+        if: inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable.zip
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}_portable.zip
           asset_name: OrcaSlicer_Windows_portable_nightly.zip
           asset_content_type: application/x-zip-compressed
           max_releases: 1
 
-      - name: Deploy Windows release installer
-        if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+      - name: Deploy Windows release portable (arm64)
+        if: inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}_arm64_portable.zip
+          asset_name: OrcaSlicer_Windows_portable_nightly_arm64.zip
+          asset_content_type: application/x-zip-compressed
+          max_releases: 1
+
+      - name: Deploy Windows release installer (x64)
+        if: inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -352,8 +384,20 @@ jobs:
           asset_content_type: application/x-msdownload
           max_releases: 1
 
-      - name: Deploy Windows OrcaSlicer_profile_validator release
-        if: inputs.os == 'windows-latest' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+      - name: Deploy Windows release installer (arm64)
+        if: inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_Installer_${{ env.ver }}_arm64.exe
+          asset_name: OrcaSlicer_Windows_Installer_nightly_arm64.exe
+          asset_content_type: application/x-msdownload
+          max_releases: 1
+
+      - name: Deploy Windows OrcaSlicer_profile_validator release (x64 only)
+        if: inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -453,18 +497,29 @@ jobs:
           name: OrcaSlicer_profile_validator_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
           path: './build/src/Release/OrcaSlicer_profile_validator'
 
-      - name: Deploy Ubuntu release
+      - name: Deploy Ubuntu release (amd64)
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}${{ env.arch_suffix }}_${{ env.ver }}.AppImage
+          asset_path: ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_${{ env.ver }}.AppImage
           asset_name: OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly.AppImage
           asset_content_type: application/octet-stream
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
-      - name: Deploy Ubuntu release
+      - name: Deploy Ubuntu release (aarch64)
+        if: ${{ inputs.arch == 'aarch64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_aarch64_${{ env.ver }}.AppImage
+          asset_name: OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly_aarch64.AppImage
+          asset_content_type: application/octet-stream
+          max_releases: 1
+      - name: Deploy Ubuntu release tag
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/action-create-tag@main
         with:
@@ -474,7 +529,7 @@ jobs:
           message: "Nightly-Rolling"
           github_token: ${{ secrets.GH_TOKEN }}
 
-      - name: Deploy Ubuntu OrcaSlicer_profile_validator release
+      - name: Deploy Ubuntu OrcaSlicer_profile_validator release (amd64 only)
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/deploy-nightly@master
         with:
