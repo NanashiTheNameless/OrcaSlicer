@@ -275,7 +275,7 @@ jobs:
             "ARCH_SUFFIX=_arm64"     | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
           } else {
             "BUILD_DIR=build"        | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
-            "ARCH_SUFFIX="           | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
+            "ARCH_SUFFIX=_x64"       | Out-File -Append -FilePath $env:GITHUB_ENV -Encoding utf8
           }
 
       - name: setup MSVC
