@@ -169,7 +169,7 @@ echo -n "[9/9] Generating Linux app..."
     # The script is at ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh
     # The binary is at ${CMAKE_CURRENT_BINARY_DIR}/Release/orca-slicer or ../../Release/orca-slicer
     ORIGINAL_BINARY_LOCATION=""
-    CONFIG_LOWER="${CONFIG,,}"
+    CONFIG_LOWER="$(printf '%s' "${CONFIG}" | tr '[:upper:]' '[:lower:]')"
     CANDIDATE_BINARY_LOCATIONS=(
         "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@"
         "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@"
@@ -193,7 +193,7 @@ echo -n "[9/9] Generating Linux app..."
         # CMake generator/layout differences may place the binary outside the
         # common config paths above; search a bounded depth in the build tree.
         # Depth 3 covers known layouts like src/Release/orca-slicer.
-        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)" || true
+        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)"
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         echo "Error: @SLIC3R_APP_CMD@ binary not found in expected build directories"
