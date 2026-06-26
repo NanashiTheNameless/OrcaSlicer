@@ -8,9 +8,9 @@ set -e
 export ROOT=$(echo $ROOT | grep . || pwd)
 export NCORES=$(nproc --all)
 CONFIG=Release
-# Search depth for fallback binary discovery (depth counts path components from build root:
-# src (1) / Release (2) / orca-slicer (3)).
-MAX_BINARY_SEARCH_DEPTH=3
+# Search depth for fallback binary discovery (depth counts path components from the search root:
+# build (1) / src (2) / Release (3) / orca-slicer (4)).
+MAX_BINARY_SEARCH_DEPTH=4
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
@@ -192,7 +192,7 @@ echo -n "[9/9] Generating Linux app..."
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         # CMake generator/layout differences may place the binary outside the
         # common config paths above; search a bounded depth in the build tree.
-        # Depth 3 covers known layouts like src/Release/orca-slicer.
+        # Depth 4 covers known layouts like build/src/Release/orca-slicer.
         ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)"
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then

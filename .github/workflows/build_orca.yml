@@ -349,19 +349,19 @@ jobs:
           path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
 
       - name: Deploy Windows release portable (x64)
-        if: inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}_portable.zip
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable.zip
           asset_name: OrcaSlicer_Windows_portable_nightly.zip
           asset_content_type: application/x-zip-compressed
           max_releases: 1
 
       - name: Deploy Windows release portable (arm64)
-        if: inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'Windows' && inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
