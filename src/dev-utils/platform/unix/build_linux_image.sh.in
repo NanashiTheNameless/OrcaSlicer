@@ -8,6 +8,7 @@ set -e
 export ROOT=$(echo $ROOT | grep . || pwd)
 export NCORES=$(nproc --all)
 CONFIG=Release
+MAX_BINARY_SEARCH_DEPTH=3
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
@@ -180,13 +181,17 @@ echo -n "[9/9] Generating Linux app..."
         )
     fi
 
-    ORIGINAL_BINARY_LOCATION="$(find_first_existing_file "${CANDIDATE_BINARY_LOCATIONS[@]}")" || true
+    for candidate in "${CANDIDATE_BINARY_LOCATIONS[@]}"; do
+        if [ -f "${candidate}" ]; then
+            ORIGINAL_BINARY_LOCATION="${candidate}"
+            break
+        fi
+    done
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         # CMake generator/layout differences may place the binary outside the
         # common config paths above; search a bounded depth in the build tree.
         # Depth 3 covers known layouts like src/Release/orca-slicer.
-        MAX_BINARY_SEARCH_DEPTH=3
-        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" -print -quit 2>/dev/null)" || true
+        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -path '*/CMakeFiles' -prune -o -type f -name "@SLIC3R_APP_CMD@" -print -quit 2>/dev/null)" || true
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         echo "Error: @SLIC3R_APP_CMD@ binary not found in expected build directories"
