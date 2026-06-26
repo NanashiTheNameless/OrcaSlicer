@@ -69,8 +69,6 @@ jobs:
             os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }}
           - arch: ""
             os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
-          - arch: "aarch64"
-            os: ubuntu-24.04-arm
     # Don't run scheduled builds on forks:
     if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
@@ -127,9 +125,9 @@ jobs:
     secrets: inherit
   unit_tests:
     name: Unit Tests
-    # Tests are built on the aarch64 leg by default (faster GitHub arm runner),
-    # so run them there; self-hosted builds them on the amd64 server instead.
-    runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04-arm' }}
+    # Tests are built on the standard ubuntu runner,
+    # self-hosted builds them on the amd64 server instead.
+    runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
     needs: build_linux
     if: ${{ !cancelled() && success() }}
     steps:
