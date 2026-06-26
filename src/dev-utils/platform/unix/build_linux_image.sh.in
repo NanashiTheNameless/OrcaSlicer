@@ -191,9 +191,22 @@ echo -n "[9/9] Generating Linux app..."
     done
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         # CMake generator/layout differences may place the binary outside the
-        # common config paths above; search a bounded depth in the build tree.
-        # Depth 4 covers known layouts like build/src/Release/orca-slicer.
-        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)"
+        # common config paths above; search a bounded depth in the likely build roots.
+        # Matching symlinks is intentional because some generators create executable shims.
+        for search_root in \
+            "${SCRIPT_DIR}/.." \
+            "${REPO_ROOT}" \
+            "${REPO_ROOT}/build" \
+            "${REPO_ROOT}/build/src" \
+            "${REPO_ROOT}/src"
+        do
+            if [ -d "${search_root}" ]; then
+                ORIGINAL_BINARY_LOCATION="$(find "${search_root}" -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)"
+                if [ -n "${ORIGINAL_BINARY_LOCATION}" ]; then
+                    break
+                fi
+            fi
+        done
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         echo "Error: @SLIC3R_APP_CMD@ binary not found in expected build directories"
