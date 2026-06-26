@@ -391,7 +391,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
           release_id: 242055857
-          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_Installer_${{ env.ver }}_arm64.exe
+          asset_path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_Installer_${{ env.ver }}${{ env.ARCH_SUFFIX }}.exe
           asset_name: OrcaSlicer_Windows_Installer_nightly_arm64.exe
           asset_content_type: application/x-msdownload
           max_releases: 1
