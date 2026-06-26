@@ -350,7 +350,7 @@ modules:
         # CMake (SLIC3R_FHS mode) installs the desktop file under the upstream app-id name;
         # rename it to the Flatpak app-id so flatpak-builder's rename-icon post-processing
         # can find and rewrite the Icon= field successfully.
-        mv "/app/share/applications/com.orcaslicer.OrcaSlicer.desktop" \
+        mv "/app/share/applications/io.github.nanashithenameless.OrcaSlicer.desktop" \
            "/app/share/applications/${FLATPAK_ID}.desktop"
         desktop-file-edit --set-key=Exec --set-value="entrypoint %U" \
           "/app/share/applications/${FLATPAK_ID}.desktop"

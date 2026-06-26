@@ -209,7 +209,7 @@ bool DesktopIntegrationDialog::is_integrated()
     if (path.empty())
         return false;
 
-    // confirmation that com.orcaslicer.OrcaSlicer.desktop exists
+    // confirmation that io.github.nanashithenameless.OrcaSlicer.desktop exists
     struct stat buffer;   
     return (stat (path.c_str(), &buffer) == 0);
 }
@@ -346,11 +346,11 @@ void DesktopIntegrationDialog::perform_desktop_integration()
 
             std::string path = GUI::format("%1%/applications/com.orcaslicer.OrcaSlicer%2%.desktop", target_dir_desktop, version_suffix);
             if (create_desktop_file(path, desktop_file)){
-                BOOST_LOG_TRIVIAL(debug) << "com.orcaslicer.OrcaSlicer.desktop file installation success.";
+                BOOST_LOG_TRIVIAL(debug) << "io.github.nanashithenameless.OrcaSlicer.desktop file installation success.";
                 break;
             } else {
             	// write failed - try another path
-                BOOST_LOG_TRIVIAL(debug) << "Attempt to com.orcaslicer.OrcaSlicer.desktop file installation failed. failed path: " << target_candidates[i];
+                BOOST_LOG_TRIVIAL(debug) << "Attempt to io.github.nanashithenameless.OrcaSlicer.desktop file installation failed. failed path: " << target_candidates[i];
                 target_dir_desktop.clear(); 
             }
             // if all failed - try creating default home folder
