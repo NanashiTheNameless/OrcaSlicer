@@ -168,7 +168,7 @@ echo -n "[9/9] Generating Linux app..."
     # The script is at ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh
     # The binary is at ${CMAKE_CURRENT_BINARY_DIR}/Release/orca-slicer or ../../Release/orca-slicer
     ORIGINAL_BINARY_LOCATION=""
-    CONFIG_LOWER="$(printf '%s' "${CONFIG}" | tr '[:upper:]' '[:lower:]')"
+    CONFIG_LOWER="${CONFIG,,}"
     CANDIDATE_BINARY_LOCATIONS=(
         "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@"
         "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@"
