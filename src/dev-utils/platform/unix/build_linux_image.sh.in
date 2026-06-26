@@ -143,6 +143,7 @@ echo -n "[9/9] Generating Linux app..."
     fi
 
     APPDIR="package"
+    APPDIR_ABS="$(cd "$(dirname "${APPDIR}")" && pwd)/$(basename "${APPDIR}")"
     BIN_DIR="$APPDIR/bin"
     LIB_DIR="$APPDIR/lib"
     PRIVATE_LIB_DIR="$LIB_DIR/orca-runtime"
@@ -158,13 +159,17 @@ echo -n "[9/9] Generating Linux app..."
         mkdir -p "$GST_PLUGIN_DIR" "$GIO_MODULE_DIR" "$GDK_PIXBUF_DIR"
     fi
 
-    cp -Rf ../resources "$APPDIR/resources"
+    # Copy resources from repo root
+    cp -Rf "${REPO_ROOT}/resources" "$APPDIR/resources"
 
+    # Find the binary relative to the script's location (CMAKE_CURRENT_BINARY_DIR)
+    # The script is at ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh
+    # The binary is at ${CMAKE_CURRENT_BINARY_DIR}/Release/orca-slicer or ../../Release/orca-slicer
     ORIGINAL_BINARY_LOCATION=""
-    if [ -f "src/${CONFIG}/@SLIC3R_APP_CMD@" ]; then
-        ORIGINAL_BINARY_LOCATION="$(realpath "src/${CONFIG}/@SLIC3R_APP_CMD@")"
-    elif [ -f "src/@SLIC3R_APP_CMD@" ]; then
-        ORIGINAL_BINARY_LOCATION="$(realpath "src/@SLIC3R_APP_CMD@")"
+    if [ -f "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@" ]; then
+        ORIGINAL_BINARY_LOCATION="$(realpath "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@")"
+    elif [ -f "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@" ]; then
+        ORIGINAL_BINARY_LOCATION="$(realpath "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@")"
     else
         echo "Error: @SLIC3R_APP_CMD@ binary not found in any configuration directory"
         exit 1
