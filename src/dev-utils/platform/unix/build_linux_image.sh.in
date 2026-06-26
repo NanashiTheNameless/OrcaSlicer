@@ -185,7 +185,7 @@ echo -n "[9/9] Generating Linux app..."
         # CMake generator/layout differences may place the binary outside the
         # common config paths above; search a bounded depth in the build tree.
         MAX_BINARY_SEARCH_DEPTH=4
-        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" 2>/dev/null | head -n1)" || true
+        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" -print -quit 2>/dev/null)" || true
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         echo "Error: @SLIC3R_APP_CMD@ binary not found in expected build directories"
