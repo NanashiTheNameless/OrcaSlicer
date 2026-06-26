@@ -168,18 +168,26 @@ echo -n "[9/9] Generating Linux app..."
     # Find the binary relative to the script's location (CMAKE_CURRENT_BINARY_DIR)
     # The script is at ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh
     # The binary is at ${CMAKE_CURRENT_BINARY_DIR}/Release/orca-slicer or ../../Release/orca-slicer
+    
+    # SLIC3R_APP_CMD substitution may have failed if CMake didn't configure properly
+    # If it's still a placeholder, use the hardcoded default
+    SLIC3R_APP_CMD="${SLIC3R_APP_CMD:-orca-slicer}"
+    if [[ "${SLIC3R_APP_CMD}" == "@SLIC3R_APP_CMD@" ]]; then
+        SLIC3R_APP_CMD="orca-slicer"
+    fi
+    
     ORIGINAL_BINARY_LOCATION=""
     CONFIG_LOWER="$(printf '%s' "${CONFIG}" | tr '[:upper:]' '[:lower:]')"
     CANDIDATE_BINARY_LOCATIONS=(
-        "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@"
-        "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@"
-        "${SCRIPT_DIR}/@SLIC3R_APP_CMD@"
-        "${SCRIPT_DIR}/../@SLIC3R_APP_CMD@"
+        "${SCRIPT_DIR}/${CONFIG}/${SLIC3R_APP_CMD}"
+        "${SCRIPT_DIR}/../${CONFIG}/${SLIC3R_APP_CMD}"
+        "${SCRIPT_DIR}/${SLIC3R_APP_CMD}"
+        "${SCRIPT_DIR}/../${SLIC3R_APP_CMD}"
     )
     if [ "${CONFIG_LOWER}" != "${CONFIG}" ]; then
         CANDIDATE_BINARY_LOCATIONS+=(
-            "${SCRIPT_DIR}/${CONFIG_LOWER}/@SLIC3R_APP_CMD@"
-            "${SCRIPT_DIR}/../${CONFIG_LOWER}/@SLIC3R_APP_CMD@"
+            "${SCRIPT_DIR}/${CONFIG_LOWER}/${SLIC3R_APP_CMD}"
+            "${SCRIPT_DIR}/../${CONFIG_LOWER}/${SLIC3R_APP_CMD}"
         )
     fi
 
@@ -201,7 +209,7 @@ echo -n "[9/9] Generating Linux app..."
             "${REPO_ROOT}/src"
         do
             if [ -d "${search_root}" ]; then
-                ORIGINAL_BINARY_LOCATION="$(find "${search_root}" -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)"
+                ORIGINAL_BINARY_LOCATION="$(find "${search_root}" -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -name "${SLIC3R_APP_CMD}" ! -path '*/CMakeFiles/*' -print -quit)"
                 if [ -n "${ORIGINAL_BINARY_LOCATION}" ]; then
                     break
                 fi
@@ -209,11 +217,11 @@ echo -n "[9/9] Generating Linux app..."
         done
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
-        echo "Error: @SLIC3R_APP_CMD@ binary not found in expected build directories"
+        echo "Error: ${SLIC3R_APP_CMD} binary not found in expected build directories"
         exit 1
     fi
     ORIGINAL_BINARY_LOCATION="$(realpath "${ORIGINAL_BINARY_LOCATION}")"
-    cp -fl "${ORIGINAL_BINARY_LOCATION}" "$BIN_DIR/@SLIC3R_APP_CMD@"
+    cp -fl "${ORIGINAL_BINARY_LOCATION}" "$BIN_DIR/${SLIC3R_APP_CMD}"
 
     if [ "$BUNDLE_DESKTOP_STACK" = "1" ]; then
         GSTREAMER_PLUGIN_SOURCE_DIR="$(find_pkg_config_dir pluginsdir gstreamer-1.0 || true)"
@@ -275,7 +283,7 @@ echo -n "[9/9] Generating Linux app..."
     mapfile -d '' BUNDLE_TARGETS < <(find "$BIN_DIR" "$LIB_DIR" "$LIBEXEC_DIR" -type f -print0 2>/dev/null)
     bundle_dependency_closure "$PRIVATE_LIB_DIR" "${BUNDLE_TARGETS[@]}"
 
-cat << EOF >"$LIBEXEC_DIR/@SLIC3R_APP_CMD@-env"
+cat << EOF >"$LIBEXEC_DIR/${SLIC3R_APP_CMD}-env"
 #!/bin/sh
 set -e
 SELF_DIR=\$(CDPATH= cd -- "\$(dirname -- "\$0")" && pwd)
@@ -394,9 +402,9 @@ fi
 
 exec "\$@"
 EOF
-    chmod a+x "$LIBEXEC_DIR/@SLIC3R_APP_CMD@-env"
+    chmod a+x "$LIBEXEC_DIR/${SLIC3R_APP_CMD}-env"
 
-cat << EOF >@SLIC3R_APP_CMD@
+cat << EOF >${SLIC3R_APP_CMD}
 #!/bin/bash
 DIR=\$(dirname "\$(readlink -f "\$0")")
 export APPDIR="\${APPDIR:-\$DIR}"
@@ -424,14 +432,14 @@ if [ "\$XDG_SESSION_TYPE" = "wayland" ] && [ "\$ZINK_DISABLE_OVERRIDE" != "1" ];
         fi
     fi
 fi
-exec "\$DIR/libexec/@SLIC3R_APP_CMD@-env" "\$DIR/bin/@SLIC3R_APP_CMD@" "\$@"
+exec "\$DIR/libexec/${SLIC3R_APP_CMD}-env" "\$DIR/bin/${SLIC3R_APP_CMD}" "\$@"
 EOF
 
-    chmod ug+x @SLIC3R_APP_CMD@
-    cp -fl @SLIC3R_APP_CMD@ "$APPDIR/@SLIC3R_APP_CMD@"
+    chmod ug+x ${SLIC3R_APP_CMD}
+    cp -fl ${SLIC3R_APP_CMD} "$APPDIR/${SLIC3R_APP_CMD}"
 
     if [ -x "${CHECK_SCRIPT}" ] && [ -z "${ORCA_SKIP_APPIMAGE_AUDIT}" ]; then
-        "${CHECK_SCRIPT}" "$APPDIR" "$BIN_DIR/@SLIC3R_APP_CMD@"
+        "${CHECK_SCRIPT}" "$APPDIR" "$BIN_DIR/${SLIC3R_APP_CMD}"
     fi
 # } &> $ROOT/Build.log # Capture all command output
 echo "done"
