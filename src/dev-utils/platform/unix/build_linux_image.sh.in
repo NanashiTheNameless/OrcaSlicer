@@ -184,7 +184,8 @@ echo -n "[9/9] Generating Linux app..."
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
         # CMake generator/layout differences may place the binary outside the
         # common config paths above; search a bounded depth in the build tree.
-        MAX_BINARY_SEARCH_DEPTH=4
+        # Depth 3 covers known layouts like src/Release/orca-slicer.
+        MAX_BINARY_SEARCH_DEPTH=3
         ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" -print -quit 2>/dev/null)" || true
     fi
     if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
