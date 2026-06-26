@@ -8,6 +8,9 @@ set -e
 export ROOT=$(echo $ROOT | grep . || pwd)
 export NCORES=$(nproc --all)
 CONFIG=Release
+# Search depth for fallback binary discovery (depth counts path components from build root:
+# src (1) / Release (2) / orca-slicer (3)).
+MAX_BINARY_SEARCH_DEPTH=3
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
@@ -166,14 +169,37 @@ echo -n "[9/9] Generating Linux app..."
     # The script is at ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh
     # The binary is at ${CMAKE_CURRENT_BINARY_DIR}/Release/orca-slicer or ../../Release/orca-slicer
     ORIGINAL_BINARY_LOCATION=""
-    if [ -f "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@" ]; then
-        ORIGINAL_BINARY_LOCATION="$(realpath "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@")"
-    elif [ -f "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@" ]; then
-        ORIGINAL_BINARY_LOCATION="$(realpath "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@")"
-    else
-        echo "Error: @SLIC3R_APP_CMD@ binary not found in any configuration directory"
+    CONFIG_LOWER="$(printf '%s' "${CONFIG}" | tr '[:upper:]' '[:lower:]')"
+    CANDIDATE_BINARY_LOCATIONS=(
+        "${SCRIPT_DIR}/${CONFIG}/@SLIC3R_APP_CMD@"
+        "${SCRIPT_DIR}/../${CONFIG}/@SLIC3R_APP_CMD@"
+        "${SCRIPT_DIR}/@SLIC3R_APP_CMD@"
+        "${SCRIPT_DIR}/../@SLIC3R_APP_CMD@"
+    )
+    if [ "${CONFIG_LOWER}" != "${CONFIG}" ]; then
+        CANDIDATE_BINARY_LOCATIONS+=(
+            "${SCRIPT_DIR}/${CONFIG_LOWER}/@SLIC3R_APP_CMD@"
+            "${SCRIPT_DIR}/../${CONFIG_LOWER}/@SLIC3R_APP_CMD@"
+        )
+    fi
+
+    for candidate in "${CANDIDATE_BINARY_LOCATIONS[@]}"; do
+        if [ -f "${candidate}" ]; then
+            ORIGINAL_BINARY_LOCATION="${candidate}"
+            break
+        fi
+    done
+    if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
+        # CMake generator/layout differences may place the binary outside the
+        # common config paths above; search a bounded depth in the build tree.
+        # Depth 3 covers known layouts like src/Release/orca-slicer.
+        ORIGINAL_BINARY_LOCATION="$(find "${SCRIPT_DIR}/.." -maxdepth "${MAX_BINARY_SEARCH_DEPTH}" -type f -name "@SLIC3R_APP_CMD@" ! -path '*/CMakeFiles/*' -print -quit)"
+    fi
+    if [ -z "${ORIGINAL_BINARY_LOCATION}" ]; then
+        echo "Error: @SLIC3R_APP_CMD@ binary not found in expected build directories"
         exit 1
     fi
+    ORIGINAL_BINARY_LOCATION="$(realpath "${ORIGINAL_BINARY_LOCATION}")"
     cp -fl "${ORIGINAL_BINARY_LOCATION}" "$BIN_DIR/@SLIC3R_APP_CMD@"
 
     if [ "$BUNDLE_DESKTOP_STACK" = "1" ]; then
