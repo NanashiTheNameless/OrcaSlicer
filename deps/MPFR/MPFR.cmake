@@ -36,6 +36,14 @@ else ()
             ./configure ${_cross_compile_arg} --prefix=${DESTDIR} --enable-shared=no --enable-static=yes --with-gmp=${DESTDIR} ${_gmp_build_tgt}
     )
 
+    # Avoid make trying to regenerate Makefile.in (which would require automake).
+    # Some CI environments extract tarballs with fresh timestamps, making
+    # Makefile.am appear newer than Makefile.in and triggering automake.
+    set(_mpfr_build_cmd make -j)
+    if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+        set(_mpfr_build_cmd make -j -o Makefile.in)
+    endif ()
+
     ExternalProject_Add(dep_MPFR
         URL https://github.com/NanashiTheNameless/OrcaSlicer_deps/releases/download/mpfr-4.2.2.tar.bz2/mpfr-4.2.2.tar.bz2
             https://ftp.gnu.org/gnu/mpfr/mpfr-4.2.2.tar.bz2
@@ -44,7 +52,7 @@ else ()
         DOWNLOAD_DIR ${DEP_DOWNLOAD_DIR}/MPFR
         BUILD_IN_SOURCE ON
         CONFIGURE_COMMAND ${_mpfr_configure_cmd}
-        BUILD_COMMAND make -j
+        BUILD_COMMAND ${_mpfr_build_cmd}
         INSTALL_COMMAND make install
         DEPENDS dep_GMP
     )
