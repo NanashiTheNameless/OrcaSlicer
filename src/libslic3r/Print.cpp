@@ -207,6 +207,7 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
         "even_loops_flow_ratio", "loop_sequence", "even_loops_speed", "outermost_wall_control",
         // Orca
         "chamber_temperature",
+        "chamber_minimal_temperature",
         "thumbnails",
         "thumbnails_format",
         "seam_gap",
