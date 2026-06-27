@@ -373,7 +373,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows release installer (x64)
-        if: inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -385,7 +385,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows release installer (arm64)
-        if: inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'Windows' && inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -397,7 +397,7 @@ jobs:
           max_releases: 1
 
       - name: Deploy Windows OrcaSlicer_profile_validator release (x64 only)
-        if: inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
         with:
           token: ${{ secrets.GH_TOKEN }}
