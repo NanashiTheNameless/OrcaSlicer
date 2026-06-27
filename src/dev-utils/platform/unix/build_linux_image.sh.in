@@ -169,11 +169,17 @@ echo -n "[9/9] Generating Linux app..."
     # The script is at ${CMAKE_CURRENT_BINARY_DIR}/build_linux_image.sh
     # The binary is at ${CMAKE_CURRENT_BINARY_DIR}/Release/orca-slicer or ../../Release/orca-slicer
     
-    # SLIC3R_APP_CMD substitution may have failed if CMake didn't configure properly
-    # If it's still a placeholder, use the hardcoded default
-    SLIC3R_APP_CMD="${SLIC3R_APP_CMD:-orca-slicer}"
-    if [[ "${SLIC3R_APP_CMD}" == "@SLIC3R_APP_CMD@" ]]; then
-        SLIC3R_APP_CMD="orca-slicer"
+    # Prefer the value configured by CMake (ensures CI/AppImage scripts are consistent
+    # even if an environment variable SLIC3R_APP_CMD is set).
+    SLIC3R_APP_CMD_CONFIGURED="@SLIC3R_APP_CMD@"
+    if [[ -n "${SLIC3R_APP_CMD_CONFIGURED}" ]] && [[ "${SLIC3R_APP_CMD_CONFIGURED}" != "@SLIC3R_APP_CMD@" ]]; then
+        SLIC3R_APP_CMD="${SLIC3R_APP_CMD_CONFIGURED}"
+    else
+        # Fallback for cases where the script wasn't configured by CMake.
+        SLIC3R_APP_CMD="${SLIC3R_APP_CMD:-orca-slicer}"
+        if [[ "${SLIC3R_APP_CMD}" == "@SLIC3R_APP_CMD@" ]]; then
+            SLIC3R_APP_CMD="orca-slicer"
+        fi
     fi
     
     ORIGINAL_BINARY_LOCATION=""

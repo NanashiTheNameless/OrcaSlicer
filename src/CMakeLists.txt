@@ -233,15 +233,21 @@ if (WIN32)
 
 
 else ()
-    if (APPLE AND NOT CMAKE_MACOSX_BUNDLE)
-        # On OSX, the name of the binary matches the name of the Application.
+    # Provide a stable CLI / artifact name across platforms without clobbering
+    # the actual executable.
+    #
+    # - macOS builds produce an executable named "OrcaSlicer"; we also want an
+    #   "orca-slicer" shim for CLI usage.
+    # - Linux builds set OUTPUT_NAME to "orca-slicer" (see earlier in this file);
+    #   some scripts/CI paths still expect "OrcaSlicer", so provide a compat link.
+    if (APPLE)
         add_custom_command(TARGET OrcaSlicer POST_BUILD
             COMMAND ln -sf OrcaSlicer orca-slicer
             WORKING_DIRECTORY "$<TARGET_FILE_DIR:OrcaSlicer>"
             VERBATIM)
     else ()
         add_custom_command(TARGET OrcaSlicer POST_BUILD
-            COMMAND ln -sf OrcaSlicer orca-slicer
+            COMMAND ln -sf orca-slicer OrcaSlicer
             WORKING_DIRECTORY "$<TARGET_FILE_DIR:OrcaSlicer>"
             VERBATIM)
     endif ()
