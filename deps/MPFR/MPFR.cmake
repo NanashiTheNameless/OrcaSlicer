@@ -44,7 +44,7 @@ else ()
         # Touch every generated Makefile.in in-tree before build.
         # This prevents recursive make (for example doc/) from trying to run
         # version-pinned automake binaries that are unavailable on CI runners.
-        set(_mpfr_build_cmd /bin/sh -c "find . -name Makefile.in -type f -exec touch {} + && make -j")
+        set(_mpfr_build_cmd ${CMAKE_COMMAND} -E env sh -c "find . -name Makefile.in -type f -exec touch {} + && make -j")
     endif ()
 
     ExternalProject_Add(dep_MPFR
