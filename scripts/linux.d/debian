@@ -41,15 +41,18 @@ then
             REQUIRED_DEV_PACKAGES+=(curl libfuse-dev m4)
             # libgstreamer1.0-dev on 22.x depends on libunwind-dev; include it explicitly to avoid unmet deps
             REQUIRED_DEV_PACKAGES+=(libunwind-dev)
-            # 22.x ships GCC 11 by default. That toolchain has been observed to
+            # 22.x ships clang 14 by default. That toolchain has been observed to
             # mis-codegen some numeric code (e.g. flush-volume computation produces
-            # much smaller purge amounts than the identical source built with a
-            # newer GCC on 24.x). Pull in GCC 13 from the toolchain PPA so the
-            # build step can select it explicitly; see build_linux.sh's use of
-            # ORCA_GCC_VERSION.
-            sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+            # much smaller purge amounts than the identical source built with the
+            # clang 18 that 24.x ships). Pull in clang 18 from the official LLVM
+            # apt repo so the build step can select it explicitly; see
+            # build_linux.sh's use of ORCA_CLANG_VERSION.
+            llvm_codename=$(. /etc/os-release && echo "${VERSION_CODENAME}")
+            sudo wget -qO /usr/share/keyrings/llvm.asc https://apt.llvm.org/llvm-snapshot.gpg.key
+            sudo gpg --dearmor -o /usr/share/keyrings/llvm.gpg /usr/share/keyrings/llvm.asc
+            echo "deb [signed-by=/usr/share/keyrings/llvm.gpg] https://apt.llvm.org/${llvm_codename}/ llvm-toolchain-${llvm_codename}-18 main" | sudo tee /etc/apt/sources.list.d/llvm18.list
             sudo apt update
-            REQUIRED_DEV_PACKAGES+=(gcc-13 g++-13)
+            REQUIRED_DEV_PACKAGES+=(clang-18)
         fi
     fi
 

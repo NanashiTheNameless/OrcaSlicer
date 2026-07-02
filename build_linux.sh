@@ -489,12 +489,15 @@ fi
 
 export CMAKE_C_CXX_COMPILER_OVERRIDE=()
 if [[ -n "${USE_CLANG}" ]] ; then
-    export CMAKE_C_CXX_COMPILER_OVERRIDE=(-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++)
-elif [[ -n "${ORCA_GCC_VERSION}" ]] ; then
-    # Pin a specific GCC version (e.g. on Ubuntu 22.04, whose default GCC 11
-    # has been observed to mis-codegen some numeric code). Requires
-    # gcc-${ORCA_GCC_VERSION}/g++-${ORCA_GCC_VERSION} to already be installed.
-    export CMAKE_C_CXX_COMPILER_OVERRIDE=(-DCMAKE_C_COMPILER="gcc-${ORCA_GCC_VERSION}" -DCMAKE_CXX_COMPILER="g++-${ORCA_GCC_VERSION}")
+    if [[ -n "${ORCA_CLANG_VERSION}" ]] ; then
+        # Pin a specific clang version (e.g. on Ubuntu 22.04, whose default
+        # clang 14 has been observed to mis-codegen some numeric code). Requires
+        # clang-${ORCA_CLANG_VERSION}/clang++-${ORCA_CLANG_VERSION} to already
+        # be installed.
+        export CMAKE_C_CXX_COMPILER_OVERRIDE=(-DCMAKE_C_COMPILER="clang-${ORCA_CLANG_VERSION}" -DCMAKE_CXX_COMPILER="clang++-${ORCA_CLANG_VERSION}")
+    else
+        export CMAKE_C_CXX_COMPILER_OVERRIDE=(-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++)
+    fi
 fi
 
 # Configure use of ld.lld as the linker when requested
