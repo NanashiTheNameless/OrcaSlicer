@@ -451,9 +451,12 @@ jobs:
         run: |
           # Build + tar the unit tests (-t) only on the leg that runs them: the
           # aarch64 leg by default (faster GitHub arm runner), or amd64 when using
-          # self-hosted runners (no arm self-hosted server). unit_tests downloads
-          # this tarball. The profile validator is built with -s, so amd64 keeps it.
-          tests=${{ (!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') }}
+          # self-hosted runners (no arm self-hosted server).
+          #
+          # This fork's linux matrix also includes two amd64 runners (22.04 + 24.04).
+          # Ensure one of them (24.04) always produces the test artifact so the
+          # separate unit_tests job can download and execute it.
+          tests=${{ (!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') || (!vars.SELF_HOSTED && (inputs.arch == '' || inputs.arch == null) && env.ubuntu-ver == '2404') }}
           if $tests; then flags=-istrlL; else flags=-isrlL; fi
           ./build_linux.sh "$flags"
           ./scripts/check_appimage_libs.sh ./build/package ./build/package/bin/orca-slicer
@@ -465,7 +468,7 @@ jobs:
         # Use tar because upload-artifacts won't always preserve directory structure
         # and doesn't preserve file permissions
       - name: Upload Test Artifact
-        if: runner.os == 'Linux' && ((!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64'))
+        if: runner.os == 'Linux' && ((!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') || (!vars.SELF_HOSTED && (inputs.arch == '' || inputs.arch == null) && env.ubuntu-ver == '2404'))
         uses: actions/upload-artifact@v7
         with:
           name: ${{ github.sha }}-tests

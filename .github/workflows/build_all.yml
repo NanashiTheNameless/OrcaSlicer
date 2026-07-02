@@ -129,7 +129,9 @@ jobs:
     # self-hosted builds them on the amd64 server instead.
     runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
     needs: build_linux
-    if: ${{ !cancelled() && success() }}
+    # When manually dispatched with build-deps-only=true we skip build_orca, so
+    # no build_tests.tar artifact exists to download.
+    if: ${{ !cancelled() && success() && (github.event_name != 'workflow_dispatch' || !inputs.build-deps-only) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -195,9 +197,9 @@ jobs:
 
     runs-on: ${{ matrix.variant.runner }}
     env:
-      date:
-      ver:
-      ver_pure:
+      date: ""
+      ver: ""
+      ver_pure: ""
     steps:
     - name: "Remove unneeded stuff to free disk space"
       run:
