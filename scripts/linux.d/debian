@@ -47,7 +47,8 @@ then
             # clang 18 that 24.x ships). Pull in clang 18 from the official LLVM
             # apt repo so the build step can select it explicitly; see
             # build_linux.sh's use of ORCA_CLANG_VERSION.
-            llvm_codename=$(. /etc/os-release && echo "${VERSION_CODENAME}")
+            # `/etc/os-release` is already sourced above; reuse VERSION_CODENAME.
+            llvm_codename=${VERSION_CODENAME}
             sudo wget -qO /usr/share/keyrings/llvm.asc https://apt.llvm.org/llvm-snapshot.gpg.key
             sudo gpg --dearmor -o /usr/share/keyrings/llvm.gpg /usr/share/keyrings/llvm.asc
             echo "deb [signed-by=/usr/share/keyrings/llvm.gpg] https://apt.llvm.org/${llvm_codename}/ llvm-toolchain-${llvm_codename}-18 main" | sudo tee /etc/apt/sources.list.d/llvm18.list
