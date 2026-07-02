@@ -41,6 +41,15 @@ then
             REQUIRED_DEV_PACKAGES+=(curl libfuse-dev m4)
             # libgstreamer1.0-dev on 22.x depends on libunwind-dev; include it explicitly to avoid unmet deps
             REQUIRED_DEV_PACKAGES+=(libunwind-dev)
+            # 22.x ships GCC 11 by default. That toolchain has been observed to
+            # mis-codegen some numeric code (e.g. flush-volume computation produces
+            # much smaller purge amounts than the identical source built with a
+            # newer GCC on 24.x). Pull in GCC 13 from the toolchain PPA so the
+            # build step can select it explicitly; see build_linux.sh's use of
+            # ORCA_GCC_VERSION.
+            sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+            sudo apt update
+            REQUIRED_DEV_PACKAGES+=(gcc-13 g++-13)
         fi
     fi
 

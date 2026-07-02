@@ -487,9 +487,14 @@ if [[ -z "${SKIP_RAM_CHECK}" ]] ; then
     check_available_memory_and_disk
 fi
 
-export CMAKE_C_CXX_COMPILER_CLANG=()
+export CMAKE_C_CXX_COMPILER_OVERRIDE=()
 if [[ -n "${USE_CLANG}" ]] ; then
-    export CMAKE_C_CXX_COMPILER_CLANG=(-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++)
+    export CMAKE_C_CXX_COMPILER_OVERRIDE=(-DCMAKE_C_COMPILER=/usr/bin/clang -DCMAKE_CXX_COMPILER=/usr/bin/clang++)
+elif [[ -n "${ORCA_GCC_VERSION}" ]] ; then
+    # Pin a specific GCC version (e.g. on Ubuntu 22.04, whose default GCC 11
+    # has been observed to mis-codegen some numeric code). Requires
+    # gcc-${ORCA_GCC_VERSION}/g++-${ORCA_GCC_VERSION} to already be installed.
+    export CMAKE_C_CXX_COMPILER_OVERRIDE=(-DCMAKE_C_COMPILER="gcc-${ORCA_GCC_VERSION}" -DCMAKE_CXX_COMPILER="g++-${ORCA_GCC_VERSION}")
 fi
 
 # Configure use of ld.lld as the linker when requested
@@ -536,7 +541,7 @@ if [[ -n "${BUILD_DEPS}" ]] ; then
         BUILD_ARGS+=(-DCMAKE_BUILD_TYPE="${BUILD_CONFIG}")
     fi
 
-    print_and_run cmake -S deps -B deps/$BUILD_DIR "${CMAKE_C_CXX_COMPILER_CLANG[@]}" "${CMAKE_LLD_LINKER_ARGS[@]}" "${CMAKE_CCACHE_ARGS[@]}" -G Ninja "${COLORED_OUTPUT}" "${BUILD_ARGS[@]}"
+    print_and_run cmake -S deps -B deps/$BUILD_DIR "${CMAKE_C_CXX_COMPILER_OVERRIDE[@]}" "${CMAKE_LLD_LINKER_ARGS[@]}" "${CMAKE_CCACHE_ARGS[@]}" -G Ninja "${COLORED_OUTPUT}" "${BUILD_ARGS[@]}"
     print_and_run cmake --build deps/$BUILD_DIR -j1
 fi
 
@@ -556,7 +561,7 @@ if [[ -n "${BUILD_ORCA}" ]] || [[ -n "${BUILD_TESTS}" ]] ; then
         BUILD_ARGS+=(-DORCA_UPDATER_SIG_KEY="${ORCA_UPDATER_SIG_KEY}")
     fi
 
-    print_and_run cmake -S . -B $BUILD_DIR "${CMAKE_C_CXX_COMPILER_CLANG[@]}" "${CMAKE_LLD_LINKER_ARGS[@]}" "${CMAKE_CCACHE_ARGS[@]}" -G "Ninja Multi-Config" \
+    print_and_run cmake -S . -B $BUILD_DIR "${CMAKE_C_CXX_COMPILER_OVERRIDE[@]}" "${CMAKE_LLD_LINKER_ARGS[@]}" "${CMAKE_CCACHE_ARGS[@]}" -G "Ninja Multi-Config" \
 -DSLIC3R_PCH=${SLIC3R_PRECOMPILED_HEADERS} \
 -DORCA_TOOLS=ON \
 "${COLORED_OUTPUT}" \

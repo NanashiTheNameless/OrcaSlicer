@@ -441,6 +441,12 @@ jobs:
       - name: Build slicer and tests
         if: runner.os == 'Linux'
         shell: bash
+        env:
+          # Ubuntu 22.04's default GCC 11 mis-codegens some numeric code (observed
+          # as multicolor prints purging 35-45% less filament than the identical
+          # source built with a newer GCC). Pin GCC 13 there instead; deps stay on
+          # the cached build since the C++ ABI is stable across these GCC versions.
+          ORCA_GCC_VERSION: ${{ env.ubuntu-ver == '2204' && '13' || '' }}
         run: |
           # Build + tar the unit tests (-t) only on the leg that runs them: the
           # aarch64 leg by default (faster GitHub arm runner), or amd64 when using
