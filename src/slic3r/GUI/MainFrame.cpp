@@ -556,7 +556,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
     });
 
 #endif // __WXMSW__
- 
+
 
     // BBS
     Fit();
@@ -2598,10 +2598,10 @@ static wxMenu* generate_help_menu()
     append_menu_item(helpMenu, wxID_ANY, _L("Check for Updates"), _L("Check for Updates"),
         [](wxCommandEvent&) {
             MessageDialog(wxGetApp().mainframe,
-                _L("This fork does not support automatic update checking."),
+                _L("This unofficial fork does not support automatic update checking."),
                 wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Check for Updates"),
                 wxOK | wxICON_INFORMATION,
-                "", _L("Check the nightly release page on GitHub to update manually."),
+                "", _L("\nCheck the nightly release page on GitHub to update manually."),
                 [](const wxString&) {
                     wxLaunchDefaultBrowser("https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling", wxBROWSER_NEW_WINDOW);
                 }).ShowModal();
