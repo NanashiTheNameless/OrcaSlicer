@@ -32,7 +32,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           lfs: 'false'
 
@@ -58,7 +58,7 @@ jobs:
 
       - name: load cached deps
         if: ${{ !(runner.os == 'macOS' && inputs.macos-combine-only) }}
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ${{ inputs.cache-path }}
           key: ${{ inputs.cache-key }}
