@@ -196,7 +196,10 @@ jobs:
           ./build_release_macos.sh -u -x ${{ !vars.SELF_HOSTED && '-1' || '' }} -a universal -t 10.15
 
       - name: Create DMG without notary
-        if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/belt-printer' && runner.os == 'macOS' && inputs.macos-combine-only
+        # Upstream skips this on main/belt-printer because its "Sign app and notary" step
+        # (Apple notarization, needs org secrets) builds the DMG there instead. This fork
+        # has no notarization step, so it must always build the DMG itself.
+        if: (github.repository != 'OrcaSlicer/OrcaSlicer' || (github.ref != 'refs/heads/main' && github.ref != 'refs/heads/belt-printer')) && runner.os == 'macOS' && inputs.macos-combine-only
         working-directory: ${{ github.workspace }}
         run: |
           # Load the `retry` helper (retries flaky commands such as `hdiutil create`).
