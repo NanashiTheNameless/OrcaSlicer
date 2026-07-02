@@ -36,13 +36,17 @@ else ()
             ./configure ${_cross_compile_arg} --prefix=${DESTDIR} --enable-shared=no --enable-static=yes --with-gmp=${DESTDIR} ${_gmp_build_tgt}
     )
 
-    # Avoid make trying to regenerate Makefile.in (which would require automake).
-    # Some CI environments extract tarballs with fresh timestamps, making
-    # Makefile.am appear newer than Makefile.in and triggering automake.
-    set(_mpfr_build_cmd make -j)
-    if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
-        set(_mpfr_build_cmd make -j -o Makefile.in)
-    endif ()
+    # Extraction can leave the shipped configure/aclocal.m4/Makefile.in files
+    # with timestamps older than their Makefile.am/configure.ac sources, which
+    # makes `make` re-run autoconf/automake/aclocal. CI runners don't have the
+    # exact automake version the tarball was generated with (e.g.
+    # automake-1.17), so that regeneration fails. `make -o Makefile.in` only
+    # covers the top-level Makefile.in (make doesn't propagate -o to the
+    # per-subdir sub-makes for doc/src/tests/tune), so touch every generated
+    # autotools file everywhere instead, which covers all of them at once.
+    set(_mpfr_patch_cmd
+        find . "(" -name "configure" -o -name "aclocal.m4" -o -name "Makefile.in" -o -name "config.h.in" ")" -exec touch "{}" +
+    )
 
     ExternalProject_Add(dep_MPFR
         URL https://github.com/NanashiTheNameless/OrcaSlicer_deps/releases/download/mpfr-4.2.2.tar.bz2/mpfr-4.2.2.tar.bz2
@@ -51,8 +55,9 @@ else ()
         URL_HASH SHA256=9ad62c7dc910303cd384ff8f1f4767a655124980bb6d8650fe62c815a231bb7b
         DOWNLOAD_DIR ${DEP_DOWNLOAD_DIR}/MPFR
         BUILD_IN_SOURCE ON
+        PATCH_COMMAND ${_mpfr_patch_cmd}
         CONFIGURE_COMMAND ${_mpfr_configure_cmd}
-        BUILD_COMMAND ${_mpfr_build_cmd}
+        BUILD_COMMAND make -j
         INSTALL_COMMAND make install
         DEPENDS dep_GMP
     )
