@@ -2597,7 +2597,14 @@ static wxMenu* generate_help_menu()
     // Check New Version
     append_menu_item(helpMenu, wxID_ANY, _L("Check for Updates"), _L("Check for Updates"),
         [](wxCommandEvent&) {
-            wxGetApp().check_new_version_sf(true, 1);
+            MessageDialog(wxGetApp().mainframe,
+                _L("This fork does not support automatic update checking."),
+                wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Check for Updates"),
+                wxOK | wxICON_INFORMATION,
+                "", _L("Check the nightly release page on GitHub to update manually."),
+                [](const wxString&) {
+                    wxLaunchDefaultBrowser("https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling", wxBROWSER_NEW_WINDOW);
+                }).ShowModal();
         }, "", nullptr, []() {
             return true;
         });
