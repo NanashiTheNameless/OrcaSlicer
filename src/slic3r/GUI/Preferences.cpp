@@ -783,6 +783,47 @@ wxBoxSizer *PreferencesDialog::create_camera_orbit_mult_input(wxString title, wx
     return m_sizer;
 }
 
+wxBoxSizer *PreferencesDialog::create_item_decimal_input(wxString title, wxString title2, wxString tooltip, std::string param, double min, double max, int decimals, const wxString wiki_url)
+{
+    auto tip = tooltip.IsEmpty() ? title : tooltip; // auto fill tooltips with title if its empty
+
+    wxBoxSizer *m_sizer = create_item_label(title, tip, wiki_url);
+
+    auto       input = new ::TextInput(m_parent, wxEmptyString, title2, wxEmptyString, wxDefaultPosition, DESIGN_INPUT_SIZE, wxTE_PROCESS_ENTER);
+    StateColor input_bg(std::pair<wxColour, int>(wxColour("#F0F0F1"), StateColor::Disabled), std::pair<wxColour, int>(*wxWHITE, StateColor::Enabled));
+    input->SetBackgroundColor(input_bg);
+    input->GetTextCtrl()->SetValue(app_config->get(param));
+    wxTextValidator validator(wxFILTER_NUMERIC);
+    input->SetToolTip(tooltip);
+    input->GetTextCtrl()->SetValidator(validator);
+
+    m_sizer->Add(input, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, FromDIP(5));
+
+    auto apply_value = [this, param, input, min, max, decimals]() {
+        auto value = input->GetTextCtrl()->GetValue();
+        double conv = min;
+        if (value.ToCDouble(&conv)) {
+            conv = conv < min ? min : conv > max ? max : conv;
+            auto strval = std::string(wxString::FromCDouble(conv, decimals).mb_str());
+            input->GetTextCtrl()->SetValue(strval);
+            app_config->set(param, strval);
+        }
+    };
+
+    input->GetTextCtrl()->Bind(wxEVT_TEXT_ENTER, [apply_value](wxCommandEvent &e) {
+        apply_value();
+        wxGetApp().app_config->save();
+        e.Skip();
+    });
+
+    input->GetTextCtrl()->Bind(wxEVT_KILL_FOCUS, [apply_value](wxFocusEvent &e) {
+        apply_value();
+        e.Skip();
+    });
+
+    return m_sizer;
+}
+
 wxBoxSizer *PreferencesDialog::create_item_backup(wxString title, wxString tooltip)
 {
     auto tip = tooltip.IsEmpty() ? title : tooltip; // auto fill tooltips with title if its empty
@@ -1604,6 +1645,15 @@ void PreferencesDialog::create_items()
         "enable_step_mesh_setting", wxEmptyString, "import_export#dont-show-again"
     );
     g_sizer->Add(item_step_dialog);
+
+    auto item_step_linear      = create_item_decimal_input(_L("STEP importing: linear deflection"), "mm", _L("Linear deflection used when meshing imported STEP files.\nSmaller values produce higher-quality meshes but increase processing time.\nUsed as the default in the import dialog, or directly when the import dialog is disabled.\nDefault: 0.003 mm."), "linear_deflection", 0.001, 0.1, 3);
+    g_sizer->Add(item_step_linear);
+
+    auto item_step_angle       = create_item_decimal_input(_L("STEP importing: angle deflection"), "", _L("Angle deflection used when meshing imported STEP files.\nSmaller values produce higher-quality meshes but increase processing time.\nUsed as the default in the import dialog, or directly when the import dialog is disabled.\nDefault: 0.5."), "angle_deflection", 0.01, 1.0, 2);
+    g_sizer->Add(item_step_angle);
+
+    auto item_step_split       = create_item_checkbox(_L("STEP importing: Split into multiple objects"), _L("If enabled, compound and compsolid shapes in imported STEP files are split into multiple objects.\nUsed as the default in the import dialog, or directly when the import dialog is disabled.\nDefault: disabled."), "is_split_compound");
+    g_sizer->Add(item_step_split);
 
     auto item_draco_bits = create_item_spinctrl(_L("Quality level for Draco export"), "",
         _L("bits"),
