@@ -169,7 +169,6 @@ jobs:
   publish_test_results:
     name: Publish Test Results
     needs: [unit_tests_linux_x86_64, unit_tests_linux_aarch64, unit_tests_windows_x64, unit_tests_windows_arm64, unit_tests_macos_arm64]
-    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     # When manually dispatched with build-deps-only=true we skip build_orca, so
     # no build_tests.tar artifact exists to download.
