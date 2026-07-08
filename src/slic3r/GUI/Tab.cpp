@@ -2757,6 +2757,8 @@ void TabPrint::build()
         optgroup->append_single_option_line("bottom_surface_density", "strength_settings_top_bottom_shells#surface-density");
         optgroup->append_single_option_line("bottom_surface_pattern", "strength_settings_top_bottom_shells#surface-pattern");
         optgroup->append_single_option_line("bottom_layer_direction", "strength_settings_infill#direction");
+        optgroup->append_single_option_line("center_of_surface_pattern", "strength_settings_top_bottom_shells#center-surface-pattern-on");
+        optgroup->append_single_option_line("anisotropic_surfaces", "strength_settings_top_bottom_shells#anisotropic-surfaces");
         optgroup->append_single_option_line("top_bottom_infill_wall_overlap", "strength_settings_top_bottom_shells#infillwall-overlap");
 
         optgroup = page->new_optgroup(L("Infill"), L"param_infill");
@@ -2787,6 +2789,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("solid_infill_rotate_template", "strength_settings_infill_rotation_template_metalanguage");
         optgroup->append_single_option_line("gap_fill_target", "strength_settings_infill#apply-gap-fill");
         optgroup->append_single_option_line("filter_out_gap_fill", "strength_settings_infill#filter-out-tiny-gaps");
+        optgroup->append_single_option_line("separated_infills", "strength_settings_infill#separated-infills");
         optgroup->append_single_option_line("infill_wall_overlap", "strength_settings_infill#infill-wall-overlap");
 
         optgroup = page->new_optgroup(L("Advanced"), L"param_advanced");
