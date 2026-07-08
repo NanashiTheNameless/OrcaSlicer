@@ -127,7 +127,7 @@ jobs:
   unit_tests_linux_x86_64:
     name: Linux x86_64
     needs: build_linux
-    if: ${{ !cancelled() && success() }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
@@ -135,7 +135,7 @@ jobs:
   unit_tests_linux_aarch64:
     name: Linux aarch64
     needs: build_linux
-    if: ${{ !cancelled() && success() }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: ubuntu-24.04-arm
@@ -143,7 +143,7 @@ jobs:
   unit_tests_windows_x64:
     name: Windows x64
     needs: build_windows
-    if: ${{ !cancelled() && success() }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-win-server' || 'windows-latest' }}
@@ -151,7 +151,7 @@ jobs:
   unit_tests_windows_arm64:
     name: Windows arm64
     needs: build_windows
-    if: ${{ !cancelled() && success() }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: windows-11-arm
@@ -160,7 +160,7 @@ jobs:
   unit_tests_macos_arm64:
     name: macOS arm64
     needs: build_macos_arch
-    if: ${{ !cancelled() && success() }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
@@ -212,7 +212,7 @@ jobs:
           - arch: aarch64
             runner: ubuntu-24.04-arm
     # Don't run scheduled builds on forks; skip entirely on self-hosted runners
-    if: ${{ !cancelled() && !vars.SELF_HOSTED && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    if: ${{ !cancelled() && !vars.SELF_HOSTED && !inputs.build-deps-only && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
 
     runs-on: ${{ matrix.variant.runner }}
     env:
