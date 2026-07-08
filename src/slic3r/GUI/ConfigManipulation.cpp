@@ -744,6 +744,13 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     toggle_field("top_layer_direction", has_top_shell);
     toggle_field("bottom_layer_direction", has_bottom_shell);
 
+    toggle_line("top_surface_expansion", has_top_shell);
+    toggle_line("top_surface_expansion_margin", has_top_shell);
+    bool has_top_surface_expansion = config->opt_float("top_surface_expansion") > 0;
+    toggle_field("top_surface_expansion_margin", has_top_surface_expansion);
+    toggle_line("top_surface_expansion_direction", has_top_shell);
+    toggle_field("top_surface_expansion_direction", has_top_surface_expansion);
+
     for (auto el : { "infill_direction", "sparse_infill_line_width", "gap_fill_target","filter_out_gap_fill","infill_wall_overlap",
         "bridge_angle", "internal_bridge_angle", "relative_bridge_angle",
         "solid_infill_direction", "solid_infill_rotate_template", "internal_solid_infill_pattern", "internal_solid_filament_id", "top_surface_filament_id", "bottom_surface_filament_id",

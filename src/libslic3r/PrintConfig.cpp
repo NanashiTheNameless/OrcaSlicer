@@ -224,6 +224,13 @@ static t_config_enum_values s_keys_map_FuzzySkinMode {
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(FuzzySkinMode)
 
+static t_config_enum_values s_keys_map_TopSurfaceExpansionDirection {
+    { "inward_and_outward", int(TopSurfaceExpansionDirection::InwardAndOutward) },
+    { "inward",             int(TopSurfaceExpansionDirection::Inward) },
+    { "outward",            int(TopSurfaceExpansionDirection::Outward) }
+};
+CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(TopSurfaceExpansionDirection)
+
 static t_config_enum_values s_keys_map_InfillPattern {
     { "monotonic", ipMonotonic },
     { "monotonicline", ipMonotonicLine },
@@ -532,6 +539,12 @@ static t_config_enum_values s_keys_map_PerimeterGeneratorType{
     { "arachne", int(PerimeterGeneratorType::Arachne) }
 };
 CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(PerimeterGeneratorType)
+
+static t_config_enum_values s_keys_map_ToolChangeOrderingType {
+    { "default", int(ToolChangeOrderingType::Default) },
+    { "cyclic",  int(ToolChangeOrderingType::Cyclic) }
+};
+CONFIG_OPTION_ENUM_DEFINE_STATIC_MAPS(ToolChangeOrderingType)
 
 static const t_config_enum_values s_keys_map_ZHopType = {
     { "Auto Lift",          zhtAuto },
@@ -2127,6 +2140,47 @@ void PrintConfigDef::init_fff_params()
     def->min = 0;
     def->max = 100;
     def->set_default_value(new ConfigOptionPercent(100));
+
+    def = this->add("top_surface_expansion", coFloat);
+    def->label = L("Top surface expansion");
+    def->category = L("Strength");
+    def->tooltip = L("Expands the top surfaces by this distance to connect distinct top surfaces and fill gaps.\n"
+                     "Useful for cases where the top surface is interrupted by a raised feature, such as text on a plane."
+                     "Expanding it removes the holes beneath these features and creates a continuous path with a better finish for printing on top."
+                     "The expansion is applied to the original top surface, before any other processing such as bridging or overhang detection.");
+    def->sidetext = L("mm");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(0));
+
+    def = this->add("top_surface_expansion_margin", coFloat);
+    def->label = L("Top expansion wall margin");
+    def->category = L("Strength");
+    def->tooltip = L("Using “Top surface expansion” may cause a surface that did not previously touch the model's outer walls to now do so.\n"
+                     "This can cause contraction marks (such as the hull line) on the outer walls.\n"
+                     "By adding a small margin, this contraction will not occur directly on the walls, thereby preventing a visible mark.");
+    def->sidetext = L("mm");
+    def->min = 0;
+    def->max = 10;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionFloat(0));
+
+    def = this->add("top_surface_expansion_direction", coEnum);
+    def->label = L("Top expansion direction");
+    def->category = L("Strength");
+    def->tooltip = L("Direction in which the top surface expansion grows.\n"
+                     " - Inward grows into the holes and gaps left by features rising from the middle of a top surface.\n"
+                     " - Outward grows the outer edge of the surface, connecting surfaces separated by features that can divide a surface, such as a lattice pattern.\n"
+                     " - Inward and Outward does both.");
+    def->enum_keys_map = &ConfigOptionEnum<TopSurfaceExpansionDirection>::get_enum_values();
+    def->enum_values.push_back("inward_and_outward");
+    def->enum_values.push_back("inward");
+    def->enum_values.push_back("outward");
+    def->enum_labels.push_back(L("Inward and Outward"));
+    def->enum_labels.push_back(L("Inward"));
+    def->enum_labels.push_back(L("Outward"));
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionEnum<TopSurfaceExpansionDirection>(TopSurfaceExpansionDirection::InwardAndOutward));
 
     def = this->add("bottom_surface_pattern", coEnum);
     def->label = L("Bottom surface pattern");
@@ -6150,6 +6204,22 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("If enabled, all printing extruders will be primed at the front edge of the print bed at the start of the print.");
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionBool(false));
+
+    def = this->add("toolchange_ordering", coEnum);
+    def->label = L("Toolchange ordering");
+    def->category = L("Advanced");
+    def->tooltip = L(
+        "Determines the order of tool changes on each layer.\n"
+        "- Default: Starts with the last used extruder to minimize tool changes.\n"
+        "- Cyclic: Uses a fixed tool sequence each layer. This sacrifices speed for better surface quality, as the extra toolchanges allow layers more time to cool."
+    );
+    def->mode = comAdvanced;
+    def->enum_keys_map = &ConfigOptionEnum<ToolChangeOrderingType>::get_enum_values();
+    def->enum_values.emplace_back("default");
+    def->enum_values.emplace_back("cyclic");
+    def->enum_labels.emplace_back(L("Default"));
+    def->enum_labels.emplace_back(L("Cyclic"));
+    def->set_default_value(new ConfigOptionEnum<ToolChangeOrderingType>(ToolChangeOrderingType::Default));
 
     def = this->add("slice_closing_radius", coFloat);
     def->label = L("Slice gap closing radius");
