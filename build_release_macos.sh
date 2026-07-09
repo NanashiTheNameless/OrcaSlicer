@@ -4,10 +4,13 @@ set -e
 set -o pipefail
 SECONDS=0
 
-while getopts ":dpa:snt:xbc:i:1Th" opt; do
+while getopts ":dpa:snt:xbc:i:1Tuh" opt; do
   case "${opt}" in
     d )
         export BUILD_TARGET="deps"
+        ;;
+    u )
+        export BUILD_TARGET="universal"
         ;;
     p )
         export PACK_DEPS="1"
@@ -48,6 +51,7 @@ while getopts ":dpa:snt:xbc:i:1Th" opt; do
         echo "   -d: Build deps only"
         echo "   -a: Set ARCHITECTURE (arm64 or x86_64 or universal)"
         echo "   -s: Build slicer only"
+        echo "   -u: Build universal app only (requires existing arm64 and x86_64 app bundles)"
         echo "   -n: Nightly build"
         echo "   -t: Specify minimum version of the target platform, default is 11.3"
         echo "   -x: Use Ninja Multi-Config CMake generator, default is Xcode"
@@ -314,8 +318,12 @@ case "${BUILD_TARGET}" in
     slicer)
         build_slicer
         ;;
+    universal)
+        # No-op: the universal binary is lipo-merged from the existing arm64/x86_64
+        # app bundles below, not (re)built from source.
+        ;;
     *)
-        echo "Unknown target: $BUILD_TARGET. Available targets: deps, slicer, all."
+        echo "Unknown target: $BUILD_TARGET. Available targets: deps, slicer, all, universal."
         exit 1
         ;;
 esac
