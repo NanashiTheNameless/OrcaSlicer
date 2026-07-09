@@ -3,7 +3,8 @@ description: 'Build the OrcaSlicer dependency tree for the current runner OS/arc
 inputs:
   arch:
     required: false
-    type: string
+  self-hosted:
+    required: false
 runs:
   using: 'composite'
   steps:
@@ -93,7 +94,7 @@ runs:
       if: runner.os == 'Windows'
       working-directory: ${{ github.workspace }}
       run: |
-          if (-not "${{ vars.SELF_HOSTED }}") {
+          if (-not "${{ inputs.self-hosted }}") {
             choco install strawberryperl
           }
           $arch = "${{ inputs.arch }}"
@@ -111,15 +112,15 @@ runs:
       working-directory: ${{ github.workspace }}
       shell: bash
       run: |
-          if [ -z "${{ vars.SELF_HOSTED }}" ]; then
+          if [ -z "${{ inputs.self-hosted }}" ]; then
             brew install autoconf automake texinfo libtool
           fi
-          ./build_release_macos.sh -dx ${{ !vars.SELF_HOSTED && '-1' || '' }} -a ${{ inputs.arch }} -t 10.15
+          ./build_release_macos.sh -dx ${{ !inputs.self-hosted && '-1' || '' }} -a ${{ inputs.arch }} -t 10.15
           (cd "${{ github.workspace }}/deps/build/${{ inputs.arch }}" && \
           find . -mindepth 1 -maxdepth 1 ! -name 'OrcaSlicer_dep' -exec rm -rf {} +)
 
     - name: Apt-Install Dependencies
-      if: runner.os == 'Linux' && !vars.SELF_HOSTED
+      if: runner.os == 'Linux' && !inputs.self-hosted
       uses: ./.github/actions/apt-install-deps
 
     - name: Build on Ubuntu

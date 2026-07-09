@@ -73,6 +73,7 @@ jobs:
         uses: ./.github/actions/build-deps
         with:
           arch: ${{ inputs.arch }}
+          self-hosted: ${{ vars.SELF_HOSTED }}
 
       - uses: lukka/get-cmake@latest
         # The windows-11-arm runner needs CMake <= 3.31 (handled in the next step).
