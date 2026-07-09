@@ -37,7 +37,7 @@ jobs:
           lfs: 'false'
 
       - name: Detect Ubuntu version
-        if: runner.os == 'Linux' && !contains(inputs.os, 'arm')
+        if: runner.os == 'Linux'
         run: |
           ubuntu_version=$(lsb_release -rs | tr -d '.')
           case "$ubuntu_version" in
@@ -496,13 +496,14 @@ jobs:
           ORCA_CLANG_VERSION: ${{ env.ubuntu-ver == '2204' && '18' || '' }}
         run: |
           # Build + tar the unit tests (-t) only on the leg that runs them: the
-          # aarch64 leg by default (faster GitHub arm runner), or amd64 when using
-          # self-hosted runners (no arm self-hosted server).
+          # 24.04 aarch64 leg by default (faster GitHub arm runner), or amd64 when
+          # using self-hosted runners (no arm self-hosted server).
           #
-          # This fork's linux matrix also includes two amd64 runners (22.04 + 24.04).
-          # Ensure one of them (24.04) always produces the test artifact so the
-          # separate unit_tests job can download and execute it.
-          tests=${{ (!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') || (!vars.SELF_HOSTED && (inputs.arch == '' || inputs.arch == null) && env.ubuntu-ver == '2404') }}
+          # This fork's linux matrix runs two ubuntu versions per arch (22.04 +
+          # 24.04, amd64 and aarch64 alike). Ensure exactly one leg per arch (the
+          # 24.04 one) produces the test artifact, so the separate unit_tests job
+          # has a single unambiguous artifact to download and execute.
+          tests=${{ (!vars.SELF_HOSTED && inputs.arch == 'aarch64' && env.ubuntu-ver == '2404') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') || (!vars.SELF_HOSTED && (inputs.arch == '' || inputs.arch == null) && env.ubuntu-ver == '2404') }}
           if $tests; then flags=-istrlL; else flags=-isrlL; fi
           ./build_linux.sh "$flags"
           ./scripts/check_appimage_libs.sh ./build/package ./build/package/bin/orca-slicer
@@ -514,7 +515,7 @@ jobs:
         # Use tar because upload-artifacts won't always preserve directory structure
         # and doesn't preserve file permissions
       - name: Upload Test Artifact
-        if: runner.os == 'Linux' && ((!vars.SELF_HOSTED && inputs.arch == 'aarch64') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') || (!vars.SELF_HOSTED && (inputs.arch == '' || inputs.arch == null) && env.ubuntu-ver == '2404'))
+        if: runner.os == 'Linux' && ((!vars.SELF_HOSTED && inputs.arch == 'aarch64' && env.ubuntu-ver == '2404') || (vars.SELF_HOSTED && inputs.arch != 'aarch64') || (!vars.SELF_HOSTED && (inputs.arch == '' || inputs.arch == null) && env.ubuntu-ver == '2404'))
         uses: actions/upload-artifact@v7
         with:
           name: ${{ github.sha }}-tests-linux-${{ inputs.arch == 'aarch64' && 'aarch64' || 'x86_64' }}

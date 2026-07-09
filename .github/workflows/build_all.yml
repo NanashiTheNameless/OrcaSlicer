@@ -69,6 +69,10 @@ jobs:
             os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }}
           - arch: ""
             os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
+          - arch: "aarch64"
+            os: ubuntu-22.04-arm
+          - arch: "aarch64"
+            os: ubuntu-24.04-arm
     # Don't run scheduled builds on forks:
     if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
