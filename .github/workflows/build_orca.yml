@@ -58,11 +58,21 @@ jobs:
 
       - name: load cached deps
         if: ${{ !(runner.os == 'macOS' && inputs.macos-combine-only) }}
+        id: load_cached_deps
         uses: actions/cache@v6
         with:
           path: ${{ inputs.cache-path }}
           key: ${{ inputs.cache-key }}
-          fail-on-cache-miss: true
+
+        # The deps cache is built (and confirmed present) by the upstream Build
+        # Deps job, but under repo cache-storage quota pressure it can be evicted
+        # by a concurrent matrix leg's cache save before this job gets to restore
+        # it. Rebuild deps in place here rather than hard-failing on that race.
+      - name: Rebuild deps (cache restore missed)
+        if: ${{ !(runner.os == 'macOS' && inputs.macos-combine-only) && steps.load_cached_deps.outputs.cache-hit != 'true' }}
+        uses: ./.github/actions/build-deps
+        with:
+          arch: ${{ inputs.arch }}
 
       - uses: lukka/get-cmake@latest
         # The windows-11-arm runner needs CMake <= 3.31 (handled in the next step).
@@ -498,7 +508,7 @@ jobs:
           appimage=./build/OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}${{ env.arch_suffix }}_${{ env.ver }}.AppImage
           mv -n ./build/OrcaSlicer_Linux_V${{ env.ver_pure }}.AppImage "$appimage"
           chmod +x "$appimage"
-          tar -cvf build_tests.tar build/tests
+          if $tests; then tar -cvf build_tests.tar build/tests; fi
 
         # Use tar because upload-artifacts won't always preserve directory structure
         # and doesn't preserve file permissions
