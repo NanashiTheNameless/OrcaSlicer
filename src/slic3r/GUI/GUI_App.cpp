@@ -6967,6 +6967,10 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
             // finishFn tears down the progress dialog (and clears the re-entrancy guard), so it
             // must run on every exit path — otherwise an early bail-out would leak the modal
             // dialog and leave the guard stuck, blocking all later manual syncs.
+            // Guard the whole thread body: an uncaught exception here (e.g. a transient
+            // boost::filesystem error while scanning the preset folder) would otherwise
+            // propagate out of the thread and terminate the entire application.
+            try {
             if (!m_agent) { finishFn(false); return; }
 
             // One-time scan for orphaned .info files left over from offline deletions; queues HTTP DELETEs.
@@ -7207,6 +7211,11 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
                 } else {
                     boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
                 }
+            }
+            } catch (const std::exception& e) {
+                BOOST_LOG_TRIVIAL(error) << "user preset sync thread terminated by exception: " << e.what();
+            } catch (...) {
+                BOOST_LOG_TRIVIAL(error) << "user preset sync thread terminated by unknown exception";
             }
         });
 }
@@ -8528,8 +8537,13 @@ void GUI_App::scan_orphaned_info_files()
         if (!fs::exists(type_dir))
             continue;
 
-        // Iterate through all .info files
-        for (auto& entry : boost::filesystem::directory_iterator(type_dir)) {
+        // Iterate through all .info files. Use the error_code-based iterator so a transient
+        // directory-read failure (e.g. macOS readdir returning ENOTSUP) is logged and skipped
+        // instead of throwing an uncaught exception that would terminate the app from the
+        // background sync thread this runs on.
+        boost::system::error_code ec;
+        for (boost::filesystem::directory_iterator it(type_dir, ec), end; !ec && it != end; it.increment(ec)) {
+            const auto& entry = *it;
             if (entry.path().extension() != ".info")
                 continue;
 
@@ -8548,6 +8562,8 @@ void GUI_App::scan_orphaned_info_files()
                 }
             }
         }
+        if (ec)
+            BOOST_LOG_TRIVIAL(warning) << "scan_orphaned_info_files: failed to scan " << type_dir.string() << ": " << ec.message();
     }
 }
 
