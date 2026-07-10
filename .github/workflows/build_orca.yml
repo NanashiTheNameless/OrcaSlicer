@@ -579,15 +579,6 @@ jobs:
           asset_name: OrcaSlicer_Linux_AppImage${{ env.ubuntu-ver-str }}_nightly_aarch64.AppImage
           asset_content_type: application/octet-stream
           max_releases: 1
-      - name: Deploy Ubuntu release tag
-        if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/action-create-tag@main
-        with:
-          tag: "Nightly-Rolling"
-          tag_exists_error: false
-          force_push_tag: true
-          message: "Nightly-Rolling"
-          github_token: ${{ secrets.GH_TOKEN }}
 
       - name: Deploy Ubuntu OrcaSlicer_profile_validator release (amd64 only)
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
@@ -612,3 +603,13 @@ jobs:
           asset_name: orca_custom_preset_tests.zip
           asset_content_type: application/octet-stream
           max_releases: 1
+
+      - name: Deploy Ubuntu release tag
+        if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
+        uses: NanashiTheNameless/action-create-tag@main
+        with:
+          tag: "Nightly-Rolling"
+          tag_exists_error: false
+          force_push_tag: true
+          message: "Nightly-Rolling"
+          github_token: ${{ secrets.GH_TOKEN }}
