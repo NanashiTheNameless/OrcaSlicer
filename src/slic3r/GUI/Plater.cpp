@@ -537,6 +537,7 @@ struct Sidebar::priv
     //wxComboBox *                m_comboBox_print_preset;
     wxStaticLine *              m_staticline1;
     StaticBox* m_panel_filament_title;
+    wxPanel*   m_panel_filament_separator;
     wxStaticText* m_staticText_filament_settings;
     wxStaticText* m_staticText_filament_count;
     ScalableButton *  m_bpButton_add_filament;
@@ -556,6 +557,7 @@ struct Sidebar::priv
 
     // BBS printer config
     StaticBox* m_panel_printer_title = nullptr;
+    wxPanel*   m_panel_printer_separator = nullptr;
     ScalableButton* m_printer_icon = nullptr;
     ScalableButton* m_printer_connect = nullptr;
     ScalableButton* m_printer_bbl_sync = nullptr;
@@ -1735,10 +1737,6 @@ Sidebar::Sidebar(Plater *parent)
         p->m_panel_printer_title->Layout();
 
         // 1.2 Add spliters around title bar
-        // add spliter 1
-        //auto spliter_1 = new ::StaticLine(p->scrolled);
-        //spliter_1->SetBackgroundColour("#A6A9AA");
-        //scrolled_sizer->Add(spliter_1, 0, wxEXPAND);
 
         // add printer title
         scrolled_sizer->Add(p->m_panel_printer_title, 0, wxEXPAND | wxALL, 0);
@@ -1750,14 +1748,13 @@ Sidebar::Sidebar(Plater *parent)
             wxString title   = _L("Printer") + wxString(!isShown ? "" : ("  |  " + p->combo_printer->GetValue()));
             p->m_text_printer_settings->SetLabel(title);
             p->m_panel_printer_content->Show(!isShown);
+            p->m_panel_printer_separator->Show(isShown);
             m_scrolled_sizer->Layout();
         });
-
-        // add spliter 2
-        auto spliter_2 = new ::StaticLine(p->scrolled);
-        spliter_2->SetLineColour("#CECECE");
-        scrolled_sizer->Add(spliter_2, 0, wxEXPAND);
-
+        // ORCA add bottom border for seperation wile sections folded
+        p->m_panel_printer_separator = new wxPanel(p->scrolled, wxID_ANY, wxDefaultPosition, wxSize(-1, FromDIP(2))); // ORCA staticline class not works without string
+        p->m_panel_printer_separator->SetBackgroundColour("#FFFFFF");
+        scrolled_sizer->Add(p->m_panel_printer_separator, 0, wxEXPAND);
 
         /*************************** 2. add printer content ************************/
 
@@ -1937,9 +1934,9 @@ Sidebar::Sidebar(Plater *parent)
         }
 
         wxGridSizer *nozzle_dia_sizer = new wxGridSizer(3, 1, FromDIP(2), 0);
-        nozzle_dia_sizer->Add(p->label_nozzle_title, 0, wxALIGN_CENTER | wxTOP, FromDIP(4));
-        nozzle_dia_sizer->Add(p->combo_nozzle_dia  , 0, wxALIGN_CENTER | wxTOP | wxBOTTOM, FromDIP(2));
-        nozzle_dia_sizer->Add(p->label_nozzle_type , 0, wxALIGN_CENTER);
+        nozzle_dia_sizer->Add(p->label_nozzle_title, 1, wxALIGN_CENTER | wxTOP   , FromDIP(2));
+        nozzle_dia_sizer->Add(p->combo_nozzle_dia  , 0, wxALIGN_CENTER);
+        nozzle_dia_sizer->Add(p->label_nozzle_type , 1, wxALIGN_CENTER | wxBOTTOM, FromDIP(1));
 
         p->panel_nozzle_dia->SetSizer(nozzle_dia_sizer);
 
@@ -2108,7 +2105,9 @@ Sidebar::Sidebar(Plater *parent)
         else if (ams_btn->IsShown())                    exclude_pt = ams_btn->GetPosition().x;
         if (e.GetPosition().x > exclude_pt)
             return;
-        p->m_panel_filament_content->Show(!p->m_panel_filament_content->IsShown());
+        bool isShown = p->m_panel_filament_content->IsShown();
+        p->m_panel_filament_content->Show(!isShown);
+        p->m_panel_filament_separator->Show(isShown);
         m_scrolled_sizer->Layout();
 
         CallAfter([this]{update_filaments_counter(true);}); // call after all UI processing done
@@ -2128,13 +2127,11 @@ Sidebar::Sidebar(Plater *parent)
 
     p->m_panel_filament_title->SetSizer( bSizer39 );
     p->m_panel_filament_title->Layout();
-    auto spliter_1 = new ::StaticLine(p->scrolled);
-    spliter_1->SetLineColour("#A6A9AA");
-    scrolled_sizer->Add(spliter_1, 0, wxEXPAND);
     scrolled_sizer->Add(p->m_panel_filament_title, 0, wxEXPAND | wxALL, 0);
-    auto spliter_2 = new ::StaticLine(p->scrolled);
-    spliter_2->SetLineColour("#CECECE");
-    scrolled_sizer->Add(spliter_2, 0, wxEXPAND);
+    // ORCA add bottom border for seperation wile sections folded
+    p->m_panel_filament_separator = new wxPanel(p->scrolled, wxID_ANY, wxDefaultPosition, wxSize(-1, FromDIP(2))); // ORCA staticline class not works without string
+    p->m_panel_filament_separator->SetBackgroundColour("#FFFFFF");
+    scrolled_sizer->Add(p->m_panel_filament_separator, 0, wxEXPAND);
 
     bSizer39->AddStretchSpacer(1);
 
