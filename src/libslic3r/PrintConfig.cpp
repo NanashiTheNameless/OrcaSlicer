@@ -1266,7 +1266,7 @@ void PrintConfigDef::init_fff_params()
         "If left to zero, the bridging angle will be calculated automatically for each specific bridge.\n"
         "Otherwise the provided angle will be used according to:\n"
         " - The absolute coordinates\n"
-        " - The absolute coordinates + Model rotation: If Align infill direction to model is enabled\n"
+        " - The absolute coordinates + Model rotation: If Align directions to model is enabled\n"
         " - The optimal automatic angle + this value: If 'Relative Bridge Angle' is enabled\n\n"
         "Use 180° for zero absolute angle.");
     def->sidetext = u8"°";	// degrees, don't need translation
@@ -1283,7 +1283,7 @@ void PrintConfigDef::init_fff_params()
         "If left to zero, the bridging angle will be calculated automatically for each specific bridge.\n"
         "Otherwise the provided angle will be used according to:\n"
         " - The absolute coordinates\n"
-        " - The absolute coordinates + Model rotation: If Align infill direction to model is enabled\n"
+        " - The absolute coordinates + Model rotation: If Align directions to model is enabled\n"
         " - The optimal automatic angle + this value: If 'Relative Bridge Angle' is enabled\n\n"
         "Use 180° for zero absolute angle.");
     def->sidetext = u8"°";	// degrees, don't need translation
@@ -3164,10 +3164,11 @@ void PrintConfigDef::init_fff_params()
     def->set_default_value(new ConfigOptionPercent(20));
 
     def           = this->add("align_infill_direction_to_model", coBool);
-    def->label    = L("Align infill direction to model");
+    def->label    = L("Align directions to model");
     def->category = L("Strength");
-    def->tooltip  = L("Aligns infill, bridge, ironing and surface fill directions to follow the model's orientation on the build plate.\n"
-                      "When enabled, directions rotate with the model to maintain optimal strength characteristics.");
+    def->tooltip  = L("Aligns infill, bridge, ironing, and top/bottom surface directions to follow the model's orientation on the build plate.\n"
+                      "When enabled, these directions rotate together with the model so the printed features keep their intended orientation "
+                      "relative to the part, preserving optimal strength and surface characteristics regardless of how the model is placed.");
     def->mode     = comAdvanced;
     def->set_default_value(new ConfigOptionBool(false));
 
@@ -6981,13 +6982,12 @@ void PrintConfigDef::init_fff_params()
     def           = this->add("separated_infills", coBool);
     def->label    = L("Separated infills");
     def->category = L("Strength");
-    def->tooltip  = L("Aligns the internal infill pattern of each part independently instead of across the whole object or assembly.\n"
-                       "By default, aligned infill patterns share a single origin for the entire object, so the pattern of every "
-                       "part is referenced to the same point. When enabled, each connected body is aligned on its own: parts that "
-                       "touch or overlap are treated as one body and share an origin, while parts detached from the rest each get "
-                       "their own.\n Useful when an assembly groups several distinct objects that should each keep a self-centered infill.\n"
-                       "Only affects centered infill patterns (Archimedean Chords, Octagram Spiral) and patterns driven by an "
-                       "infill rotation template.");
+    def->tooltip  = L("Centers the internal infill of each part on itself, as if it were sliced on its own, instead of on the "
+                       "whole assembly. Parts that touch or overlap are treated as one body and share a center; separate parts "
+                       "(or distinct 3D objects) each get their own.\n"
+                       "Useful when an assembly groups several objects that should each keep a consistent, self-centered infill.\n"
+                       "Affects line and grid patterns and rotation-template infills.\n"
+                       "Patterns locked to global coordinates (Gyroid, Honeycomb, TPMS, ...) are unaffected.");
     def->mode     = comExpert;
     def->set_default_value(new ConfigOptionBool(false));
 
