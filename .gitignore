@@ -50,3 +50,4 @@ internal_docs/
 __pycache__/
 *.pyc
 logs_*/
+logs_*.zip
