@@ -482,8 +482,14 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
         retraction_length_during_wipe = config.retraction_speed.get_at(extruder_id) * 
             unscale_(wipe_path_length) / wipe_speed;
 
+<<<<<<< HEAD
         // If the maximum retraction amount during wipe is too small, 
         // return 0 and retract everything prior to the wipe.
+=======
+        // If the maximum retraction amount during wipe is too small,
+        // disable wipe-time retraction and leave any remaining retract amount
+        // to the subsequent standard retract flow.
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
         if (retraction_length_during_wipe <= EPSILON) 
             return { retraction_length_before_wipe, 0., retraction_length_after_wipe };
         
@@ -8536,6 +8542,12 @@ std::string GCode::retract(bool toolchange, bool is_last_retraction, LiftType li
         gcode += toolchange ? m_writer.retract_for_toolchange(true, wipeRetractions.retraction_length_before_wipe) :
                               m_writer.retract(true, wipeRetractions.retraction_length_before_wipe);
         gcode += m_wipe.wipe(*this, wipeRetractions.retraction_length_during_wipe, toolchange, is_last_retraction);
+<<<<<<< HEAD
+=======
+
+        // Orca: wipeRetractions.retraction_length_after_wipe is not being used explicitly,
+        // the remaining retraction after wipe is handled by the subsequent m_writer.retract() call
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     }
 
     /*  The parent class will decide whether we need to perform an actual retraction

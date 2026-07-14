@@ -1772,6 +1772,10 @@ static wxString pad_combo_value_for_config(const DynamicPrintConfig &config)
 
 void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
 {
+    // Orca:
+    // TODO: Move filament-specific checks to TabFilament::on_value_change()
+    // TODO: Move printer-specific checks to TabPrinter::on_value_change()
+
     if (wxGetApp().plater() == nullptr) {
         return;
     }
@@ -2768,6 +2772,7 @@ void TabPrint::build()
         optgroup->append_single_option_line("top_shell_thickness", "strength_settings_top_bottom_shells#shell-thickness");
         optgroup->append_single_option_line("top_surface_density", "strength_settings_top_bottom_shells#surface-density");
         optgroup->append_single_option_line("top_surface_pattern", "strength_settings_top_bottom_shells#surface-pattern");
+        optgroup->append_single_option_line("top_surface_fill_order", "strength_settings_top_bottom_shells#fill-order");
         optgroup->append_single_option_line("top_layer_direction", "strength_settings_infill#top-bottom-direction");
         optgroup->append_single_option_line("top_surface_expansion", "strength_settings_top_bottom_shells#surface-expansion");
         optgroup->append_single_option_line("top_surface_expansion_margin", "strength_settings_top_bottom_shells#surface-expansion-margin");
@@ -2776,9 +2781,9 @@ void TabPrint::build()
         optgroup->append_single_option_line("bottom_shell_thickness", "strength_settings_top_bottom_shells#shell-thickness");
         optgroup->append_single_option_line("bottom_surface_density", "strength_settings_top_bottom_shells#surface-density");
         optgroup->append_single_option_line("bottom_surface_pattern", "strength_settings_top_bottom_shells#surface-pattern");
+        optgroup->append_single_option_line("bottom_surface_fill_order", "strength_settings_top_bottom_shells#fill-order");
         optgroup->append_single_option_line("bottom_layer_direction", "strength_settings_infill#top-bottom-direction");
         optgroup->append_single_option_line("center_of_surface_pattern", "strength_settings_top_bottom_shells#center-surface-pattern-on");
-        optgroup->append_single_option_line("anisotropic_surfaces", "strength_settings_top_bottom_shells#anisotropic-surfaces");
         optgroup->append_single_option_line("top_bottom_infill_wall_overlap", "strength_settings_top_bottom_shells#infillwall-overlap");
 
         optgroup = page->new_optgroup(L("Infill"), L"param_infill");
@@ -3992,7 +3997,7 @@ void TabFilament::add_filament_overrides_page()
                                         "filament_retraction_minimum_travel",
                                         "filament_retract_when_changing_layer",
                                         "filament_wipe",
-                                        //BBS
+                                        // BBS
                                         "filament_wipe_distance",
                                         "filament_retract_before_wipe",
                                         // Orca
@@ -4121,7 +4126,7 @@ void TabFilament::update_filament_overrides_page(const DynamicPrintConfig* print
                                             "filament_retraction_minimum_travel",
                                             "filament_retract_when_changing_layer",
                                             "filament_wipe",
-                                            //BBS
+                                            // BBS
                                             "filament_wipe_distance",
                                             "filament_retract_before_wipe",
                                             // Orca
@@ -4794,11 +4799,16 @@ void TabFilament::clear_pages()
     m_overrides_options.clear();
 }
 
+<<<<<<< HEAD
+=======
+// Orca:
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
 void TabFilament::on_value_change(const std::string& opt_key, const boost::any& value)
 {
     if (wxGetApp().plater() == nullptr || m_config_manipulation.is_applying())
         return;
 
+<<<<<<< HEAD
     if (opt_key == "filament_retract_after_wipe" || opt_key == "filament_retract_before_wipe") {
         const int extruder_idx = 0; // #ys_FIXME
         auto percent_value_clamp = [](double percent_value) { return std::clamp(percent_value, 0., 100.); };
@@ -4824,6 +4834,60 @@ void TabFilament::on_value_change(const std::string& opt_key, const boost::any& 
 
         if (need_to_reload_config)
             reload_config();
+=======
+    const int pos = opt_key.find("#");
+
+    if (pos > 0) {
+        std::string temp_str = opt_key;
+        boost::erase_head(temp_str, pos + 1);
+        int orig_opt_idx = static_cast<size_t>(atoi(temp_str.c_str()));
+        int opt_idx = orig_opt_idx >= 0 ? orig_opt_idx : 0;
+
+        std::string opt_key_pure = opt_key;
+        boost::erase_tail(opt_key_pure, opt_key_pure.size() - pos);
+
+        if (opt_key_pure == "filament_retract_after_wipe" || opt_key_pure == "filament_retract_before_wipe") {
+            double dvalue = boost::any_cast<double>(value);
+            auto percent_value_clamp = [](double percent_value) { return std::clamp(percent_value, 0., 100.); };
+            auto get_value_by_opt_key = [&](const std::string& opt_key) {
+                    if (opt_key_pure == opt_key && !std::isnan(dvalue)) {
+                        // Return the incoming value (if it is valid) if the opt_key equals the key of the changed option.
+                        return percent_value_clamp(dvalue);
+                    } else if (!m_config->option<ConfigOptionPercents>(opt_key)->is_nil(opt_idx)) {
+                        // Return the overridden value if the option value for the opt_key was overridden for the given filament.
+                        return percent_value_clamp(m_config->option<ConfigOptionPercents>(opt_key)->get_at(opt_idx));
+                    } else {
+                        // Return the value of the option value for opt_key from the printer setting if it was not overridden for the filament.
+                        const auto& printer_config = m_preset_bundle->printers.get_edited_preset().config;
+                        const std::string printer_opt_key = opt_key.substr(strlen("filament_"));
+                        return percent_value_clamp(printer_config.option<ConfigOptionPercents>(printer_opt_key)->get_at(opt_idx));
+                    }
+
+                    return 0.;
+                };
+
+            double retract_before_wipe = get_value_by_opt_key("filament_retract_before_wipe");
+            double retract_after_wipe  = get_value_by_opt_key("filament_retract_after_wipe");
+
+            bool need_to_reload_config = false;
+
+            if (percent_value_clamp(dvalue) != dvalue) {
+                change_opt_value(*m_config, opt_key_pure, percent_value_clamp(dvalue), opt_idx);
+                need_to_reload_config = true;
+            }
+
+            if (retract_after_wipe > 100. - retract_before_wipe) {
+                change_opt_value(*m_config, "filament_retract_after_wipe", 100. - retract_before_wipe, opt_idx);
+                need_to_reload_config = true;
+            }
+
+            if (need_to_reload_config && !m_postpone_update_ui) {
+                update_dirty();
+                reload_config();
+                update_tab_ui();
+            }
+        }
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     }
 
     Tab::on_value_change(opt_key, value);
@@ -5593,6 +5657,8 @@ if (is_marlin_flavor)
             optgroup->append_single_option_line("wipe", "printer_extruder_retraction#wipe-while-retracting", extruder_idx);
             optgroup->append_single_option_line("wipe_distance", "printer_extruder_retraction#wipe-distance", extruder_idx);
             optgroup->append_single_option_line("retract_before_wipe", "printer_extruder_retraction#retract-amount-before-wipe", extruder_idx);
+            // Orca
+            optgroup->append_single_option_line("retract_after_wipe", "printer_extruder_retraction#retract-amount-after-wipe", extruder_idx);
 
             optgroup = page->new_optgroup(L("Z-Hop"), L"param_extruder_lift_enforcement");
             optgroup->append_single_option_line("retract_lift_enforce", "printer_extruder_z_hop#on-surfaces", extruder_idx);
@@ -6060,8 +6126,14 @@ void TabPrinter::toggle_options()
 
         bool wipe = retraction && m_config->opt_bool("wipe", variant_index);
 
+<<<<<<< HEAD
         double retract_before_wipe = m_config->option<ConfigOptionPercents>("retract_before_wipe")->get_at(i);
         double retract_after_wipe  = m_config->option<ConfigOptionPercents>("retract_after_wipe")->get_at(i);
+=======
+        // Orca:
+        double retract_before_wipe = m_config->option<ConfigOptionPercents>("retract_before_wipe")->get_at(variant_index);
+        double retract_after_wipe  = m_config->option<ConfigOptionPercents>("retract_after_wipe")->get_at(variant_index);
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
 
         toggle_option("retract_before_wipe", wipe && !is_approx(retract_after_wipe, 100.), i);
         toggle_option("retract_after_wipe", wipe && !is_approx(retract_before_wipe, 100.), i);
@@ -6167,6 +6239,10 @@ void TabPrinter::toggle_options()
     }
 }
 
+<<<<<<< HEAD
+=======
+// Orca:
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
 void TabPrinter::on_value_change(const std::string& opt_key, const boost::any& value)
 {
     if (wxGetApp().plater() == nullptr || m_config_manipulation.is_applying())
@@ -6205,8 +6281,16 @@ void TabPrinter::on_value_change(const std::string& opt_key, const boost::any& v
                 need_to_reload_config = true;
             }
 
+<<<<<<< HEAD
             if (need_to_reload_config)
                 reload_config();
+=======
+            if (need_to_reload_config && !m_postpone_update_ui) {
+                update_dirty();
+                reload_config();
+                update_tab_ui();
+            }
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
         }
     }
 

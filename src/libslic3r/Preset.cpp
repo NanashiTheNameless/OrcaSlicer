@@ -1046,8 +1046,13 @@ static std::vector<std::string> s_Preset_print_options{
     "top_surface_expansion_margin",
     "top_surface_expansion_direction",
     "bottom_surface_pattern",
+<<<<<<< HEAD
     "staggered_perimeters",
     "staggered_perimeter_flow_ratio",
+=======
+    "top_surface_fill_order",
+    "bottom_surface_fill_order",
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     "infill_direction",
     "solid_infill_direction",
     "top_layer_direction",
@@ -1063,11 +1068,14 @@ static std::vector<std::string> s_Preset_print_options{
     "skin_infill_density",
     "align_infill_direction_to_model",
     "extra_solid_infills",
+<<<<<<< HEAD
     "even_loops_flow_ratio",
     "loop_sequence",
     "even_loops_speed",
     "outermost_wall_control",
     "anisotropic_surfaces",
+=======
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     "center_of_surface_pattern",
     "separated_infills",
     "minimum_sparse_infill_area",
@@ -1313,7 +1321,6 @@ static std::vector<std::string> s_Preset_print_options{
     "interlocking_depth",
     "interlocking_boundary_avoidance",
     "interlocking_beam_width",
-    "calib_flowrate_topinfill_special_order",
     // Z Anti-Aliasing (ZAA)
     "zaa_enabled",
     "zaa_minimize_perimeter_height",
@@ -1339,8 +1346,25 @@ static std::vector<std::string> s_Preset_filament_options {/*"filament_colour", 
     //exhaust fan control
     "activate_air_filtration","activate_air_filtration_during_print","activate_air_filtration_on_completion","during_print_exhaust_fan_speed","complete_print_exhaust_fan_speed",
     // Retract overrides
+<<<<<<< HEAD
     "filament_retraction_length", "filament_z_hop", "filament_z_hop_types", "filament_retract_lift_above", "filament_retract_lift_below", "filament_retract_lift_enforce", "filament_retraction_speed", "filament_deretraction_speed", "filament_retract_restart_extra", "filament_retraction_minimum_travel",
     "filament_retract_when_changing_layer", "filament_wipe", "filament_retract_before_wipe", "filament_retract_after_wipe",
+=======
+    "filament_deretraction_speed",
+    "filament_retract_after_wipe", // Orca
+    "filament_retract_before_wipe",
+    "filament_retract_lift_above",
+    "filament_retract_lift_below",
+    "filament_retract_lift_enforce",
+    "filament_retract_restart_extra",
+    "filament_retract_when_changing_layer",
+    "filament_retraction_length",
+    "filament_retraction_minimum_travel",
+    "filament_retraction_speed",
+    "filament_wipe",
+    "filament_z_hop",
+    "filament_z_hop_types",
+>>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     // Profile compatibility
     "filament_vendor", "compatible_prints", "compatible_prints_condition", "compatible_printers", "compatible_printers_condition", "inherits",
     //BBS
