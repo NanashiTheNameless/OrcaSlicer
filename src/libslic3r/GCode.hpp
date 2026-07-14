@@ -61,10 +61,7 @@ public:
     bool enable;
     Polyline path;
 
-<<<<<<< HEAD
-=======
     // Orca:
->>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     struct RetractionValues{
         double retraction_length_before_wipe = 0.;
         double retraction_length_during_wipe = 0.;

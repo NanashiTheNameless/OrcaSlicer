@@ -4799,42 +4799,12 @@ void TabFilament::clear_pages()
     m_overrides_options.clear();
 }
 
-<<<<<<< HEAD
-=======
 // Orca:
->>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
 void TabFilament::on_value_change(const std::string& opt_key, const boost::any& value)
 {
     if (wxGetApp().plater() == nullptr || m_config_manipulation.is_applying())
         return;
 
-<<<<<<< HEAD
-    if (opt_key == "filament_retract_after_wipe" || opt_key == "filament_retract_before_wipe") {
-        const int extruder_idx = 0; // #ys_FIXME
-        auto percent_value_clamp = [](double percent_value) { return std::clamp(percent_value, 0., 100.); };
-        double dvalue = boost::any_cast<double>(value);
-
-        double retract_before_wipe = percent_value_clamp(opt_key == "filament_retract_before_wipe"
-            ? dvalue : m_config->option<ConfigOptionPercents>("filament_retract_before_wipe")->get_at(extruder_idx));
-
-        double retract_after_wipe = percent_value_clamp(opt_key == "filament_retract_after_wipe"
-            ? dvalue : m_config->option<ConfigOptionPercents>("filament_retract_after_wipe")->get_at(extruder_idx));
-
-        bool need_to_reload_config = false;
-
-        if (percent_value_clamp(dvalue) != dvalue) {
-            change_opt_value(*m_config, opt_key, percent_value_clamp(dvalue), extruder_idx);
-            need_to_reload_config = true;
-        }
-
-        if (retract_after_wipe > 100. - retract_before_wipe) {
-            change_opt_value(*m_config, "filament_retract_after_wipe", 100. - retract_before_wipe, extruder_idx);
-            need_to_reload_config = true;
-        }
-
-        if (need_to_reload_config)
-            reload_config();
-=======
     const int pos = opt_key.find("#");
 
     if (pos > 0) {
@@ -4887,7 +4857,6 @@ void TabFilament::on_value_change(const std::string& opt_key, const boost::any& 
                 update_tab_ui();
             }
         }
->>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
     }
 
     Tab::on_value_change(opt_key, value);
@@ -6126,14 +6095,9 @@ void TabPrinter::toggle_options()
 
         bool wipe = retraction && m_config->opt_bool("wipe", variant_index);
 
-<<<<<<< HEAD
-        double retract_before_wipe = m_config->option<ConfigOptionPercents>("retract_before_wipe")->get_at(i);
-        double retract_after_wipe  = m_config->option<ConfigOptionPercents>("retract_after_wipe")->get_at(i);
-=======
         // Orca:
         double retract_before_wipe = m_config->option<ConfigOptionPercents>("retract_before_wipe")->get_at(variant_index);
         double retract_after_wipe  = m_config->option<ConfigOptionPercents>("retract_after_wipe")->get_at(variant_index);
->>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
 
         toggle_option("retract_before_wipe", wipe && !is_approx(retract_after_wipe, 100.), i);
         toggle_option("retract_after_wipe", wipe && !is_approx(retract_before_wipe, 100.), i);
@@ -6239,10 +6203,7 @@ void TabPrinter::toggle_options()
     }
 }
 
-<<<<<<< HEAD
-=======
 // Orca:
->>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
 void TabPrinter::on_value_change(const std::string& opt_key, const boost::any& value)
 {
     if (wxGetApp().plater() == nullptr || m_config_manipulation.is_applying())
@@ -6281,16 +6242,11 @@ void TabPrinter::on_value_change(const std::string& opt_key, const boost::any& v
                 need_to_reload_config = true;
             }
 
-<<<<<<< HEAD
-            if (need_to_reload_config)
-                reload_config();
-=======
             if (need_to_reload_config && !m_postpone_update_ui) {
                 update_dirty();
                 reload_config();
                 update_tab_ui();
             }
->>>>>>> 1889ffb22a7f88b9effd4deef735a69ee552d988
         }
     }
 
