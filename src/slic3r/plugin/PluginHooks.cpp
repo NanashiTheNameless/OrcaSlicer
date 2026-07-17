@@ -10,6 +10,8 @@
 #include "libslic3r/Print.hpp"
 #include "libslic3r_version.h"
 
+#include "slic3r/Utils/NetworkAgentFactory.hpp"
+
 #include <boost/log/trivial.hpp>
 
 #include <memory>
@@ -27,6 +29,15 @@ void install_capability_resolver()
     ConfigBase::set_resolve_capability_fn([](const std::string& cap_name, const std::string& cap_type) {
         PluginManager& plugin_mgr = PluginManager::instance();
         const PluginCapabilityType type = plugin_capability_type_from_string(cap_type);
+        // "printer_agent" stores the agent registry ID (AgentInfo.id), not the capability name, so
+        // look plugin-backed agents up in the registry, which stored the full reference at
+        // registration (plugin_printer_agent_full_ref). Built-in agents return "" here and fall
+        // through to the capability lookup below, correctly contributing no manifest entry.
+        if (type == PluginCapabilityType::PrinterConnection) {
+            std::string agent_ref = NetworkAgentFactory::get_printer_agent_plugin_identifier(cap_name);
+            if (!agent_ref.empty())
+                return agent_ref;
+        }
         // only_enabled = false: this resolves the reference a preset STORES, which must stay
         // resolvable whether or not the user currently has the capability enabled. Filtering on
         // the enable flag here would quietly drop the reference out of the preset's manifest.

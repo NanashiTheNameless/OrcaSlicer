@@ -1608,12 +1608,24 @@ void ConfigBase::save_plugin_collection(const std::string& opt_key, const Config
     const std::string& type = opt_def->plugin_type;
 
     // Resolve a single bare capability value into its full reference and append it, skipping unset
-    // values, capabilities that could not be resolved (resolver returns ""), and duplicates already
-    // collected (preserving insertion order).
-    const auto append_ref = [&plugin_refs, &type](const std::string& capability_value) {
+    // values, capabilities that could not be resolved (resolver returns "" and no stored manifest
+    // entry matches), and duplicates already collected (preserving insertion order).
+    const auto append_ref = [this, &plugin_refs, &type](const std::string& capability_value) {
         if (capability_value.empty())
             return;
         std::string ref = resolve_capability_fn(capability_value, type);
+        if (ref.empty()) {
+            // The referenced plugin is not currently loaded/installed, so the resolver cannot
+            // derive a fresh reference. Fall back to the already-stored manifest entry for this
+            // capability: dropping it would lose the name/uuid PluginResolver needs to report or
+            // reinstall the missing plugin on the next load.
+            if (const auto* manifest = dynamic_cast<const ConfigOptionStrings*>(this->option("plugins")))
+                for (const std::string& stored : manifest->values)
+                    if (auto parsed = parse_capability_ref(stored); parsed && parsed->capability_name == capability_value) {
+                        ref = stored;
+                        break;
+                    }
+        }
         if (!ref.empty() && std::find(plugin_refs.begin(), plugin_refs.end(), ref) == plugin_refs.end())
             plugin_refs.emplace_back(std::move(ref));
     };
