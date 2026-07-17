@@ -2025,7 +2025,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("initial_layer_travel_acceleration", coFloatsOrPercents);
     def->label = L("First layer travel");
     def->tooltip = L("Travel acceleration of first layer.\nThe percentage value is relative to Travel Acceleration.");
-    def->sidetext = L("mm/s² or %");
+    def->sidetext = L(u8"mm/s² or %");
     def->min = 0;
     def->mode = comAdvanced;
     def->ratio_over = "travel_acceleration";
@@ -2036,7 +2036,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Bridge");
     def->category = L("Speed");
     def->tooltip = L("Acceleration of bridges. If the value is expressed as a percentage (e.g. 50%), it will be calculated based on the outer wall acceleration.");
-    def->sidetext = L("mm/s² or %");
+    def->sidetext = L(u8"mm/s² or %");
     def->min = 0;
     def->mode = comAdvanced;
     def->ratio_over = "outer_wall_acceleration";
@@ -3516,7 +3516,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Sparse infill");
     def->category = L("Speed");
     def->tooltip = L("Acceleration of sparse infill. If the value is expressed as a percentage (e.g. 100%), it will be calculated based on the default acceleration.");
-    def->sidetext = L("mm/s² or %");
+    def->sidetext = L(u8"mm/s² or %");
     def->min = 0;
     def->mode = comAdvanced;
     def->ratio_over = "default_acceleration";
@@ -3527,7 +3527,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Internal solid infill");
     def->category = L("Speed");
     def->tooltip = L("Acceleration of internal solid infill. If the value is expressed as a percentage (e.g. 100%), it will be calculated based on the default acceleration.");
-    def->sidetext = L("mm/s² or %");
+    def->sidetext = L(u8"mm/s² or %");
     def->min = 0;
     def->mode = comAdvanced;
     def->ratio_over = "default_acceleration";
@@ -3983,7 +3983,7 @@ void PrintConfigDef::init_fff_params()
                      "The shift is applied once every number of layers set by Layers between ripple offset, so layers within the same group are printed identically.");
     def->min = 0;
     def->max = 100;
-    def->sidetext = ("%");
+    def->sidetext = "%";
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionPercent(50));
 
@@ -4191,7 +4191,7 @@ void PrintConfigDef::init_fff_params()
                      "value that the firmware would silently drop, and the fan never receives a value below the one "
                      "you know it can actually spool at."
                      "\nSet to 0 to deactivate.");
-    def->sidetext = L("%");
+    def->sidetext = "%";
     def->min = 0;
     def->max = 100;
     def->mode = comAdvanced;
@@ -4711,6 +4711,11 @@ void PrintConfigDef::init_fff_params()
     def->mode     = comAdvanced;
     def->set_default_value(new ConfigOptionInt(2));
 
+    // ORCA: special flag for flow rate calibration
+    def           = this->add("calib_flowrate_topinfill_special_order", coBool);
+    def->mode     = comDevelop;
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("ironing_type", coEnum);
     def->label = L("Ironing type");
     def->category = L("Quality");
@@ -5141,7 +5146,7 @@ void PrintConfigDef::init_fff_params()
     def           = this->add("input_shaping_freq_x", coFloat);
     def->label    = L("X");
     def->tooltip  = L("Resonant frequency for the X axis input shaper.\nZero will use the firmware frequency.\nTo disable input shaping, use the Disable type.\nRRF: X and Y values are equal.");
-    def->sidetext = "Hz";
+    def->sidetext = L("Hz");	// Hertz, CIS languages need translation
     def->min      = 0;
     def->max      = 1000;
     def->mode     = comExpert;
@@ -5150,7 +5155,7 @@ void PrintConfigDef::init_fff_params()
     def           = this->add("input_shaping_freq_y", coFloat);
     def->label    = L("Y");
     def->tooltip  = L("Resonant frequency for the Y axis input shaper.\nZero will use the firmware frequency.\nTo disable input shaping, use the Disable type.");
-    def->sidetext = "Hz";
+    def->sidetext = L("Hz");	// Hertz, CIS languages need translation
     def->min      = 0;
     def->max      = 1000;
     def->mode     = comExpert;
@@ -7184,7 +7189,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Minimal");
     def->tooltip = L("This is the chamber temperature at which printing should start, while the chamber continues heating "
                      "toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to "
-                     "begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n\n"
+                     "begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n\n"
                      "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro "
                      "or a heat soak macro, like this: PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature].\n\n"
                      "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes "
@@ -9101,7 +9106,6 @@ void PrintConfigDef::handle_legacy(t_config_option_key &opt_key, std::string &va
         "internal_bridge_support_thickness", "top_area_threshold", "reduce_wall_solid_infill","filament_load_time","filament_unload_time",
         "smooth_coefficient", "overhang_totally_speed", "silent_mode",
         "overhang_speed_classic", "filament_prime_volume",
-        "calib_flowrate_topinfill_special_order",
         "anisotropic_surfaces", // superseded by top_surface_fill_order / bottom_surface_fill_order
     };
 
