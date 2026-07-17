@@ -824,6 +824,16 @@ else ()
 endif ()
 target_include_directories(libslic3r_gui PRIVATE Utils ${CMAKE_CURRENT_BINARY_DIR})
 
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    # Linux finds wxWidgets via wx-config (FindwxWidgets module mode), which only
+    # sets directory-scope includes/definitions under src/. Export them from the
+    # target so out-of-tree consumers (tests/) can compile GUI headers that
+    # include wx - the same propagation Windows/macOS get from the imported
+    # targets of CONFIG-mode find_package.
+    target_include_directories(libslic3r_gui SYSTEM PUBLIC ${wxWidgets_INCLUDE_DIRS})
+    target_compile_definitions(libslic3r_gui PUBLIC ${wxWidgets_DEFINITIONS} $<$<CONFIG:Debug>:${wxWidgets_DEFINITIONS_DEBUG}>)
+endif()
+
 if (WIN32)
     target_include_directories(libslic3r_gui SYSTEM PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/WebView2/include)
     target_link_libraries(libslic3r_gui Advapi32)
