@@ -988,6 +988,9 @@ void PrintConfigDef::init_common_params()
     def->tooltip = L("Select the network agent implementation for printer communication.");
     def->mode = comAdvanced;
     def->cli = ConfigOptionDef::nocli;
+    // Plugin-backed (see ConfigOptionDef::is_plugin_backed), but edited through the Choice widget above
+    // rather than a plugin_picker field.
+    def->plugin_type = "printer-connection";
     def->set_default_value(new ConfigOptionString(""));
 
     def = this->add("print_host", coString);
@@ -1085,6 +1088,17 @@ void PrintConfigDef::init_common_params()
         def = this->add("preset_name", coString);
         def->set_default_value(new ConfigOptionString());
     }
+
+    def = this->add("plugin_config_overrides", coString);
+    def->label = L("Capabilities");
+    def->tooltip = L("Configuration for the plugin capabilities this preset uses, overriding the global "
+                     "Capabilities configuration. Stored as a raw JSON array and edited through the dialog "
+                     "behind the button, never typed in directly.");
+    // Never shown as a text field: GUIType::plugin_config renders a button that opens PluginsConfigDialog.
+    def->gui_type = ConfigOptionDef::GUIType::plugin_config;
+    def->mode = comAdvanced;
+    def->cli = ConfigOptionDef::nocli;
+    def->set_default_value(new ConfigOptionString(""));
 }
 
 void PrintConfigDef::init_fff_params()
@@ -5552,6 +5566,22 @@ void PrintConfigDef::init_fff_params()
     def->height = 5;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionString());
+
+    def = this->add("plugins", coStrings);
+    def->label = L("Plugins Used");
+    def->tooltip = L("Plugin capabilities referenced by this preset, stored as name;uuid;capability.");
+    def->mode = comDevelop;
+    def->set_default_value(new ConfigOptionStrings());
+
+    def = this->add("slicing_pipeline_plugin", coStrings);
+    def->label = L("Slicing Pipeline Plugin");
+    def->tooltip = L("Python plugin(s) invoked at each slicing pipeline step to read and modify intermediate slicing data, "
+                   "including a final G-code post-processing step. Research/experimental.");
+    def->gui_type = ConfigOptionDef::GUIType::plugin_picker;
+    def->plugin_type = "slicing-pipeline";
+    def->full_width = true;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionStrings());
 
     def = this->add("printer_model", coString);
     def->label = L("Printer type");

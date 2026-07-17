@@ -1034,6 +1034,7 @@ wxDEFINE_EVENT(EVT_GLCANVAS_ORIENT_PARTPLATE, SimpleEvent);
 wxDEFINE_EVENT(EVT_GLCANVAS_SELECT_CURR_PLATE_ALL, SimpleEvent);
 wxDEFINE_EVENT(EVT_GLCANVAS_SELECT_ALL, SimpleEvent);
 wxDEFINE_EVENT(EVT_GLCANVAS_QUESTION_MARK, SimpleEvent);
+wxDEFINE_EVENT(EVT_GLCANVAS_OPEN_SPEED_DIAL, SimpleEvent);
 wxDEFINE_EVENT(EVT_GLCANVAS_INCREASE_INSTANCES, Event<int>);
 wxDEFINE_EVENT(EVT_GLCANVAS_INSTANCE_MOVED, SimpleEvent);
 wxDEFINE_EVENT(EVT_GLCANVAS_INSTANCE_ROTATED, SimpleEvent);
@@ -3008,6 +3009,11 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
             _set_warning_notification(EWarning::MixtureFilamentIncompatible, !filament_mixture_compatible);
 
             bool model_fits = contained_min_one && !m_model->objects.empty() && !partlyOut && object_results.filaments.empty() && tpu_valid && filament_printable;
+            // Honor the missing-plugin block so this geometry-only path does not re-enable slicing
+            // that Plater::validate_current_plate disabled (otherwise moving an object would briefly
+            // re-enable the Slice button while required plugins are still missing).
+            if (wxGetApp().plater() && wxGetApp().plater()->plugins_block_slicing())
+                model_fits = false;
             post_event(Event<bool>(EVT_GLCANVAS_ENABLE_ACTION_BUTTONS, model_fits));
             ppl.get_curr_plate()->update_slice_ready_status(model_fits);
         }
@@ -3505,6 +3511,11 @@ void GLCanvas3D::on_char(wxKeyEvent& evt)
             break;
         }
         case '?': { post_event(SimpleEvent(EVT_GLCANVAS_QUESTION_MARK)); break; }
+        case ' ': {
+            if (m_canvas_type == ECanvasType::CanvasView3D)
+                post_event(SimpleEvent(EVT_GLCANVAS_OPEN_SPEED_DIAL));
+            break;
+        }
         case 'A':
         case 'a':
             {
