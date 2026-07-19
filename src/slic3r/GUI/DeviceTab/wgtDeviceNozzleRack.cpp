@@ -257,7 +257,9 @@ void wgtDeviceNozzleRackArea::CreateGui()
     wxSizer* content_sizer = new wxBoxSizer(wxVERTICAL);
 
     m_panel_content = new wxPanel(m_simple_book, wxID_ANY);
+    m_panel_content->SetBackgroundColour(*wxWHITE);
     m_panel_refresh = new wxPanel(m_simple_book, wxID_ANY);
+    m_panel_refresh->SetBackgroundColour(*wxWHITE);
 
     // Create Hotends ans Rack Position Panel
     wxSizer* hotends_rack_sizer = new wxBoxSizer(wxHORIZONTAL);

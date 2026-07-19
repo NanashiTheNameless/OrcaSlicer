@@ -559,7 +559,7 @@ SelectMachineDialog::SelectMachineDialog(Plater *plater)
     sizer_split_options->Add(m_split_options_line, 1, wxALIGN_CENTER, 0);
 
     m_options_other = new wxPanel(m_scroll_area);
-
+    m_options_other->SetBackgroundColour(*wxWHITE);
 
     auto option_timelapse = new PrintOption(m_options_other, _L("Timelapse"), wxEmptyString, ops_no_auto, "timelapse");
 
@@ -3144,7 +3144,7 @@ void SelectMachineDialog::save_option_vals(MachineObject *obj) {
 void SelectMachineDialog::Enable_Auto_Refill(bool enable)
 {
     if (enable) {
-        m_ams_backup_tip->SetForegroundColour(wxColour("#009688"));
+        m_ams_backup_tip->SetForegroundColour(StateColor::darkModeColorFor("#009688"));
     }
     else {
         m_ams_backup_tip->SetForegroundColour(wxColour(0x90, 0x90, 0x90));
@@ -3169,19 +3169,21 @@ void SelectMachineDialog::show_timelapse_folder_popup()
         return;
     }
 
-    // build popup with rounded corners + light border
+    // build popup with rounded corners + themed border
+    const wxColour popup_bg     = wxGetApp().dark_mode() ? wxColour("#333337") : wxColour(0xF0, 0xF0, 0xF0);
+    const wxColour popup_border = StateColor::darkModeColorFor(wxColour(0xCE, 0xCE, 0xCE));
     m_timelapse_storage_popup = new PopupWindow(this, wxBORDER_NONE);
-    m_timelapse_storage_popup->SetBackgroundColour(wxColour(0xF0, 0xF0, 0xF0));
-    m_timelapse_storage_popup->Bind(wxEVT_PAINT, [this](wxPaintEvent&) {
+    m_timelapse_storage_popup->SetBackgroundColour(popup_bg);
+    m_timelapse_storage_popup->Bind(wxEVT_PAINT, [this, popup_bg, popup_border](wxPaintEvent&) {
         wxPaintDC dc(m_timelapse_storage_popup);
         auto size = m_timelapse_storage_popup->GetSize();
-        dc.SetPen(wxPen(wxColour(0xCE, 0xCE, 0xCE)));
-        dc.SetBrush(wxBrush(wxColour(0xF0, 0xF0, 0xF0)));
+        dc.SetPen(wxPen(popup_border));
+        dc.SetBrush(wxBrush(popup_bg));
         dc.DrawRoundedRectangle(0, 0, size.x, size.y, FromDIP(8));
     });
 
     auto* panel = new wxPanel(m_timelapse_storage_popup, wxID_ANY);
-    panel->SetBackgroundColour(wxColour(0xF0, 0xF0, 0xF0));
+    panel->SetBackgroundColour(popup_bg);
 
     // horizontal layout: [ Internal]  [External]
     auto* sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -3202,7 +3204,8 @@ void SelectMachineDialog::show_timelapse_folder_popup()
         if (enabled) radio->Enable(); else radio->Disable();
 
         auto* text = new Label(panel, Label::Body_14, label);
-        text->SetForegroundColour(enabled ? wxColour(0x5C, 0x5C, 0x5C) : wxColour(0xAC, 0xAC, 0xAC));
+        text->SetForegroundColour(enabled ? (wxGetApp().dark_mode() ? wxColour("#E5E5E4") : wxColour(0x5C, 0x5C, 0x5C))
+                                          : StateColor::darkModeColorFor(wxColour(0xAC, 0xAC, 0xAC)));
 
         if (enabled) {
             auto on_select = [this, val](wxMouseEvent&) {
@@ -3376,7 +3379,7 @@ void SelectMachineDialog::show_timelapse_storage_dialog(MachineObject* obj)
         create_scaled_bitmap("obj_warning", &dlg, 16), wxDefaultPosition, wxSize(FromDIP(16), FromDIP(16)));
     auto* msg_label = new Label(&dlg, body_text);
     msg_label->SetFont(Label::Body_14);
-    msg_label->SetForegroundColour(wxColour(0x33, 0x33, 0x33));
+    msg_label->SetForegroundColour(wxGetApp().dark_mode() ? wxColour("#EFEFF0") : wxColour(0x33, 0x33, 0x33));
     msg_label->Wrap(FromDIP(340));
     msg_sizer->Add(warn_bmp, 0, wxALIGN_TOP | wxRIGHT, FromDIP(6));
     msg_sizer->Add(msg_label, 1, wxEXPAND);
@@ -3417,6 +3420,7 @@ void SelectMachineDialog::show_timelapse_storage_dialog(MachineObject* obj)
     dlg.SetSizer(main_sizer);
     dlg.Fit();
     dlg.CenterOnParent();
+    wxGetApp().UpdateDlgDarkUI(&dlg);
 
     // ShowModal returns after the dialog closes; handle the action outside the modal stack.
     // wxID_CANCEL is returned when the user clicks X (close button) -> do nothing in that case.
@@ -4077,12 +4081,15 @@ void SelectMachineDialog::on_timer(wxTimerEvent &event)
         if (m_ams_backup_tip->IsShown()) {
             m_ams_backup_tip->Hide();
             img_ams_backup->Hide();
+            m_scroll_area->Layout();
         }
     }
     else {
         if (!m_ams_backup_tip->IsShown()) {
             m_ams_backup_tip->Show();
             img_ams_backup->Show();
+            // first show: position them, they were never laid out while hidden
+            m_scroll_area->Layout();
         }
     }
 

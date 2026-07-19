@@ -8,6 +8,7 @@
 #include "uiDeviceUpdateVersion.h"
 
 #include "slic3r/GUI/I18N.hpp"
+#include "slic3r/GUI/GUI_App.hpp"
 #include "slic3r/GUI/wxExtensions.hpp"
 #include "slic3r/GUI/Widgets/Label.hpp" // Orca: explicit Label include
 
@@ -27,6 +28,7 @@ uiDeviceUpdateVersion::uiDeviceUpdateVersion(wxWindow* parent,
                                              long style /*= wxTAB_TRAVERSAL*/)
      : wxPanel(parent, id, pos, size, style)
 {
+    SetBackgroundColour(*wxWHITE);
     CreateWidgets();
 }
 
@@ -110,4 +112,6 @@ void uiDeviceUpdateVersion::CreateWidgets()
 
     SetSizer(main_sizer);
     Layout();
+
+    wxGetApp().UpdateDarkUIWin(this);
 }

@@ -9,6 +9,7 @@
 #include "wgtDeviceNozzleRack.h"
 
 #include "slic3r/GUI/I18N.hpp"
+#include "slic3r/GUI/GUI_App.hpp"
 #include "slic3r/GUI/DeviceTab/wgtMsgBox.h"
 #include "slic3r/GUI/Widgets/Label.hpp" // Orca: explicit Label include
 
@@ -28,6 +29,7 @@ wgtDeviceNozzleRackSelect::wgtDeviceNozzleRackSelect(wxWindow *parent) : wxPanel
 static wxPanel* s_create_title(wxWindow *parent, const wxString& text)
 {
     wxPanel *panel = new wxPanel(parent, wxID_ANY);
+    panel->SetBackgroundColour(*wxWHITE);
 
     auto title  = new Label(panel, text);
     title->SetFont(::Label::Body_13);
@@ -35,7 +37,7 @@ static wxPanel* s_create_title(wxWindow *parent, const wxString& text)
     title->SetForegroundColour(0x909090);
 
     auto split_line = new wxPanel(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-    split_line->SetBackgroundColour(0xeeeeee);
+    split_line->SetBackgroundColour(wxColour(0xEE, 0xEE, 0xEE));
     split_line->SetMinSize(wxSize(-1, 1));
     split_line->SetMaxSize(wxSize(-1, 1));
 
@@ -104,6 +106,8 @@ void wgtDeviceNozzleRackSelect::CreateGui()
     SetSizer(main_sizer);
     Layout();
     Fit();
+
+    wxGetApp().UpdateDarkUIWin(this);
 }
 
 static void s_update_nozzle_info(wgtDeviceNozzleRackNozzleItem* item,

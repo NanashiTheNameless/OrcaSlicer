@@ -188,6 +188,7 @@ void wgtDeviceNozzleRackHotendUpdate::CreateGui()
 
     // Icon
     wxPanel* imagePanel = new wxPanel(this);
+    imagePanel->SetBackgroundColour(WGT_DEVICE_NOZZLE_RACK_HOTEND_UPDATE_DEFAULT_BG);
     imagePanel->SetMaxSize(WX_DIP_SIZE(46, -1));
     imagePanel->SetMinSize(WX_DIP_SIZE(46, -1));
     imagePanel->SetSize(wxSize(FromDIP(46), FromDIP(-1)));
@@ -203,6 +204,7 @@ void wgtDeviceNozzleRackHotendUpdate::CreateGui()
 
     // Diameter/type (vertical)
     wxPanel* type_panel = new wxPanel(this);
+    type_panel->SetBackgroundColour(WGT_DEVICE_NOZZLE_RACK_HOTEND_UPDATE_DEFAULT_BG);
     auto* main_type_sizer = new wxBoxSizer(wxVERTICAL);
     auto* type_sizer_row_1 = new wxBoxSizer(wxHORIZONTAL);
     auto* type_sizer_row_2 = new wxBoxSizer(wxHORIZONTAL);
@@ -251,6 +253,7 @@ void wgtDeviceNozzleRackHotendUpdate::CreateGui()
 
     // SN and version (vertical)
     wxPanel* info_panel = new wxPanel(this);
+    info_panel->SetBackgroundColour(WGT_DEVICE_NOZZLE_RACK_HOTEND_UPDATE_DEFAULT_BG);
     auto* info_sizer = new wxBoxSizer(wxVERTICAL);
     m_sn_label = new Label(info_panel);
     m_sn_label->SetFont(Label::Body_12);
