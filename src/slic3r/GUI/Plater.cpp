@@ -11402,7 +11402,23 @@ void Plater::priv::update_plugin_when_launch(wxCommandEvent &event)
     if (!app_config) return;
 
     if (result == wxID_OK) {
-        app_config->set("update_network_plugin", "true");
+        // Apply the downloaded update right away and hot-reload the plug-in, the same
+        // way a manual version switch in Preferences behaves. When a file is still in
+        // use and cannot be replaced, fall back to installing on the next launch.
+        bool had_cache = false;
+        if (wxGetApp().install_network_plugin_from_ota(had_cache)) {
+            notification_manager->close_notification_of_type(NotificationType::BBLPluginUpdateAvailable);
+            app_config->set("update_network_plugin", "false");
+            if (wxGetApp().hot_reload_network_plugin()) {
+                MessageDialog dlg_ok(wxGetApp().mainframe, _L("Network plug-in switched successfully."), _L("Success"), wxOK | wxICON_INFORMATION);
+                dlg_ok.ShowModal();
+            } else {
+                MessageDialog dlg_fail(wxGetApp().mainframe, _L("Failed to load network plug-in. Please restart the application."), _L("Restart Required"), wxOK | wxICON_WARNING);
+                dlg_fail.ShowModal();
+            }
+        } else {
+            app_config->set("update_network_plugin", had_cache ? "true" : "false");
+        }
     }
     else if (result == wxID_NO) {
         app_config->set("update_network_plugin", "false");

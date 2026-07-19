@@ -6,14 +6,14 @@
 //**********************************************************/
 
 #include "wgtDeviceNozzleSelect.h"
-#include "wgtDeviceNozzleRackNozzleItem.h" // the nozzle-item widget lives in its own header
+#include "wgtDeviceNozzleRack.h"
 
 #include "slic3r/GUI/I18N.hpp"
 #include "slic3r/GUI/DeviceTab/wgtMsgBox.h"
-#include "slic3r/GUI/Widgets/Label.hpp"
+#include "slic3r/GUI/Widgets/Label.hpp" // Orca: explicit Label include
 
 static wxColour s_gray_clr("#B0B0B0");
-static wxColour s_hgreen_clr("#009688");
+static wxColour s_hgreen_clr("#009688"); // Orca: accent green
 static wxColour s_red_clr("#D01B1B");
 
 static std::vector<int> a_nozzle_seq = {16, 18, 20, 17, 19, 21};
@@ -132,7 +132,7 @@ void wgtDeviceNozzleRackSelect::UpdateNozzleInfos(std::shared_ptr<DevNozzleRack>
     }
 }
 
-static void s_enable_item_if_match(wgtDeviceNozzleRackNozzleItem* item,
+static void s_enable_item_if_match(wgtDeviceNozzleRackNozzleItem* item, 
                                    const DevNozzle& nozzle_info,
                                    const DevNozzle& selected_nozzle)
 {
@@ -214,7 +214,7 @@ void wgtDeviceNozzleRackSelect::UpdatSelectedNozzles(std::shared_ptr<DevNozzleRa
     }
 }
 
-void wgtDeviceNozzleRackSelect::ClearSelection()
+void wgtDeviceNozzleRackSelect::ClearSelection() 
 {
     m_selected_nozzle = DevNozzle();
     m_toolhead_nozzle_l->SetSelected(false);
