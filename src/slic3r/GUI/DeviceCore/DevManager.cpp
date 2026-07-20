@@ -36,7 +36,7 @@ namespace Slic3r
         AppConfig* config = GUI::wxGetApp().app_config;
         if (!config)
             return;
-        const auto& local_machines = config->get_local_machines();
+        const auto local_machines = config->get_local_machines();
         for (auto& it : local_machines) {
             const auto& m = it.second;
             if (localMachineList.count(m.dev_id))
