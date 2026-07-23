@@ -618,7 +618,7 @@ jobs:
           asset_content_type: application/octet-stream
           max_releases: 1
 
-      - name: Deploy Ubuntu release tag
+      - name: Deploy Nightly-Rolling release tag
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/action-create-tag@main
         with:
