@@ -2636,7 +2636,6 @@ void GUI_App::on_start_subscribe_again(std::string dev_id)
 
         if ( (dev_id == obj->get_dev_id()) && obj->is_connecting() && obj->subscribe_counter > 0) {
             obj->subscribe_counter--;
-            if(wxGetApp().getAgent()) wxGetApp().getAgent()->set_user_selected_machine(dev_id);
             BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << ": dev_id=" << obj->get_dev_id();
         }
     });
