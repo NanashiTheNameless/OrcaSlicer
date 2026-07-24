@@ -48,7 +48,10 @@ NetworkPluginDownloadDialog::NetworkPluginDownloadDialog(wxWindow* parent, Mode 
         create_missing_plugin_ui();
     }
     Layout();
-    Fit();
+    // Use SetSizeHints() instead of Fit(): with GTK client-side decorations the
+    // header bar is part of the window, so a plain Fit() leaves the client area
+    // one title bar short and the bottom button row gets clipped away.
+    main_sizer->SetSizeHints(this);
     CentreOnParent();
     wxGetApp().UpdateDlgDarkUI(this);
 }
@@ -97,7 +100,7 @@ void NetworkPluginDownloadDialog::create_missing_plugin_ui()
                 details_text->Show(!details_text->IsShown());
                 expand_btn->SetLabel(details_text->IsShown() ? _L("Hide details") : _L("Show details"));
                 Layout();
-                Fit();
+                GetSizer()->SetSizeHints(this);
                 Refresh();
                 Thaw();
             });
@@ -113,7 +116,7 @@ void NetworkPluginDownloadDialog::create_missing_plugin_ui()
     setup_version_selector();
 
     main_sizer->Add(m_version_combo, 0, wxLEFT | wxRIGHT | wxEXPAND, BORDER_W);
-    main_sizer->AddSpacer(15);
+    main_sizer->AddSpacer(FromDIP(15));
 
     auto dlg_btns = new DialogButtons(this,
         {"Download and Install", "Skip for Now"},
@@ -148,7 +151,7 @@ void NetworkPluginDownloadDialog::create_update_available_ui(const std::string& 
 
     setup_version_selector();
     main_sizer->Add(m_version_combo, 0, wxLEFT | wxRIGHT | wxEXPAND, BORDER_W);
-    main_sizer->AddSpacer(20);
+    main_sizer->AddSpacer(FromDIP(20));
 
     auto daa_sizer = new wxBoxSizer(wxHORIZONTAL);
     auto cfg = wxGetApp().app_config;
@@ -175,7 +178,7 @@ void NetworkPluginDownloadDialog::create_update_available_ui(const std::string& 
     daa_sizer->Add(daa_str, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, FromDIP(5));
 
     main_sizer->Add(daa_sizer, 0, wxLEFT | wxRIGHT | wxEXPAND, BORDER_W);
-    main_sizer->AddSpacer(10);
+    main_sizer->AddSpacer(FromDIP(10));
 
     auto dlg_btns = new DialogButtons(this,
         {"Update Now", "Remind Later", "Skip Version"},
@@ -266,7 +269,7 @@ void NetworkPluginDownloadDialog::on_dont_ask(wxCommandEvent& evt)
 void NetworkPluginDownloadDialog::on_dpi_changed(const wxRect& suggested_rect)
 {
     Layout();
-    Fit();
+    GetSizer()->SetSizeHints(this);
 }
 
 NetworkPluginRestartDialog::NetworkPluginRestartDialog(wxWindow* parent)
@@ -304,7 +307,7 @@ NetworkPluginRestartDialog::NetworkPluginRestartDialog(wxWindow* parent)
 
     icon_sizer->Add(text_sizer, 1, wxEXPAND | wxRIGHT, BORDER_W);
     main_sizer->Add(icon_sizer, 0, wxLEFT | wxRIGHT | wxEXPAND, BORDER_W);
-    main_sizer->AddSpacer(15);
+    main_sizer->AddSpacer(FromDIP(15));
 
     auto dlg_btns = new DialogButtons(this,
         {"Restart Now", "Restart Later"},
@@ -325,7 +328,7 @@ NetworkPluginRestartDialog::NetworkPluginRestartDialog(wxWindow* parent)
 
     SetSizer(main_sizer);
     Layout();
-    Fit();
+    main_sizer->SetSizeHints(this);
     CentreOnParent();
     wxGetApp().UpdateDlgDarkUI(this);
 }
@@ -333,7 +336,7 @@ NetworkPluginRestartDialog::NetworkPluginRestartDialog(wxWindow* parent)
 void NetworkPluginRestartDialog::on_dpi_changed(const wxRect& suggested_rect)
 {
     Layout();
-    Fit();
+    GetSizer()->SetSizeHints(this);
 }
 
 }
