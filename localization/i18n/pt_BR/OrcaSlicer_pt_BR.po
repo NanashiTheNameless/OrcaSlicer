@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Orca Slicer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-20 10:39-0300\n"
+"POT-Creation-Date: 2026-07-23 15:24-0300\n"
 "PO-Revision-Date: 2026-07-22 20:39-0300\n"
 "Last-Translator: Alexandre Folle de Menezes\n"
 "Language-Team: Portuguese, Brazilian\n"
@@ -553,8 +553,9 @@ msgstr "Remapear"
 msgid "Reset"
 msgstr "Reiniciar"
 
+msgctxt "Keyboard Shortcut"
 msgid "Enter"
-msgstr "Enter"
+msgstr ""
 
 msgid "Shortcut Key "
 msgstr "Tecla de atalho "
@@ -883,8 +884,9 @@ msgstr "Remover conector da seleção"
 msgid "Select all connectors"
 msgstr "Selecionar todos os conectores"
 
+msgctxt "Cut tool"
 msgid "Cut"
-msgstr "Cortar"
+msgstr ""
 
 msgid "Rotate cut plane"
 msgstr "Rotacionar plano de corte"
@@ -1745,14 +1747,16 @@ msgstr "Selecionar"
 msgid "Select point"
 msgstr "Selecionar ponto"
 
+msgctxt "Keyboard Shortcut"
 msgid "Delete"
-msgstr "Excluir"
+msgstr ""
 
 msgid "Restart selection"
 msgstr "Reiniciar seleção"
 
+msgctxt "Keyboard Shortcut"
 msgid "Esc"
-msgstr "Esc"
+msgstr ""
 
 msgid "Cancel a feature until exit"
 msgstr "Cancelar um recurso até sair"
@@ -1857,8 +1861,9 @@ msgstr "Entrando no gizmo de Medida"
 msgid "Leaving Measure gizmo"
 msgstr "Saindo do gizmo de Medida"
 
+msgctxt "Assembly tool"
 msgid "Assemble"
-msgstr "Montar"
+msgstr ""
 
 msgid "Please confirm explosion ratio = 1 and select at least two volumes."
 msgstr "Por favor, confirme a taxa de explosão = 1 e selecione pelo menos dois volumes."
@@ -2410,6 +2415,9 @@ msgstr "Não foi possível baixar da URL. A pasta de destino não está definida
 msgid "Import File"
 msgstr "Importar Arquivo"
 
+msgid "Delete"
+msgstr "Excluir"
+
 msgid "Choose files"
 msgstr "Escolher arquivos"
 
@@ -2528,12 +2536,14 @@ msgstr "Ocultar"
 msgid "Show"
 msgstr "Mostrar"
 
+msgctxt "Keyboard Shortcut"
 msgid "Del"
-msgstr "Del"
+msgstr ""
 
 msgid "Delete the selected object"
 msgstr "Apagar o objeto selecionado"
 
+msgctxt "Keyboard Shortcut"
 msgid "Backspace"
 msgstr ""
 
@@ -2723,6 +2733,9 @@ msgstr "Converter de Metros"
 
 msgid "Restore to Meter"
 msgstr "Restaurar para Metros"
+
+msgid "Assemble"
+msgstr "Montar"
 
 msgid "Assemble the selected objects into an object with multiple parts"
 msgstr "Montar os objetos selecionados em um objeto com várias peças"
@@ -3472,6 +3485,7 @@ msgctxt "air_duct"
 msgid "Left(Aux)"
 msgstr "Esquerda(Aux)"
 
+msgctxt "Hotend Heat Breaker Fan"
 msgid "Hotend"
 msgstr "Hotend"
 
@@ -4225,6 +4239,14 @@ msgstr "Imprimir usando filamento no carretel externo."
 # TODO: Review, changed by lang refactor. PR 14254
 msgid "Print with filament in AMS"
 msgstr "Imprimir com filamentos no AMS"
+
+msgctxt "Nozzle position"
+msgid "Left"
+msgstr ""
+
+msgctxt "Nozzle position"
+msgid "Right"
+msgstr ""
 
 msgid "When the current material run out, the printer will continue to print in the following order."
 msgstr "Quando o material atual acabar, a impressora continuará a imprimir na seguinte ordem."
@@ -5522,8 +5544,9 @@ msgstr "Adaptativo"
 msgid "Quality / Speed"
 msgstr "Qualidade / Velocidade"
 
+msgctxt "Mesh action"
 msgid "Smooth"
-msgstr "Suave"
+msgstr ""
 
 msgid "Radius"
 msgstr "Raio"
@@ -6143,6 +6166,9 @@ msgstr "Desfazer"
 msgid "Redo"
 msgstr "Refazer"
 
+msgid "Cut"
+msgstr "Cortar"
+
 msgid "Cut selection to clipboard"
 msgstr "Recortar seleção para área de transferência"
 
@@ -6243,6 +6269,10 @@ msgstr "Mostrar contorno ao redor do objeto selecionado na cena 3D."
 
 msgid "Preferences"
 msgstr "Preferências"
+
+msgctxt "Menu"
+msgid "Edit"
+msgstr ""
 
 msgid "View"
 msgstr "Visualizar"
@@ -8919,6 +8949,15 @@ msgstr "Mostrar painel de FPS"
 msgid "Displays current viewport FPS in the top-right corner."
 msgstr "Exibe o FPS atual da janela de visualização no canto superior direito."
 
+msgid "G-code Preview"
+msgstr ""
+
+msgid "Dim lower layers"
+msgstr ""
+
+msgid "When scrubbing the layer slider in the sliced preview, render the layers below the current one darkened so that only the layer being viewed is shown at full brightness."
+msgstr ""
+
 msgid "Login region"
 msgstr "Região de login"
 
@@ -9210,8 +9249,9 @@ msgstr "Incompatível"
 msgid "The selected preset is null!"
 msgstr "A predefinição selecionada é nula!"
 
+msgctxt "Layer range"
 msgid "End"
-msgstr "Fim"
+msgstr ""
 
 msgid "Customize"
 msgstr "Personalizar"
@@ -9502,6 +9542,9 @@ msgstr "Quando o modo vaso espiral está ativado, máquinas com estrutura I3 nã
 
 msgid "The current printer does not support timelapse in Traditional Mode when printing By-Object."
 msgstr "A impressora atual não suporta timelapse no Modo Tradicional ao imprimir Por Objeto."
+
+msgid "I have checked the installed nozzle and want to print anyway."
+msgstr ""
 
 msgid "Errors"
 msgstr "Erros"
@@ -11212,26 +11255,30 @@ msgstr "Selecionar vários objetos"
 msgid "Select objects by rectangle"
 msgstr "Selecionar objetos por retângulo"
 
+msgctxt "Keyboard Shortcut"
 msgid "Arrow Up"
-msgstr "Seta para cima"
+msgstr ""
 
 msgid "Move selection 10mm in positive Y direction"
 msgstr "Mover seleção 10mm na direção Y positiva"
 
+msgctxt "Keyboard Shortcut"
 msgid "Arrow Down"
-msgstr "Seta para baixo"
+msgstr ""
 
 msgid "Move selection 10mm in negative Y direction"
 msgstr "Mover seleção 10mm na direção Y negativa"
 
+msgctxt "Keyboard Shortcut"
 msgid "Arrow Left"
-msgstr "Seta para esquerda"
+msgstr ""
 
 msgid "Move selection 10mm in negative X direction"
 msgstr "Mover seleção 10mm na direção X negativa"
 
+msgctxt "Keyboard Shortcut"
 msgid "Arrow Right"
-msgstr "Seta para direita"
+msgstr ""
 
 msgid "Move selection 10mm in positive X direction"
 msgstr "Mover seleção 10mm na direção X positiva"
@@ -11314,8 +11361,16 @@ msgstr "Afastar zoom"
 msgid "Toggle printable for object/part"
 msgstr "Alternar modo de impressão para objeto/peça"
 
+msgctxt "Keyboard Shortcut"
+msgid "Tab"
+msgstr ""
+
 msgid "Switch between Prepare/Preview"
 msgstr "Alternar entre Preparar/Pré-visualizar"
+
+msgctxt "Keyboard Shortcut"
+msgid "Space"
+msgstr ""
 
 msgid "Open actions speed dial"
 msgstr ""
@@ -11374,8 +11429,16 @@ msgstr "Ativar/Desativar janela de G-code"
 msgid "Move slider 5x faster"
 msgstr "Mover o controle deslizante 5 vezes mais rápido"
 
+msgctxt "Keyboard Shortcut"
+msgid "Home"
+msgstr ""
+
 msgid "Horizontal slider - Move to start position"
 msgstr "Barra deslizante horizontal — Mover para a posição inicial"
+
+msgctxt "Keyboard Shortcut"
+msgid "End"
+msgstr ""
 
 msgid "Horizontal slider - Move to last position"
 msgstr "Barra deslizante horizontal — Mover para a última posição"
@@ -15680,16 +15743,16 @@ msgstr ""
 "Esta quantidade pode ser especificada em milímetros ou como uma porcentagem do diâmetro atual da extrusora. O valor padrão para este parâmetro é 10%."
 
 msgid "Scarf joint seam (beta)"
-msgstr "Costura junta cachecol (beta)"
+msgstr "Costura em bisel (beta)"
 
 msgid "Use scarf joint to minimize seam visibility and increase seam strength."
-msgstr "Usar a junta cachecol para minimizar a visibilidade da costura e aumentar a resistência da costura."
+msgstr "Use a junta em bisel para minimizar a visibilidade da costura e aumentar a resistência da costura."
 
 msgid "Conditional scarf joint"
-msgstr "Junta cachecol condicional"
+msgstr "Junta em bisel condicional"
 
 msgid "Apply scarf joints only to smooth perimeters where traditional seams do not conceal the seams at sharp corners effectively."
-msgstr "Aplique juntas cachecol apenas em perímetros suaves onde costuras tradicionais não escondem as costuras em cantos agudos de forma eficaz."
+msgstr "Aplique juntas em bisel apenas em perímetros suaves onde costuras tradicionais não escondem as costuras em cantos agudos de forma eficaz."
 
 msgid "Conditional angle threshold"
 msgstr "Limiar de ângulo condicional"
@@ -15698,61 +15761,61 @@ msgid ""
 "This option sets the threshold angle for applying a conditional scarf joint seam.\n"
 "If the maximum angle within the perimeter loop exceeds this value (indicating the absence of sharp corners), a scarf joint seam will be used. The default value is 155°."
 msgstr ""
-"Esta opção define o ângulo limiar para aplicar uma costura junta cachecol condicional.\n"
-"Se o ângulo máximo dentro da volta do perímetro exceder esse valor (indicando a ausência de cantos afiados), será usada uma costura junta cachecol. O valor padrão é 155°."
+"Esta opção define o ângulo limiar para aplicar uma costura em bisel condicional.\n"
+"Se o ângulo máximo dentro da volta do perímetro exceder esse valor (indicando a ausência de cantos afiados), será usada uma costura em bisel. O valor padrão é 155°."
 
 msgid "Conditional overhang threshold"
 msgstr "Limiar de saliência condicional"
 
 #, no-c-format, no-boost-format
 msgid "This option determines the overhang threshold for the application of scarf joint seams. If the unsupported portion of the perimeter is less than this threshold, scarf joint seams will be applied. The default threshold is set at 40% of the external wall's width. Due to performance considerations, the degree of overhang is estimated."
-msgstr "Esta opção determina o limiar de saliência para a aplicação de juntas cachecol. Se a parte sem suporte do perímetro for inferior a esse limiar, as costuras junta cachecol serão aplicadas. O limiar padrão é definido em 40% da largura da parede externa. Devido a considerações de desempenho, o grau de saliência é estimado."
+msgstr "Esta opção determina o limiar de saliência para a aplicação de juntas em bisel. Se a parte sem suporte do perímetro for inferior a esse limiar, as costuras junta em bisel serão aplicadas. O limiar padrão é definido em 40% da largura da parede externa. Devido a considerações de desempenho, o grau de saliência é estimado."
 
 msgid "Scarf joint speed"
-msgstr "Velocidade da junta cachecol"
+msgstr "Velocidade da junta em bisel"
 
 msgid "This option sets the printing speed for scarf joints. It is recommended to print scarf joints at a slow speed (less than 100 mm/s). It's also advisable to enable 'Extrusion rate smoothing' if the set speed varies significantly from the speed of the outer or inner walls. If the speed specified here is higher than the speed of the outer or inner walls, the printer will default to the slower of the two speeds. When specified as a percentage (e.g., 80%), the speed is calculated based on the respective outer or inner wall speed. The default value is set to 100%."
-msgstr "Esta opção define a velocidade de impressão para as juntas cachecol. É recomendável imprimir as juntas cachecol em uma velocidade baixa (menor que 100 mm/s). Também é aconselhável habilitar 'Suavização da taxa de extrusão' se a velocidade definida variar significativamente da velocidade das paredes externas ou internas. Se a velocidade especificada aqui for maior que a velocidade das paredes externas ou internas, a impressora utilizará a mais lenta das duas velocidades. Quando especificado como uma porcentagem (por exemplo, 80%), a velocidade é calculada com base na velocidade do perímetro externo ou interna respectiva. O valor padrão é definido como 100%."
+msgstr "Esta opção define a velocidade de impressão para as juntas em bisel. É recomendável imprimir as juntas em bisel em uma velocidade baixa (menor que 100 mm/s). Também é aconselhável habilitar 'Suavização da taxa de extrusão' se a velocidade definida variar significativamente da velocidade das paredes externas ou internas. Se a velocidade especificada aqui for maior que a velocidade das paredes externas ou internas, a impressora utilizará a mais lenta das duas velocidades. Quando especificado como uma porcentagem (por exemplo, 80%), a velocidade é calculada com base na velocidade do perímetro externo ou interna respectiva. O valor padrão é definido como 100%."
 
 msgid "Scarf joint flow ratio"
-msgstr "Taxa de fluxo em junta cachecol"
+msgstr "Taxa de fluxo da junta em bisel"
 
 msgid "This factor affects the amount of material for scarf joints."
-msgstr "Este fator afeta a quantidade de material para as juntas cachecol."
+msgstr "Este fator afeta a quantidade de material para as juntas em bisel."
 
 msgid "Scarf start height"
-msgstr "Altura inicial do cachecol"
+msgstr "Altura inicial do bisel"
 
 msgid ""
 "Start height of the scarf.\n"
 "This amount can be specified in millimeters or as a percentage of the current layer height. The default value for this parameter is 0."
 msgstr ""
-"Altura inicial do cachecol.\n"
+"Altura inicial do bisel.\n"
 "Esta quantidade pode ser especificada em milímetros ou como uma porcentagem da altura atual da camada. O valor padrão para este parâmetro é 0."
 
 msgid "Scarf around entire wall"
-msgstr "Cachecol em torno de toda a parede"
+msgstr "Bisel em torno de toda a parede"
 
 msgid "The scarf extends to the entire length of the wall."
-msgstr "O cachecol se estende por todo o comprimento da parede."
+msgstr "O bisel se estende por todo o comprimento da parede."
 
 msgid "Scarf length"
-msgstr "Comprimento do cachecol"
+msgstr "Comprimento do bisel"
 
 msgid "Length of the scarf. Setting this parameter to zero effectively disables the scarf."
-msgstr "Comprimento do cachecol. Definir este parâmetro como zero efetivamente desabilita o cachecol."
+msgstr "Comprimento do bisel. Definir este parâmetro como zero efetivamente desabilita o bisel."
 
 msgid "Scarf steps"
-msgstr "Degraus do cachecol"
+msgstr "Degraus do bisel"
 
 msgid "Minimum number of segments of each scarf."
-msgstr "Número mínimo de segmentos de cada cachecol."
+msgstr "Número mínimo de segmentos de cada bisel."
 
 msgid "Scarf joint for inner walls"
-msgstr "Junta cachecol em paredes internas"
+msgstr "Junta em bisel em paredes internas"
 
 msgid "Use scarf joint for inner walls as well."
-msgstr "Usar junta cachecol em paredes internas também."
+msgstr "Usar junta em bisel em paredes internas também."
 
 msgid "Role base wipe speed"
 msgstr "Velocidade de limpeza baseada na função"
@@ -15938,6 +16001,9 @@ msgstr "Se o modo suave ou tradicional for selecionado, um vídeo em timelapse s
 
 msgid "Traditional"
 msgstr "Tradicional"
+
+msgid "Smooth"
+msgstr "Suave"
 
 msgid "Farthest point timelapse"
 msgstr ""
@@ -16896,6 +16962,15 @@ msgstr "Quando este valor de retração for modificado, ele será usado como a q
 
 msgid "Support fast purge mode"
 msgstr "Suporte ao modo de purga rápida"
+
+msgid "Whether this printer supports fast purge mode with optimized temperature and multiplier."
+msgstr ""
+
+msgid "Filament change"
+msgstr ""
+
+msgid "The volume of material required to prime the extruder on the tower, excluding a hotend change."
+msgstr ""
 
 msgid "The volume of material required to prime the extruder for a hotend change on the tower."
 msgstr "O volume de material necessário para preparar o extrusor para uma troca do hotend na torre."
@@ -20083,14 +20158,14 @@ msgstr "Erro: %s"
 msgid "Show details"
 msgstr "Mostrar detalhes"
 
+msgid "Hide details"
+msgstr ""
+
 msgid "Version to install:"
 msgstr "Versão para instalar:"
 
 msgid "Download and Install"
 msgstr "Baixar e Instalar"
-
-msgid "Skip for Now"
-msgstr "Pular por Enquanto"
 
 msgid "A new version of the Bambu Network Plug-in is available."
 msgstr "Uma nova versão do Plug-in de Rede Bambu está disponível."
@@ -20102,17 +20177,11 @@ msgstr "Versão atual: %s"
 msgid "Update to version:"
 msgstr "Atualizar para versão:"
 
-msgid "Update Now"
-msgstr "Atualizar Agora"
-
-msgid "Remind Later"
-msgstr "Lembre-me Depois"
-
-msgid "Skip Version"
-msgstr "Pular Versão"
-
 msgid "Don't Ask Again"
 msgstr "Não Perguntar Novamente"
+
+msgid "Update Now"
+msgstr "Atualizar Agora"
 
 msgid "(Latest)"
 msgstr "(Mais recente)"
@@ -20128,9 +20197,6 @@ msgstr "É necessário reiniciar para carregar o novo plug-in. Deseja reiniciar 
 
 msgid "Restart Now"
 msgstr "Reiniciar Agora"
-
-msgid "Restart Later"
-msgstr "Reiniciar Depois"
 
 msgid "NO RAMMING AT ALL"
 msgstr "SEM NENHUM MOLDEAMENTO"
@@ -20618,7 +20684,8 @@ msgstr ""
 "Divida suas impressões em placas\n"
 "Você sabia que pode dividir um modelo que tem diversas peças em placas individuais distintas prontas para imprimir? Isso simplifica o processo de manter o controle de todas as peças."
 
-#: resources/data/hints.ini: [hint:Speed up your print with Adaptive Layer Height]
+#: resources/data/hints.ini: [hint:Speed up your print with Adaptive Layer
+#: Height]
 msgid ""
 "Speed up your print with Adaptive Layer Height\n"
 "Did you know that you can print a model even faster by using the Adaptive Layer Height option? Check it out!"
@@ -20690,7 +20757,8 @@ msgstr ""
 "Melhorar a resistência\n"
 "Você sabia que pode usar mais voltas de parede e maior densidade de preenchimento esparso mais alta para melhorar a resistência do modelo?"
 
-#: resources/data/hints.ini: [hint:When do you need to print with the printer door opened]
+#: resources/data/hints.ini: [hint:When do you need to print with the printer
+#: door opened]
 msgid ""
 "When do you need to print with the printer door opened?\n"
 "Did you know that opening the printer door can reduce the probability of extruder/hotend clogging when printing lower temperature filament with a higher enclosure temperature? There is more info about this in the Wiki."
@@ -20705,6 +20773,45 @@ msgid ""
 msgstr ""
 "Evitar empenamento\n"
 "Você sabia que ao imprimir materiais propensos ao empenamento como ABS, aumentar adequadamente a temperatura da mesa aquecida pode reduzir a probabilidade de empenamento?"
+
+#~ msgid "Enter"
+#~ msgstr "Enter"
+
+#~ msgid "Esc"
+#~ msgstr "Esc"
+
+#~ msgid "Del"
+#~ msgstr "Del"
+
+#~ msgid "Arrow Up"
+#~ msgstr "Seta para cima"
+
+#~ msgid "Arrow Down"
+#~ msgstr "Seta para baixo"
+
+#~ msgid "Arrow Left"
+#~ msgstr "Seta para esquerda"
+
+#~ msgid "Arrow Right"
+#~ msgstr "Seta para direita"
+
+#~ msgid "End"
+#~ msgstr "Fim"
+
+#~ msgid "Hotend"
+#~ msgstr "Extrusora"
+
+#~ msgid "Skip for Now"
+#~ msgstr "Pular por Enquanto"
+
+#~ msgid "Remind Later"
+#~ msgstr "Lembre-me Depois"
+
+#~ msgid "Skip Version"
+#~ msgstr "Pular Versão"
+
+#~ msgid "Restart Later"
+#~ msgstr "Reiniciar Depois"
 
 #~ msgid "Select filament that installed to the left nozzle"
 #~ msgstr "Selecione o filamento instalado no bico esquerdo"

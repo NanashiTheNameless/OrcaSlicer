@@ -291,11 +291,6 @@ else ()
             COMMAND ln -sf OrcaSlicer orca-slicer
             WORKING_DIRECTORY "$<TARGET_FILE_DIR:OrcaSlicer>"
             VERBATIM)
-    else ()
-        add_custom_command(TARGET OrcaSlicer POST_BUILD
-            COMMAND ln -sf orca-slicer OrcaSlicer
-            WORKING_DIRECTORY "$<TARGET_FILE_DIR:OrcaSlicer>"
-            VERBATIM)
     endif ()
     if (XCODE)
         # Because of Debug/Release/etc. configurations (similar to MSVC) the slic3r binary is located in an extra level
