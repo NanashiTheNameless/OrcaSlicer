@@ -47,6 +47,7 @@ NetworkPluginDownloadDialog::NetworkPluginDownloadDialog(wxWindow* parent, Mode 
     } else {
         create_missing_plugin_ui();
     }
+    main_sizer->SetSizeHints(this);
     Layout();
     // Use SetSizeHints() instead of Fit(): with GTK client-side decorations the
     // header bar is part of the window, so a plain Fit() leaves the client area
