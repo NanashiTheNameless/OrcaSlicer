@@ -151,6 +151,9 @@ jobs:
         if: runner.os == 'macOS' && !inputs.macos-combine-only
         run: |
           if [ -z "${{ vars.SELF_HOSTED }}" ]; then
+            # Runner image ships an untrusted aws/tap we never use; brew warns on
+            # every invocation until it is gone (see https://docs.brew.sh/Tap-Trust).
+            brew untap aws/tap || true
             brew install libtool
             brew list
           fi

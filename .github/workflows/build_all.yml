@@ -299,7 +299,8 @@ jobs:
       uses: actions/upload-artifact@v7
       with:
         name: OrcaSlicer-Linux-flatpak_nightly_${{ matrix.variant.arch }}.flatpak
-        path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ matrix.variant.arch }}.flatpak'
+        path: '/__w/OrcaSlicer/OrcaSlicer/OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak'
+        if-no-files-found: error
     - name: Deploy Flatpak to nightly release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
       uses: NanashiTheNameless/deploy-nightly@master
