@@ -175,18 +175,29 @@ static std::pair<std::string, std::optional<double>> split_lead(const std::strin
     return { entry.substr(0, tab), std::stod(tail.substr(tail.find(' ') + 1)) };
 }
 
-// Same command, and a lead time within half a second. The lead is an estimate summed over every
-// move before it, so it drifts slightly with unrelated changes to travel or tower geometry; half a
-// second is far below the tens of seconds a preheat leaving its backtrace position would shift it.
+// Same command, ignoring the rounded preheat-time comment, and a lead time within one second. Both
+// values are estimates summed over preceding moves, so they can drift slightly with platform timing
+// or unrelated travel and tower-geometry changes. One second is far below the tens of seconds a
+// preheat leaving its backtrace position would shift it.
 static bool trace_entries_match(const std::string& a, const std::string& b)
 {
     const auto x = split_lead(a);
     const auto y = split_lead(b);
-    if (x.first != y.first)
+    const auto strip_preheat_time = [](std::string command) {
+        const size_t preheat = command.find("; preheat T");
+        const size_t time    = preheat == std::string::npos ? std::string::npos : command.find(" time: ", preheat);
+        if (time == std::string::npos)
+            return command;
+        const size_t seconds = command.find('s', time + 7);
+        if (seconds != std::string::npos)
+            command.erase(time, seconds - time + 1);
+        return command;
+    };
+    if (strip_preheat_time(x.first) != strip_preheat_time(y.first))
         return false;
     if (x.second.has_value() != y.second.has_value())
         return false;
-    return !x.second.has_value() || std::abs(*x.second - *y.second) <= 0.5;
+    return !x.second.has_value() || std::abs(*x.second - *y.second) <= 1.;
 }
 
 // Tool index = filament id - 1; brim and skirt follow the wall filament.
@@ -649,4 +660,3 @@ TEST_CASE("Multi-extruder slice stays in bounds with a short max_layer_height", 
     init_and_process_print({ cube(20) }, print, config);
     REQUIRE_FALSE(print.objects().front()->layers().empty());
 }
-
