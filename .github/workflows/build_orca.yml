@@ -159,13 +159,38 @@ jobs:
           fi
           mkdir -p ${{ github.workspace }}/deps/build/${{ inputs.arch }}
 
-      - name: Free disk space
-        if: runner.os == 'macOS' && !inputs.macos-combine-only && !vars.SELF_HOSTED
+      - name: Free disk space on hosted macOS runner
+        if: runner.os == 'macOS' && !vars.SELF_HOSTED
+        shell: bash
         run: |
-          df -hI /dev/disk3s1s1
-          sudo find /Applications -maxdepth 1 -type d -name "Xcode_*.app" ! -name "Xcode_15.4.app" -exec rm -rf {} +
-          sudo rm -rf ~/Library/Developer/CoreSimulator/Caches/*
-          df -hI /dev/disk3s1s1
+          df -h "${{ github.workspace }}"
+
+          # macos-14 contains several complete Xcode installations. Keep the
+          # selected toolchain and remove the versions this build cannot use.
+          active_developer_dir="$(xcode-select -p)"
+          case "$active_developer_dir" in
+            /Applications/Xcode*.app/Contents/Developer)
+              active_xcode="${active_developer_dir%/Contents/Developer}"
+              ;;
+            *)
+              echo "::error::Unexpected active Xcode path: $active_developer_dir"
+              exit 1
+              ;;
+          esac
+          echo "Keeping active Xcode: $active_xcode"
+          while IFS= read -r -d '' xcode; do
+            if [ "$xcode" != "$active_xcode" ]; then
+              echo "Removing unused Xcode: $xcode"
+              sudo rm -rf "$xcode"
+            fi
+          done < <(find /Applications -maxdepth 1 -type d -name 'Xcode*.app' -print0)
+
+          # OrcaSlicer neither builds for Android nor runs Apple simulators.
+          sudo rm -rf /Users/runner/Library/Android/sdk
+          sudo rm -rf /Users/runner/Library/Developer/CoreSimulator
+          brew cleanup --prune=all || true
+
+          df -h "${{ github.workspace }}"
 
       - name: Build slicer mac
         if: runner.os == 'macOS' && !inputs.macos-combine-only
@@ -227,6 +252,16 @@ jobs:
         run: |
           ./build_release_macos.sh -u -x ${{ !vars.SELF_HOSTED && '-1' || '' }} -a universal -t 10.15
 
+      - name: Free disk space before macOS packaging
+        if: runner.os == 'macOS' && inputs.macos-combine-only
+        working-directory: ${{ github.workspace }}
+        run: |
+          df -h "${{ github.workspace }}"
+          # The universal app is now independent of these downloaded and
+          # extracted per-architecture bundles.
+          rm -rf mac_bundles build/arm64 build/x86_64
+          df -h "${{ github.workspace }}"
+
       - name: Create DMG without notary
         # Upstream skips this on main/belt-printer because its "Sign app and notary" step
         # (Apple notarization, needs org secrets) builds the DMG there instead. This fork
@@ -236,19 +271,27 @@ jobs:
         run: |
           # Load the `retry` helper (retries flaky commands such as `hdiutil create`).
           source ${{ github.workspace }}/scripts/retry.sh
-          mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_dmg
-          rm -rf ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/*
-          cp -R ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer.app ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/
-          ln -sfn /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_dmg/Applications
-          retry hdiutil create -volname "OrcaSlicer" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_dmg -ov -format UDZO OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
+          df -h "${{ github.workspace }}"
+          main_dmg_dir="${{ github.workspace }}/build/universal/OrcaSlicer_dmg"
+          rm -rf "$main_dmg_dir"
+          mkdir -p "$main_dmg_dir"
+          # The universal app is no longer needed after packaging. Move it into
+          # the staging directory to avoid consuming space for a full copy.
+          mv "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer.app" "$main_dmg_dir/"
+          ln -sfn /Applications "$main_dmg_dir/Applications"
+          retry hdiutil create -volname "OrcaSlicer" -srcfolder "$main_dmg_dir" -ov -format UDZO "OrcaSlicer_Mac_universal_${{ env.ver }}.dmg"
+          rm -rf "$main_dmg_dir"
+          df -h "${{ github.workspace }}"
 
           # Create separate OrcaSlicer_profile_validator DMG if the app exists
           if [ -f "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app/Contents/MacOS/OrcaSlicer_profile_validator" ]; then
-            mkdir -p ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg
-            rm -rf ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg/*
-            cp -R ${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg/
-            ln -sfn /Applications ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg/Applications
-            retry hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder ${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg -ov -format UDZO OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
+            validator_dmg_dir="${{ github.workspace }}/build/universal/OrcaSlicer_profile_validator_dmg"
+            rm -rf "$validator_dmg_dir"
+            mkdir -p "$validator_dmg_dir"
+            mv "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app" "$validator_dmg_dir/"
+            ln -sfn /Applications "$validator_dmg_dir/Applications"
+            retry hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder "$validator_dmg_dir" -ov -format UDZO "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg"
+            rm -rf "$validator_dmg_dir"
           fi
 
       # Delete the per-arch bundles only after DMG creation succeeded, so a
