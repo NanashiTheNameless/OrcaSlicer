@@ -3272,14 +3272,11 @@ bool GUI_App::on_init_inner()
         }
     } */
 
-    copy_network_if_available();
 
     if (scrn) {
         scrn->SetText(_L("Loading Plugins") + dots, 20);
         wxYield();
     }
-
-    on_init_network();
 
     // Initialize plugins after network then register on_load callbacks so once the plugin loads finish, it gets registered automatically.
     // initialize() also installs the libslic3r hooks (capability resolver,
@@ -3308,6 +3305,9 @@ bool GUI_App::on_init_inner()
             BOOST_LOG_TRIVIAL(info) << "Auto-loading plugin on startup: " << plugin_key;
         }
     }
+
+    copy_network_if_available();
+    on_init_network();
 
     if (m_agent)
         plugin_mgr.set_cloud_agent(std::dynamic_pointer_cast<OrcaCloudServiceAgent>(m_agent->get_cloud_agent()));
