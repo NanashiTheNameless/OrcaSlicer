@@ -1162,6 +1162,67 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
 
     std::string printer_type = wxGetApp().preset_bundle->printers.get_edited_preset().get_printer_type(wxGetApp().preset_bundle);
     toggle_line("enable_wrapping_detection", DevPrinterConfigUtil::support_wrapping_detection(printer_type));
+
+
+    // Orca: wave-overhangs conditional visibility.
+    // - Master toggle off → hide every wave_overhang_* tunable (only master stays).
+    const bool wo_enabled = config->opt_bool("wave_overhangs");
+
+    for (const std::string &k : {
+        std::string("wave_overhangs_instead_of_bridges"),
+        std::string("wave_overhang_outer_perimeters"),
+        std::string("wave_overhang_flow_mm3_per_mm"),
+        std::string("wave_overhang_end_retract_length"),
+        std::string("wave_overhang_print_speed"),
+        std::string("wave_overhang_perimeter_speed"),
+        std::string("wave_overhang_travel_speed"),
+        std::string("wave_overhang_fan_speed"),
+        std::string("wave_overhang_aux_fan_speed"),
+        std::string("wave_overhang_nozzle_temp"),
+        std::string("wave_overhang_min_wave_time"),
+        std::string("wave_overhang_min_layer_time"),
+        std::string("wave_overhang_floor_layers"),
+        std::string("wave_overhang_floor_perimeter_speed"),
+        std::string("wave_overhang_floor_speed_ramp"),
+        std::string("wave_overhang_floor_use_hilbert"),
+        std::string("wave_overhang_min_angle"),
+        std::string("wave_overhang_min_length"),
+        std::string("wave_overhang_max_iterations"),
+        std::string("wave_overhang_seam_mode"),
+        std::string("wave_overhang_debug_gcode"),
+        std::string("support_remaining_areas_after_wave_overhangs"),
+        std::string("wave_overhang_pattern"),
+        std::string("wave_overhang_perimeter_overlap"),
+        std::string("wave_overhang_minimum_width"),
+        std::string("wave_overhang_line_spacing"),
+        std::string("wave_overhang_spacing_mode"),
+        std::string("wave_overhang_min_new_area"),
+        std::string("wave_overhang_corner_taper_enable"),
+    })
+        toggle_line(k, wo_enabled);
+
+    // Orca: corner-reinforcement sub-options. Master toggle reveals the three
+    // tunables, same shape as the Hilbert-floor section below.
+    const bool wo_corner_taper = wo_enabled
+        && config->opt_bool("wave_overhang_corner_taper_enable");
+    for (const std::string &k : {
+        std::string("wave_overhang_line_spacing_corner"),
+        std::string("wave_overhang_corner_taper_distance"),
+        std::string("wave_overhang_corner_angle_threshold"),
+    })
+        toggle_line(k, wo_corner_taper);
+
+    // Orca: wave-overhang Hilbert floor sub-options. Only meaningful when the
+    // master Hilbert toggle is on AND wave overhangs themselves are enabled.
+    const bool wo_floor_hilbert = wo_enabled && config->opt_bool("wave_overhang_floor_use_hilbert");
+    for (const std::string &k : {
+        std::string("wave_overhang_floor_hilbert_layers"),
+        std::string("wave_overhang_floor_hilbert_density"),
+        std::string("wave_overhang_floor_print_speed"),
+        std::string("wave_overhang_floor_fan_speed"),
+        std::string("wave_overhang_floor_aux_fan_speed"),
+    })
+        toggle_line(k, wo_floor_hilbert);
 }
 
 void ConfigManipulation::update_print_sla_config(DynamicPrintConfig* config, const bool is_global_config/* = false*/)

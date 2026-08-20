@@ -540,6 +540,19 @@ private:
     void bridge_over_infill();
     void clip_fill_surfaces();
     void discover_horizontal_shells();
+    // Orca: wave-overhang floor-layer authority — runs after all surface-classification
+    // passes to authoritatively set surface types within the wave shadow (N=0 => all
+    // stInternal; N>=1 => N layers of uniform stInternalSolid above each wave strip).
+    void apply_wave_overhang_floor_layer_authority();
+    // Orca: wave-overhang bridge suppression — when wave_overhangs_instead_of_bridges
+    // is true, reclassify any stBottomBridge / stInternalBridge surfaces inside the
+    // overhang region to stInternalSolid so residuals (small pockets the wave
+    // generator couldn't grow into) print as solid infill instead of bridge pattern.
+    void apply_wave_overhang_bridge_suppression();
+    // Orca: tag perimeter ExtrusionPaths in wave-overhang layers and floor layers above
+    // so the G-code stage applies wave_overhang_perimeter_speed (wave layers) or
+    // wave_overhang_floor_perimeter_speed (floor layers) to those walls.
+    void tag_wave_overhang_perimeters();
     void combine_infill();
     void _generate_support_material();
     std::pair<FillAdaptive::OctreePtr, FillAdaptive::OctreePtr> prepare_adaptive_infill_data(
