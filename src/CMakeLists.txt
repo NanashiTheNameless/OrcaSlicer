@@ -258,14 +258,6 @@ if (WIN32)
                 VERBATIM
             )
         endforeach ()
-
-        if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-            orcaslicer_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
-        elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
-            orcaslicer_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_Release)
-        else()
-            orcaslicer_copy_dlls(COPY_DLLS "Release" "" output_dlls_Release)
-        endif()
     else ()
         file(TO_NATIVE_PATH "${CMAKE_CURRENT_BINARY_DIR}/resources" WIN_RESOURCES_SYMLINK)
         add_custom_command(TARGET OrcaSlicer POST_BUILD
@@ -281,6 +273,27 @@ if (WIN32)
         COMMENT "Copying Python runtime into the build tree"
         VERBATIM)
 
+    if (CMAKE_CONFIGURATION_TYPES)
+        # Multi-config generators (Visual Studio, Ninja Multi-Config): copy per config.
+        foreach (cfg ${CMAKE_CONFIGURATION_TYPES})
+            if ("${cfg}" STREQUAL "Debug")
+                orcaslicer_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
+            elseif("${cfg}" STREQUAL "RelWithDebInfo")
+                orcaslicer_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
+            else()
+                orcaslicer_copy_dlls(COPY_DLLS "${cfg}" "" output_dlls_${cfg})
+            endif()
+        endforeach()
+    else()
+        # Single-config generators (Ninja): use CMAKE_BUILD_TYPE.
+        if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+            orcaslicer_copy_dlls(COPY_DLLS "Debug" "d" output_dlls_Debug)
+        elseif("${CMAKE_BUILD_TYPE}" STREQUAL "RelWithDebInfo")
+            orcaslicer_copy_dlls(COPY_DLLS "RelWithDebInfo" "" output_dlls_RelWithDebInfo)
+        else()
+            orcaslicer_copy_dlls(COPY_DLLS "Release" "" output_dlls_Release)
+        endif()
+    endif()
 
 else ()
     # Provide a stable CLI / artifact name across platforms without clobbering
