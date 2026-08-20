@@ -547,16 +547,21 @@ void append_wave_fronts(ExtrusionPaths &overhang_region,
             if (it->polyline.points.size() < 2)
                 continue;
 
+            // Orca: ExtrusionPath stores a Polyline3, but this scoring is purely 2D
+            // (all wave paths on a layer share one Z). Drop to 2D once per support
+            // path so the projection below stays a plain planar computation.
+            const Polyline support_pl = it->polyline.to_polyline();
+
             double score = 0.;
             for (const auto &[distance_along, weight] : samples) {
                 Point sample = point_at_distance(candidate, distance_along);
-                std::pair<int, Point> foot = foot_pt(it->polyline.points, sample);
+                std::pair<int, Point> foot = foot_pt(support_pl.points, sample);
                 int seg_idx = foot.first;
-                if (seg_idx < 0 || size_t(seg_idx + 1) >= it->polyline.points.size())
+                if (seg_idx < 0 || size_t(seg_idx + 1) >= support_pl.points.size())
                     continue;
 
-                const Point &a = it->polyline.points[size_t(seg_idx)];
-                const Point &b = it->polyline.points[size_t(seg_idx + 1)];
+                const Point &a = support_pl.points[size_t(seg_idx)];
+                const Point &b = support_pl.points[size_t(seg_idx + 1)];
                 const bool interior_projection = foot.second != a && foot.second != b;
                 const double distance_to_support = (sample - foot.second).cast<double>().norm();
                 const double normalized_support = std::max(0.0, 1.0 - distance_to_support / double(std::max<coord_t>(1, support_reach)));
@@ -627,10 +632,14 @@ void append_zig_zag_front_levels(ExtrusionPaths               &overhang_region,
         // Orca: ExtrusionPath holds a Polyline3, so lift the 2D front to z = 0
         // before appending (matches make_wave_path above).
         const Polyline3 front3(front);
+        // Orca: qualify the base-class call explicitly — Polyline3 declares its own
+        // append(Point3)/append(Polyline3), which hide MultiPoint3's iterator-range
+        // overload. Appending the raw range also keeps Polyline3::append's
+        // is_valid() guard from silently dropping a 2-point front.
         if (current.last_point() == front.first_point())
-            current.polyline.append(front3.points.begin() + 1, front3.points.end());
+            current.polyline.MultiPoint3::append(front3.points.begin() + 1, front3.points.end());
         else
-            current.polyline.append(front3.points.begin(), front3.points.end());
+            current.polyline.MultiPoint3::append(front3.points.begin(), front3.points.end());
     };
 
     std::function<void(size_t, size_t, bool)> follow_branch = [&](size_t level_idx, size_t front_idx, bool reverse_front) {
