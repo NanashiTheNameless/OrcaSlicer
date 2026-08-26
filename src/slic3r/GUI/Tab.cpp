@@ -2772,74 +2772,6 @@ void TabPrint::build()
         optgroup->append_single_option_line("overhang_reverse_internal_only", "quality_settings_overhangs#reverse-internal-only");
         optgroup->append_single_option_line("overhang_reverse_threshold", "quality_settings_overhangs#reverse-threshold");
 
-    // Dedicated Wave Overhangs page. Layout follows the user's mental model
-    // top-to-bottom: "do I want this?" (General) -> "which overhangs qualify?"
-    // (Detection) -> "what does the wave look like?" (Pattern) -> "extra lever
-    // for sharp corners?" (Corner reinforcement, opt-in) -> "how does it print?"
-    // (Motion + Cooling) -> "what sits on top?" (Floor layers) -> debug. The
-    // two opt-in sub-features (Corner reinforcement here, Hilbert under Floor
-    // layers) both follow a master-toggle + reveal-sub-options pattern so
-    // they're structurally consistent.
-    page = add_options_page(L("Wave overhangs"), "custom-gcode_quality");
-        optgroup = page->new_optgroup(L("General"), L"param_overhang");
-        optgroup->append_single_option_line("wave_overhangs");
-        optgroup->append_single_option_line("wave_overhangs_instead_of_bridges");
-        optgroup->append_single_option_line("support_remaining_areas_after_wave_overhangs");
-
-        optgroup = page->new_optgroup(L("Detection"), L"param_overhang");
-        optgroup->append_single_option_line("wave_overhang_min_angle");
-        optgroup->append_single_option_line("wave_overhang_min_length");
-        optgroup->append_single_option_line("wave_overhang_max_iterations");
-
-        // Pattern: how the wave is shaped.
-        optgroup = page->new_optgroup(L("Pattern"), L"param_overhang");
-        optgroup->append_single_option_line("wave_overhang_pattern");
-        optgroup->append_single_option_line("wave_overhang_seam_mode");
-        optgroup->append_single_option_line("wave_overhang_outer_perimeters");
-        optgroup->append_single_option_line("wave_overhang_line_spacing");
-        optgroup->append_single_option_line("wave_overhang_spacing_mode");
-        optgroup->append_single_option_line("wave_overhang_perimeter_overlap");
-        optgroup->append_single_option_line("wave_overhang_minimum_width");
-        optgroup->append_single_option_line("wave_overhang_min_new_area");
-        optgroup->append_single_option_line("wave_overhang_flow_mm3_per_mm");
-
-        // Corner reinforcement: opt-in feature. Master toggle reveals the
-        // three tunables (matches the pattern used by Hilbert under Floor
-        // layers). ConfigManipulation gates the sub-options on the master
-        // toggle so the sub-rows hide cleanly when off.
-        optgroup = page->new_optgroup(L("Corner reinforcement"), L"param_overhang");
-        optgroup->append_single_option_line("wave_overhang_corner_taper_enable");
-        optgroup->append_single_option_line("wave_overhang_line_spacing_corner");
-        optgroup->append_single_option_line("wave_overhang_corner_taper_distance");
-        optgroup->append_single_option_line("wave_overhang_corner_angle_threshold");
-
-        optgroup = page->new_optgroup(L("Motion"), L"param_speed");
-        optgroup->append_single_option_line("wave_overhang_print_speed");
-        optgroup->append_single_option_line("wave_overhang_perimeter_speed");
-        optgroup->append_single_option_line("wave_overhang_travel_speed");
-        optgroup->append_single_option_line("wave_overhang_end_retract_length");
-
-        optgroup = page->new_optgroup(L("Cooling"), L"param_cooling");
-        optgroup->append_single_option_line("wave_overhang_fan_speed");
-        optgroup->append_single_option_line("wave_overhang_aux_fan_speed");
-        optgroup->append_single_option_line("wave_overhang_nozzle_temp");
-        optgroup->append_single_option_line("wave_overhang_min_wave_time");
-        optgroup->append_single_option_line("wave_overhang_min_layer_time");
-
-        optgroup = page->new_optgroup(L("Floor layers"), L"param_overhang");
-        optgroup->append_single_option_line("wave_overhang_floor_layers");
-        optgroup->append_single_option_line("wave_overhang_floor_use_hilbert");
-        optgroup->append_single_option_line("wave_overhang_floor_hilbert_layers");
-        optgroup->append_single_option_line("wave_overhang_floor_hilbert_density");
-        optgroup->append_single_option_line("wave_overhang_floor_print_speed");
-        optgroup->append_single_option_line("wave_overhang_floor_perimeter_speed");
-        optgroup->append_single_option_line("wave_overhang_floor_speed_ramp");
-        optgroup->append_single_option_line("wave_overhang_floor_fan_speed");
-        optgroup->append_single_option_line("wave_overhang_floor_aux_fan_speed");
-
-        optgroup = page->new_optgroup(L("Debug"), L"param_overhang");
-        optgroup->append_single_option_line("wave_overhang_debug_gcode");
-
     page = add_options_page(L("Strength"), "custom-gcode_strength"); // ORCA: icon only visible on placeholders
         optgroup = page->new_optgroup(L("Walls"), L"param_wall");
         optgroup->append_single_option_line("wall_loops", "strength_settings_walls#wall-loops");
@@ -3203,6 +3135,74 @@ void TabPrint::build()
         option.opt.full_width = true;
         option.opt.height = 25;//250;
         optgroup->append_single_option_line(option, "others_settings_notes");
+
+    // Dedicated Wave Overhangs page. Layout follows the user's mental model
+    // top-to-bottom: "do I want this?" (General) -> "which overhangs qualify?"
+    // (Detection) -> "what does the wave look like?" (Pattern) -> "extra lever
+    // for sharp corners?" (Corner reinforcement, opt-in) -> "how does it print?"
+    // (Motion + Cooling) -> "what sits on top?" (Floor layers) -> debug. The
+    // two opt-in sub-features (Corner reinforcement here, Hilbert under Floor
+    // layers) both follow a master-toggle + reveal-sub-options pattern so
+    // they're structurally consistent.
+    page = add_options_page(L("Wave overhangs"), "custom-gcode_quality");
+        optgroup = page->new_optgroup(L("General"), L"param_overhang");
+        optgroup->append_single_option_line("wave_overhangs");
+        optgroup->append_single_option_line("wave_overhangs_instead_of_bridges");
+        optgroup->append_single_option_line("support_remaining_areas_after_wave_overhangs");
+
+        optgroup = page->new_optgroup(L("Detection"), L"param_overhang");
+        optgroup->append_single_option_line("wave_overhang_min_angle");
+        optgroup->append_single_option_line("wave_overhang_min_length");
+        optgroup->append_single_option_line("wave_overhang_max_iterations");
+
+        // Pattern: how the wave is shaped.
+        optgroup = page->new_optgroup(L("Pattern"), L"param_overhang");
+        optgroup->append_single_option_line("wave_overhang_pattern");
+        optgroup->append_single_option_line("wave_overhang_seam_mode");
+        optgroup->append_single_option_line("wave_overhang_outer_perimeters");
+        optgroup->append_single_option_line("wave_overhang_line_spacing");
+        optgroup->append_single_option_line("wave_overhang_spacing_mode");
+        optgroup->append_single_option_line("wave_overhang_perimeter_overlap");
+        optgroup->append_single_option_line("wave_overhang_minimum_width");
+        optgroup->append_single_option_line("wave_overhang_min_new_area");
+        optgroup->append_single_option_line("wave_overhang_flow_mm3_per_mm");
+
+        // Corner reinforcement: opt-in feature. Master toggle reveals the
+        // three tunables (matches the pattern used by Hilbert under Floor
+        // layers). ConfigManipulation gates the sub-options on the master
+        // toggle so the sub-rows hide cleanly when off.
+        optgroup = page->new_optgroup(L("Corner reinforcement"), L"param_overhang");
+        optgroup->append_single_option_line("wave_overhang_corner_taper_enable");
+        optgroup->append_single_option_line("wave_overhang_line_spacing_corner");
+        optgroup->append_single_option_line("wave_overhang_corner_taper_distance");
+        optgroup->append_single_option_line("wave_overhang_corner_angle_threshold");
+
+        optgroup = page->new_optgroup(L("Motion"), L"param_speed");
+        optgroup->append_single_option_line("wave_overhang_print_speed");
+        optgroup->append_single_option_line("wave_overhang_perimeter_speed");
+        optgroup->append_single_option_line("wave_overhang_travel_speed");
+        optgroup->append_single_option_line("wave_overhang_end_retract_length");
+
+        optgroup = page->new_optgroup(L("Cooling"), L"param_cooling");
+        optgroup->append_single_option_line("wave_overhang_fan_speed");
+        optgroup->append_single_option_line("wave_overhang_aux_fan_speed");
+        optgroup->append_single_option_line("wave_overhang_nozzle_temp");
+        optgroup->append_single_option_line("wave_overhang_min_wave_time");
+        optgroup->append_single_option_line("wave_overhang_min_layer_time");
+
+        optgroup = page->new_optgroup(L("Floor layers"), L"param_overhang");
+        optgroup->append_single_option_line("wave_overhang_floor_layers");
+        optgroup->append_single_option_line("wave_overhang_floor_use_hilbert");
+        optgroup->append_single_option_line("wave_overhang_floor_hilbert_layers");
+        optgroup->append_single_option_line("wave_overhang_floor_hilbert_density");
+        optgroup->append_single_option_line("wave_overhang_floor_print_speed");
+        optgroup->append_single_option_line("wave_overhang_floor_perimeter_speed");
+        optgroup->append_single_option_line("wave_overhang_floor_speed_ramp");
+        optgroup->append_single_option_line("wave_overhang_floor_fan_speed");
+        optgroup->append_single_option_line("wave_overhang_floor_aux_fan_speed");
+
+        optgroup = page->new_optgroup(L("Debug"), L"param_overhang");
+        optgroup->append_single_option_line("wave_overhang_debug_gcode");
 
     // Orca: hide the dependencies tab for process for now. The UI is not ready yet.
     // page = add_options_page(L("Dependencies"), "param_profile_dependencies"); // icons ready
