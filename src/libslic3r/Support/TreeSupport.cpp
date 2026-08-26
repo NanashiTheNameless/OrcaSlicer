@@ -1094,6 +1094,30 @@ void TreeSupport::detect_overhangs(bool check_support_necessity/* = false*/)
             m_object->remove_bridges_from_contacts(lower_layer, layer, extrusion_width_scaled, &layer->loverhangs, max_bridge_length, break_bridge);
         }
 
+        // Orca: on layers where wave overhangs generated coverage, subtract that
+        // coverage from the detected overhangs + cantilevers so tree support only
+        // seeds trunks under the area the waves did NOT reach. Subtracting rather
+        // than clearing matters when the wave generator skipped or only partially
+        // covered an overhang on this layer: clearing would leave that residual
+        // area unsupported, contrary to what the option promises, and would
+        // diverge from the normal-support path, which already uses diff_ex.
+        // Enforcers are appended AFTER this point and therefore unaffected.
+        // Gate: any printing region with wave_overhangs && support_remaining_areas_after_wave_overhangs.
+        if (!layer->wave_overhang_covered_polygons.empty()) {
+            bool wave_support_gate = false;
+            for (size_t ri = 0; ri < m_object->num_printing_regions(); ++ri) {
+                const PrintRegionConfig &rc = m_object->printing_region(ri).config();
+                if (rc.wave_overhangs.value && rc.support_remaining_areas_after_wave_overhangs.value) {
+                    wave_support_gate = true;
+                    break;
+                }
+            }
+            if (wave_support_gate) {
+                layer->loverhangs  = diff_ex(layer->loverhangs,  layer->wave_overhang_covered_polygons);
+                layer->cantilevers = diff_ex(layer->cantilevers, layer->wave_overhang_covered_polygons);
+            }
+        }
+
 		int nDetected = layer->loverhangs.size();
         // enforcers now follow same logic as normal support. See STUDIO-3692
         if (layer_nr < enforcers.size() && lower_layer) {
@@ -1105,6 +1129,23 @@ void TreeSupport::detect_overhangs(bool check_support_necessity/* = false*/)
             }
         }
         int nEnforced = layer->loverhangs.size();
+
+        // Orca: also subtract wave-overhang coverage from sharp-tail overhangs
+        // before they get appended — sharp tails are the kind of thin cantilever
+        // that wave overhangs cover, so without this the sharp-tail code path
+        // would still re-add wave-covered area into loverhangs.
+        if (!sharp_tail_overhangs.empty() && !layer->wave_overhang_covered_polygons.empty()) {
+            bool wave_support_gate = false;
+            for (size_t ri = 0; ri < m_object->num_printing_regions(); ++ri) {
+                const PrintRegionConfig &rc = m_object->printing_region(ri).config();
+                if (rc.wave_overhangs.value && rc.support_remaining_areas_after_wave_overhangs.value) {
+                    wave_support_gate = true;
+                    break;
+                }
+            }
+            if (wave_support_gate)
+                sharp_tail_overhangs = diff_ex(sharp_tail_overhangs, layer->wave_overhang_covered_polygons);
+        }
 
         // add sharp tail overhangs
         append(layer->loverhangs, sharp_tail_overhangs);

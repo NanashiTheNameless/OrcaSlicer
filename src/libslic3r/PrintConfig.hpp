@@ -101,6 +101,26 @@ enum PrintHostType {
     htPrusaLink, htPrusaConnect, htOctoPrint, htDuet, htFlashAir, htAstroBox, htRepetier, htMKS, htESP3D, htCrealityPrint, htObico, htFlashforge, htSimplyPrint, htElegooLink, ht3DPrinterOS, htMoonraker
 };
 
+// Orca: wave-overhang ring spacing mode.
+enum WaveOverhangSpacingMode {
+    wosmUniform,
+    wosmProgressive
+};
+
+// Orca: wave-overhang inter-ring seam direction mode.
+enum WaveOverhangSeamMode {
+    woseAlternating,
+    woseAligned,
+    woseRandom
+};
+
+// Wave-overhang fill pattern (ported from stmcculloch alpha.6).
+enum class WaveOverhangPattern : int {
+    Monotonic,
+    ZigZag,
+    Smart
+};
+
 enum AuthorizationType {
     atKeyPassword, atUserPassword
 };
@@ -703,6 +723,9 @@ CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(WipeTowerWallType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(PerimeterGeneratorType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(ToolChangeOrderingType)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(PowerLossRecoveryMode)
+CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(WaveOverhangSpacingMode)
+CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(WaveOverhangSeamMode)
+CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(WaveOverhangPattern)
 CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS(SurfaceFillOrder)
 
 #undef CONFIG_OPTION_ENUM_DECLARE_STATIC_MAPS
@@ -1357,6 +1380,45 @@ PRINT_CONFIG_CLASS_DEFINE(
     ((ConfigOptionFloatsNullable, filament_ironing_speed))
     // Detect bridging perimeters
     ((ConfigOptionBool, detect_overhang_wall))
+    // Wave Overhangs
+    ((ConfigOptionBool,                 wave_overhangs))
+    ((ConfigOptionBool,                 wave_overhangs_instead_of_bridges))
+    ((ConfigOptionInt,                  wave_overhang_outer_perimeters))
+    ((ConfigOptionFloat,                wave_overhang_perimeter_overlap))
+    ((ConfigOptionFloat,                wave_overhang_minimum_width))
+    ((ConfigOptionEnum<WaveOverhangPattern>, wave_overhang_pattern))
+    ((ConfigOptionFloat,                wave_overhang_line_spacing))
+    ((ConfigOptionFloat,                wave_overhang_flow_mm3_per_mm))
+    ((ConfigOptionFloat,                wave_overhang_print_speed))
+    ((ConfigOptionFloat,                wave_overhang_perimeter_speed))
+    ((ConfigOptionFloat,                wave_overhang_travel_speed))
+    ((ConfigOptionInt,                  wave_overhang_fan_speed))
+    ((ConfigOptionInt,                  wave_overhang_aux_fan_speed))
+    ((ConfigOptionInt,                       wave_overhang_floor_layers))
+    ((ConfigOptionBool,                      wave_overhang_floor_use_hilbert))
+    ((ConfigOptionInt,                       wave_overhang_floor_hilbert_layers))
+    ((ConfigOptionInt,                       wave_overhang_floor_hilbert_density))
+    ((ConfigOptionFloat,                     wave_overhang_floor_print_speed))
+    ((ConfigOptionFloat,                     wave_overhang_floor_perimeter_speed))
+    ((ConfigOptionInt,                       wave_overhang_floor_speed_ramp))
+    ((ConfigOptionInt,                       wave_overhang_floor_fan_speed))
+    ((ConfigOptionInt,                       wave_overhang_floor_aux_fan_speed))
+    ((ConfigOptionInt,                       wave_overhang_nozzle_temp))
+    ((ConfigOptionFloat,                     wave_overhang_min_wave_time))
+    ((ConfigOptionFloat,                     wave_overhang_min_layer_time))
+    ((ConfigOptionFloat,                     wave_overhang_min_angle))
+    ((ConfigOptionEnum<WaveOverhangSpacingMode>, wave_overhang_spacing_mode))
+    ((ConfigOptionEnum<WaveOverhangSeamMode>,    wave_overhang_seam_mode))
+    ((ConfigOptionBool,                      wave_overhang_debug_gcode))
+    ((ConfigOptionFloat,                     wave_overhang_min_length))
+    ((ConfigOptionInt,                       wave_overhang_max_iterations))
+    ((ConfigOptionFloat,                     wave_overhang_min_new_area))
+    ((ConfigOptionBool,                      wave_overhang_corner_taper_enable))
+    ((ConfigOptionFloat,                     wave_overhang_line_spacing_corner))
+    ((ConfigOptionFloat,                     wave_overhang_corner_taper_distance))
+    ((ConfigOptionFloat,                     wave_overhang_corner_angle_threshold))
+    ((ConfigOptionFloat,                     wave_overhang_end_retract_length))
+    ((ConfigOptionBool,                      support_remaining_areas_after_wave_overhangs))
     ((ConfigOptionInt, outer_wall_filament_id))
     ((ConfigOptionInt, inner_wall_filament_id))
     ((ConfigOptionFloatOrPercent, inner_wall_line_width))

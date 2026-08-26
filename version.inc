@@ -16,6 +16,11 @@ set(ORCA_VERSION_PATCH ${CMAKE_MATCH_3})
 
 set(SLIC3R_VERSION "02.08.01.55")
 
+# Wave Overhangs feature version (overridable by the build script).
+if(NOT DEFINED WAVE_OVERHANGS_VERSION)
+    set(WAVE_OVERHANGS_VERSION "dev")
+endif()
+
 if (NOT DEFINED ORCA_UPDATER_SIG_KEY)
     set(ORCA_UPDATER_SIG_KEY "" CACHE STRING "Base64url encoded updater signature key")
 endif()

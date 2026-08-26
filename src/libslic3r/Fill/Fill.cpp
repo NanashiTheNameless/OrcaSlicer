@@ -22,6 +22,28 @@
 
 namespace Slic3r {
 
+// Orca: recursively tag every ExtrusionPath leaf inside an entity tree as a
+// wave-overhang-floor path. Used to mark Hilbert-pattern infill on the solid
+// floor layers above wave overhangs so the G-code stage applies the
+// wave_overhang_floor_print_speed and wave_overhang_floor_fan_speed overrides.
+// `distance` is the 1-based layer offset from the nearest wave layer below;
+// G-code interpolates against wave_overhang_floor_speed_ramp using this.
+static void tag_wave_overhang_floor_recursive(ExtrusionEntity *ent, int8_t distance)
+{
+    if (!ent) return;
+    auto stamp = [distance](ExtrusionPath &p) {
+        p.wave_overhang_floor = true;
+        p.wave_overhang_floor_distance = distance;
+    };
+    if (auto *path = dynamic_cast<ExtrusionPath*>(ent))         { stamp(*path); }
+    else if (auto *loop = dynamic_cast<ExtrusionLoop*>(ent))    { for (ExtrusionPath &p : loop->paths) stamp(p); }
+    else if (auto *mp = dynamic_cast<ExtrusionMultiPath*>(ent)) { for (ExtrusionPath &p : mp->paths) stamp(p); }
+    else if (auto *coll = dynamic_cast<ExtrusionEntityCollection*>(ent)) {
+        for (ExtrusionEntity *child : coll->entities)
+            tag_wave_overhang_floor_recursive(child, distance);
+    }
+}
+
 // Calculate infill rotation angle (in radians) for a given layer from a rotation template.
 // Grammar subset handled (rotation only):
 //   [±]α[*Z or !][joint][-][N|B|T][length][* or !]
@@ -275,6 +297,15 @@ struct SurfaceFillParams
     // Params for Lateral honeycomb
     float infill_overhang_angle = 60.f;
 
+    // Orca: True when this fill is a Hilbert-curve floor over a wave-overhang region.
+    // Used by Layer::make_fills() to tag produced ExtrusionPaths so the G-code stage
+    // applies wave_overhang_floor_print_speed / wave_overhang_floor_fan_speed overrides.
+    bool wave_overhang_floor = false;
+    // Orca: 1-based layer distance from the nearest wave layer below; 0 when not a
+    // wave-overhang floor. Tagged onto produced ExtrusionPaths so G-code can ramp the
+    // floor print speed across wave_overhang_floor_speed_ramp layers.
+    int8_t wave_overhang_floor_distance = 0;
+
     // For Gyroid: when true, use the parameterized "optimized" wave.
     bool gyroid_optimized = false;
 
@@ -318,6 +349,8 @@ struct SurfaceFillParams
 		RETURN_COMPARE_NON_EQUAL(infill_lock_depth);
 		RETURN_COMPARE_NON_EQUAL(skin_infill_depth);
         RETURN_COMPARE_NON_EQUAL(infill_overhang_angle);
+		RETURN_COMPARE_NON_EQUAL_TYPED(unsigned, wave_overhang_floor);
+		RETURN_COMPARE_NON_EQUAL_TYPED(int, wave_overhang_floor_distance);
 		RETURN_COMPARE_NON_EQUAL(gyroid_optimized);
         RETURN_COMPARE_NON_EQUAL(smooth_factor);
         RETURN_COMPARE_NON_EQUAL(center_of_surface_pattern);
@@ -349,6 +382,8 @@ struct SurfaceFillParams
 				this->infill_lock_depth       == rhs.infill_lock_depth       &&
 				this->skin_infill_depth       == rhs.skin_infill_depth       &&
                 this->infill_overhang_angle   == rhs.infill_overhang_angle   &&
+                this->wave_overhang_floor     == rhs.wave_overhang_floor     &&
+                this->wave_overhang_floor_distance == rhs.wave_overhang_floor_distance &&
                 this->center_of_surface_pattern == rhs.center_of_surface_pattern &&
                 this->separated_infills       == rhs.separated_infills &&
                 this->gyroid_optimized        == rhs.gyroid_optimized        &&
@@ -917,6 +952,44 @@ std::vector<SurfaceFill> group_fills(const Layer &layer, LockRegionParam &lock_p
                     } else if (surface.is_solid_infill()) {
                         params.pattern = region_config.internal_solid_infill_pattern.value;
                         params.density = 100.f;
+                        // Orca: wave-overhang Hilbert floor. When the region opts in via
+                        // wave_overhang_floor_use_hilbert and this surface lies inside the
+                        // layer's wave_overhang_shadow polygon and we are within the bottom
+                        // M layers above the wave (cap = wave_overhang_floor_hilbert_layers,
+                        // 0 = match wave_overhang_floor_layers), override the pattern to
+                        // ipHilbertCurve and apply wave_overhang_floor_hilbert_density.
+                        // Fractal scan paths leave the smallest residual thermal stress,
+                        // reducing warping in the cantilevered overhangs below.
+                        if (region_config.wave_overhangs.value
+                            && region_config.wave_overhang_floor_use_hilbert.value
+                            && !layer.wave_overhang_shadow_polygons.empty()) {
+                            const int floor_layers       = std::max(0, region_config.wave_overhang_floor_layers.value);
+                            const int hilbert_layers_cfg = std::max(0, region_config.wave_overhang_floor_hilbert_layers.value);
+                            const int hilbert_cap = (hilbert_layers_cfg > 0)
+                                ? std::min(hilbert_layers_cfg, floor_layers)
+                                : floor_layers;
+                            if (hilbert_cap > 0) {
+                                int k = -1;
+                                const Layer *cur = &layer;
+                                for (int d = 1; d <= hilbert_cap; ++d) {
+                                    cur = cur->lower_layer;
+                                    if (!cur) break;
+                                    if (!cur->wave_overhang_floor_polygons.empty()) {
+                                        k = d;
+                                        break;
+                                    }
+                                }
+                                if (k >= 1 && k <= hilbert_cap) {
+                                    Polygons surf_polys = to_polygons(surface);
+                                    if (!intersection(surf_polys, layer.wave_overhang_shadow_polygons).empty()) {
+                                        params.pattern = ipHilbertCurve;
+                                        params.density = float(std::clamp(region_config.wave_overhang_floor_hilbert_density.value, 1, 100));
+                                        params.wave_overhang_floor = true;
+                                        params.wave_overhang_floor_distance = static_cast<int8_t>(std::min(k, 127));
+                                    }
+                                }
+                            }
+                        }
                     } else {
                         if (region_config.top_surface_pattern == ipMonotonic || region_config.top_surface_pattern == ipMonotonicLine)
                             params.pattern = ipMonotonic;
@@ -1386,6 +1459,11 @@ void Layer::make_fills(FillAdaptive::Octree* adaptive_fill_octree, FillAdaptive:
         }
 		if (surface_fill.params.pattern == ipGrid)
 			params.can_reverse = false;
+		// Orca: snapshot fill entity count before this surface_fill's expolygons
+		// produce paths, so we can tag the new entries as wave-overhang-floor paths
+		// (used for the per-region speed/fan overrides at G-code emission).
+		auto &dst_entities = m_regions[surface_fill.region_id]->fills.entities;
+		const size_t wo_floor_dst_size_before = dst_entities.size();
 		for (ExPolygon& expoly : surface_fill.expolygons) {
 
             // Orca: separate infill / per-model pattern centering.
@@ -1445,7 +1523,14 @@ void Layer::make_fills(FillAdaptive::Octree* adaptive_fill_octree, FillAdaptive:
             // make fill
 			f->fill_surface_extrusion(&surface_fill.surface,
 				params,
-				m_regions[surface_fill.region_id]->fills.entities);
+				dst_entities);
+		}
+		// Orca: now tag every newly-produced path/loop/multi-path/sub-collection if
+		// this SurfaceFill represented a wave-overhang Hilbert floor.
+		if (surface_fill.params.wave_overhang_floor) {
+			const int8_t dist = surface_fill.params.wave_overhang_floor_distance;
+			for (size_t i = wo_floor_dst_size_before; i < dst_entities.size(); ++i)
+				tag_wave_overhang_floor_recursive(dst_entities[i], dist);
 		}
     }
 
