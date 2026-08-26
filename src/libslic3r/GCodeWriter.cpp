@@ -955,7 +955,7 @@ std::string GCodeWriter::travel_to_xyz(const Vec3d &point, double speed_override
             m_lifted = 0.;
         //BBS
         this->set_current_position_clear(true);
-        return this->travel_to_xy(to_2d(point), speed_override, comment);
+        return this->travel_to_xy(to_2d(point), speed_override);
     }
     else {
         /*  In all the other cases, we perform an actual XYZ move and cancel
