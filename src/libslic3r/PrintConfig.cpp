@@ -5883,8 +5883,12 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Floor layers");
     def->category = L("Strength");
     def->tooltip = L("Number of solid floor layers placed directly above wave-overhang regions. "
-                     "These layers bridge over the wave surface and give the cantilever mechanical backing. "
-                     "0 = let Orca's normal top-shell-layers handle it (no wave-specific override).");
+                     "These layers bridge over the wave surface and give the cantilever mechanical backing.\n\n"
+                     "This count is authoritative inside the wave region, not additive with the normal shell "
+                     "settings: the layers above a wave are governed by this value alone, and the usual top/bottom "
+                     "shell propagation is suppressed there.\n\n"
+                     "0 = no solid backing at all above the wave (the region is filled with sparse infill). "
+                     "Choose 0 only for a pure-wave overhang with nothing resting on it.");
     def->mode = comAdvanced;
     def->min = 0;
     def->max = 20;

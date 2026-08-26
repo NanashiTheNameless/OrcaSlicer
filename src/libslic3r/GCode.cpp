@@ -7992,9 +7992,14 @@ std::string GCode::_extrude(const ExtrusionPath &path, std::string description, 
     const bool wave_temp_active = path.wave_overhang && wave_nozzle_temp > 0;
     int restore_nozzle_temp = 0;
     if (wave_temp_active) {
-        const ConfigOption *o = m_config.option("nozzle_temperature");
-        if (auto *ints = dynamic_cast<const ConfigOptionInts*>(o))
-            restore_nozzle_temp = ints->values.empty() ? 0 : ints->values[0];
+        // Restore the ACTIVE filament's temperature, not index 0. In a multi-filament
+        // print a wave path may run on any filament, and restoring nozzle_temperature[0]
+        // would leave the hotend targeting another material's temperature for everything
+        // that follows. Use the same filament-mapped lookup the rest of GCode.cpp uses,
+        // and the initial-layer temperature while we are still on the first layer.
+        restore_nozzle_temp = this->on_first_layer()
+            ? FILAMENT_CONFIG(nozzle_temperature_initial_layer)
+            : FILAMENT_CONFIG(nozzle_temperature);
         char buf[64];
         snprintf(buf, sizeof(buf), "M104 S%d ; wave-overhang temp override\n", wave_nozzle_temp);
         gcode += buf;
