@@ -181,6 +181,7 @@ wxBoxSizer* NetworkTestDialog::create_result_sizer(wxWindow* parent)
 	sizer->Add(text_result, 0, wxALL, 5);
 
 	txt_log = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE);
+	txt_log->SetForegroundColour(wxColour("#262E30"));
 	sizer->Add(txt_log, 1, wxALL | wxEXPAND, 5);
 	return sizer;
 }
@@ -371,5 +372,4 @@ void NetworkTestDialog::update_status(int job_id, wxString info)
 
 } // namespace GUI
 } // namespace Slic3r
-
 
