@@ -1,6 +1,6 @@
 # OrcaSlicer tests
 
-Building, running and writing tests is documented on the wiki, under [How to Test](https://www.orcaslicer.com/wiki/developer_reference/how_to_test.html).
+Building, running and writing tests is documented on the wiki, under [How to Test](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/developer_reference/how_to_test.html).
 
 Two files here rather than there, because coding agents only read what is in the repository:
 

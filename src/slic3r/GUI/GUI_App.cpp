@@ -308,9 +308,9 @@ public:
         )
     {
 		// Some desktop environments ignore splash screen typed window properties
-		// when running the app through Wayland,resulting in the titlebar being shown 
+		// when running the app through Wayland,resulting in the titlebar being shown
 		// on the splash screen. The code below creates a client-side window decoration
-		// when running on Wayland and then removes that decoration. This ensures every 
+		// when running on Wayland and then removes that decoration. This ensures every
 		// environment correctly targets and removes the titlebar for this screen.
 		#if defined(__WXGTK__)
 	        if (Slic3r::GUI::is_running_on_wayland()) {
@@ -320,7 +320,7 @@ public:
 	            gtk_window_set_decorated(GTK_WINDOW(GetHandle()), false);
 	        }
 		#endif
-		
+
         this->SetPosition(pos);
         this->CenterOnScreen();
 
@@ -365,7 +365,7 @@ public:
         dc.DrawLabel(m_text_action, rc, wxALIGN_CENTER);
 
         const wxRect progress_rc(0, c_sz.GetHeight() - m_progress_h, c_sz.GetWidth(), m_progress_h);
-                
+
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.SetBrush(wxBrush(m_progress_bg_color));
         dc.DrawRectangle(progress_rc);
@@ -998,7 +998,7 @@ void GUI_App::post_init()
     if (is_editor() && m_last_config_version && m_last_config_version->valid()
         && *m_last_config_version < Semver(2, 4, 0)) {
         CallAfter([] {
-            const wxString wiki_url = "https://www.orcaslicer.com/wiki/user_profiles/user_profiles.html#profiles-missing-after-updating-from-bambu-cloud";
+            const wxString wiki_url = "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/user_profiles/user_profiles.html#profiles-missing-after-updating-from-bambu-cloud";
             MessageDialog dlg(nullptr,
                 _L("Since version 2.4.0, OrcaSlicer syncs user profiles through Orca Cloud instead of Bambu Cloud.\n\n"
                    "To migrate your existing profiles, log in to Orca Cloud and they will be transferred automatically. "

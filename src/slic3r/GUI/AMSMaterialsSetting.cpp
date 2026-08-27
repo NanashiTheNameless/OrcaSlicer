@@ -298,7 +298,7 @@ void AMSMaterialsSetting::create_panel_kn(wxWindow* parent)
     m_ratio_text->SetFont(Label::Head_14);
 
     // Orca: link to the Orca Slicer pressure-advance wiki (region-agnostic).
-    wxString link_url = "https://www.orcaslicer.com/wiki/pressure_advance_calib";
+    wxString link_url = "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/pressure_advance_calib";
     m_wiki_ctrl = new HyperLink(parent, _L("Wiki Guide"), link_url);
     cali_title_sizer->Add(m_ratio_text, 0, wxALIGN_CENTER_VERTICAL);
     cali_title_sizer->Add(m_wiki_ctrl, 0, wxALIGN_CENTER_VERTICAL);
@@ -1094,7 +1094,7 @@ void AMSMaterialsSetting::Popup(wxString filament, wxString sn, wxString temp_mi
         for (size_t i = preset_names.size(); i-- > 0; ) {
             std::string wanted = preset_names[i];
             const int sort_rank = -static_cast<int>(preset_names.size() - i);
-            
+
             const Preset* match = nullptr;
 
             do {
@@ -1126,7 +1126,7 @@ void AMSMaterialsSetting::Popup(wxString filament, wxString sn, wxString temp_mi
                                     << match->name << " - Alias: " << match->alias;
             selected_filament_ranks.insert_or_assign(match->alias, sort_rank);
         }
-        
+
         static const std::vector<wxString> sorted_vendors { "Generic" };
         static const std::vector<wxString> sorted_types { "PLA", "PETG", "ABS", "TPU" };
         auto priority_rank = [](const std::vector<wxString>& priorities, const wxString& value) {

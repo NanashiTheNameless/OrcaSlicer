@@ -676,7 +676,7 @@ SelectMachineDialog::SelectMachineDialog(Plater *plater)
     m_status_bar    = std::make_shared<BBLStatusBarPrint>(m_simplebook);
     m_panel_sending = m_status_bar->get_panel();
     m_simplebook->AddPage(m_panel_sending, wxEmptyString, false);
-    
+
     m_worker = std::make_unique<PlaterWorker<BoostThreadWorker>>(this, m_status_bar, "send_worker");
 
     // finish mode
@@ -6329,7 +6329,7 @@ void SelectMachineDialog::UpdateStatusCheckWarning_ExtensionTool(MachineObject* 
                 {
                     show_status(PrintDialogStatus::PrintStatusToolHeadCoolingFanWarning,
                                 { _L("Install toolhead enhanced cooling fan to prevent filament softening.")},
-                                "https://www.orcaslicer.com/wiki/"); // Orca: neutral wiki link (vendor URL removed)
+                                "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/"); // Orca: neutral wiki link (vendor URL removed)
                     return;
                 }
             }
@@ -7075,7 +7075,7 @@ void PrinterInfoBox::Create()
 
 void PrinterInfoBox::OnBtnQuestionClicked(wxCommandEvent& event)
 {
-    wxLaunchDefaultBrowser(wxT("https://www.orcaslicer.com/wiki/")); // Orca: neutral wiki link (vendor URL removed)
+    wxLaunchDefaultBrowser(wxT("https://github.com/NanashiTheNameless/OrcaSlicer/wiki/")); // Orca: neutral wiki link (vendor URL removed)
 }
 
 

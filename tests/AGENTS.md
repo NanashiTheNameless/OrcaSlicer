@@ -1,6 +1,6 @@
 # Test suite rules
 
-Rules for writing tests under `tests/`. [CATCH2.md](CATCH2.md) is the Catch2 reference. Building and running the suites is covered on the wiki, at <https://www.orcaslicer.com/wiki/developer_reference/how_to_test.html>.
+Rules for writing tests under `tests/`. [CATCH2.md](CATCH2.md) is the Catch2 reference. Building and running the suites is covered on the wiki, at <https://github.com/NanashiTheNameless/OrcaSlicer/wiki/developer_reference/how_to_test.html>.
 
 ## The suites
 

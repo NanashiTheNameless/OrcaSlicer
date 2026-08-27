@@ -602,7 +602,7 @@ DiffViewCtrl::DiffViewCtrl(wxWindow* parent, wxSize size)
     this->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &DiffViewCtrl::item_value_changed, this);
 }
 
-DiffViewCtrl::~DiffViewCtrl() { 
+DiffViewCtrl::~DiffViewCtrl() {
     this->AssociateModel(nullptr);
     delete model;
 }
@@ -836,7 +836,7 @@ UnsavedChangesDialog::UnsavedChangesDialog(Preset::Type type, PresetCollection *
 
 inline int UnsavedChangesDialog::ShowModal()
 {
-    auto choise_key = "save_preset_choise"; 
+    auto choise_key = "save_preset_choise";
     auto choise     = wxGetApp().app_config->get(choise_key);
     long result = 0;
     if ((m_buttons & REMEMBER_CHOISE) && !choise.empty() && wxString(choise).ToLong(&result) && (1 << result) & (m_buttons | DONT_SAVE)) {
@@ -983,7 +983,7 @@ void UnsavedChangesDialog::build(Preset::Type type, PresetCollection *dependent_
     checkbox_sizer->Show(bool(m_buttons & REMEMBER_CHOISE));
 
     if (dependent_presets != nullptr) {
-        auto wiki = new HyperLink(this, _L("Help"), "https://www.orcaslicer.com/wiki/transfer_discard_changes");
+        auto wiki = new HyperLink(this, _L("Help"), "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/transfer_discard_changes");
         m_sizer_button->Add(wiki, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, FromDIP(22));
     }
 
@@ -2053,7 +2053,7 @@ void DiffPresetDialog::create_buttons()
 
     auto dlg_btns = new DialogButtons(this, {"OK", "Cancel"});
 
-    // Transfer 
+    // Transfer
     auto transfer_btn = dlg_btns->GetOK();
     transfer_btn->SetLabel(L("Transfer"));
     transfer_btn->Bind(wxEVT_BUTTON, [this](wxEvent&) { button_event(Action::Transfer);});
@@ -2118,7 +2118,7 @@ void DiffPresetDialog::create_edit_sizer()
             this->Layout();
     });
 
-    // Add Buttons 
+    // Add Buttons
     create_buttons();
 
     // Create and fill edit sizer
@@ -2367,7 +2367,7 @@ void DiffPresetDialog::update_tree()
     bool can_transfer_options = m_view_type == Preset::TYPE_INVALID || get_left_preset_name(m_view_type) != get_right_preset_name(m_view_type);
     m_edit_sizer->Show(show_tree && can_transfer_options);
     m_buttons->Show(m_edit_sizer->IsShown(size_t(0)) && m_use_for_transfer->GetValue());
-   
+
     update_bottom_info(bottom_info);
 
     if (tree_was_shown == m_tree->IsShown())
