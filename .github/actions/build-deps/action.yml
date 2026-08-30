@@ -113,7 +113,7 @@ runs:
       shell: bash
       run: |
           if [ -z "${{ inputs.self-hosted }}" ]; then
-            brew install autoconf automake texinfo libtool
+            brew install autoconf automake texinfo libtool pkgconf yasm nasm
           fi
           ./build_release_macos.sh -dx ${{ !inputs.self-hosted && '-1' || '' }} -a ${{ inputs.arch }} -t 10.15
           (cd "${{ github.workspace }}/deps/build/${{ inputs.arch }}" && \
