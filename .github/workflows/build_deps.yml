@@ -16,6 +16,10 @@ on:
       arch:
         required: false
         type: string
+      compiler:
+        required: false
+        type: string
+        default: msvc
       build-deps-only:
         required: false
         type: boolean
@@ -48,6 +52,7 @@ jobs:
         uses: ./.github/actions/build-deps
         with:
           arch: ${{ inputs.arch }}
+          compiler: ${{ inputs.compiler }}
           self-hosted: ${{ vars.SELF_HOSTED }}
 
 
@@ -85,4 +90,5 @@ jobs:
       cache-path: ${{ inputs.cache-path }}
       os: ${{ inputs.os }}
       arch: ${{ inputs.arch }}
+      compiler: ${{ inputs.compiler }}
     secrets: inherit
