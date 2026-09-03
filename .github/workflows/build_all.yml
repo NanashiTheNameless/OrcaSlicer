@@ -8,13 +8,28 @@ on:
      - belt-printer
     paths:
      - 'deps/**'
+     - 'deps_src/**'
      - 'src/**'
      - '**/CMakeLists.txt'
+     - 'cmake/**'
      - 'version.inc'
      - 'localization/**'
      - 'resources/**'
      - ".github/workflows/build_*.yml"
+     - '.github/workflows/unit_tests.yml'
+     - '.github/actions/**'
+     - 'build_linux.sh'
+     - 'build_release_macos.sh'
+     - 'build_release_vs.bat'
+     - 'build_win.bat'
+     - 'scripts/test_build_win.ps1'
      - 'scripts/build_preset_cache.*'
+     - 'scripts/linux.d/**'
+     - 'scripts/run_gettext.*'
+     - 'scripts/run_unit_tests.sh'
+     - 'scripts/retry.sh'
+     - 'scripts/check_appimage_libs.sh'
+     - 'scripts/appimage_lib_policy.sh'
      - 'scripts/flatpak/**'
      - 'scripts/msix/**'
      - 'tests/**'
@@ -40,11 +55,6 @@ on:
      - 'scripts/flatpak/**'
      - 'scripts/msix/**'
      - 'tests/**'
-
-
-  schedule:
-    - cron: '0 12 1 * *'
-      timezone: 'America/Chicago'
 
   workflow_dispatch: # allows for manual dispatch
     inputs:
@@ -91,8 +101,7 @@ jobs:
             os: ubuntu-22.04-arm
           - arch: "aarch64"
             os: ubuntu-24.04-arm
-    # Don't run scheduled builds on forks:
-    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ matrix.os }}
@@ -109,15 +118,13 @@ jobs:
           && '[{"arch":"x64","os":"orca-win-server","compiler":"clang"}]'
           || '[{"arch":"x64","os":"windows-latest","compiler":"clang"},{"arch":"arm64","os":"windows-11-arm","compiler":"clang"}]') }}
     needs: check_build_script
-    # Don't run scheduled builds on forks:
-    if: ${{ !cancelled() && needs.check_build_script.result == 'success' && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    if: ${{ !cancelled() && needs.check_build_script.result == 'success' }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ matrix.os }}
       arch: ${{ matrix.arch }}
       compiler: ${{ matrix.compiler }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
-      force-build: ${{ github.event_name == 'schedule' }}
     secrets: inherit
   build_macos_arch:
     strategy:
@@ -126,19 +133,17 @@ jobs:
         arch:
           - arm64
           - x86_64
-    # Don't run scheduled builds on forks:
-    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    if: ${{ !cancelled() }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
       arch: ${{ matrix.arch }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
-      force-build: ${{ github.event_name == 'schedule' }}
     secrets: inherit
   build_macos_universal:
     name: Build macOS Universal
     needs: build_macos_arch
-    if: ${{ !cancelled() && needs.build_macos_arch.result == 'success' && !inputs.build-deps-only && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    if: ${{ !cancelled() && needs.build_macos_arch.result == 'success' && !inputs.build-deps-only }}
     uses: ./.github/workflows/build_orca.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
@@ -257,8 +262,8 @@ jobs:
             runner: ubuntu-24.04
           - arch: aarch64
             runner: ubuntu-24.04-arm
-    # Don't run scheduled builds on forks; skip entirely on self-hosted runners
-    if: ${{ !cancelled() && !vars.SELF_HOSTED && !inputs.build-deps-only && (github.event_name != 'schedule' || github.repository == 'NanashiTheNameless/OrcaSlicer') }}
+    # Skip entirely on self-hosted runners.
+    if: ${{ !cancelled() && !vars.SELF_HOSTED && !inputs.build-deps-only }}
 
     runs-on: ${{ matrix.variant.runner }}
     env:
