@@ -94,7 +94,7 @@ Install from the command line:
 
 ```shell
 flatpak install /path/to/orca/OrcaSlicer-Linux-flatpak_nightly_<arch>.flatpak
-flatpak run com.orcaslicer.OrcaSlicer
+flatpak run dev.namelessnanashi.OrcaSlicer
 ```
 
 It can also be installed through graphical software managers (KDE Discover, GNOME Software, etc.) when Flathub is enabled. Search for **OrcaSlicer** in your software center.

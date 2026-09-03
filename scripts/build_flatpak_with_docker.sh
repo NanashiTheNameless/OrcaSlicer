@@ -98,8 +98,8 @@ echo "  ccache:     enabled"
 echo ""
 
 # ---------- prepare manifest ----------
-MANIFEST_SRC="scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml"
-MANIFEST_DOCKER="scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.docker.yml"
+MANIFEST_SRC="scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml"
+MANIFEST_DOCKER="scripts/flatpak/dev.namelessnanashi.OrcaSlicer.docker.yml"
 # Ensure cleanup on exit (success or failure)
 trap 'rm -f "$PROJECT_ROOT/$MANIFEST_DOCKER"' EXIT
 
@@ -121,6 +121,9 @@ sed "/name: OrcaSlicer/{
 \1  env:\\
 \1    git_commit_hash: \"$GIT_COMMIT_HASH\"|
 }" > "$MANIFEST_DOCKER"
+
+# ---------- pack deps/ ----------
+./scripts/flatpak/make_deps_tar.sh
 
 # ---------- run build in Docker ----------
 DOCKER="${DOCKER:-docker}"
@@ -201,7 +204,7 @@ flatpak-builder $FORCE_CLEAN_FLAG \
     --arch="$BUILD_ARCH" \
     --repo=flatpak-repo \
     flatpak-build \
-    scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.docker.yml
+    scripts/flatpak/dev.namelessnanashi.OrcaSlicer.docker.yml
 builder_end=$(date +%s)
 builder_duration=$((builder_end - builder_start))
 
@@ -210,7 +213,7 @@ flatpak build-bundle \
     --arch="$BUILD_ARCH" \
     flatpak-repo \
     "$BUNDLE_NAME" \
-    io.github.nanashithenameless.OrcaSlicer
+    dev.namelessnanashi.OrcaSlicer
 bundle_end=$(date +%s)
 bundle_duration=$((bundle_end - bundle_start))
 

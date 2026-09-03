@@ -255,10 +255,13 @@ mkdir -p "$BUILD_DIR"
 rm -rf "$BUILD_DIR/build-dir"
 
 # Check if flatpak manifest exists
-if [[ ! -f "./scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml" ]]; then
-    echo -e "${RED}Error: Flatpak manifest not found at scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml${NC}"
+if [[ ! -f "./scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml" ]]; then
+    echo -e "${RED}Error: Flatpak manifest not found at scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml${NC}"
     exit 1
 fi
+
+echo -e "${YELLOW}Packing deps/ for the manifest...${NC}"
+./scripts/flatpak/make_deps_tar.sh
 
 # Build the Flatpak
 echo -e "${YELLOW}Building Flatpak package...${NC}"
@@ -316,11 +319,11 @@ if [[ "$DISABLE_ROFILES_FUSE" == true ]]; then
 fi
 
 # Use a temp manifest with no-debuginfo if requested
-MANIFEST="scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml"
+MANIFEST="scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml"
 if [[ "$NO_DEBUGINFO" == true ]]; then
-    MANIFEST="scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.no-debug.yml"
+    MANIFEST="scripts/flatpak/dev.namelessnanashi.OrcaSlicer.no-debug.yml"
     sed '/^build-options:/a\  no-debuginfo: true\n  strip: true' \
-        scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.yml > "$MANIFEST"
+        scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml > "$MANIFEST"
     echo -e "${YELLOW}Debug info disabled (using temp manifest)${NC}"
 fi
 
@@ -330,19 +333,19 @@ if ! flatpak-builder \
     "$MANIFEST"; then
     echo -e "${RED}Error: flatpak-builder failed${NC}"
     echo -e "${YELLOW}Check the build log above for details${NC}"
-    rm -f "scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.no-debug.yml"
+    rm -f "scripts/flatpak/dev.namelessnanashi.OrcaSlicer.no-debug.yml"
     exit 1
 fi
 
 # Clean up temp manifest
-rm -f "scripts/flatpak/io.github.nanashithenameless.OrcaSlicer.no-debug.yml"
+rm -f "scripts/flatpak/dev.namelessnanashi.OrcaSlicer.no-debug.yml"
 
 # Create bundle
 echo -e "${YELLOW}Creating Flatpak bundle...${NC}"
 if ! flatpak build-bundle \
     "$BUILD_DIR/repo" \
     "$BUNDLE_NAME" \
-    io.github.nanashithenameless.OrcaSlicer \
+    dev.namelessnanashi.OrcaSlicer \
     --arch="$ARCH"; then
     echo -e "${RED}Error: Failed to create Flatpak bundle${NC}"
     exit 1
@@ -361,10 +364,10 @@ echo -e "${BLUE}To install the Flatpak:${NC}"
 echo -e "flatpak install --user $BUNDLE_NAME"
 echo ""
 echo -e "${BLUE}To run OrcaSlicer:${NC}"
-echo -e "flatpak run io.github.nanashithenameless.OrcaSlicer"
+echo -e "flatpak run dev.namelessnanashi.OrcaSlicer"
 echo ""
 echo -e "${BLUE}To uninstall:${NC}"
-echo -e "flatpak uninstall --user io.github.nanashithenameless.OrcaSlicer"
+echo -e "flatpak uninstall --user dev.namelessnanashi.OrcaSlicer"
 echo ""
 if [[ "$FORCE_CLEAN" != true ]]; then
     echo -e "${BLUE}Cache Management:${NC}"

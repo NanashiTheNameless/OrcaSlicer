@@ -450,13 +450,33 @@ static void migrate_flatpak_legacy_datadir(const boost::filesystem::path &data_d
     }
     std::cerr << "Migrating Flatpak data dir: " << data_dir_path << std::endl;
 
-    std::string legacy_data_dir_str = data_dir_path.string();
-    boost::replace_first(legacy_data_dir_str, "com.orcaslicer.OrcaSlicer", "io.github.orcaslicer.OrcaSlicer");
-    const fs::path legacy_data_dir(legacy_data_dir_str);
+    // Bundle IDs this build may have to migrate from, newest first:
+    // - io.github.nanashithenameless.OrcaSlicer - this fork before the dev.namelessnanashi.OrcaSlicer rename
+    // - com.orcaslicer.OrcaSlicer               - upstream OrcaSlicer since 2.3.2
+    // - io.github.softfever.OrcaSlicer          - upstream OrcaSlicer before 2.3.2
+    // - io.github.orcaslicer.OrcaSlicer         - upstream nightlies between 2.3.1 and 2.3.2
+    static const char *legacy_app_ids[] = {
+        "io.github.nanashithenameless.OrcaSlicer",
+        "com.orcaslicer.OrcaSlicer",
+        "io.github.softfever.OrcaSlicer",
+        "io.github.orcaslicer.OrcaSlicer",
+    };
 
-    std::cerr << "Legacy Flatpak data dir: " << legacy_data_dir << std::endl;
+    fs::path legacy_data_dir;
+    for (const char *legacy_app_id : legacy_app_ids) {
+        std::string legacy_data_dir_str = data_dir_path.string();
+        boost::replace_first(legacy_data_dir_str, "dev.namelessnanashi.OrcaSlicer", legacy_app_id);
+        const fs::path candidate(legacy_data_dir_str);
 
-    if ( ! fs::exists(legacy_data_dir) || ! fs::is_directory(legacy_data_dir))
+        std::cerr << "Legacy Flatpak data dir candidate: " << candidate << std::endl;
+
+        if (candidate != data_dir_path && fs::exists(candidate) && fs::is_directory(candidate)) {
+            legacy_data_dir = candidate;
+            break;
+        }
+    }
+
+    if (legacy_data_dir.empty())
         return;
     std::cerr << "Legacy Flatpak data dir exists: " << legacy_data_dir << std::endl;
 

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-    <id>io.github.nanashithenameless.OrcaSlicer</id>
-    <launchable type="desktop-id">io.github.nanashithenameless.OrcaSlicer.desktop</launchable>
+    <id>dev.namelessnanashi.OrcaSlicer</id>
+    <launchable type="desktop-id">dev.namelessnanashi.OrcaSlicer.desktop</launchable>
     <provides>
-        <id>io.github.nanashithenameless.OrcaSlicer.desktop</id>
+        <id>dev.namelessnanashi.OrcaSlicer.desktop</id>
     </provides>
     <name>OrcaSlicer</name>
     <summary>(UNOFFICIAL) Get even more perfect prints!</summary>
     <developer_name>NanashiTheNameless (Upstream: SoftFever)</developer_name>
-    <developer id="io.github.nanashithenameless.OrcaSlicer">
+    <developer id="dev.namelessnanashi.OrcaSlicer">
         <name>NanashiTheNameless (Upstream: SoftFever)</name>
     </developer>
     <url type="bugtracker">https://github.com/NanashiTheNameless/issues</url>
