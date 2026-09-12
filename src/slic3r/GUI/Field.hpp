@@ -25,6 +25,7 @@
 #include "wxExtensions.hpp"
 #include "Widgets/SpinInput.hpp"
 #include "Widgets/TextInput.hpp"
+#include "Widgets/ComboBox.hpp"
 
 #ifdef __WXMSW__
 #define wxMSW true
@@ -532,10 +533,8 @@ public:
 
 private:
     struct PluginRow {
-        ScalableButton* select_btn { nullptr };
-        wxTextCtrl*     display { nullptr };
+        ComboBox*       display { nullptr };
         ScalableButton* remove_btn { nullptr };
-        ScalableButton* add_btn { nullptr };
         wxBoxSizer*     sizer { nullptr };
     };
 
@@ -553,7 +552,7 @@ private:
     wxBoxSizer*             m_main_sizer { nullptr };
     std::vector<PluginRow>  m_rows;
     std::vector<std::string> m_values;
-    ScalableButton*         m_standalone_add_btn { nullptr };
+    Button*                  m_standalone_add_btn { nullptr };
     std::function<std::string()> m_selector;
 };
 
@@ -651,7 +650,7 @@ public:
 	void			BUILD()  override;
 	bool			value_was_changed(wxTextCtrl* win);
     // Propagate value from field to the OptionGroupe and Config after kill_focus/ENTER
-    void            propagate_value(wxTextCtrl* win);
+	void			propagate_input_value(wxTextCtrl* win);
 	void			set_value(const Vec2d& value, bool change_event = false);
 	void			set_value(const boost::any& value, bool change_event = false) override;
 	boost::any&		get_value() override;

@@ -699,10 +699,15 @@ std::string OptionsGroup::pick_plugin(const ConfigOptionDef& opt)
     Slic3r::PluginManager& manager = Slic3r::PluginManager::instance();
     const Slic3r::PluginCapabilityType plugin_type = Slic3r::plugin_capability_type_from_string(opt.plugin_type);
     if (plugin_type == Slic3r::PluginCapabilityType::Unknown) {
-        const std::string message = opt.plugin_type.empty()
-                                        ? "This setting does not specify a plugin capability type."
-                                        : "This setting specifies an unrecognized plugin capability type: '" + opt.plugin_type + "'.";
-        wxMessageBox(from_u8(message), _L("Plugin Selection"), wxOK | wxICON_WARNING, m_parent);
+        MessageDialog dlg(m_parent, 
+            opt.plugin_type.empty() ? _L("This setting does not specify a plugin capability type.")
+                                    : _L("This setting specifies an unrecognized plugin capability type: ") + "'" + opt.plugin_type + "'.", 
+            _L("Plugin Selection"), 
+            wxOK | wxICON_WARNING
+        );
+        dlg.CenterOnParent();
+        dlg.ShowModal();
+
         return {};
     }
 
@@ -715,7 +720,13 @@ std::string OptionsGroup::pick_plugin(const ConfigOptionDef& opt)
     });
 
     if (caps.empty()) {
-        wxMessageBox(_L("No plugins capabilities available for this type.\nEnable or install some to use."), _L("Plugin Selection"), wxOK | wxICON_INFORMATION, m_parent);
+        MessageDialog dlg(m_parent,
+            _L("No plugins capabilities available for this type.\nEnable or install some to use."),
+            _L("Plugin Selection"),
+            wxOK | wxICON_INFORMATION
+        );
+        dlg.CenterOnParent();
+        dlg.ShowModal();
         return {};
     }
 

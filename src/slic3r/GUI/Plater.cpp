@@ -17840,6 +17840,10 @@ void Plater::increase_instances(size_t num)
         model_object->add_instance(offset_vec, model_instance->get_scaling_factor(), model_instance->get_rotation(), model_instance->get_mirror());
 //        p->print.get_object(obj_idx)->add_copy(Slic3r::to_2d(offset_vec));
     }
+    // Register the copies with the plate they land on before the scene reloads: the plate's
+    // filament list and wipe tower preview are read from that registry.
+    for (size_t i = model_object->instances.size() - num; i < model_object->instances.size(); ++i)
+        p->partplate_list.notify_instance_update(obj_idx, static_cast<int>(i));
 
 #ifdef SUPPORT_AUTO_CENTER
     if (p->get_config("autocenter") == "true")
@@ -17870,8 +17874,10 @@ void Plater::decrease_instances(size_t num)
 
     ModelObject* model_object = p->model.objects[obj_idx];
     if (model_object->instances.size() > num) {
-        for (size_t i = 0; i < num; ++ i)
+        for (size_t i = 0; i < num; ++ i) {
+            p->partplate_list.notify_instance_removed(obj_idx, static_cast<int>(model_object->instances.size()) - 1);
             model_object->delete_last_instance();
+        }
         p->update();
         // Delete object from Sidebar list. Do it after update, so that the GLScene selection is updated with the modified model.
         sidebar().obj_list()->decrease_object_instances(obj_idx, num);
