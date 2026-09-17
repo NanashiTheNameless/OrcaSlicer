@@ -7,11 +7,10 @@
     </provides>
     <name>OrcaSlicer</name>
     <summary>(UNOFFICIAL) Get even more perfect prints!</summary>
-    <developer_name>NanashiTheNameless (Upstream: SoftFever)</developer_name>
-    <developer id="dev.namelessnanashi.OrcaSlicer">
+    <developer id="dev.namelessnanashi">
         <name>NanashiTheNameless (Upstream: SoftFever)</name>
     </developer>
-    <url type="bugtracker">https://github.com/NanashiTheNameless/issues</url>
+    <url type="bugtracker">https://github.com/NanashiTheNameless/OrcaSlicer/issues</url>
     <url type="homepage">https://github.com/NanashiTheNameless/OrcaSlicer</url>
     <url type="donation">https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/.github/FUNDING.yml</url>
     <url type="contact">https://github.com/NanashiTheNameless/OrcaSlicer/discussions</url>
@@ -39,14 +38,23 @@
         </screenshot>
     </screenshots>
     <description>
-        <p>THIS IS AN UNOFFICIAL FORKED VERSION</p>
-        <p>OrcaSlicer is a powerful, free and open-source 3D printer slicer with cutting-edge
+        <p>This is an unofficial fork of OrcaSlicer maintained by NanashiTheNameless.
+            OrcaSlicer is a powerful, free and open-source 3D printer slicer with cutting-edge
             features for FDM printing. It supports a wide range of printers from manufacturers
             including Bambu Lab, Prusa, Voron, Creality, and many more.</p>
         <p>Key features include advanced calibration tools, adaptive layer heights, tree supports,
             multi-material support, and an intuitive interface for both beginners and experts.
             OrcaSlicer also provides built-in network printing capabilities for compatible printers.</p>
     </description>
+    <releases>
+        <release type="development" version="Nightly-Rolling" date="9999-12-31">
+            <url>https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling</url>
+            <description>
+                <p>Rolling nightly builds of the unofficial OrcaSlicer fork maintained by
+                    NanashiTheNameless. These experimental builds are updated continuously.</p>
+            </description>
+        </release>
+    </releases>
     <branding>
         <color type="primary" scheme_preference="dark">#2d2d30</color>
     </branding>
