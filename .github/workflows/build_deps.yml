@@ -51,6 +51,7 @@ jobs:
       - name: Build deps
         uses: ./.github/actions/build-deps
         with:
+          cache-path: ${{ inputs.cache-path }}
           arch: ${{ inputs.arch }}
           compiler: ${{ inputs.compiler }}
           self-hosted: ${{ vars.SELF_HOSTED }}
