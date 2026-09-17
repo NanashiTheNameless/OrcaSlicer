@@ -507,13 +507,10 @@ echo -n "Creating Appimage for distribution..."
     cp -Rf package package_appimage
     pushd package_appimage > /dev/null
     chmod +x ../build_appimage.sh
-    if ../build_appimage.sh; then
-        popd > /dev/null
-        mv package_appimage/"@SLIC3R_APP_KEY@_Linux_V@SoftFever_VERSION@.AppImage" "@SLIC3R_APP_KEY@_Linux_V@SoftFever_VERSION@.AppImage"
-        rm -fR package_appimage
-    else
-        popd > /dev/null
-    fi
+    ../build_appimage.sh
+    popd > /dev/null
+    mv package_appimage/"@SLIC3R_APP_KEY@_Linux_V@SoftFever_VERSION@.AppImage" "@SLIC3R_APP_KEY@_Linux_V@SoftFever_VERSION@.AppImage"
+    rm -fR package_appimage
 # } &> $ROOT/Build.log # Capture all command output
 echo "done"
 fi

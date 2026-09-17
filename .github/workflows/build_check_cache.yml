@@ -45,8 +45,10 @@ jobs:
           # build_deps.yml and build_orca.yml pass the Windows directory to build_win.bat.
           dep-folder-name: ${{ runner.os == 'macOS' && format('/{0}', inputs.arch) || (runner.os == 'Windows' && inputs.arch == 'arm64') && '-arm64/OrcaSlicer_dep' || '/OrcaSlicer_dep' }}
           output-cmd: ${{ runner.os == 'Windows' && '$env:GITHUB_OUTPUT' || '"$GITHUB_OUTPUT"'}}
+        # Rebuild when the build scripts change too: older Windows scripts could
+        # report success and cache an incomplete dependency install after a failure.
         run: |
-          echo cache-key=${{ env.cache-os }}-cache-orcaslicer_deps-build-${{ hashFiles('deps/**') }} >> ${{ env.output-cmd }}
+          echo cache-key=${{ env.cache-os }}-cache-orcaslicer_deps-build-${{ hashFiles('deps/**', '.github/actions/build-deps/**', 'build_win.bat', 'build_linux.sh', 'build_release_macos.sh') }} >> ${{ env.output-cmd }}
           echo cache-path=${{ github.workspace }}/deps/build${{ env.dep-folder-name }} >> ${{ env.output-cmd }}
 
       - name: load cache

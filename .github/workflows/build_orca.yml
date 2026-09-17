@@ -113,6 +113,10 @@ jobs:
         shell: bash
         run: |
           leg="${{ runner.os }}-${{ inputs.arch || 'amd64' }}${{ runner.os == 'Windows' && format('-{0}', inputs.compiler) || '' }}"
+          # Ubuntu versions build concurrently and must not save to the same key.
+          if [ "${{ runner.os }}" = Linux ]; then
+            leg="$leg-${{ inputs.os }}"
+          fi
           # clang-cl refuses a precompiled header from another cl.exe build and ccache
           # does not hash that build, so each one gets its own cache. The build number
           # is read from cl.exe itself; the toolset directory keeps its name across patches.

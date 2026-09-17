@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
+set -euo pipefail
+
 APPIMAGETOOLURL="https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-$(uname -m).AppImage"
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
+REPO_ROOT="@CMAKE_SOURCE_DIR@"
 
 
 APP_IMAGE="@SLIC3R_APP_KEY@_Linux_V@SoftFever_VERSION@.AppImage"
 
-wget ${APPIMAGETOOLURL} -O ../appimagetool.AppImage
+wget --tries=5 --waitretry=5 --timeout=60 --retry-connrefused \
+  --retry-on-http-error=429,500,502,503,504 \
+  "${APPIMAGETOOLURL}" -O ../appimagetool.AppImage.part
+mv ../appimagetool.AppImage.part ../appimagetool.AppImage
 chmod +x ../appimagetool.AppImage
 
 if [ -f /.dockerenv ] ; then # Only run if inside of a Docker Container
@@ -43,11 +47,11 @@ cp "${REPO_ROOT}/scripts/flatpak/dev.namelessnanashi.@SLIC3R_APP_KEY@.metainfo.x
 
 export ARCH=$(uname -m)
 
-if [ -f /.dockerenv ] ; then # Only run if inside of a Docker Container
-  ../appimagetool.AppImage --appimage-extract-and-run . $([ -n "${container}" ] && echo '--appimage-extract-and-run')
-else
-  ../appimagetool.AppImage . $([ -n "${container}" ] && echo '--appimage-extract-and-run')
+appimage_args=()
+if [ -f /.dockerenv ] || [ -n "${container:-}" ]; then
+  appimage_args+=(--appimage-extract-and-run)
 fi
+../appimagetool.AppImage "${appimage_args[@]}" .
 
-mv @SLIC3R_APP_KEY@-$(uname -m).AppImage ${APP_IMAGE}
-chmod +x ${APP_IMAGE}
+mv "@SLIC3R_APP_KEY@-$(uname -m).AppImage" "${APP_IMAGE}"
+chmod +x "${APP_IMAGE}"
