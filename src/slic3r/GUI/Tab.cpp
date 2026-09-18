@@ -8476,17 +8476,19 @@ void Tab::sync_excluder()
     Preset & printer_preset = m_preset_bundle->printers.get_edited_preset();
     auto nozzle_volumes = m_preset_bundle->project_config.option<ConfigOptionEnumsGeneric>("nozzle_volume_type");
     auto extruders      = printer_preset.config.option<ConfigOptionEnumsGeneric>("extruder_type");
+    // Motion ability options hold a (normal, silent) pair per variant, so switch_excluder indexes that page with stride 2.
+    const int stride = m_active_page->title().StartsWith("Motion ability") ? 2 : 1;
     auto get_index_for_extruder =
-            [this, &extruders, variant_keys = extruder_variant_keys[m_type >= Preset::TYPE_COUNT ? Preset::TYPE_PRINT : m_type]](int extruder_id, NozzleVolumeType nozzle_type) {
+            [this, &extruders, stride, variant_keys = extruder_variant_keys[m_type >= Preset::TYPE_COUNT ? Preset::TYPE_PRINT : m_type]](int extruder_id, NozzleVolumeType nozzle_type) {
         return m_config->get_index_for_extruder(extruder_id + 1, variant_keys.first,
-            ExtruderType(extruders->values[extruder_id]), nozzle_type, variant_keys.second);
+            ExtruderType(extruders->values[extruder_id]), nozzle_type, variant_keys.second, stride);
     };
     int active_index = get_current_active_extruder();
     auto active_nozzle = get_actual_nozzle_volume_type(active_index);
     int from_index = get_index_for_extruder(active_index, active_nozzle);
     int dest_index = get_index_for_extruder(1 - active_index, active_nozzle);
-    auto from_str = std::to_string(from_index);
-    auto dest_str = std::to_string(dest_index);
+    if (from_index < 0 || dest_index < 0) // no variant column for this nozzle on one of the extruders
+        return;
     auto dirty_options = m_presets->current_dirty_options(true);
     DynamicConfig config_origin, config_to_apply;
     for (int i = 0; i < dirty_options.size(); ++i) {
@@ -8499,16 +8501,21 @@ void Tab::sync_excluder()
         if (field == nullptr || line == nullptr)
             continue;
         ++n;
-        bool dirty  = opt.substr(n) == from_str;
+        auto is_from_slot = [&](const std::string &dirty_opt) {
+            int slot = std::atoi(dirty_opt.c_str() + n);
+            return slot >= from_index && slot < from_index + stride;
+        };
+        bool dirty = is_from_slot(opt);
         while (i + 1 < dirty_options.size() && dirty_options[i + 1].compare(0, n, opt, 0, n) == 0) {
-            dirty |= dirty_options[i + 1].substr(n) == from_str;
+            dirty |= is_from_slot(dirty_options[i + 1]);
             ++i;
         }
         if (dirty) {
             auto key = opt.substr(0, n - 1);
             auto option = dynamic_cast<ConfigOptionVectorBase*>(m_config->option(key));
             auto option2 = dynamic_cast<ConfigOptionVectorBase*>(option->clone());
-            option2->set_at(option, dest_index, from_index);
+            for (int s = 0; s < stride; ++s)
+                option2->set_at(option, dest_index + s, from_index + s);
             if (*option == *option2) {
                 delete option2;
                 continue;
