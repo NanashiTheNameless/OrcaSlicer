@@ -732,6 +732,18 @@ jobs:
           path: './build/src/Release/OrcaSlicer_profile_validator'
           retention-days: 7
 
+      # generate_system_cache is what scripts/build_preset_cache.sh bakes the
+      # <vendor>.opc caches with; it was already built by the "Build system
+      # preset cache (Linux)" step above. The .opc format is 64-bit
+      # little-endian native, i.e. identical across every platform Orca ships,
+      # so only the Linux binary is published.
+      - name: Upload generate_system_cache Ubuntu
+        if: ${{ ! env.ACT && runner.os == 'Linux' && !vars.SELF_HOSTED && inputs.arch != 'aarch64' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: generate_system_cache_Linux_ubuntu_${{ env.ubuntu-ver }}_${{ env.ver }}
+          path: './build/src/dev-utils/Release/generate_system_cache'
+
       - name: Deploy Ubuntu release (amd64)
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
         uses: NanashiTheNameless/deploy-nightly@master
@@ -764,6 +776,18 @@ jobs:
           release_id: 242055857
           asset_path: ./build/src/Release/OrcaSlicer_profile_validator
           asset_name: OrcaSlicer_profile_validator_Linux${{ env.ubuntu-ver-str }}
+          asset_content_type: application/octet-stream
+          max_releases: 1
+
+      - name: Deploy Ubuntu generate_system_cache release
+        if: ${{ github.repository == 'NanashiTheNameless/OrcaSlicer' && github.event_name == 'push' && ! env.ACT && github.ref == 'refs/heads/main' && runner.os == 'Linux' && !vars.SELF_HOSTED && inputs.arch != 'aarch64' }}
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ./build/src/dev-utils/Release/generate_system_cache
+          asset_name: generate_system_cache_Linux${{ env.ubuntu-ver-str }}_nightly
           asset_content_type: application/octet-stream
           max_releases: 1
 
