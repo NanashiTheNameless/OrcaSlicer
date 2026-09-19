@@ -857,13 +857,3 @@ jobs:
                 '.[] | select((.key | ltrimstr($prefix) | split("-")[0] | tonumber?) < $run) | .id' \
             | tr -d '\r' \
             | while read -r id; do gh cache delete "$id"; done
-
-      - name: Deploy Nightly-Rolling release tag
-        if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/action-create-tag@main
-        with:
-          tag: "Nightly-Rolling"
-          tag_exists_error: false
-          force_push_tag: true
-          message: "Nightly-Rolling"
-          github_token: ${{ secrets.GH_TOKEN }}

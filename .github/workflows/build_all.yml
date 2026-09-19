@@ -496,3 +496,38 @@ jobs:
     with:
       os: ubuntu-24.04-arm
       artifact: ${{ github.sha }}-flatpak-tests-aarch64
+
+  deploy_nightly_rolling_tag:
+    name: Deploy Nightly-Rolling release tag
+    # Wait for every job, including failed or skipped builds and tests.
+    needs:
+      - check_build_script
+      - build_linux
+      - build_windows
+      - build_macos_arch
+      - build_macos_universal
+      - unit_tests_linux_x86_64
+      - unit_tests_linux_aarch64
+      - unit_tests_windows_x64
+      - unit_tests_windows_arm64
+      - unit_tests_macos_arm64
+      - slice_check_linux
+      - publish_test_results
+      - flatpak
+      - unit_tests_flatpak_x86_64
+      - unit_tests_flatpak_aarch64
+    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          lfs: 'false'
+      - name: Deploy Nightly-Rolling release tag
+        uses: NanashiTheNameless/action-create-tag@main
+        with:
+          tag: "Nightly-Rolling"
+          tag_exists_error: false
+          force_push_tag: true
+          message: "Nightly-Rolling"
+          github_token: ${{ secrets.GH_TOKEN }}
