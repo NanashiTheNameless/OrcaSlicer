@@ -1,12 +1,17 @@
 {
 	"type": "machine",
-	"name": "M3D Enabler D8500 MM",
+	"name": "M3D Enabler D8500 0.4 nozzle",
 	"inherits": "fdm_machine_common",
+	"renamed_from": "M3D Enabler D8500 MM",
 	"from": "system",
-	"setting_id": "AEagqO0H5lE3ndsg",
+	"setting_id": "xdGprcdFiVkG5vT2",
 	"instantiation": "true",
-	"printer_model": "M3D Enabler D8500 MM Model",
+	"printer_model": "M3D Enabler D8500",
 	"printer_variant": "0.4",
+	"default_print_profile": "0.20mm Standard @M3D Enabler D8500",
+	"default_filament_profile": [
+		"Enabler PLA @M3D"
+	],
 	"auxiliary_fan": "1",
 	"change_filament_gcode": "M18 E",
 	"deretraction_speed": [
@@ -89,7 +94,8 @@
 		"210x150",
 		"0x150"
 	],
-	"printer_settings_id": "M3D Enabler D8500 MM",
+	"printable_height": "150",
+	"printer_settings_id": "M3D Enabler D8500 0.4 nozzle",
 	"retract_before_wipe": [
 		"100%",
 		"100%"

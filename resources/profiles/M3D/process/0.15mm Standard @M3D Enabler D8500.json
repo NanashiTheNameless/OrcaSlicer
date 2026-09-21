@@ -1,12 +1,13 @@
 {
 	"type": "process",
-	"name": "0.20mm MM @D8500",
+	"name": "0.15mm Standard @M3D Enabler D8500",
 	"inherits": "fdm_process_common",
+	"renamed_from": "0.15mm MM @D8500",
 	"from": "system",
-	"setting_id": "sW4h3MpFpgMeE1pl",
+	"setting_id": "69ArGbue7nQ5gO2r",
 	"instantiation": "true",
 	"compatible_printers": [
-		"M3D Enabler D8500 MM"
+		"M3D Enabler D8500 0.4 nozzle"
 	],
 	"brim_type": "no_brim",
 	"support_object_first_layer_gap": "1",
@@ -29,7 +30,7 @@
 	"inner_wall_line_width": "0.4",
 	"inner_wall_speed": "90",
 	"internal_solid_infill_speed": "60",
-	"layer_height": "0.2",
+	"layer_height": "0.15",
 	"outer_wall_speed": "45",
 	"prime_tower_brim_width": "1",
 	"prime_tower_width": "40",
@@ -39,8 +40,8 @@
 	"sparse_infill_speed": "60",
 	"support_interface_speed": "30",
 	"support_type": "normal(manual)",
-	"top_surface_speed": "40",
 	"travel_speed": "100",
 	"wall_loops": "2",
-	"wipe_tower_extra_spacing": "200%"
+	"wipe_tower_extra_spacing": "200%",
+	"wipe_tower_filament": "2"
 }
