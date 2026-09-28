@@ -353,6 +353,10 @@ jobs:
         run: |
           # Load the `retry` helper (retries flaky commands such as `hdiutil create`).
           source ${{ github.workspace }}/scripts/retry.sh
+          # hdiutil's -srcfolder size estimate can undershoot for bundles holding a
+          # single large binary, failing with "No space left on device" inside the
+          # scratch volume. Size it explicitly from the staged content plus headroom.
+          dmg_size() { echo "$(( $(du -sm "$1" | cut -f1) * 12 / 10 + 64 ))m"; }
           df -h "${{ github.workspace }}"
           main_dmg_dir="${{ github.workspace }}/build/universal/OrcaSlicer_dmg"
           rm -rf "$main_dmg_dir"
@@ -361,7 +365,7 @@ jobs:
           # the staging directory to avoid consuming space for a full copy.
           mv "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer.app" "$main_dmg_dir/"
           ln -sfn /Applications "$main_dmg_dir/Applications"
-          retry hdiutil create -volname "OrcaSlicer" -srcfolder "$main_dmg_dir" -ov -format UDZO "OrcaSlicer_Mac_universal_${{ env.ver }}.dmg"
+          retry hdiutil create -volname "OrcaSlicer" -srcfolder "$main_dmg_dir" -size "$(dmg_size "$main_dmg_dir")" -ov -format UDZO "OrcaSlicer_Mac_universal_${{ env.ver }}.dmg"
           rm -rf "$main_dmg_dir"
           df -h "${{ github.workspace }}"
 
@@ -372,7 +376,7 @@ jobs:
             mkdir -p "$validator_dmg_dir"
             mv "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app" "$validator_dmg_dir/"
             ln -sfn /Applications "$validator_dmg_dir/Applications"
-            retry hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder "$validator_dmg_dir" -ov -format UDZO "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg"
+            retry hdiutil create -volname "OrcaSlicer Profile Validator" -srcfolder "$validator_dmg_dir" -size "$(dmg_size "$validator_dmg_dir")" -ov -format UDZO "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg"
             rm -rf "$validator_dmg_dir"
           fi
 
