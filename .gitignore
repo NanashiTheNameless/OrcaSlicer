@@ -54,4 +54,6 @@ __pycache__/
 logs_*/
 logs_*.zip
 *.opc
+/.test/
 docs/superpowers/
+ctest_results.xml
