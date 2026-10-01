@@ -11,9 +11,6 @@
 name: Parity Nightly
 
 on:
-  schedule:
-    # build_all.yml starts at 17:00 UTC and has finished by ~20:00
-    - cron: "0 21 * * *"
   workflow_dispatch:
     inputs:
       test_repo_ref:
