@@ -18,12 +18,10 @@ on:
      - ".github/workflows/build_*.yml"
      - '.github/workflows/unit_tests.yml'
      - '.github/actions/**'
+     - ".github/workflows/unit_tests*.yml"
      - 'build_linux.sh'
      - 'build_release_macos.sh'
      - 'build_release_vs.bat'
-     - 'build_win.bat'
-     - 'scripts/test_build_win.ps1'
-     - ".github/workflows/unit_tests*.yml"
      - 'build_win.bat'
      - 'scripts/test_build_win.ps1'
      - 'scripts/build_preset_cache.*'
@@ -58,6 +56,10 @@ on:
      - 'scripts/msix/**'
      - 'tests/**'
 
+
+  schedule:
+      - cron: '0 17 * * *' # run once a day at 1 AM Singapore time (UTC+8)
+
   workflow_dispatch: # allows for manual dispatch
     inputs:
       build-deps-only:
@@ -67,8 +69,10 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  # Pushes don't cancel a running build, because only a finished branch build
+  # saves caches every pull request can restore.
   cancel-in-progress: false
-
+  
 
 jobs:
   # build_win.bat ships a test suite. Run it before the Windows builds.
@@ -103,7 +107,8 @@ jobs:
             os: ubuntu-22.04-arm
           - arch: "aarch64"
             os: ubuntu-24.04-arm
-    if: ${{ !cancelled() }}
+    # Don't run scheduled builds on forks:
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ matrix.os }}
@@ -120,13 +125,15 @@ jobs:
           && '[{"arch":"x64","os":"orca-win-server","compiler":"clang"}]'
           || '[{"arch":"x64","os":"windows-latest","compiler":"clang"},{"arch":"arm64","os":"windows-11-vs2026-arm","compiler":"clang"}]') }}
     needs: check_build_script
-    if: ${{ !cancelled() && needs.check_build_script.result == 'success' }}
+    # Don't run scheduled builds on forks:
+    if: ${{ !cancelled() && needs.check_build_script.result == 'success' && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ matrix.os }}
       arch: ${{ matrix.arch }}
       compiler: ${{ matrix.compiler }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
+      force-build: ${{ github.event_name == 'schedule' }}
     secrets: inherit
   build_macos_arch:
     strategy:
@@ -135,17 +142,19 @@ jobs:
         arch:
           - arm64
           - x86_64
-    if: ${{ !cancelled() }}
+    # Don't run scheduled builds on forks:
+    if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
       arch: ${{ matrix.arch }}
       build-deps-only: ${{ inputs.build-deps-only || false }}
+      force-build: ${{ github.event_name == 'schedule' }}
     secrets: inherit
   build_macos_universal:
     name: Build macOS Universal
     needs: build_macos_arch
-    if: ${{ !cancelled() && needs.build_macos_arch.result == 'success' && !inputs.build-deps-only }}
+    if: ${{ !cancelled() && needs.build_macos_arch.result == 'success' && !inputs.build-deps-only && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
     uses: ./.github/workflows/build_orca.yml
     with:
       os: ${{ vars.SELF_HOSTED && 'orca-macos-arm64' || 'macos-14' }}
@@ -164,7 +173,7 @@ jobs:
   unit_tests_linux_aarch64:
     name: Linux aarch64
     needs: build_linux
-    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only && !vars.SELF_HOSTED }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: ubuntu-24.04-arm
@@ -180,7 +189,7 @@ jobs:
   unit_tests_windows_arm64:
     name: Windows arm64
     needs: build_windows
-    if: ${{ !cancelled() && success() && !inputs.build-deps-only }}
+    if: ${{ !cancelled() && success() && !inputs.build-deps-only && !vars.SELF_HOSTED }}
     uses: ./.github/workflows/unit_tests.yml
     with:
       os: windows-11-vs2026-arm
@@ -224,10 +233,9 @@ jobs:
   publish_test_results:
     name: Publish Test Results
     needs: [unit_tests_linux_x86_64, unit_tests_linux_aarch64, unit_tests_windows_x64, unit_tests_windows_arm64, unit_tests_macos_arm64, unit_tests_flatpak_x86_64, unit_tests_flatpak_aarch64]
-    runs-on: ubuntu-latest
-    # When manually dispatched with build-deps-only=true we skip build_orca, so
-    # no build_tests.tar artifact exists to download.
+    # A deps-only dispatch does not produce test artifacts.
     if: ${{ !cancelled() && success() && (github.event_name != 'workflow_dispatch' || !inputs.build-deps-only) }}
+    runs-on: ubuntu-latest
     steps:
       - name: Download Test Results
         uses: actions/download-artifact@v8
@@ -266,14 +274,14 @@ jobs:
             runner: ubuntu-24.04
           - arch: aarch64
             runner: ubuntu-24.04-arm
-    # Skip entirely on self-hosted runners.
-    if: ${{ !cancelled() && !vars.SELF_HOSTED && !inputs.build-deps-only }}
+    # Don't run scheduled builds on forks; skip entirely on self-hosted runners
+    if: ${{ !cancelled() && !vars.SELF_HOSTED && !inputs.build-deps-only && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
 
     runs-on: ${{ matrix.variant.runner }}
     env:
-      date: ""
-      ver: ""
-      ver_pure: ""
+      date:
+      ver:
+      ver_pure:
     steps:
     - name: "Remove unneeded stuff to free disk space"
       run:
@@ -509,7 +517,6 @@ jobs:
 
   deploy_nightly_rolling_tag:
     name: Deploy Nightly-Rolling release tag
-    # Wait for every job, including failed or skipped builds and tests.
     needs:
       - check_build_script
       - build_linux

@@ -78,12 +78,12 @@ void ConfigManipulation::set_option_label(const std::string& opt_key, const wxSt
         cb_set_option_label(opt_key, label, opt_index);
 }
 
-void ConfigManipulation::check_nozzle_recommended_temperature_range(DynamicPrintConfig *config) {
+void ConfigManipulation::check_nozzle_recommended_temperature_range(DynamicPrintConfig *config, unsigned int variant_index) {
     if (is_msg_dlg_already_exist)
         return;
 
     int temperature_range_low, temperature_range_high;
-    if (!get_temperature_range(config, temperature_range_low, temperature_range_high)) return;
+    if (!get_temperature_range(config, temperature_range_low, temperature_range_high, variant_index)) return;
 
     // Get the selected filament type
     std::string filament_type = "";
@@ -123,16 +123,16 @@ void ConfigManipulation::check_nozzle_recommended_temperature_range(DynamicPrint
     }
 }
 
-void ConfigManipulation::check_nozzle_temperature_range(DynamicPrintConfig *config)
+void ConfigManipulation::check_nozzle_temperature_range(DynamicPrintConfig *config, unsigned int variant_index)
 {
     if (is_msg_dlg_already_exist)
         return;
 
     int temperature_range_low, temperature_range_high;
-    if (!get_temperature_range(config, temperature_range_low, temperature_range_high)) return;
+    if (!get_temperature_range(config, temperature_range_low, temperature_range_high, variant_index)) return;
 
     if (config->has("nozzle_temperature")) {
-        if (config->opt_int("nozzle_temperature", 0) < temperature_range_low || config->opt_int("nozzle_temperature", 0) > temperature_range_high) {
+        if (config->opt_int("nozzle_temperature", variant_index) < temperature_range_low || config->opt_int("nozzle_temperature", variant_index) > temperature_range_high) {
             wxString msg_text = _(L("The nozzle may become clogged when the temperature is out of the recommended range.\nPlease make sure whether to use this temperature to print.\n\n"));
             msg_text += wxString::Format(_L("The recommended nozzle temperature for this filament type is [%d, %d] degrees Celsius."), temperature_range_low, temperature_range_high);
             MessageDialog dialog(m_msg_dlg_parent, msg_text, "", wxICON_WARNING | wxOK);
@@ -143,17 +143,17 @@ void ConfigManipulation::check_nozzle_temperature_range(DynamicPrintConfig *conf
     }
 }
 
-void ConfigManipulation::check_nozzle_temperature_initial_layer_range(DynamicPrintConfig* config)
+void ConfigManipulation::check_nozzle_temperature_initial_layer_range(DynamicPrintConfig* config, unsigned int variant_index)
 {
     if (is_msg_dlg_already_exist)
         return;
 
     int temperature_range_low, temperature_range_high;
-    if (!get_temperature_range(config, temperature_range_low, temperature_range_high)) return;
+    if (!get_temperature_range(config, temperature_range_low, temperature_range_high, variant_index)) return;
 
     if (config->has("nozzle_temperature_initial_layer")) {
-        if (config->opt_int("nozzle_temperature_initial_layer", 0) < temperature_range_low ||
-            config->opt_int("nozzle_temperature_initial_layer", 0) > temperature_range_high)
+        if (config->opt_int("nozzle_temperature_initial_layer", variant_index) < temperature_range_low ||
+            config->opt_int("nozzle_temperature_initial_layer", variant_index) > temperature_range_high)
         {
             wxString msg_text = _(L("The nozzle may become clogged when the temperature is out of the recommended range.\nPlease make sure whether to use this temperature to print.\n\n"));
             msg_text += wxString::Format(_L("The recommended nozzle temperature for this filament type is [%d, %d] degrees Celsius."), temperature_range_low, temperature_range_high);
@@ -210,6 +210,30 @@ void ConfigManipulation::check_filament_max_volumetric_speed(DynamicPrintConfig 
         is_msg_dlg_already_exist = false;
     }
 
+}
+
+void ConfigManipulation::check_filament_ironing_spacing(DynamicPrintConfig *config)
+{
+    const auto *opt = config->option<ConfigOptionFloatsNullable>("filament_ironing_spacing");
+    if (opt == nullptr)
+        return;
+    std::vector<double> values = opt->values;
+    bool                reset  = false;
+    for (size_t i = 0; i < values.size(); ++i)
+        if (!opt->is_nil(i) && values[i] < IRONING_SPACING_MIN) {
+            values[i] = 0.1;
+            reset     = true;
+        }
+    if (!reset)
+        return;
+    const wxString     msg_text = _(L("Ironing spacing too small\nIt has been reset to 0.1"));
+    MessageDialog      dialog(nullptr, msg_text, "", wxICON_WARNING | wxOK);
+    DynamicPrintConfig new_conf = *config;
+    is_msg_dlg_already_exist    = true;
+    dialog.ShowModal();
+    new_conf.set_key_value("filament_ironing_spacing", new ConfigOptionFloatsNullable(values));
+    apply(config, &new_conf);
+    is_msg_dlg_already_exist = false;
 }
 
 void ConfigManipulation::check_chamber_temperature(DynamicPrintConfig* config)
@@ -334,7 +358,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
     }
 
     //BBS: ironing_spacing shouldn't be too small or equal to zero
-    if (config->opt_float("ironing_spacing") < 0.05)
+    if (config->opt_float("ironing_spacing") < IRONING_SPACING_MIN)
     {
         const wxString msg_text = _(L("Ironing spacing too small\nIt has been reset to 0.1"));
         MessageDialog dialog(nullptr, msg_text, "", wxICON_WARNING | wxOK);
@@ -345,7 +369,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
     }
-    if (config->opt_float("support_ironing_spacing") < 0.05)
+    if (config->opt_float("support_ironing_spacing") < IRONING_SPACING_MIN)
     {
         const wxString msg_text = _(L("Ironing spacing too small\nIt has been reset to 0.1"));
         MessageDialog dialog(nullptr, msg_text, "", wxICON_WARNING | wxOK);
@@ -428,8 +452,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
            ! config->opt_bool("detect_thin_wall") &&
            ! config->opt_bool("overhang_reverse") &&
             config->opt_enum<TimelapseType>("timelapse_type") == TimelapseType::tlTraditional &&
-            !config->opt_bool("enable_wrapping_detection") && 
-		    !config->opt_bool("staggered_perimeters")))
+            !config->opt_bool("enable_wrapping_detection")))
     {
         DynamicPrintConfig new_conf = *config;
         auto answer = show_spiral_mode_settings_dialog(is_object_config);
@@ -444,37 +467,12 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
             new_conf.set_key_value("overhang_reverse", new ConfigOptionBool(false));
             new_conf.set_key_value("timelapse_type", new ConfigOptionEnum<TimelapseType>(tlTraditional));
             new_conf.set_key_value("enable_wrapping_detection", new ConfigOptionBool(false));
-            new_conf.set_key_value("staggered_perimeters", new ConfigOptionBool(false));
             sparse_infill_density = 0;
             timelapse_type = TimelapseType::tlTraditional;
             support = false;
         }
         else {
             new_conf.set_key_value("spiral_mode", new ConfigOptionBool(false));
-        }
-        apply(config, &new_conf);
-        is_msg_dlg_already_exist = false;
-    }
-
-    bool have_arachne = config->opt_enum<PerimeterGeneratorType>("wall_generator") == PerimeterGeneratorType::Arachne;
-	if (!is_plate_config &&
-        config->opt_bool("staggered_perimeters") &&
-        (abs(config->opt_float("initial_layer_print_height") - config->opt_float("layer_height")) > EPSILON  ||
-        !(*config->option<ConfigOptionFloatOrPercent>("top_surface_line_width") == *config->option<ConfigOptionFloatOrPercent>("outer_wall_line_width")) ||
-            !have_arachne ||
-            config->opt_bool("spiral_mode")))
-    {
-        DynamicPrintConfig new_conf = *config;
-        auto answer = show_staggered_perimeter_settings_dialog();
-        bool support = true;
-        if (answer == wxID_YES) {
-            new_conf.set_key_value("initial_layer_print_height", config->option<ConfigOptionFloat>("layer_height")->clone());
-            new_conf.set_key_value("top_surface_line_width", config->option<ConfigOptionFloatOrPercent>("outer_wall_line_width")->clone() );
-            new_conf.set_key_value("wall_generator", new ConfigOptionEnum<PerimeterGeneratorType>(PerimeterGeneratorType::Arachne));
-            new_conf.set_key_value("spiral_mode", new ConfigOptionBool(false));
-        }
-        else {
-            new_conf.set_key_value("staggered_perimeters", new ConfigOptionBool(false));
         }
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
@@ -694,8 +692,8 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
     }
-
-    // bool have_arachne = config->opt_enum<PerimeterGeneratorType>("wall_generator") == PerimeterGeneratorType::Arachne;
+    
+    bool have_arachne = config->opt_enum<PerimeterGeneratorType>("wall_generator") == PerimeterGeneratorType::Arachne;
     if (config->opt_enum<FuzzySkinMode>("fuzzy_skin_mode") != FuzzySkinMode::Displacement && !have_arachne) {
         wxString msg_text = _(L("Both [Extrusion] and [Combined] modes of Fuzzy Skin require the Arachne Wall Generator to be enabled."));
         msg_text += "\n\n" + _(L("Change these settings automatically?\n"
@@ -707,7 +705,7 @@ void ConfigManipulation::update_print_fff_config(DynamicPrintConfig* config, con
         auto answer = dialog.ShowModal();
         if (answer == wxID_YES)
             new_conf.set_key_value("wall_generator", new ConfigOptionEnum<PerimeterGeneratorType>(PerimeterGeneratorType::Arachne));
-        else
+        else 
             new_conf.set_key_value("fuzzy_skin_mode", new ConfigOptionEnum<FuzzySkinMode>(FuzzySkinMode::Displacement));
         apply(config, &new_conf);
         is_msg_dlg_already_exist = false;
@@ -767,11 +765,6 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     for (auto el : { "inner_wall_speed", "outer_wall_speed", "small_perimeter_speed", "small_perimeter_threshold" })
         toggle_field(el, have_perimeters, variant_index);
 
-    WallSequence _wall_sequence = config->option<ConfigOptionEnum<WallSequence>>("wall_sequence")->value;
-    static WallSequence _wall_sequence_trig = WallSequence::Count;
-    for (auto el : {"even_loops_flow_ratio", "even_loops_speed", "loop_sequence", "outermost_wall_control"})
-        toggle_line(el, _wall_sequence == WallSequence::OddEven);
-
     bool have_infill = config->option<ConfigOptionPercent>("sparse_infill_density")->value > 0;
     // sparse_infill_filament_id uses the same logic as in Print::extruders()
     for (auto el : { "sparse_infill_pattern", "infill_combination", "fill_multiline","infill_direction",
@@ -821,7 +814,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     bool is_locked_zig = config->option<ConfigOptionEnum<InfillPattern>>("sparse_infill_pattern")->value == InfillPattern::ipLockedZag;
 
     toggle_line("infill_shift_step", is_cross_zag || is_locked_zig);
-
+    
     for (auto el : { "skeleton_infill_density", "skin_infill_density", "infill_lock_depth", "skin_infill_depth","skin_infill_line_width", "skeleton_infill_line_width" })
         toggle_line(el, is_locked_zig);
 
@@ -1103,7 +1096,6 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
 
     bool have_avoid_crossing_perimeters = config->opt_bool("reduce_crossing_wall");
     toggle_line("max_travel_detour_distance", have_avoid_crossing_perimeters);
-    toggle_line("staggered_perimeter_flow_ratio", config->opt_bool("staggered_perimeters"));
 
     bool has_set_other_flow_ratios = config->opt_bool("set_other_flow_ratios");
     for (auto el : {"first_layer_flow_ratio", "outer_wall_flow_ratio", "inner_wall_flow_ratio", "overhang_flow_ratio", "sparse_infill_flow_ratio", "internal_solid_infill_flow_ratio", "gap_fill_flow_ratio", "support_flow_ratio", "support_interface_flow_ratio"})
@@ -1229,67 +1221,6 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
 
     std::string printer_type = wxGetApp().preset_bundle->printers.get_edited_preset().get_printer_type(wxGetApp().preset_bundle);
     toggle_line("enable_wrapping_detection", DevPrinterConfigUtil::support_wrapping_detection(printer_type));
-
-
-    // Orca: wave-overhangs conditional visibility.
-    // - Master toggle off → hide every wave_overhang_* tunable (only master stays).
-    const bool wo_enabled = config->opt_bool("wave_overhangs");
-
-    for (const std::string &k : {
-        std::string("wave_overhangs_instead_of_bridges"),
-        std::string("wave_overhang_outer_perimeters"),
-        std::string("wave_overhang_flow_mm3_per_mm"),
-        std::string("wave_overhang_end_retract_length"),
-        std::string("wave_overhang_print_speed"),
-        std::string("wave_overhang_perimeter_speed"),
-        std::string("wave_overhang_travel_speed"),
-        std::string("wave_overhang_fan_speed"),
-        std::string("wave_overhang_aux_fan_speed"),
-        std::string("wave_overhang_nozzle_temp"),
-        std::string("wave_overhang_min_wave_time"),
-        std::string("wave_overhang_min_layer_time"),
-        std::string("wave_overhang_floor_layers"),
-        std::string("wave_overhang_floor_perimeter_speed"),
-        std::string("wave_overhang_floor_speed_ramp"),
-        std::string("wave_overhang_floor_use_hilbert"),
-        std::string("wave_overhang_min_angle"),
-        std::string("wave_overhang_min_length"),
-        std::string("wave_overhang_max_iterations"),
-        std::string("wave_overhang_seam_mode"),
-        std::string("wave_overhang_debug_gcode"),
-        std::string("support_remaining_areas_after_wave_overhangs"),
-        std::string("wave_overhang_pattern"),
-        std::string("wave_overhang_perimeter_overlap"),
-        std::string("wave_overhang_minimum_width"),
-        std::string("wave_overhang_line_spacing"),
-        std::string("wave_overhang_spacing_mode"),
-        std::string("wave_overhang_min_new_area"),
-        std::string("wave_overhang_corner_taper_enable"),
-    })
-        toggle_line(k, wo_enabled);
-
-    // Orca: corner-reinforcement sub-options. Master toggle reveals the three
-    // tunables, same shape as the Hilbert-floor section below.
-    const bool wo_corner_taper = wo_enabled
-        && config->opt_bool("wave_overhang_corner_taper_enable");
-    for (const std::string &k : {
-        std::string("wave_overhang_line_spacing_corner"),
-        std::string("wave_overhang_corner_taper_distance"),
-        std::string("wave_overhang_corner_angle_threshold"),
-    })
-        toggle_line(k, wo_corner_taper);
-
-    // Orca: wave-overhang Hilbert floor sub-options. Only meaningful when the
-    // master Hilbert toggle is on AND wave overhangs themselves are enabled.
-    const bool wo_floor_hilbert = wo_enabled && config->opt_bool("wave_overhang_floor_use_hilbert");
-    for (const std::string &k : {
-        std::string("wave_overhang_floor_hilbert_layers"),
-        std::string("wave_overhang_floor_hilbert_density"),
-        std::string("wave_overhang_floor_print_speed"),
-        std::string("wave_overhang_floor_fan_speed"),
-        std::string("wave_overhang_floor_aux_fan_speed"),
-    })
-        toggle_line(k, wo_floor_hilbert);
 }
 
 void ConfigManipulation::update_print_sla_config(DynamicPrintConfig* config, const bool is_global_config/* = false*/)
@@ -1391,12 +1322,12 @@ int ConfigManipulation::show_spiral_mode_settings_dialog(bool is_object_config)
 int ConfigManipulation::show_staggered_perimeter_settings_dialog()
 {
     wxString msg_text = _(L("Staggered perimeters is an experimental feature and only works when the First layer height is the same as Layer height, Top surface line width is the same as Outer wall line width and only for Arachne"));
-			msg_text += "\n\n" + _(L("Change these settings automatically? \n"
-				"Yes - Change these settings and enable staggered perimeters\n"
-				"No  - Give up using staggered perimeters this time"));
+    msg_text += "\n\n" + _(L("Change these settings automatically? \n"
+        "Yes - Change these settings and enable staggered perimeters\n"
+        "No  - Give up using staggered perimeters this time"));
 
     MessageDialog dialog(m_msg_dlg_parent, msg_text, "",
-        wxICON_WARNING |  wxYES | wxNO );
+        wxICON_WARNING | wxYES | wxNO);
 
     is_msg_dlg_already_exist = true;
     auto answer = dialog.ShowModal();
@@ -1404,15 +1335,15 @@ int ConfigManipulation::show_staggered_perimeter_settings_dialog()
     return answer;
 }
 
-bool ConfigManipulation::get_temperature_range(DynamicPrintConfig *config, int &range_low, int &range_high)
+bool ConfigManipulation::get_temperature_range(DynamicPrintConfig *config, int &range_low, int &range_high, unsigned int variant_index)
 {
     bool range_low_exist = false, range_high_exist = false;
     if (config->has("nozzle_temperature_range_low")) {
-        range_low       = config->opt_int("nozzle_temperature_range_low", (unsigned int) 0);
+        range_low       = config->opt_int("nozzle_temperature_range_low", variant_index);
         range_low_exist       = true;
     }
     if (config->has("nozzle_temperature_range_high")) {
-        range_high       = config->opt_int("nozzle_temperature_range_high", (unsigned int) 0);
+        range_high       = config->opt_int("nozzle_temperature_range_high", variant_index);
         range_high_exist       = true;
     }
     return range_low_exist && range_high_exist;
