@@ -1,4 +1,68 @@
 #include "libslic3r/libslic3r.h"
+#include "libslic3r/Point.hpp"
+#include <string>
+#include <sstream>
+#include <iomanip>
+#include <imgui.h>
+#include <wx/event.h>
+#include "slic3r/GUI/Event.hpp"
+#include <vector>
+#include <utility>
+#include "libslic3r/Slicing.hpp"
+#include "slic3r/GUI/Gizmos/GLGizmosManager.hpp"
+#include <cstddef>
+#include <array>
+#include <cassert>
+#include <climits>
+#include "libslic3r/BoundingBox.hpp"
+#include <chrono>
+#include "libslic3r/Polygon.hpp"
+#include "libslic3r/LocalesUtils.hpp"
+#include "libslic3r/Config.hpp"
+#include <wx/timer.h>
+#include "slic3r/GUI/IMSlider.hpp"
+#include "libslic3r/Preset.hpp"
+#include "libslic3r/Model.hpp"
+#include <memory>
+#include "slic3r/GUI/SceneRaycaster.hpp"
+#include "slic3r/GUI/Camera.hpp"
+#include "slic3r/GUI/GCodeViewer.hpp"
+#include <optional>
+#include <map>
+#include "slic3r/GUI/GUI_Geometry.hpp"
+#include "libslic3r/PrintBase.hpp"
+#include <tuple>
+#include "libslic3r/SLA/SupportPoint.hpp"
+#include "slic3r/GUI/MeshUtils.hpp"
+#include "libslic3r/GCode/WipeTowerEstimate.hpp"
+#include "slic3r/GUI/Gizmos/GLGizmoBase.hpp"
+#include <wx/window.h>
+#include "slic3r/GUI/GLTexture.hpp"
+#include <ratio>
+#include <wx/string.h>
+#include "slic3r/GUI/GLToolbar.hpp"
+#include <math.h>
+#include <Eigen/Core>
+#include <iterator>
+#include <wx/app.h>
+#include <cstdlib>
+#include <wx/setup.h>
+#include "libslic3r/Line.hpp"
+#include "libslic3r/Format/bbs_3mf.hpp"
+#include "libslic3r/LifecycleEvents.hpp"
+#include "slic3r/GUI/GUI_ObjectLayers.hpp"
+#include "libslic3r/GCode/WipeTower.hpp"
+#include "libslic3r/Geometry.hpp"
+#include <wx/gdicmn.h>
+#include "slic3r/GUI/Jobs/Job.hpp"
+#include <cstring>
+#include "libslic3r/Color.hpp"
+#include <boost/container_hash/hash.hpp>
+#include <cstdint>
+#include <functional>
+#include <wx/colour.h>
+#include <string_view>
+#include "slic3r/GUI/Selection.hpp"
 #include "GLCanvas3D.hpp"
 #ifdef SLIC3R_CAD
 #include "slic3r/GUI/CAD/DesignSketchTool.hpp"   // Design tab: interactive 2D sketch tool
@@ -1260,8 +1324,11 @@ GLCanvas3D::~GLCanvas3D()
             m_shadow_map_fbo = 0;
         }
         m_plate_shadow_mask.reset();
+        m_section_view_caps.clear();
     }
     m_plate_shadow_mask_key.clear();
+    if (m_section_view->owner == this)
+        m_section_view->owner = nullptr;
 
     reset_volumes();
 
@@ -1410,6 +1477,7 @@ void GLCanvas3D::reset_volumes()
 
     m_selection.clear();
     m_volumes.clear();
+    m_section_view_caps.clear();
     m_dirty = true;
 
     _set_warning_notification(EWarning::ObjectOutside, false);
@@ -1558,6 +1626,42 @@ ModelInstanceEPrintVolumeState GLCanvas3D::check_volumes_outside_state(ObjectFil
     construct_error_string(*object_results, get_object_clashed_text());
     construct_extruder_unprintable_error(*object_results, get_left_extruder_unprintable_text(), get_right_extruder_unprintable_text());
     return state;
+}
+
+void GLCanvas3D::set_section_view_ratio(double ratio)
+{
+    ratio = std::clamp(ratio, 0., 1.);
+    if (ratio == m_section_view->ratio)
+        return;
+
+    if (ratio == 0.)
+        m_section_view->last_ratio = m_section_view->ratio;
+    m_section_view->ratio = ratio;
+    // Only the first cut faces the camera; later ones keep their angle until it is set again.
+    if (m_section_view->normal.isZero())
+        align_section_view_to_camera();
+    else
+        _on_section_view_changed();
+}
+
+void GLCanvas3D::toggle_section_view()
+{
+    const double last_ratio = m_section_view->last_ratio;
+    set_section_view_ratio(is_section_view_active() ? 0. : last_ratio > 0. ? last_ratio : 0.5);
+}
+
+void GLCanvas3D::align_section_view_to_camera()
+{
+    m_section_view->normal = -wxGetApp().plater()->get_camera().get_dir_forward();
+    _on_section_view_changed();
+}
+
+void GLCanvas3D::_on_section_view_changed()
+{
+    m_gizmos.update_section_view();
+    // Set from the overlay, after this frame's scene was drawn.
+    set_as_dirty();
+    request_extra_frame();
 }
 
 void GLCanvas3D::toggle_world_axes_visibility(bool force_show)
@@ -2275,6 +2379,8 @@ void GLCanvas3D::_render_scene(const Camera& camera, const Size& cnv_size)
     }
     /* preview render */
     else if (m_canvas_type == ECanvasType::CanvasPreview && m_render_preview) {
+        // Before the shadow pass, so the cut away part casts no shadow.
+        m_gcode_viewer.set_clipping_plane(_get_section_view_plane());
         _render_objects(GLVolumeCollection::ERenderType::Opaque, !m_gizmos.is_running());
         _render_sla_slices();
         _render_selection();
@@ -3057,7 +3163,6 @@ void GLCanvas3D::reload_scene(bool refresh_immediately, bool force_full_scene_re
     m_scene_raycaster.remove_raycasters(SceneRaycaster::EType::Bed);
     m_scene_raycaster.remove_raycasters(SceneRaycaster::EType::Volume);
     m_gizmos.update_data();
-    m_gizmos.update_assemble_view_data();
     m_gizmos.refresh_on_off_state();
 
     // Update the toolbar
@@ -3773,12 +3878,18 @@ void GLCanvas3D::on_key(wxKeyEvent& evt)
         m_key_down = { keyCode, key_repeats(keyCode) };
     else if (evt.GetEventType() == wxEVT_KEY_UP)
         key_released(keyCode);
+    const bool alt_wheel_released = evt.GetEventType() == wxEVT_KEY_UP && keyCode == WXK_ALT && std::exchange(m_alt_wheel_used, false);
 
     auto imgui = wxGetApp().imgui();
     if (imgui->update_key_data(evt))
         render();
     else
     {
+        // Before the gizmos and the selection, which Esc also closes.
+        if (evt.GetEventType() == wxEVT_KEY_DOWN && keyCode == WXK_ESCAPE && std::exchange(m_section_view->panel_open, false)) {
+            _set_overlay_as_dirty();
+            return;
+        }
         if (!m_gizmos.on_key(evt)) {
             if (evt.GetEventType() == wxEVT_KEY_UP) {
                 if (evt.ShiftDown() && evt.ControlDown() && keyCode == WXK_SPACE) {
@@ -3847,7 +3958,8 @@ void GLCanvas3D::on_key(wxKeyEvent& evt)
         && keyCode != WXK_LEFT
         && keyCode != WXK_UP
         && keyCode != WXK_RIGHT
-        && keyCode != WXK_DOWN) {
+        && keyCode != WXK_DOWN
+        && !alt_wheel_released) {
         evt.Skip();   // Needed to have EVT_CHAR generated as well
     }
 }
@@ -3866,6 +3978,8 @@ void GLCanvas3D::on_mouse_wheel(wxMouseEvent& evt)
     // Ignore the wheel events if the middle button is pressed.
     if (evt.MiddleIsDown())
         return;
+
+    m_alt_wheel_used |= evt.AltDown();
 
 #if ENABLE_RETINA_GL
     const float scale = m_retina_helper->get_scale_factor();
@@ -3912,25 +4026,21 @@ void GLCanvas3D::on_mouse_wheel(wxMouseEvent& evt)
     if (m_gizmos.on_mouse_wheel(evt))
         return;
 
-    if (m_canvas_type == CanvasAssembleView && (evt.AltDown() || evt.CmdDown()) && m_gizmos.m_assemble_view_data != nullptr) {
+    if (evt.AltDown()) {
+        set_section_view_ratio(get_section_view_ratio() + (evt.GetWheelRotation() < 0 ? -0.01 : 0.01));
+        return;
+    }
+
+    if (m_canvas_type == CanvasAssembleView && evt.CmdDown()) {
         float rotation = (float)evt.GetWheelRotation() / (float)evt.GetWheelDelta();
-        if (evt.AltDown()) {
-            auto clp_dist = m_gizmos.m_assemble_view_data->model_objects_clipper()->get_position();
-            clp_dist = rotation < 0.f
-                ? std::max(0., clp_dist - 0.01)
-                : std::min(1., clp_dist + 0.01);
-            m_gizmos.m_assemble_view_data->model_objects_clipper()->set_position(clp_dist, true);
-        }
-        else if (evt.CmdDown()) {
-            m_explosion_ratio = rotation < 0.f
-                ? std::max(1., m_explosion_ratio - 0.01)
-                : std::min(3., m_explosion_ratio + 0.01);
-            if (m_explosion_ratio != GLVolume::explosion_ratio) {
-                for (GLVolume* volume : m_volumes.volumes) {
-                    volume->set_bounding_boxes_as_dirty();
-                }
-                GLVolume::explosion_ratio = m_explosion_ratio;
+        m_explosion_ratio = rotation < 0.f
+            ? std::max(1., m_explosion_ratio - 0.01)
+            : std::min(3., m_explosion_ratio + 0.01);
+        if (m_explosion_ratio != GLVolume::explosion_ratio) {
+            for (GLVolume* volume : m_volumes.volumes) {
+                volume->set_bounding_boxes_as_dirty();
             }
+            GLVolume::explosion_ratio = m_explosion_ratio;
         }
         return;
     }
@@ -8492,7 +8602,7 @@ void GLCanvas3D::_render_objects(GLVolumeCollection::ERenderType type, bool with
 
     glsafe(::glEnable(GL_DEPTH_TEST));
 
-    m_camera_clipping_plane = m_gizmos.get_clipping_plane();
+    m_camera_clipping_plane = _get_volumes_clipping_plane();
 
     if (m_picking_enabled)
         // Update the layer editing selection to the first object selected, update the current object maximum Z.
@@ -8535,10 +8645,7 @@ void GLCanvas3D::_render_objects(GLVolumeCollection::ERenderType type, bool with
 
     GLGizmosManager& gm = get_gizmos_manager();
     GLGizmoBase* current_gizmo = gm.get_current();
-    if (m_canvas_type == CanvasAssembleView) {
-        m_volumes.set_clipping_plane(m_gizmos.get_assemble_view_clipping_plane().get_data());
-    }
-    else if (current_gizmo && !current_gizmo->apply_clipping_plane()) {
+    if (current_gizmo && !current_gizmo->apply_clipping_plane()) {
         m_volumes.set_clipping_plane(ClippingPlane::ClipsNothing().get_data());
     }
     else {
@@ -8647,6 +8754,7 @@ void GLCanvas3D::_render_objects(GLVolumeCollection::ERenderType type, bool with
                 }
             }
 
+            _render_section_view_caps();
             break;
         }
         case GLVolumeCollection::ERenderType::Transparent:
@@ -8668,12 +8776,6 @@ void GLCanvas3D::_render_objects(GLVolumeCollection::ERenderType type, bool with
                 }
                 },
                 partly_inside_enable, printable_heights);
-            if (m_canvas_type == CanvasAssembleView && m_gizmos.m_assemble_view_data->model_objects_clipper()->get_position() > 0) {
-                const GLGizmosManager& gm = get_gizmos_manager();
-                shader->stop_using();
-                gm.render_painter_assemble_view();
-                shader->start_using();
-            }
             break;
         }
         }
@@ -8692,6 +8794,42 @@ void GLCanvas3D::_render_objects(GLVolumeCollection::ERenderType type, bool with
     }
 
     m_camera_clipping_plane = ClippingPlane::ClipsNothing();
+}
+
+void GLCanvas3D::_render_section_view_caps()
+{
+    // A gizmo with its own clipper draws its own cut faces.
+    const ClippingPlane plane = m_gizmos.get_clipping_plane().has_value() ? ClippingPlane::ClipsNothing() : _get_section_view_plane();
+    if (!plane.is_active() || m_model == nullptr) {
+        m_section_view_caps.clear();
+        return;
+    }
+
+    // Last frame's clippers are reused, so unchanged cuts are not recomputed.
+    std::map<const GLVolume*, MeshClipper> caps;
+    for (const GLVolume* volume : m_volumes.volumes) {
+        if (!volume->is_active || volume->is_modifier || volume->is_wipe_tower || volume->volume_idx() < 0 ||
+            volume->object_idx() >= int(m_model->objects.size()))
+            continue;
+        const ModelObject* object = m_model->objects[volume->object_idx()];
+        if (volume->volume_idx() >= int(object->volumes.size()))
+            continue;
+        // Skip volumes the plane misses.
+        const BoundingBoxf3& box = volume->transformed_bounding_box();
+        if (std::abs(plane.distance(box.center())) > 0.5 * box.size().dot(plane.get_normal().cwiseAbs()))
+            continue;
+
+        auto node = m_section_view_caps.extract(volume);
+        MeshClipper& clipper = node ? caps.insert(std::move(node)).position->second : caps[volume];
+        clipper.set_mesh(object->volumes[volume->volume_idx()]->mesh().its);
+        clipper.set_plane(plane);
+        clipper.set_transformation(Geometry::Transformation(volume->world_matrix()));
+        // No cut face below the plate.
+        if (m_canvas_type != CanvasAssembleView)
+            clipper.set_limiting_plane(ClippingPlane(Vec3d::UnitZ(), -SINKING_Z_THRESHOLD));
+        clipper.render_cut({ 0.25f, 0.25f, 0.25f, 1.0f });
+    }
+    m_section_view_caps = std::move(caps);
 }
 
 bool GLCanvas3D::_is_xray_view_active() const
@@ -9782,7 +9920,31 @@ void GLCanvas3D::_render_canvas_toolbar()
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding  , padding); // without padding images clipping
 
     imgui.begin(_L("Canvas Toolbar"), ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove |
-                                           ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse);//
+                                           ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse);//
+
+    // Section view, on top so its panel opens above the toolbar.
+    const bool  section_view = is_section_view_active();
+    ImTextureID s_normal_id  = m_gizmos.get_icon_texture_id(section_view ?
+        (m_is_dark ? GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_ACTIVE_DARK : GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_ACTIVE) :
+        (m_is_dark ? GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_DARK        : GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION));
+    ImTextureID s_hover_id   = m_gizmos.get_icon_texture_id(section_view ?
+        (m_is_dark ? GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_ACTIVE_DARK_HOVER : GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_ACTIVE_HOVER) :
+        (m_is_dark ? GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_DARK_HOVER        : GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_SECTION_HOVER));
+
+    if (ImGui::ImageButton3(s_normal_id, s_hover_id, btn_size))
+        m_section_view->panel_open = !m_section_view->panel_open;
+    else if (ImGui::IsItemHovered()) {
+        if (const float wheel = ImGui::GetIO().MouseWheel; wheel != 0.f)
+            set_section_view_ratio(get_section_view_ratio() + (wheel < 0.f ? -0.01 : 0.01));
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+            toggle_section_view();
+        else if (ImGui::IsMouseClicked(ImGuiMouseButton_Middle))
+            align_section_view_to_camera();
+        imgui.tooltip(_L("Section view"), ImGui::GetFontSize() * 20.0f);
+    }
+    const ImVec2 section_panel_pos = ImGui::GetItemRectMin() - ImVec2(0.f, spacing.y);
+
+    ImGui::Dummy({ 0, spacing.y});
 
     ImTextureID m_normal_id = m_gizmos.get_icon_texture_id(m_is_dark ? GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_MENU_DARK       : GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_MENU);
     ImTextureID m_hover_id  = m_gizmos.get_icon_texture_id(m_is_dark ? GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_MENU_DARK_HOVER : GLGizmosManager::MENU_ICON_NAME::IC_CANVAS_MENU_HOVER);
@@ -9948,6 +10110,76 @@ void GLCanvas3D::_render_canvas_toolbar()
     ImGui::PopStyleVar(6);
 
     imgui.end();
+
+    _render_section_view_panel(section_panel_pos);
+}
+
+void GLCanvas3D::_render_section_view_panel(const ImVec2& bottom_left)
+{
+    if (!m_section_view->panel_open)
+        return;
+
+    ImGuiWrapper& imgui = *wxGetApp().imgui();
+    const float   sc    = get_scale();
+
+    ImGuiWrapper::push_toolbar_style(sc);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, m_is_dark ? ImGuiWrapper::COL_TOOLBAR_BG_DARK : ImGuiWrapper::COL_TOOLBAR_BG);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.f * sc);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12.f, 8.f) * sc);
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.f, 4.f) * sc);
+
+    ImGui::SetNextWindowPos(bottom_left, ImGuiCond_Always, ImVec2(0.f, 1.f));
+    imgui.begin(std::string("##CanvasSectionView"), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                                                   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+
+    const wxString alt = GUI::shortkey_alt_prefix();
+    const std::vector<std::pair<wxString, wxString>> tips = {
+        { alt + _L("Mouse wheel"),    _L("Move section plane") },
+        { _L("Mouse wheel on icon"),  _L("Move section plane") },
+        { _L("Right click on icon"),  _L("Toggle section view") },
+        { _L("Middle click on icon"), _L("Set viewing angle") },
+    };
+    // render_tooltip_button() puts the tips below y plus the panel height; they go above the panel.
+    const ImGuiStyle& style  = ImGui::GetStyle();
+    const float       tips_h = tips.size() * (ImGui::GetTextLineHeight() + style.ItemSpacing.y) - style.ItemSpacing.y + 2.f * style.WindowPadding.y;
+    GLGizmoUtils::render_tooltip_button(&imgui, *this, tips, ImGui::GetWindowPos().x,
+        ImGui::GetWindowPos().y - style.ItemSpacing.y - tips_h - ImGui::GetContentRegionMax().y - ImGui::GetFrameHeight());
+
+    ImGui::SameLine();
+    ImGui::AlignTextToFramePadding();
+    imgui.text(_L("Section view"));
+
+    float ratio = float(get_section_view_ratio());
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(imgui.scaled(7.f));
+    bool changed = imgui.bbl_slider_float_style("##section_view", &ratio, 0.f, 1.f, "%.2f", 1.0f, true);
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(1.5f * imgui.get_slider_icon_size().x);
+    changed |= ImGui::BBLDragFloat("##section_view_input", &ratio, 0.05f, 0.0f, 0.0f, "%.2f");
+    if (changed)
+        set_section_view_ratio(ratio);
+
+    ImGui::SameLine();
+    if (imgui.button(_L("Set viewing angle")))
+        align_section_view_to_camera();
+
+    imgui.disabled_begin(!is_section_view_active());
+    ImGui::SameLine();
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.f, 0.f, 0.f, 0.f));
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.f);
+    if (imgui.button(wxString(ImGui::RevertBtn) + "##section_view_reset", _L("Reset")))
+        set_section_view_ratio(0.);
+    ImGui::PopStyleVar();
+    ImGui::PopStyleColor(3);
+    imgui.disabled_end();
+
+    imgui.end();
+
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor();
+    ImGuiWrapper::pop_toolbar_style();
 }
 
 void GLCanvas3D::_render_separator_toolbar_right() const
@@ -10195,17 +10427,12 @@ float GLCanvas3D::_render_assembly_tooltip_button(ImGuiWrapper* imgui_wrapper) c
 //BBS
 void GLCanvas3D::_render_assemble_control()
 {
-    if(m_gizmos.m_assemble_view_data == nullptr)
-        return;
-
     if (m_canvas_type != ECanvasType::CanvasAssembleView) {
         GLVolume::explosion_ratio = m_explosion_ratio = 1.0;
         return;
     }
-    if (m_gizmos.get_current_type() == GLGizmosManager::EType::MmSegmentation) {
-        m_gizmos.m_assemble_view_data->model_objects_clipper()->set_position(0.0, true);
+    if (m_gizmos.get_current_type() == GLGizmosManager::EType::MmSegmentation)
         return;
-    }
 
     ImGuiWrapper* imgui = wxGetApp().imgui();
 
@@ -10215,8 +10442,6 @@ void GLCanvas3D::_render_assemble_control()
     auto canvas_h = float(get_canvas_size().get_height());
 
     const float text_padding = 7.0f;
-    const float text_size_x = std::max(imgui->calc_text_size(_L("Reset direction")).x + 2 * ImGui::GetStyle().FramePadding.x,
-        std::max(imgui->calc_text_size(_L("Explosion Ratio")).x, imgui->calc_text_size(_L("Section View")).x));
     const float slider_width = 60.0f;
     const float value_size = imgui->calc_text_size("3.00"sv).x + text_padding * 2;
     const float item_spacing = imgui->get_item_spacing().x;
@@ -10231,34 +10456,6 @@ void GLCanvas3D::_render_assemble_control()
         tooltip_button_width = _render_assembly_tooltip_button(imgui);
     }
     float same_line_width = tooltip_button_width;
-    {
-        float clp_dist = m_gizmos.m_assemble_view_data->model_objects_clipper()->get_position();
-        if (clp_dist == 0.f) {
-            ImGui::AlignTextToFramePadding();
-            imgui->text(_L("Section View"));
-        }
-        else {
-            if (imgui->button(_L("Reset direction"))) {
-                wxGetApp().CallAfter([this]() {
-                    m_gizmos.m_assemble_view_data->model_objects_clipper()->set_position(-1., false);
-                    });
-            }
-        }
-        same_line_width += (text_size_x + item_spacing);
-        ImGui::SameLine(same_line_width);
-        ImGui::PushItemWidth(slider_width);
-        bool view_slider_changed = imgui->bbl_slider_float_style("##clp_dist", &clp_dist, 0.f, 1.f, "%.2f", 1.0f, true);
-
-        same_line_width += (slider_width + item_spacing);
-        ImGui::SameLine(same_line_width);
-        ImGui::PushItemWidth(value_size);
-        bool view_input_changed = ImGui::BBLDragFloat("##clp_dist_input", &clp_dist, 0.05f, 0.0f, 0.0f, "%.2f");
-
-        if (view_slider_changed || view_input_changed)
-            m_gizmos.m_assemble_view_data->model_objects_clipper()->set_position(clp_dist, true);
-
-        same_line_width += (value_size + item_spacing * 2);
-    }
     {
         auto temp_x = imgui->calc_text_size(_L("Explosion Ratio")).x;
         ImGui::SameLine(same_line_width);
@@ -10682,12 +10879,42 @@ Vec3d GLCanvas3D::_mouse_to_bed_3d(const Point& mouse_pos)
     return mouse_ray(mouse_pos).intersect_plane(0.0);
 }
 
+ClippingPlane GLCanvas3D::_get_section_view_plane() const
+{
+    const SectionView& section_view = *m_section_view;
+    if (section_view.ratio == 0.)
+        return ClippingPlane::ClipsNothing();
+
+    // The owner's objects, so Preview cuts where Prepare does.
+    const GLCanvas3D& owner = section_view.owner != nullptr ? *section_view.owner : *this;
+    BoundingBoxf3 box = owner.volumes_bounding_box(true);
+    if (!box.defined)
+        box = owner.volumes_bounding_box();
+    // G-code without objects: its toolpaths, merged by corner as a flat box is undefined.
+    if (!box.defined && m_gcode_viewer.has_data()) {
+        box.merge(m_gcode_viewer.get_paths_bounding_box().min);
+        box.merge(m_gcode_viewer.get_paths_bounding_box().max);
+    }
+    if (!box.defined)
+        return ClippingPlane::ClipsNothing();
+
+    // Sweeps the bounding sphere from the camera side (0) to the far side (1), as ObjectClipper does.
+    const double radius = box.radius();
+    return ClippingPlane(section_view.normal, section_view.normal.dot(box.center()) + radius - 2. * radius * section_view.ratio);
+}
+
+ClippingPlane GLCanvas3D::_get_volumes_clipping_plane() const
+{
+    const std::optional<ClippingPlane> gizmo_plane = m_gizmos.get_clipping_plane();
+    return gizmo_plane.has_value() ? *gizmo_plane : _get_section_view_plane().inverted_normal();
+}
+
 ClippingPlane GLCanvas3D::get_raycaster_clipping_plane() const
 {
     // Orca: Ignore the gizmo clipping plane when the active tool does not apply it, and
     // invert the result into the convention expected by SceneRaycaster.
     GLGizmoBase* current_gizmo = m_gizmos.get_current();
-    return ((!current_gizmo || current_gizmo->apply_clipping_plane()) ? m_gizmos.get_clipping_plane() :
+    return ((!current_gizmo || current_gizmo->apply_clipping_plane()) ? _get_volumes_clipping_plane() :
                                                                        ClippingPlane::ClipsNothing())
         .inverted_normal();
 }
