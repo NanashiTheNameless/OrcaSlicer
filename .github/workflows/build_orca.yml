@@ -325,7 +325,6 @@ jobs:
           # The universal app is now independent of these downloaded and
           # extracted per-architecture bundles.
           rm -rf mac_bundles build/arm64 build/x86_64
-          df -h "${{ github.workspace }}"
 
       - name: Create DMG without notary
         # Upstream skips this on main/belt-printer because its "Sign app and notary" step
