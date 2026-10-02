@@ -529,7 +529,13 @@ jobs:
       - flatpak
       - unit_tests_flatpak_x86_64
       - unit_tests_flatpak_aarch64
-    if: ${{ always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
+    # This job only moves the tag; the release assets are uploaded by the build
+    # jobs above, so it may only run once every one of them has finished
+    # without failing. always() also ran it on a red build, and the force-pushed
+    # tag then named a commit with no assets on the nightly release. A job
+    # skipped on purpose (no arm runner, no flatpak) is not a failure and still
+    # lets this run; a cancelled run has no complete build either and is skipped.
+    if: ${{ !cancelled() && !failure() && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
