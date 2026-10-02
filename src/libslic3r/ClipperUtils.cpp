@@ -247,27 +247,17 @@ Polygons c2_to_polygons(const C2::Paths64 &paths)
 {
     Polygons out;
     out.reserve(paths.size());
-    ClipperLib::Paths out_this;
-    if (joinType == jtRound)
-        co.ArcTolerance = miterLimit;
-    else
-        co.MiterLimit = miterLimit;
-    co.ShortestEdgeLength = std::abs(offset * ClipperOffsetShortestEdgeFactor);
-    for (const ClipperLib::Path &path : paths) {
-        co.Clear();
-        // Execute reorients the contours so that the outer most contour has a positive area. Thus the output
-        // contours will be CCW oriented even though the input paths are CW oriented.
-        // Offset is applied after contour reorientation, thus the signum of the offset value is reversed.
-        co.AddPath(path, joinType, endType);
-        bool ccw = endType == ClipperLib::etClosedPolygon ? ClipperLib::Orientation(path) : true;
-        co.Execute(out_this, ccw ? offset : - offset);
-        if (! ccw) {
-            // Reverse the resulting contours.
-            for (ClipperLib::Path &path : out_this)
-                std::reverse(path.begin(), path.end());
-        }
-        append(out, std::move(out_this));
-    }
+    for (const C2::Path64 &path : paths)
+        out.emplace_back().points = c2_to_points(path);
+    return out;
+}
+
+Polylines c2_to_polylines(const C2::Paths64 &paths)
+{
+    Polylines out;
+    out.reserve(paths.size());
+    for (const C2::Path64 &path : paths)
+        out.emplace_back(c2_to_points(path));
     return out;
 }
 
@@ -417,73 +407,78 @@ inline const ExPolygon& expolygon_of(const Surface *surface) { return surface->e
 template<class ExPolygonRange, class TOut>
 void c2_offset_expolygons(const ExPolygonRange &src, float delta, JoinType joinType, double miterLimit, TOut &out)
 {
-    // 1) Offset the outer contour.
-    ClipperLib::Paths contours;
-    {
-        ClipperLib::ClipperOffset co;
-        if (joinType == jtRound)
-            co.ArcTolerance = miterLimit;
-        else
-            co.MiterLimit = miterLimit;
-        co.ShortestEdgeLength = std::abs(delta * ClipperOffsetShortestEdgeFactor);
-        co.AddPath(expoly.contour.points, joinType, ClipperLib::etClosedPolygon);
-        co.Execute(contours, delta);
-    }
-    if (contours.empty())
-        // No need to try to offset the holes.
-        return 0;
-
-    if (expoly.holes.empty()) {
-        // No need to subtract holes from the offsetted expolygon, we are done.
-        append(out, std::move(contours));
-    } else {
-        // 2) Offset the holes one by one, collect the offsetted holes.
-        ClipperLib::Paths holes;
-        {
-            for (const Polygon &hole : expoly.holes) {
-                ClipperLib::ClipperOffset co;
-                if (joinType == jtRound)
-                    co.ArcTolerance = miterLimit;
-                else
-                    co.MiterLimit = miterLimit;
-                co.ShortestEdgeLength = std::abs(delta * ClipperOffsetShortestEdgeFactor);
-                co.AddPath(hole.points, joinType, ClipperLib::etClosedPolygon);
-                ClipperLib::Paths out2;
-                // Execute reorients the contours so that the outer most contour has a positive area. Thus the output
-                // contours will be CCW oriented even though the input paths are CW oriented.
-                // Offset is applied after contour reorientation, thus the signum of the offset value is reversed.
-                co.Execute(out2, - delta);
-                append(holes, std::move(out2));
+    const double shortest = std::abs(delta * ClipperOffsetShortestEdgeFactor);
+    C2::Paths64  paths;
+    for (const auto &item : src) {
+        const ExPolygon &expoly = expolygon_of(item);
+        if (! append_offset_path(paths, expoly.contour.points, shortest, C2::EndType::Polygon))
+            continue;
+        if (const double area = C2::Area(paths.back()); area == 0.) {
+            // A degenerate contour vanishes when shrunk and encloses no hole when grown.
+            if (delta < 0.)
+                paths.pop_back();
+            continue;
+        } else if (area < 0.)
+            std::reverse(paths.back().begin(), paths.back().end());
+        for (const Polygon &hole : expoly.holes)
+            if (append_offset_path(paths, hole.points, shortest, C2::EndType::Polygon)) {
+                if (const double area = C2::Area(paths.back()); area == 0.)
+                    paths.pop_back();
+                else if (area > 0.)
+                    std::reverse(paths.back().begin(), paths.back().end());
             }
-        }
-
-        // 3) Subtract holes from the contours.
-        if (holes.empty()) {
-            // No hole remaining after an offset. Just copy the outer contour.
-            append(out, std::move(contours));
-        } else if (delta < 0) {
-            // Negative offset. There is a chance, that the offsetted hole intersects the outer contour. 
-            // Subtract the offsetted holes from the offsetted contours.            
-            if (auto output = clipper_do<ClipperLib::Paths>(ClipperLib::ctDifference, contours, holes, ClipperLib::pftNonZero); ! output.empty()) {
-                append(out, std::move(output));
-            } else {
-                // The offsetted holes have eaten up the offsetted outer contour.
-                return 0;
-            }
-        } else {
-            // Positive offset. As long as the Clipper offset does what one expects it to do, the offsetted hole will have a smaller
-            // area than the original hole or even disappear, therefore there will be no new intersections.
-            // Just collect the reversed holes.
-            out.reserve(contours.size() + holes.size());
-            append(out, std::move(contours));
-            // Reverse the holes in place.
-            for (size_t i = 0; i < holes.size(); ++ i)
-                std::reverse(holes[i].begin(), holes[i].end());
-            append(out, std::move(holes));
-        }
     }
+    C2::ClipperOffset co;
+    c2_offset_setup(co, delta, joinType, miterLimit);
+    co.AddPaths(paths, to_c2(joinType), C2::EndType::Polygon);
+    co.Execute(delta, out);
+}
 
-    return 1;
+template<class ExPolygonRange>
+Polygons c2_expolygons_offset(const ExPolygonRange &src, float delta, JoinType joinType, double miterLimit)
+{
+    C2::Paths64 out;
+    c2_offset_expolygons(src, delta, joinType, miterLimit, out);
+    return c2_to_polygons(out);
+}
+
+template<class ExPolygonRange>
+ExPolygons c2_expolygons_offset_ex(const ExPolygonRange &src, float delta, JoinType joinType, double miterLimit)
+{
+    C2::PolyTree64 out;
+    c2_offset_expolygons(src, delta, joinType, miterLimit, out);
+    return c2_to_expolygons(out);
+}
+
+template<class PathsProvider>
+Polygons c2_offset_lines(PathsProvider &&src, float delta, JoinType joinType, double miterLimit, EndType endType)
+{
+    C2::Paths64 out;
+    if (endType == etClosedPolygon) {
+        c2_offset_closed(std::forward<PathsProvider>(src), delta, joinType, miterLimit, out);
+        return c2_to_polygons(out);
+    }
+    const C2::EndType end      = to_c2(endType);
+    const double      shortest = std::abs(delta * ClipperOffsetShortestEdgeFactor);
+    C2::Paths64       paths;
+    paths.reserve(src.size());
+    for (const Points &path : src)
+        append_offset_path(paths, path, shortest, end);
+    C2::ClipperOffset co;
+    c2_offset_setup(co, delta, joinType, miterLimit);
+    co.AddPaths(paths, to_c2(joinType), end);
+    co.Execute(delta, out);
+    return c2_to_polygons(out);
+}
+
+template<class PathsProvider>
+C2::Paths64 c2_clip_paths(PathsProvider &&clip, ApplySafetyOffset do_safety_offset)
+{
+    if (do_safety_offset == ApplySafetyOffset::No)
+        return to_paths64(std::forward<PathsProvider>(clip));
+    C2::Paths64 out;
+    c2_offset_closed(std::forward<PathsProvider>(clip), ClipperSafetyOffset, DefaultJoinType, DefaultMiterLimit, out);
+    return out;
 }
 
 } // namespace
