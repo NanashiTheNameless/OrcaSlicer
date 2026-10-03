@@ -45,6 +45,7 @@ deps_src/build/
 test.js
 /.cache/
 .clangd
+/.kilo/
 internal_docs/
 *.flatpak
 /flatpak-repo/
