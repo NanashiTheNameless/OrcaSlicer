@@ -31,7 +31,7 @@
 namespace Slic3r::WaveOverhangs {
 namespace {
 
-#define EXTRA_PERIMETER_OFFSET_PARAMETERS ClipperLib::jtSquare, 0.
+#define EXTRA_PERIMETER_OFFSET_PARAMETERS jtSquare, 0.
 
 Polylines reconnect_polylines(const Polylines &polylines, double limit_distance)
 {
@@ -822,7 +822,7 @@ std::tuple<std::vector<ExtrusionPaths>, Polygons> generate(
                     trim_boundary = wave_cover_polygons;
 
                 const coord_t seed_offset = additional_shell_count > 0 ? shell_inner_edge + seed_expansion : seed_expansion;
-                Polygons accumulated_region = intersection(offset(seeds, float(seed_offset), jtRound, 0., ClipperLib::etOpenRound), wave_cover_polygons);
+                Polygons accumulated_region = intersection(offset(seeds, float(seed_offset), jtRound, 0., etOpenRound), wave_cover_polygons);
                 if (accumulated_region.empty())
                     continue;
 
