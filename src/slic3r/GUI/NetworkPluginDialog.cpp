@@ -131,7 +131,7 @@ void NetworkPluginDownloadDialog::create_missing_plugin_ui()
     main_sizer->AddSpacer(FromDIP(15));
 
     auto dlg_btns = new DialogButtons(this,
-        {"Download and Install", "Skip for Now"},
+        {L("Download and Install"), L("Skip for Now")},
         _L("Download and Install")  // Primary button
     );
 
@@ -193,7 +193,7 @@ void NetworkPluginDownloadDialog::create_update_available_ui(const std::string& 
     main_sizer->AddSpacer(FromDIP(10));
 
     auto dlg_btns = new DialogButtons(this,
-        {"Update Now", "Remind Later", "Skip Version"},
+        {L("Update Now"), L("Remind Later"), L("Skip Version")},
         _L("Update Now")
     );
 
@@ -322,7 +322,7 @@ NetworkPluginRestartDialog::NetworkPluginRestartDialog(wxWindow* parent)
     main_sizer->AddSpacer(FromDIP(15));
 
     auto dlg_btns = new DialogButtons(this,
-        {"Restart Now", "Restart Later"},
+        {L("Restart Now"), L("Restart Later")},
         _L("Restart Now") // Primary button
     );
 
