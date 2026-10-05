@@ -221,7 +221,7 @@ jobs:
         run: |
           df -h "${{ github.workspace }}"
 
-          # macos-14 contains several complete Xcode installations. Keep the
+          # Hosted macOS images ship several complete Xcode installations. Keep the
           # selected toolchain and remove the versions this build cannot use.
           active_developer_dir="$(xcode-select -p)"
           case "$active_developer_dir" in
