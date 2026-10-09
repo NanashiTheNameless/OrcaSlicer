@@ -23,15 +23,11 @@ RUN apt-get update && apt-get install  -y \
     libcairo2-dev \
     libcurl4-openssl-dev \
     libdbus-1-dev \
-    libglew-dev \
-    libglu1-mesa-dev \
-    libglu1-mesa-dev \
     libunwind-dev \
     libgstreamer1.0-dev \
     libgstreamerd-3-dev \
     libgstreamer-plugins-base1.0-dev \
     libgstreamer-plugins-good1.0-dev \
-    libgtk-3-dev \
     libgtk-3-dev \
     libsecret-1-dev \
     libsoup2.4-dev \
