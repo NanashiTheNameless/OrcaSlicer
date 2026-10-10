@@ -68,6 +68,8 @@ fi
 # Run the whole suite, excluding tests tagged [NotWorking] and tests labelled RequiresApp,
 # which run the built orca-slicer binary that this directory does not contain.
 # --no-tests=error fails the job if the filter matches nothing (instead of passing green).
-args=(--test-dir "${TEST_DIR}" -LE "NotWorking|RequiresApp" --no-tests=error --output-junit "$(pwd)/ctest_results.xml" --output-on-failure -j)
+# --timeout bounds each test, so a hung one fails by name and the results file still gets
+# written, instead of the CI step timing out with neither. The slowest test takes ~3 minutes.
+args=(--test-dir "${TEST_DIR}" -LE "NotWorking|RequiresApp" --no-tests=error --timeout 600 --output-junit "$(pwd)/ctest_results.xml" --output-on-failure -j)
 [ -n "${BUILD_CONFIG}" ] && args+=(--build-config "${BUILD_CONFIG}")
 ctest "${args[@]}"
