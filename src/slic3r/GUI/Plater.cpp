@@ -5048,35 +5048,15 @@ static bool create_mixed_filament_from_result(
         is_mixed_opt->values[new_idx] = true;
     }
 
-    std::string comp_str;
-    for (size_t i = 0; i < result.components.size(); ++i) {
-        if (i > 0) comp_str += ",";
-        comp_str += std::to_string(result.components[i]);
-    }
     {
         auto* comp_opt = project_config.option<ConfigOptionStrings>("filament_mixed_components");
         while (comp_opt->values.size() <= new_idx) comp_opt->values.push_back(std::string{});
-        comp_opt->values[new_idx] = comp_str;
-    }
-
-    int ratio_sum = 0;
-    for (int r : result.ratios) ratio_sum += r;
-    if (ratio_sum <= 0) ratio_sum = 100;
-
-    std::string ratio_str;
-    {
-        CNumericLocalesSetter c_locale_setter;
-        for (size_t i = 0; i < result.ratios.size(); ++i) {
-            if (i > 0) ratio_str += ",";
-            char buf[32];
-            std::snprintf(buf, sizeof(buf), "%.4f", (float)result.ratios[i] / ratio_sum);
-            ratio_str += buf;
-        }
+        comp_opt->values[new_idx] = format_mixed_components(result.components);
     }
     {
         auto* ratios_opt = project_config.option<ConfigOptionStrings>("filament_mixed_sublayer_ratios");
         while (ratios_opt->values.size() <= new_idx) ratios_opt->values.push_back(std::string{});
-        ratios_opt->values[new_idx] = ratio_str;
+        ratios_opt->values[new_idx] = format_mixed_ratios(result.ratios);
     }
 
     if (!project_config.option("filament_mixed_gradient"))
@@ -5136,36 +5116,12 @@ int Sidebar::ensure_mixed_filament(const std::vector<unsigned int> &components, 
         return -1;
     if (p->combos_filament.size() < 2)
         return -1;
-
-    // Normalise the way create_mixed_filament_from_result() stores them, so the comparison below sees
-    // the same text the config holds rather than two spellings of one blend.
-    int ratio_sum = 0;
-    for (const int r : ratios)
-        ratio_sum += r;
-    if (ratio_sum <= 0)
+    if (std::accumulate(ratios.begin(), ratios.end(), 0) <= 0)
         return -1;
 
-    std::string comp_str, ratio_str;
-    {
-        CNumericLocalesSetter c_locale_setter;
-        for (size_t i = 0; i < components.size(); ++i) {
-            if (i > 0) { comp_str += ","; ratio_str += ","; }
-            comp_str += std::to_string(components[i]);
-            char buf[32];
-            std::snprintf(buf, sizeof(buf), "%.4f", float(ratios[i]) / float(ratio_sum));
-            ratio_str += buf;
-        }
-    }
-
-    const auto &project_config = wxGetApp().preset_bundle->project_config;
-    const auto *is_mixed_opt   = project_config.option<ConfigOptionBools>("filament_is_mixed");
-    const auto *comp_opt       = project_config.option<ConfigOptionStrings>("filament_mixed_components");
-    const auto *ratios_opt     = project_config.option<ConfigOptionStrings>("filament_mixed_sublayer_ratios");
-    if (is_mixed_opt != nullptr && comp_opt != nullptr && ratios_opt != nullptr)
-        for (size_t i = 0; i < is_mixed_opt->values.size(); ++i)
-            if (is_mixed_opt->values[i] && i < comp_opt->values.size() && i < ratios_opt->values.size() &&
-                comp_opt->values[i] == comp_str && ratios_opt->values[i] == ratio_str)
-                return int(i);
+    if (const int existing = find_fixed_mixed_filament(wxGetApp().preset_bundle->project_config, components, ratios);
+        existing >= 0)
+        return existing;
 
     if (wxGetApp().preset_bundle->filament_presets.size() >= size_t(EnforcerBlockerType::ExtruderMax))
         return -1;
