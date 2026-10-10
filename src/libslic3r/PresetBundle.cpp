@@ -114,6 +114,12 @@ static std::vector<std::string> s_project_options {
     "nozzle_volume_type",
     "filament_map_mode",
     "filament_map",
+    // physical_extruder_map intentionally NOT here: it's owned by the printer
+    // preset (s_Preset_printer_options). Listing it project-scoped caused
+    // project_config's default [0] to clobber the preset's authored value
+    // (e.g. AFC-shaped [0,1,1,1,1]) during full_fff_config() merge, and the
+    // clobbered value then rode into saved 3mfs and back into the edited
+    // preset on reload.
     // Per-filament nozzle-volume choice; project-level like filament_map so the per-filament
     // slot resolution survives preset switches.
     "filament_volume_map",
