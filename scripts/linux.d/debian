@@ -54,7 +54,8 @@ then
             # `/etc/os-release` is already sourced above; reuse VERSION_CODENAME.
             llvm_codename=${VERSION_CODENAME}
             sudo wget -qO /usr/share/keyrings/llvm.asc https://apt.llvm.org/llvm-snapshot.gpg.key
-            sudo gpg --dearmor -o /usr/share/keyrings/llvm.gpg /usr/share/keyrings/llvm.asc
+            # --batch --yes: overwrite a keyring left by an earlier run instead of prompting on /dev/tty
+            sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/llvm.gpg /usr/share/keyrings/llvm.asc
             echo "deb [signed-by=/usr/share/keyrings/llvm.gpg] https://apt.llvm.org/${llvm_codename}/ llvm-toolchain-${llvm_codename}-18 main" | sudo tee /etc/apt/sources.list.d/llvm18.list
             sudo apt update
             REQUIRED_DEV_PACKAGES+=(clang-18)
