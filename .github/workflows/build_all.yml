@@ -43,6 +43,7 @@ on:
      - 'deps_src/**'
      - 'src/**'
      - '**/CMakeLists.txt'
+     - 'cmake/**'
      - 'version.inc'
      - ".github/workflows/build_*.yml"
      - ".github/workflows/unit_tests*.yml"
