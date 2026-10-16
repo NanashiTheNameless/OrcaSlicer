@@ -57,7 +57,7 @@ void RadioGroup::Create(
 
     m_focus_color = StateColor(
         std::pair(bg                 , (int)StateColor::NotFocused),
-        std::pair(wxColour("#009688"), (int)StateColor::Focused)
+        std::pair(wxColour("#C62828"), (int)StateColor::Focused)
     );
 
     auto bmp_size   = m_on.GetBmpSize();

@@ -247,14 +247,14 @@ bool ProgressDialog::Create(const wxString &title, const wxString &message, int 
         m_gauge = new wxGauge(this, wxID_ANY, maximum, wxDefaultPosition, PROGRESSDIALOG_GAUGE_SIZE, gauge_style);
 #ifdef __WXGTK__
         SetGaugeColor(m_gauge, 
-            StateColor::darkModeColorFor(wxColour("#009688")).GetAsString(), 
+            StateColor::darkModeColorFor(wxColour("#C62828")).GetAsString(), 
             StateColor::darkModeColorFor(wxColour("#D9D9D9")).GetAsString()
         );
         m_gauge->SetValue(0);
 #else
         m_gauge->Pulse(); // colors not applied without this. probably it switches to a dc painted version of progressbar
         m_gauge->SetValue(0);
-        m_gauge->SetForegroundColour(wxColour("#009688"));
+        m_gauge->SetForegroundColour(wxColour("#C62828"));
         m_gauge->SetBackgroundColour(wxColour("#D9D9D9"));
         wxGetApp().UpdateDarkUI(m_gauge);
 #endif
@@ -396,7 +396,7 @@ bool ProgressDialog::Create(const wxString &title, const wxString &message, int 
     //     wxStaticBitmap *m_bitmatAbort = new wxStaticBitmap(m_btnAbort, wxID_ANY, wxBitmap(icon_path, wxBITMAP_TYPE_ANY), wxDefaultPosition, wxSize(52, 24), 0);
     //     wxStaticText *textAbort = new wxStaticText(m_btnAbort, wxID_ANY, _T("Cancel"), wxPoint(5, 3), wxSize(42, 19));
     //     textAbort->SetBa
-    //     ckgroundColour(wxColor(0, 150, 136));
+    //     ckgroundColour(wxColor(198, 40, 40));
     //     textAbort->SetForegroundColour(DESIGN_RESOUTION_DEF_BK_COLOR);
     //
     //     textAbort->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent &event) {

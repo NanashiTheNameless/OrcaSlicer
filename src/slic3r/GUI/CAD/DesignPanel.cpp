@@ -4372,7 +4372,7 @@ DesignPanel::DesignPanel(wxWindow* parent)
     // over a wxGLCanvas is a platform argument (it is a native window on GTK and does not
     // reliably stack over GL), and the banner's job is to be unmissable, not to be clever.
     m_sketch_banner = new wxPanel(view_col, wxID_ANY);
-    m_sketch_banner->SetBackgroundColour(wxColour(0, 122, 116));   // Orca teal: not a plate colour
+    m_sketch_banner->SetBackgroundColour(wxColour(160, 32, 32));    // Orca accent (dark): not a plate color
     m_sketch_banner_txt = new wxStaticText(m_sketch_banner, wxID_ANY, wxString());
     m_sketch_banner_txt->SetForegroundColour(*wxWHITE);
     {

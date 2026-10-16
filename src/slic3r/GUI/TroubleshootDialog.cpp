@@ -180,7 +180,7 @@ TroubleshootDialog::TroubleshootDialog()
     m_logo            = ScalableBitmap(this, is_dark ? "OrcaSlicer_horizontal_dark" : "OrcaSlicer_horizontal_light", 64);
     m_header_logo     = new wxStaticBitmap(this, wxID_ANY, m_logo.bmp());
     auto logo_line    = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxSize(-1, FromDIP(2)));
-    logo_line->SetBackgroundColour(StateColor::darkModeColorFor(wxColour("#009687")));
+    logo_line->SetBackgroundColour(StateColor::darkModeColorFor(wxColour("#C62827")));
     auto version      = new Label(this, wxString(SoftFever_VERSION), wxALIGN_CENTRE_HORIZONTAL);
     wxFont version_font = GetFont();
     version_font = version_font.Scaled(1.65f); // SetPointSize(18) not works on macOS because it uses a 72 PPI reference

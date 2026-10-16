@@ -626,7 +626,7 @@ ReselectMachineDialog::ReselectMachineDialog(wxWindow* parent)
     suggestText = new Label(textPanel, wxEmptyString);
 
     linkwiki = new Label(textPanel, _L("How to save time?→"));
-    linkwiki->SetForegroundColour(wxColour("#009688")); // Orca: accent green
+    linkwiki->SetForegroundColour(wxColour("#C62828")); // Orca: accent green
     linkwiki->SetBackgroundColour(wxColour("#FFFFFF"));
     linkwiki->SetFont(Label::Body_14);
     // Orca: no vendor wiki page for this feature; hide the placeholder link and drop the external URL.
@@ -695,7 +695,7 @@ ReselectMachineDialog::ReselectMachineDialog(wxWindow* parent)
     m_buttonClose = new Button(this, _L("Close"));
     m_buttonClose->SetMinSize(wxSize(FromDIP(80), FromDIP(32)));
     m_buttonClose->SetMaxSize(wxSize(FromDIP(80), FromDIP(32)));
-    m_buttonClose->SetBackgroundColor(wxColour("#009688")); // Orca: accent green
+    m_buttonClose->SetBackgroundColor(wxColour("#C62828")); // Orca: accent green
     m_buttonClose->Bind(wxEVT_BUTTON, [this](wxCommandEvent &e){
         this->Close();
     });

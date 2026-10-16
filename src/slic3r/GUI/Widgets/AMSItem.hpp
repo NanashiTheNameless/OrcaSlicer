@@ -33,7 +33,7 @@
 
 #include "slic3r/GUI/DeviceCore/DevFilaSwitch.h" // Orca: DevFilaSwitch::SwitchPos for inlet-aware AMS placement
 
-#define AMS_CONTROL_BRAND_COLOUR wxColour(0, 150, 136)
+#define AMS_CONTROL_BRAND_COLOUR wxColour(198, 40, 40)
 #define AMS_CONTROL_GRAY700 wxColour(107, 107, 107)
 #define AMS_CONTROL_GRAY800 wxColour(50, 58, 61)
 #define AMS_CONTROL_GRAY500 wxColour(172, 172, 172)

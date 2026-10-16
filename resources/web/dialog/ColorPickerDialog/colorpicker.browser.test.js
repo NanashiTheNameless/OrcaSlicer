@@ -175,7 +175,7 @@ test("Global control colors follow the system while host semantic colors follow 
     await page.emulateMedia({colorScheme: system});
     await page.evaluate(value => {
       document.documentElement.dataset.orcaTheme = value;
-      const colors = value === "light" ? {bg: "#ffffff", fg: "#262e30", muted: "#363636", border: "#dbdbdb", accent: "#009688"} : {bg: "#2d2d31", fg: "#efeff0", muted: "#b2b3b5", border: "#36363b", accent: "#00675b"};
+      const colors = value === "light" ? {bg: "#ffffff", fg: "#262e30", muted: "#363636", border: "#dbdbdb", accent: "#C62828"} : {bg: "#2d2d31", fg: "#efeff0", muted: "#b2b3b5", border: "#36363b", accent: "#8e1c1c"};
       for (const [key, color] of Object.entries(colors)) document.documentElement.style.setProperty("--orca-" + key, color);
       document.documentElement.style.setProperty("--orca-accent-fg", "#ffffff");
     }, theme);
@@ -197,7 +197,7 @@ test("Global control colors follow the system while host semantic colors follow 
     assert.equal(colors.background, system === "light" ? "rgb(255, 255, 255)" : "rgb(45, 45, 49)", `${theme} app / ${system} system body`);
     assert.equal(colors.foreground, system === "light" ? "rgb(38, 46, 48)" : "rgb(239, 239, 240)");
     assert.equal(colors.modeBackground, system === "light" ? "rgb(240, 240, 240)" : "rgb(36, 36, 40)");
-    assert.equal(colors.accent, theme === "light" ? "rgb(0, 150, 136)" : "rgb(0, 103, 91)", "shared accent follows the injected app theme");
+    assert.equal(colors.accent, theme === "light" ? "rgb(198, 40, 40)" : "rgb(142, 28, 28)", "shared accent follows the injected app theme");
     assert.equal(colors.hostPanel, theme === "light" ? "rgb(255, 255, 255)" : "rgb(45, 45, 49)");
     assert.equal(colors.hostText, theme === "light" ? "rgb(38, 46, 48)" : "rgb(239, 239, 240)");
     assert.deepEqual(await page.evaluate(() => ({selection: ColorPickerDialog.exportSelection(), spectrum: document.getElementById("spectrum").toDataURL()})), initial);

@@ -57,7 +57,7 @@
 namespace Slic3r { namespace GUI {
 
 static const ColorRGBA DEF_COLOR   = {0.7f, 0.7f, 0.7f, 1.f};
-static const ColorRGBA SELECTED_COLOR = {0.0f, 0.5f, 0.5f, 1.0f};
+static const ColorRGBA SELECTED_COLOR = ColorRGBA::ORCA();
 static const ColorRGBA ERR_COLOR = {1.0f, 0.3f, 0.3f, 0.5f};
 static const ColorRGBA HOVER_COLOR = {0.7f, 0.7f, 0.7f, 0.5f};
 static constexpr float BRIM_EAR_RADIUS_MIN = 0.1f;
