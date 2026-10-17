@@ -1,5 +1,6 @@
 #include <catch2/catch_test_macros.hpp>
 
+#include <cstdlib>
 #include <string>
 
 #include "libslic3r/AppConfig.hpp"
@@ -58,4 +59,17 @@ TEST_CASE("Telemetry follows the user's choice once the wizard is finished", "[T
 
     config.set_bool("telemetry", false);
     CHECK_FALSE(Telemetry::is_enabled(config));
+}
+
+TEST_CASE("DO_NOT_TRACK opts out of telemetry", "[Telemetry]")
+{
+#ifdef _WIN32
+    _putenv_s("DO_NOT_TRACK", "1");
+    CHECK(Telemetry::env_opted_out());
+    _putenv_s("DO_NOT_TRACK", "");
+#else
+    setenv("DO_NOT_TRACK", "1", 1);
+    CHECK(Telemetry::env_opted_out());
+    unsetenv("DO_NOT_TRACK");
+#endif
 }

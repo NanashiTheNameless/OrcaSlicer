@@ -1047,10 +1047,15 @@ void PreferencesDialog::update_telemetry_item()
 
     // Stealth mode and system opt-outs force telemetry off without touching the stored choice, which returns with them.
     wxString reason;
+    wxString reason_tip;
     switch (Telemetry::system_opt_out()) {
-    case Telemetry::SystemOptOut::Registry: reason = _L("Turned off by the TelemetryOptOut policy in the Windows registry."); break;
+    case Telemetry::SystemOptOut::Registry:
+        reason     = _L("Turned off by a system policy.");
+        reason_tip = _L("TelemetryOptOut is set to a nonzero value under SOFTWARE\\Policies\\OrcaSlicer in the Windows registry.");
+        break;
     case Telemetry::SystemOptOut::Environment:
-        reason = _L("Turned off by the TELEMETRY_OPTOUT, ORCA_TELEMETRY_OPTOUT or TELEMETRY environment variable.");
+        reason     = _L("Turned off by an environment variable.");
+        reason_tip = _L("DO_NOT_TRACK, TELEMETRY_OPTOUT or ORCA_TELEMETRY_OPTOUT is set to 1, or TELEMETRY is set to 0.");
         break;
     case Telemetry::SystemOptOut::None:
         if (app_config->get_stealth_mode())
@@ -1061,6 +1066,7 @@ void PreferencesDialog::update_telemetry_item()
     m_telemetry_checkbox->Enable(reason.IsEmpty());
     m_telemetry_checkbox->SetValue(reason.IsEmpty() && app_config->get_bool("telemetry"));
     m_telemetry_reason->SetLabel(reason);
+    m_telemetry_reason->SetToolTip(reason_tip);
     m_telemetry_reason->Show(!reason.IsEmpty());
     if (m_telemetry_reason->GetParent())
         m_telemetry_reason->GetParent()->Layout();

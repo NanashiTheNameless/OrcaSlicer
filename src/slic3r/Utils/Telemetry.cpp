@@ -83,7 +83,7 @@ std::string hash_instance_id(const std::string& uuid)
 
 bool env_opted_out()
 {
-    return env_truthy("TELEMETRY_OPTOUT") || env_truthy("ORCA_TELEMETRY_OPTOUT") || env_falsy("TELEMETRY");
+    return env_truthy("DO_NOT_TRACK") || env_truthy("TELEMETRY_OPTOUT") || env_truthy("ORCA_TELEMETRY_OPTOUT") || env_falsy("TELEMETRY");
 }
 
 SystemOptOut system_opt_out()

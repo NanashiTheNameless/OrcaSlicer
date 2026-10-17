@@ -16,7 +16,7 @@ namespace Telemetry {
 // SHA-256 of the instance UUID as lowercase hex, the id format the census server counts.
 std::string hash_instance_id(const std::string& uuid);
 
-// True when TELEMETRY_OPTOUT or ORCA_TELEMETRY_OPTOUT is truthy, or TELEMETRY is falsy.
+// True when DO_NOT_TRACK, TELEMETRY_OPTOUT or ORCA_TELEMETRY_OPTOUT is truthy, or TELEMETRY is falsy.
 bool env_opted_out();
 
 // Where an opt-out made outside OrcaSlicer's own settings comes from, so the GUI can say why telemetry is off.
