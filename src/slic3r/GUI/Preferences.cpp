@@ -70,6 +70,7 @@
 #include "Shortcuts.hpp"
 #include "slic3r/Utils/bambu_networking.hpp"
 #include "slic3r/Utils/NetworkAgent.hpp"
+#include "slic3r/Utils/Telemetry.hpp"
 #include "NetworkPluginDialog.hpp"
 #include "DownloadProgressDialog.hpp"
 
@@ -1032,6 +1033,32 @@ wxBoxSizer* PreferencesDialog::create_item_darkmode(wxString title,wxString tool
     return m_sizer;
 }
 
+void PreferencesDialog::update_telemetry_item()
+{
+    if (!m_telemetry_checkbox || !m_telemetry_reason)
+        return;
+
+    // Stealth mode and system opt-outs force telemetry off without touching the stored choice, which returns with them.
+    wxString reason;
+    switch (Telemetry::system_opt_out()) {
+    case Telemetry::SystemOptOut::Registry: reason = _L("Turned off by the TelemetryOptOut policy in the Windows registry."); break;
+    case Telemetry::SystemOptOut::Environment:
+        reason = _L("Turned off by the TELEMETRY_OPTOUT, ORCA_TELEMETRY_OPTOUT or TELEMETRY environment variable.");
+        break;
+    case Telemetry::SystemOptOut::None:
+        if (app_config->get_stealth_mode())
+            reason = _L("Turned off by Stealth Mode.");
+        break;
+    }
+
+    m_telemetry_checkbox->Enable(reason.IsEmpty());
+    m_telemetry_checkbox->SetValue(reason.IsEmpty() && app_config->get_bool("telemetry"));
+    m_telemetry_reason->SetLabel(reason);
+    m_telemetry_reason->Show(!reason.IsEmpty());
+    if (m_telemetry_reason->GetParent())
+        m_telemetry_reason->GetParent()->Layout();
+}
+
 void PreferencesDialog::set_dark_mode()
 {
 #ifdef __WINDOWS__
@@ -1056,6 +1083,7 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
     checkbox->SetToolTip(tip);
 
     if (param == "sync_user_preset") { m_sync_user_preset_checkbox = checkbox; }
+    if (param == "telemetry") { m_telemetry_checkbox = checkbox; }
     if (param == SETTING_OPENGL_SKIP_IDENTICAL_FRAMES) { m_skip_identical_frames_checkbox = checkbox; }
 
     m_sizer->Add(checkbox, 0, wxALIGN_CENTER);
@@ -1091,6 +1119,11 @@ wxBoxSizer *PreferencesDialog::create_item_checkbox(wxString title, wxString too
             if (enabled) wxGetApp().on_stealth_mode_enter();
             if (m_sync_user_preset_checkbox) m_sync_user_preset_checkbox->Enable(!enabled);
             if (m_bambu_cloud_checkbox)      m_bambu_cloud_checkbox->Enable(!enabled);
+            update_telemetry_item();
+            Telemetry::send_census(*app_config);
+        }
+        else if (param == "telemetry") {
+            Telemetry::send_census(*app_config);
         }
         else if (param == "hide_login_side_panel") {
             if (WebViewPanel* home = WebViewPanel::if_built()) {
@@ -2175,6 +2208,13 @@ void PreferencesDialog::create_items()
     auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This disables all cloud features, including Orca Cloud profile syncing. Users who prefer to work entirely offline can enable this option.\nNote: When Stealth Mode is enabled, your user profiles will not be backed up to Orca Cloud."), "stealth_mode");
     g_sizer->Add(item_stealth_mode);
 
+    auto item_telemetry        = create_item_checkbox(_L("Send anonymous usage statistics"), _L("Count this installation once a day on a public dashboard. Only a hashed random ID and the program name are sent, never your files, settings or account.\nStealth mode turns this off."), "telemetry");
+    m_telemetry_reason = new wxStaticText(m_parent, wxID_ANY, wxEmptyString);
+    m_telemetry_reason->SetForegroundColour(DESIGN_GRAY600_COLOR);
+    m_telemetry_reason->SetFont(::Label::Body_13);
+    item_telemetry->Add(m_telemetry_reason, 0, wxALIGN_CENTER | wxLEFT, FromDIP(5));
+    g_sizer->Add(item_telemetry);
+
     auto item_hide_login_side_panel = create_item_checkbox(_L("Hide login side panel"), _L("Hide the login side panel on the home page."), "hide_login_side_panel");
     g_sizer->Add(item_hide_login_side_panel);
 
@@ -2200,6 +2240,7 @@ void PreferencesDialog::create_items()
         if (m_bambu_cloud_checkbox)      m_bambu_cloud_checkbox->Enable(false);
         if (m_sync_user_preset_checkbox) m_sync_user_preset_checkbox->Enable(false);
     }
+    update_telemetry_item();
 
     auto item_filament_sync_mode = create_item_combobox(
         _L("Filament sync mode"),

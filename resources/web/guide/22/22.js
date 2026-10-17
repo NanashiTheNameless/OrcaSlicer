@@ -20,11 +20,10 @@ function HandleStudio(pVal)
 
 function InstallNetworkPlugin()
 {
-	if(m_ProfileItem["network_plugin_install"]!='1' || (m_ProfileItem["network_plugin_install"]=='1' && m_ProfileItem["network_plugin_compability"]=='0') )
-	{
-		$("#AcceptBtn").hide();
-		$("#GotoNetPluginBtn").show();
-	}
+	// Always continue to the privacy page, which holds the Stealth Mode and telemetry choices
+	// and decides whether the plug-in page follows.
+	$("#AcceptBtn").hide();
+	$("#GotoNetPluginBtn").show();
 }
 
 function ReturnPreviewPage()

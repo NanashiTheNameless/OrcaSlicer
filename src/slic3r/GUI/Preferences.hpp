@@ -84,6 +84,8 @@ public:
     ::CheckBox * m_dark_mode_ckeckbox        = {nullptr};
     ::CheckBox * m_sync_user_preset_checkbox = {nullptr};
     ::CheckBox * m_bambu_cloud_checkbox      = {nullptr};
+    ::CheckBox * m_telemetry_checkbox        = {nullptr};
+    wxStaticText *m_telemetry_reason         = {nullptr};
     ::CheckBox * m_skip_identical_frames_checkbox = {nullptr};
     ::TextInput *m_backup_interval_textinput = {nullptr};
     ::SpinInput *m_dim_previous_layers_brightness_input = {nullptr};
@@ -122,6 +124,8 @@ public:
 #endif // WIN32
 
     void create_items();
+    // Greys out the telemetry checkbox and says why when stealth mode or a system opt-out forces it off.
+    void update_telemetry_item();
     void create_sync_page();
     wxBoxSizer* create_debug_page();
 

@@ -31,10 +31,23 @@
 	<!-- ORCA use label tag to allow checkbox to toggle when user clicked to text -->
 	<label id="CheckArea"><input id="StealthMode" onClick="SendStealthModeCheck()" type="checkbox"><a class="TextS1" data-i18n="enable_stealth_mode">Enable Stealth Mode.</a></label>
 	<div id="RestartText"></div>
-	
+
+	<div id="TelemetryTitle" class="TextS1" data-i18n="telemetry">Anonymous Usage Statistics</div>
+	<div id="TelemetryText">
+		<div><a class="TextS1" data-i18n="telemetry_desc">Help show how many people use OrcaSlicer. Once a day, this installation is counted on a public dashboard. Only a hashed random ID and the program name are sent, never your files, settings or account.</a></div>
+		<div><a class="TextS2" data-i18n="telemetry_note">Note: Stealth Mode turns this off. You can change this later in Preferences.</a></div>
+	</div>
+	<label id="TelemetryCheckArea"><input id="Telemetry" onClick="SendTelemetryCheck()" type="checkbox" checked><a class="TextS1" data-i18n="enable_telemetry">Send anonymous usage statistics.</a></label>
+	<div id="TelemetryReason">
+		<a class="TextS2" id="TelemetryOffStealth" data-i18n="telemetry_off_stealth">Turned off by Stealth Mode.</a>
+		<a class="TextS2" id="TelemetryOffRegistry" data-i18n="telemetry_off_registry">Turned off by the TelemetryOptOut policy in the Windows registry.</a>
+		<a class="TextS2" id="TelemetryOffEnvironment" data-i18n="telemetry_off_environment">Turned off by the TELEMETRY_OPTOUT, ORCA_TELEMETRY_OPTOUT or TELEMETRY environment variable.</a>
+	</div>
+
 </div>
 <div id="AcceptArea">
 	<div class="ButtonStyleRegular ButtonTypeChoice" id="PreBtn" onclick="window.history.back()" data-i18n="back">Back</div>
+	<div class="ButtonStyleConfirm ButtonTypeChoice" id="AcceptBtn" onclick="FinishGuide()" data-i18n="finish">Finish</div>
 	<div class="ButtonStyleConfirm ButtonTypeChoice" id="GotoNetPluginBtn" onclick="GotoNetPluginPage()" data-i18n="next">Next</div>	
 </div>	
 </body>

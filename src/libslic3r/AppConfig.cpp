@@ -469,7 +469,17 @@ void AppConfig::set_defaults()
 
     // Orca
     if (get("stealth_mode").empty()) {
-        set_bool("stealth_mode", true);
+        set_bool("stealth_mode", false);
+    }
+    // Anonymous usage census, see slic3r/Utils/Telemetry.hpp. Nothing is sent before the setup wizard
+    // is finished, because get_stealth_mode() stays on until then.
+    if (get("telemetry").empty()) {
+        set_bool("telemetry", true);
+    }
+    // Kept apart from slicer_uuid, which goes to vendor clouds; only its SHA-256 is ever sent.
+    if (get("telemetry_uuid").empty()) {
+        boost::uuids::uuid uuid = boost::uuids::random_generator()();
+        set("telemetry_uuid", to_string(uuid));
     }
     if (get("hide_login_side_panel").empty()) {
         set_bool("hide_login_side_panel", false);

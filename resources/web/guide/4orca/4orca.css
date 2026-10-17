@@ -31,3 +31,40 @@
 {
 	font-size:14px;
 }
+#TelemetryTitle
+{
+	margin-top: 8mm;
+	font-weight: bold;
+}
+
+#TelemetryText
+{
+	line-height: 30px;
+}
+
+#TelemetryCheckArea
+{
+	margin-top: 4mm;
+	line-height: 30px;
+}
+
+#TelemetryCheckArea.Disabled
+{
+	opacity: 0.5;
+}
+
+#AcceptBtn
+{
+	display: none;
+}
+
+#TelemetryReason
+{
+	padding-left: 30px;
+	line-height: 30px;
+}
+
+#TelemetryReason a
+{
+	display: none;
+}

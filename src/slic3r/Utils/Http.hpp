@@ -113,6 +113,8 @@ public:
 	Http& header(std::string name, const std::string &value);
 	// Clears all custom headers and restores default implicit headers.
 	Http& headers_reset();
+	// Clears all custom headers, including the process-wide extra headers, for requests that must carry nothing else.
+	Http& headers_clear();
 	// Removes a header field.
 	Http& remove_header(std::string name);
 	// Authorization by HTTP digest, based on RFC2617.

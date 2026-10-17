@@ -824,6 +824,8 @@ set(SLIC3R_GUI_SOURCES
     Utils/SimplyPrint.hpp
     Utils/TCPConsole.cpp
     Utils/TCPConsole.hpp
+    Utils/Telemetry.cpp
+    Utils/Telemetry.hpp
     Utils/UltiMaker.cpp
     Utils/UltiMaker.hpp
     Utils/UndoRedo.cpp

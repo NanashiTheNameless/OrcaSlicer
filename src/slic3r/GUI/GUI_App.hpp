@@ -82,6 +82,7 @@ class MachineObject;
 class NetworkAgent;
 class IPrinterAgent;
 class TaskManager;
+namespace Telemetry { class CensusTimer; }
 
 // Same typedef as in bambu_networking.hpp, so this header need not include it.
 typedef std::function<bool()> WasCancelledFn;
@@ -318,6 +319,7 @@ private:
 	size_t m_instance_hash_int;
 
     std::unique_ptr<Downloader> m_downloader;
+    std::unique_ptr<Telemetry::CensusTimer> m_census_timer;
 
     //BBS
     std::atomic<bool> m_is_closing {false};

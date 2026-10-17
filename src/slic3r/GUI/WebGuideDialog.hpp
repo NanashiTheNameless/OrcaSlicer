@@ -156,6 +156,7 @@ private:
     // User Config
     bool PrivacyUse;
     bool StealthMode;
+    bool TelemetryEnabled {true};
     std::string m_Region;
 
     bool InstallNetplugin;

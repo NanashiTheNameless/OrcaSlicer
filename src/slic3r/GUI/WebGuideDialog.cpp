@@ -80,6 +80,7 @@
 #include "libslic3r/PrintConfig.hpp"
 #include "slic3r/Utils/NetworkAgent.hpp"
 #include "slic3r/Utils/PresetUpdater.hpp"
+#include "slic3r/Utils/Telemetry.hpp"
 
 class wxWindow;
 
@@ -147,6 +148,13 @@ static json guide_strings()
         {"stealth_mode_desc", _u8L("This disables all cloud features, including Orca Cloud profile syncing. Users who prefer to work entirely offline can enable this option.")},
         {"stealth_mode_note", _u8L("Note: When Stealth Mode is enabled, your user profiles will not be backed up to Orca Cloud.")},
         {"enable_stealth_mode", _u8L("Enable Stealth Mode.")},
+        {"telemetry", _u8L("Anonymous Usage Statistics")},
+        {"telemetry_desc", _u8L("Help show how many people use OrcaSlicer. Once a day, this installation is counted on a public dashboard. Only a hashed random ID and the program name are sent, never your files, settings or account.")},
+        {"telemetry_note", _u8L("Note: Stealth Mode turns this off. You can change this later in Preferences.")},
+        {"enable_telemetry", _u8L("Send anonymous usage statistics.")},
+        {"telemetry_off_stealth", _u8L("Turned off by Stealth Mode.")},
+        {"telemetry_off_registry", _u8L("Turned off by the TelemetryOptOut policy in the Windows registry.")},
+        {"telemetry_off_environment", _u8L("Turned off by the TELEMETRY_OPTOUT, ORCA_TELEMETRY_OPTOUT or TELEMETRY environment variable.")},
         {"proprietary_plugins", _u8L("Proprietary Plugins")},
         {"proprietary_plugins_desc", _u8L("Some printer vendors require proprietary plugins for communication with their printers. Please select the corresponding plugin if you use such printers.")},
         {"proprietary_plugins_risk", _u8L("Please be aware that these plugins are not developed or maintained by OrcaSlicer. They should be used at your own discretion and risk.")},
@@ -812,6 +820,9 @@ void GuideFrame::OnScriptMessage(wxWebViewEvent &evt)
                 StealthMode = false;
             }
         }
+        else if (strCmd == "save_telemetry") {
+            TelemetryEnabled = j["data"]["action"] == "yes";
+        }
     } catch (std::exception &e) {
         // wxMessageBox(e.what(), "json Exception", MB_OK);
         BOOST_LOG_TRIVIAL(trace) << "GuideFrame::OnScriptMessage;Error:" << e.what();
@@ -918,6 +929,7 @@ int GuideFrame::SaveProfile()
 
     m_MainPtr->app_config->set("region", m_Region);
     m_MainPtr->app_config->set_bool("stealth_mode", StealthMode);
+    m_MainPtr->app_config->set_bool("telemetry", TelemetryEnabled);
 
     //finish
     m_MainPtr->app_config->set(std::string(m_SectionName.mb_str()), "finish", true);
@@ -1757,6 +1769,13 @@ int GuideFrame::SaveProfileData()
 
         StealthMode = wxGetApp().app_config->get_bool("app","stealth_mode");
         m_ProfileJson["stealth_mode"] = StealthMode;
+
+        TelemetryEnabled = wxGetApp().app_config->get_bool("telemetry");
+        m_ProfileJson["telemetry"] = TelemetryEnabled;
+        const Telemetry::SystemOptOut opt_out = Telemetry::system_opt_out();
+        m_ProfileJson["telemetry_opt_out"] = opt_out == Telemetry::SystemOptOut::Registry    ? "registry" :
+                                             opt_out == Telemetry::SystemOptOut::Environment ? "environment" :
+                                                                                               "";
     }
     catch (std::exception &e) {
         BOOST_LOG_TRIVIAL(error) << __FUNCTION__ << ", error: "<< e.what() <<std::endl;

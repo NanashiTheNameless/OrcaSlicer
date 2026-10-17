@@ -199,6 +199,7 @@
 #include "../Utils/Process.hpp"
 #include "../Utils/wxInspectorPlugins/Registration.hpp"
 #include "../Utils/Http.hpp"
+#include "../Utils/Telemetry.hpp"
 #include "../Utils/InstanceID.hpp"
 #include "../Utils/UndoRedo.hpp"
 #include "slic3r/Config/Snapshot.hpp"
@@ -1126,6 +1127,13 @@ void GUI_App::post_init()
     if (this->preset_updater) { // G-Code Viewer does not initialize preset_updater.
         CallAfter([this] {
             bool cw_showed = this->config_wizard_startup();
+
+            // After the startup wizard, so a first run reports only once the user has chosen.
+            // run_wizard() already pinged if the wizard was shown.
+            if (!cw_showed)
+                Telemetry::send_census(*app_config);
+            m_census_timer = std::make_unique<Telemetry::CensusTimer>(*app_config);
+            m_census_timer->Start(2 * 60 * 60 * 1000);
 
             if (!app_config->get_stealth_mode()) {
                 std::string http_url = get_http_url(app_config->get_country_code());
@@ -2879,6 +2887,7 @@ bool GUI_App::OnInit()
 
 int GUI_App::OnExit()
 {
+    m_census_timer.reset();
     stop_http_server();
     stop_sync_user_preset();
 
@@ -9947,6 +9956,7 @@ bool GUI_App::run_wizard(ConfigWizard::RunReason reason, ConfigWizard::StartPage
         load_current_presets();
         update_publish_status();
         mainframe->refresh_plugin_tips();
+        Telemetry::send_census(*app_config);
         // BBS: remove SLA related message
     }
 
