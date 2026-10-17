@@ -61,8 +61,8 @@ body
 /*-----Right Top MenuBtn-----*/
 .MenuItem:hover
 {
-	border-color: #00675b;
-	background-color: #223C3C;
+	border-color: #8e1c1c;
+	background-color: #3C2323;
 }
 
 .FileImg
@@ -80,7 +80,7 @@ body
 
 .CT_Item:hover
 {
-	background-color:#00675b; /*ORCA color*/
+	background-color:#8e1c1c; /*ORCA color*/
 }
 
 /*----User Manual------*/
@@ -132,7 +132,7 @@ body
 /*--- Account rows and account menu ---*/
 :root
 {
-	--row-hover            : #223C3C;
+	--row-hover            : #3C2323;
 	--warn-color           : #F07E4A;
 	--account-avatar-bg    : #3A3A40;
 	--account-avatar-glyph : #7E8785;
@@ -141,7 +141,7 @@ body
 	--account-meta         : #949494;
 	--account-border       : #4A4A51;
 	--account-divider      : #3A3A42;
-	--account-action       : #26A69A;
+	--account-action       : #D84343;
 	--account-danger       : #FF6A6A;
 	--account-danger-bg    : rgba(225, 71, 71, 0.16);
 	--account-warn-bg      : rgba(240, 126, 74, 0.16);  /*----var(--warn-color) at 16%----*/

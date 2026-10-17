@@ -463,7 +463,7 @@ ShortcutCaptureDialog::ShortcutCaptureDialog(wxWindow* parent, Shortcut shortcut
     const wxColour box_colour = StateColor::darkModeColorFor(*wxWHITE);
     StaticBox* capture = new StaticBox(this, wxID_ANY, wxDefaultPosition, wxSize(width, FromDIP(60)), wxWANTS_CHARS);
     capture->SetCornerRadius(FromDIP(4));
-    capture->SetBorderColorNormal(StateColor::darkModeColorFor(wxColour("#009688")));   // the focused-input colour, since the box always has the focus
+    capture->SetBorderColorNormal(StateColor::darkModeColorFor(wxColour("#C62828")));   // the focused-input colour, since the box always has the focus
     capture->SetBackgroundColorNormal(box_colour);
     capture->SetBackgroundColour(box_colour);
     wxBoxSizer* capture_sizer = new wxBoxSizer(wxVERTICAL);

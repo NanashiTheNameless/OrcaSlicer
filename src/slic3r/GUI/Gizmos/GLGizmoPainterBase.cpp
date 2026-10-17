@@ -1255,7 +1255,7 @@ TriangleSelector::ClippingPlane GLGizmoPainterBase::get_clipping_plane_in_volume
 }
 
 ColorRGBA TriangleSelectorGUI::enforcers_color = {0.5f, 1.f, 0.5f, 1.f};
-ColorRGBA TriangleSelectorGUI::blockers_color  = {1.f, 0.5f, 0.5f, 1.f};
+ColorRGBA TriangleSelectorGUI::blockers_color  = {1.f, 0.45f, 0.58f, 1.f}; // FF7394 - rose, distinct from the crimson accent
 
 ColorRGBA TriangleSelectorGUI::get_seed_fill_color(const ColorRGBA& base_color)
 {

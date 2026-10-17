@@ -347,7 +347,7 @@ body.pane-resizing {
 
 .capabilities-tree {
   border-top: 1px solid var(--border-soft);
-  background: rgba(0, 150, 136, 0.04);
+  background: rgba(198, 40, 40, 0.04);
   box-shadow: inset 2px 0 0 var(--row-selected-outline);
 }
 
@@ -370,7 +370,7 @@ body.pane-resizing {
 }
 
 .capability-row:hover {
-  background: rgba(0, 150, 136, 0.05);
+  background: rgba(198, 40, 40, 0.05);
 }
 
 .capability-name-cell,
@@ -852,7 +852,7 @@ body.pane-resizing {
 .plugin-expand-btn:hover,
 .plugin-expand-btn:focus-visible {
   color: var(--text);
-  background: rgba(0, 150, 136, 0.12);
+  background: rgba(198, 40, 40, 0.12);
 }
 
 .plugin-expand-btn:focus-visible {
@@ -986,8 +986,8 @@ body.pane-resizing {
 }
 
 .plugin-checkbox-input:checked + .plugin-checkbox-mark {
-  border-color: #009688;
-  background: #009688;
+  border-color: #C62828;
+  background: #C62828;
 }
 
 .plugin-checkbox-input:checked + .plugin-checkbox-mark::after {
@@ -1004,8 +1004,8 @@ body.pane-resizing {
 
 .plugin-checkbox-input:indeterminate + .plugin-checkbox-mark,
 .plugin-checkbox.mixed .plugin-checkbox-mark {
-  border-color: #009688;
-  background: #009688;
+  border-color: #C62828;
+  background: #C62828;
 }
 
 .plugin-checkbox-input:indeterminate + .plugin-checkbox-mark::after,
@@ -1028,7 +1028,7 @@ body.pane-resizing {
 .plugin-checkbox.loading .plugin-checkbox-mark {
   border-radius: 50%;
   border-color: #b7c0ca;
-  border-top-color: #009688;
+  border-top-color: #C62828;
   background: transparent;
   opacity: 1;
   animation: plugin-checkbox-spin 0.8s linear infinite;
@@ -1083,7 +1083,7 @@ body.pane-resizing {
 }
 
 .detail-tab.active {
-  border-bottom-color: #009688;
+  border-bottom-color: #C62828;
   color: var(--text);
 }
 

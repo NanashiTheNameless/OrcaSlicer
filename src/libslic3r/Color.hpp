@@ -68,7 +68,7 @@ public:
 	static const ColorRGB REDISH()      { return { 1.0f, 0.5f, 0.5f }; }
 	static const ColorRGB YELLOW()      { return { 1.0f, 1.0f, 0.0f }; }
 	static const ColorRGB WHITE()       { return { 1.0f, 1.0f, 1.0f }; }
-    static const ColorRGB ORCA()		{ return {0.0f, 150.f / 255.0f, 136.0f / 255}; }
+    static const ColorRGB ORCA()		{ return {198.f / 255.0f, 40.f / 255.0f, 40.0f / 255}; }
 	static const ColorRGB WARNING()     { return {241.0f / 255, 117.f / 255.0f, 78.0f / 255}; }
 
 	static const ColorRGB X()           { return { 255 / 255.f, 60  / 255.f, 91  / 255.f};}
@@ -140,7 +140,7 @@ public:
 	static const ColorRGBA REDISH()      { return { 1.0f, 0.5f, 0.5f, 1.0f }; }
 	static const ColorRGBA YELLOW()      { return { 1.0f, 1.0f, 0.0f, 1.0f }; }
 	static const ColorRGBA WHITE()       { return { 1.0f, 1.0f, 1.0f, 1.0f }; }
-    static const ColorRGBA ORCA()        { return {0.0f, 150.f / 255.0f, 136.0f / 255, 1.0f}; }
+    static const ColorRGBA ORCA()        { return {198.f / 255.0f, 40.f / 255.0f, 40.0f / 255, 1.0f}; }
 
 	static const ColorRGBA X()           { return { ColorRGB::X().r(), ColorRGB::X().g(), ColorRGB::X().b(), 1.f };}
 	static const ColorRGBA Y()           { return { ColorRGB::Y().r(), ColorRGB::Y().g(), ColorRGB::Y().b(), 1.f };}

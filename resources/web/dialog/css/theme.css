@@ -38,8 +38,8 @@
   --plugin-status-warn-bg: rgba(199, 122, 22, 0.12);
   --plugin-status-inactive-bg: #edf1f5;
   --plugin-status-inactive-text: #44505c;
-  --plugin-source-mine-bg: rgba(0, 137, 123, 0.12);
-  --plugin-source-mine-text: #00897b;
+  --plugin-source-mine-bg: rgba(176, 36, 36, 0.12);
+  --plugin-source-mine-text: #b02424;
   --plugin-source-neutral-bg: #edf1f5;
   --plugin-source-neutral-text: #44505c;
   --plugin-source-subscribed-bg: rgba(37, 99, 170, 0.12);
@@ -72,8 +72,8 @@
   --border-soft: #4a4a51;
   --col-sep: #4a4a51;
   --row-hover: #2b3340;
-  --row-selected: #244945;
-  --plugin-link-text: #5eead4;
+  --row-selected: #492424;
+  --plugin-link-text: #f28b8b;
   --plugin-status-danger: #ff7b72;
   --plugin-status-ok: #37c871;
   --plugin-status-warn: #f0b45a;
@@ -83,8 +83,8 @@
   --plugin-status-warn-bg: rgba(240, 180, 90, 0.18);
   --plugin-status-inactive-bg: #36363b;
   --plugin-status-inactive-text: #c7ccd2;
-  --plugin-source-mine-bg: rgba(0, 150, 136, 0.18);
-  --plugin-source-mine-text: #8de5d6;
+  --plugin-source-mine-bg: rgba(198, 40, 40, 0.18);
+  --plugin-source-mine-text: #f28b8b;
   --plugin-source-neutral-bg: #36363b;
   --plugin-source-neutral-text: #c7ccd2;
   --plugin-source-subscribed-bg: rgba(88, 166, 255, 0.18);

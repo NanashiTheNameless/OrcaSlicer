@@ -109,12 +109,12 @@ static void apply_accent_button_colours(Button* btn)
 {
     btn->SetBackgroundColor(StateColor(
         std::pair<wxColour, int>(wxColour("#CECECE"), StateColor::Disabled),
-        std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed),
-        std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)));
+        std::pair<wxColour, int>(wxColour(176, 36, 36), StateColor::Pressed),
+        std::pair<wxColour, int>(wxColour(216, 67, 67), StateColor::Hovered),
+        std::pair<wxColour, int>(wxColour(198, 40, 40), StateColor::Normal)));
     btn->SetBorderColor(StateColor(
         std::pair<wxColour, int>(wxColour("#CECECE"), StateColor::Disabled),
-        std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Normal)));
+        std::pair<wxColour, int>(wxColour(198, 40, 40), StateColor::Normal)));
     btn->SetTextColor(StateColor(
         std::pair<wxColour, int>(wxColour("#6B6B6A"), StateColor::Disabled),
         std::pair<wxColour, int>(wxColour("#FFFFFE"), StateColor::Normal)));
@@ -327,7 +327,7 @@ void AccentSlider::OnPaint(wxPaintEvent&)
     int ts = FromDIP(8);
     int pen_w = FromDIP(2);
 
-    wxColour accent_clr = StateColor::darkModeColorFor(IsEnabled() ? wxColour("#009688") : wxColour("#ACACAC"));
+    wxColour accent_clr = StateColor::darkModeColorFor(IsEnabled() ? wxColour("#C62828") : wxColour("#ACACAC"));
     wxColour track_clr  = StateColor::darkModeColorFor(IsEnabled() ? wxColour("#CECECE") : wxColour("#DFDFDF"));
 
     int tx = xFromValue();
@@ -605,7 +605,7 @@ public:
         add_label->SetFont(af);
         decompose_label->SetFont(af);
         const bool add_enabled = !m_can_add_filament || m_can_add_filament();
-        const wxColour action_clr = StateColor::darkModeColorFor(wxColour("#009688"));
+        const wxColour action_clr = StateColor::darkModeColorFor(wxColour("#C62828"));
         add_label->SetForegroundColour(add_enabled ? action_clr : header_clr);
         decompose_label->SetForegroundColour(add_enabled ? action_clr : header_clr);
         add_label->SetCursor(wxCursor(add_enabled ? wxCURSOR_HAND : wxCURSOR_ARROW));
@@ -968,7 +968,7 @@ private:
         wxColour row_bg   = StateColor::darkModeColorFor(*wxWHITE);
         wxColour hover_bg = StateColor::darkModeColorFor(wxColour("#F4F4F4"));
         wxColour text_fg  = texture_import_text_colour();
-        wxColour accent   = StateColor::darkModeColorFor(wxColour("#009688"));
+        wxColour accent   = StateColor::darkModeColorFor(wxColour("#C62828"));
 
         wxPanel* row = new wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(-1, row_h),
                                    wxTAB_TRAVERSAL | wxFULL_REPAINT_ON_RESIZE);
@@ -2088,14 +2088,14 @@ void TextureImportDialog::build_params_panel(wxWindow* parent, wxSizer* sizer)
 
     {
         StateColor preset_bg(
-            std::pair<wxColour, int>(wxColour(0, 137, 123), StateColor::Pressed | StateColor::Checked),
-            std::pair<wxColour, int>(wxColour(38, 166, 154), StateColor::Hovered | StateColor::Checked),
-            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Checked),
+            std::pair<wxColour, int>(wxColour(176, 36, 36), StateColor::Pressed | StateColor::Checked),
+            std::pair<wxColour, int>(wxColour(216, 67, 67), StateColor::Hovered | StateColor::Checked),
+            std::pair<wxColour, int>(wxColour(198, 40, 40), StateColor::Checked),
             std::pair<wxColour, int>(wxColour("#CECECE"), StateColor::Pressed),
             std::pair<wxColour, int>(wxColour("#EEEEEE"), StateColor::Hovered),
             std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
         StateColor preset_bd(
-            std::pair<wxColour, int>(wxColour(0, 150, 136), StateColor::Checked),
+            std::pair<wxColour, int>(wxColour(198, 40, 40), StateColor::Checked),
             std::pair<wxColour, int>(wxColour("#CECECE"), StateColor::Normal));
         StateColor preset_text(
             std::pair<wxColour, int>(wxColour("#FFFFFE"), StateColor::Checked),
@@ -2160,8 +2160,8 @@ void TextureImportDialog::build_params_panel(wxWindow* parent, wxSizer* sizer)
             std::pair<wxColour, int>(wxColour("#CECECE"), StateColor::Pressed),
             std::pair<wxColour, int>(wxColour("#EEEEEE"), StateColor::Hovered),
             std::pair<wxColour, int>(*wxWHITE, StateColor::Normal));
-        const wxColour btn_bd_accent = wxColour(0, 150, 136);
-        const wxColour btn_text_accent = wxColour(0, 150, 136);
+        const wxColour btn_bd_accent = wxColour(198, 40, 40);
+        const wxColour btn_text_accent = wxColour(198, 40, 40);
 
         m_btn_color_auto->SetCornerRadius(FromDIP(12));
         m_btn_color_auto->SetMinSize(wxSize(FromDIP(60), FromDIP(28)));

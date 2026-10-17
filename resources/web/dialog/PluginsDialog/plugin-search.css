@@ -18,7 +18,7 @@
 
 .plugin-search:focus-within {
   border-color: var(--main-color);
-  box-shadow: 0 0 0 2px rgba(0, 150, 136, 0.25);
+  box-shadow: 0 0 0 2px rgba(198, 40, 40, 0.25);
 }
 
 .plugin-search-icon {
