@@ -200,6 +200,7 @@
 #include "../Utils/wxInspectorPlugins/Registration.hpp"
 #include "../Utils/Http.hpp"
 #include "../Utils/Telemetry.hpp"
+#include "UnsupportedLanguageNotice.hpp"
 #include "../Utils/InstanceID.hpp"
 #include "../Utils/UndoRedo.hpp"
 #include "slic3r/Config/Snapshot.hpp"
@@ -8417,6 +8418,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 	    wxFileTranslationsLoader::AddCatalogLookupPathPrefix(from_u8(localization_dir()));
     	// Get the active language from PrusaSlicer.ini, or empty string if the key does not exist.
         language = app_config->get("language");
+        const bool language_configured = ! language.empty();
         if (! language.empty())
         	BOOST_LOG_TRIVIAL(info) << boost::format("language provided by OrcaSlicer.conf: %1%") % language;
         else {
@@ -8464,6 +8466,12 @@ bool GUI_App::load_language(wxString language, bool initial)
 #endif
                 }
             }
+        }
+        // This fork supports English only: start new installs in English instead of the system language, and
+        // ask once before using another language that was saved earlier.
+        if (! language_configured || ! confirm_unsupported_language(nullptr, *app_config, into_u8(language))) {
+            language = "en";
+            app_config->set("language", "en");
         }
     }
 

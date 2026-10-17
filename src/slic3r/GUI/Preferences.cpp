@@ -71,6 +71,7 @@
 #include "slic3r/Utils/bambu_networking.hpp"
 #include "slic3r/Utils/NetworkAgent.hpp"
 #include "slic3r/Utils/Telemetry.hpp"
+#include "UnsupportedLanguageNotice.hpp"
 #include "NetworkPluginDialog.hpp"
 #include "DownloadProgressDialog.hpp"
 
@@ -551,6 +552,12 @@ wxBoxSizer *PreferencesDialog::create_item_language_combobox(wxString title, wxS
             return;
 
         if (e.GetString().ToStdString() != app_config->get(param)) {
+            const int selection = combobox->GetSelection();
+            if (selection >= 0 && selection < int(vlist.size()) &&
+                !confirm_unsupported_language(this, *app_config, vlist[selection]->CanonicalName.ToUTF8().data(), app_config->get(param))) {
+                combobox->SetSelection(m_current_language_selected);
+                return;
+            }
             {
                 //check if the project has changed
                 if (wxGetApp().plater()->is_project_dirty()) {

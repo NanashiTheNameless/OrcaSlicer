@@ -25,6 +25,10 @@ If you come across any of these in search results, please <b>report them</b> as 
 
 See <https://github.com/OrcaSlicer/OrcaSlicer> for the official version.
 
+# Languages
+
+This fork only officially supports English, and new installs start in English. Other languages can still be picked in Preferences after acknowledging a one-time notice, but they get no support and may be incompletely translated.
+
 # Telemetry
 
 This fork reports an anonymous usage count to [NamelessTelemetry](https://github.com/NanashiTheNameless/NamelessTelemetry), shown on a public dashboard at <https://telemetry.namelessnanashi.dev/?project=OrcaSlicer-Nanashi>.

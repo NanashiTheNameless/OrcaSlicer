@@ -564,6 +564,8 @@ set(SLIC3R_GUI_SOURCES
     GUI/TroubleshootDialog.hpp
     GUI/UnsavedChangesDialog.cpp
     GUI/UnsavedChangesDialog.hpp
+    GUI/UnsupportedLanguageNotice.cpp
+    GUI/UnsupportedLanguageNotice.hpp
     GUI/UpdateDialogs.cpp
     GUI/UpdateDialogs.hpp
     GUI/NetworkPluginDialog.cpp
