@@ -560,6 +560,13 @@ jobs:
           path: ${{ github.workspace }}/build/src/Release/OrcaSlicer_profile_validator.exe
           retention-days: 7
 
+      - name: Check exception throw info Win
+        if: runner.os == 'Windows' && inputs.compiler == 'clang'
+        working-directory: ${{ github.workspace }}
+        # After the uploads, so a failure still leaves the build and its PDB to inspect, and before any deploy.
+        shell: pwsh
+        run: scripts\check_exception_throw_info.ps1 -BuildDir $env:BUILD_DIR
+
       - name: Deploy Windows release portable (x64)
         if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: NanashiTheNameless/deploy-nightly@master
