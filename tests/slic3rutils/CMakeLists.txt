@@ -46,6 +46,7 @@ add_executable(${_TEST_NAME}_tests
     test_telemetry.cpp
     test_unsupported_language_notice.cpp
     test_texture_island_view.cpp
+    test_timelapse_codecs.cpp
     test_file_url.cpp
     test_imgui_wrapper.cpp
     test_user_manager.cpp
