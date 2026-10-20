@@ -9,9 +9,6 @@ while getopts ":dpa:snt:xbc:i:j:Tuh" opt; do
     d )
         export BUILD_TARGET="deps"
         ;;
-    u )
-        export BUILD_TARGET="universal"
-        ;;
     p )
         export PACK_DEPS="1"
         ;;
