@@ -249,8 +249,8 @@ function pack_deps() {
     )
 }
 
-# codesign cannot seal the runtime's dotted directories (include/python3.12,
-# lib/python3.12) anywhere under Contents/MacOS -- it mistakes any dotted
+# codesign cannot seal the runtime's dotted directories (include/python3.14,
+# lib/python3.14) anywhere under Contents/MacOS -- it mistakes any dotted
 # directory there for a nested bundle and fails with "bundle format
 # unrecognized" -- so packaged apps ship the runtime under Contents/Resources
 # with a compatibility symlink that keeps every Contents/MacOS/python path and

@@ -353,7 +353,7 @@ else ()
         set(MACOSX_BUNDLE_COPYRIGHT "Copyright(C) 2022-2024 Li Jiang All Rights Reserved")
         if (XCODE)
             # Xcode's CodeSign phase fails on the bundled Python runtime's dotted
-            # dirs (python3.12) under Contents/MacOS. Skip it for local dev builds
+            # dirs (python3.14) under Contents/MacOS. Skip it for local dev builds
             # and let the linker ad-hoc sign; the shipped bundle is signed by the
             # Ninja/CI packaging path (build_release_macos.sh, build_orca.yml).
             set_target_properties(OrcaSlicer PROPERTIES XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED NO)

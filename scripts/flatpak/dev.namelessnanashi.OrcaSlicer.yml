@@ -295,10 +295,10 @@ modules:
         sha256: 1ec1cba65f9f20fe5a41fda1586e01c70ea0c9a6d7b67c9e13edf0cfe2239277
         dest: external-packages/OpenCV
 
-      # CPython 3.12.13
+      # CPython 3.14.9
       - type: file
-        url: https://www.python.org/ftp/python/3.12.13/Python-3.12.13.tar.xz
-        sha256: c08bc65a81971c1dd5783182826503369466c7e67374d1646519adf05207b684
+        url: https://www.python.org/ftp/python/3.14.9/Python-3.14.9.tar.xz
+        sha256: e02d9ac21cebda6e46435369744a92c65cc7cd8669697694122cf97ffacd1e53
         dest: external-packages/python3
 
       # wxInspector 1.0.0

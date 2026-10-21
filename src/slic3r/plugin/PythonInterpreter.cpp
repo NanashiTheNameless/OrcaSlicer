@@ -170,11 +170,11 @@ std::string format_python_error(PyObject* ptype, PyObject* pvalue, PyObject* ptr
 }
 
 #ifdef _WIN32
-constexpr const char* PYTHON_DLL       = "python312.dll";
-constexpr const char* PYTHON_DEBUG_DLL = "python312_d.dll";
+constexpr const char* PYTHON_DLL       = "python314.dll";
+constexpr const char* PYTHON_DEBUG_DLL = "python314_d.dll";
 #else
-constexpr const char* PYTHON_STDLIB_DIR = "python3.12";
-constexpr const char* PYTHON_EXECUTABLE = "python3.12";
+constexpr const char* PYTHON_STDLIB_DIR = "python3.14";
+constexpr const char* PYTHON_EXECUTABLE = "python3.14";
 #endif
 
 std::string executable_name(const char* base)
@@ -544,7 +544,7 @@ bool PythonInterpreter::initialize()
 
         // Log the exact paths being used for debugging
         BOOST_LOG_TRIVIAL(info) << "Setting Python home to: " << python_home;
-        BOOST_LOG_TRIVIAL(info) << "Python 3.12 stdlib path: " << python_lib.string();
+        BOOST_LOG_TRIVIAL(info) << "Python 3.14 stdlib path: " << python_lib.string();
 
         // Verify encodings module exists
         fs::path encodings_path = python_lib / "encodings";
@@ -554,7 +554,7 @@ bool PythonInterpreter::initialize()
             BOOST_LOG_TRIVIAL(warning) << "Encodings module NOT found at: " << encodings_path.string();
         }
 
-        BOOST_LOG_TRIVIAL(info) << "Using Python 3.12 PyConfig initialization API";
+        BOOST_LOG_TRIVIAL(info) << "Using Python 3.14 PyConfig initialization API";
 
         // Set Python home - this is the prefix where Python libraries are located
         PyConfig config;

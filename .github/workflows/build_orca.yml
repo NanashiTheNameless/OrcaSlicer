@@ -33,8 +33,12 @@ jobs:
       ubuntu-ver: ""
       ubuntu-ver-str: ""
       ORCA_UPDATER_SIG_KEY: ${{ secrets.ORCA_UPDATER_SIG_KEY }}
-      NSIS_VERSION: '3.13'
-      NSIS_SHA256: BA63DFFC4410EE89193E1CB5A41989991BD77C61068DA17E3156D136B7B0B3D8
+      # Overridable from repo variables so the NSIS stub version can be A/B-tested
+      # (some antivirus engines flag the stub a given NSIS release emits) without
+      # editing this file. Set repo variables NSIS_VERSION and the matching
+      # NSIS_SHA256 together; both default to the pinned 3.13 below.
+      NSIS_VERSION: ${{ vars.NSIS_VERSION || '3.13' }}
+      NSIS_SHA256: ${{ vars.NSIS_SHA256 || 'BA63DFFC4410EE89193E1CB5A41989991BD77C61068DA17E3156D136B7B0B3D8' }}
 
     steps:
       - name: Checkout
