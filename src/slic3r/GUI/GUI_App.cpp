@@ -39,6 +39,7 @@
 #include <boost/filesystem/file_status.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/exception.hpp>
+#include <boost/dll/runtime_symbol_info.hpp>
 #include <boost/locale/encoding_utf.hpp>
 #include <boost/log/detail/native_typeof.hpp>
 #include <cstdint>
@@ -292,7 +293,6 @@ typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS2)(
 
 #endif
 #ifdef _WIN32
-#include <boost/dll/runtime_symbol_info.hpp>
 #include <direct.h>
 #endif
 
