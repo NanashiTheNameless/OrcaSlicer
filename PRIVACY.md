@@ -35,14 +35,15 @@ If any of that is more than you want to share, turn it off. It is designed to be
 
 ## How to disable it
 
-Any one of these stops all pings. The change takes effect immediately and nothing is sent.
+Any one of these stops all pings once applied. Preferences and Stealth Mode take effect immediately; the installer choice is applied the next time OrcaSlicer starts.
 
 ### Any operating system
 
 - Setup wizard: uncheck "Send anonymous usage statistics" on first run.
 - Preferences: on the Online tab, turn off "Send anonymous usage statistics" at any time. Your choice is saved and can be turned back on.
 - Stealth Mode: turning on Stealth Mode also turns telemetry off.
-- Command line: launch with `--turn-telemetry-off` once. It turns telemetry off, saves that choice, and keeps starting normally. Useful for scripted or unattended installs. The Windows installer's opt-out checkbox uses it.
+- Command line: launch with `--turn-telemetry-off` once. It turns telemetry off, saves that choice, and keeps starting normally. Useful for scripted or unattended installs.
+- Windows installer: on the installer's final page, tick "Turn off anonymous usage statistics (telemetry)". The installer leaves a one-time marker next to OrcaSlicer; on the next launch, OrcaSlicer turns telemetry off in your config and removes the marker.
 - Environment variable (forces it off without changing your saved setting): set `DO_NOT_TRACK`, `TELEMETRY_OPTOUT`, or `ORCA_TELEMETRY_OPTOUT` to `1`, or set `TELEMETRY` to `0`.
 
 ### Windows only

@@ -2809,8 +2809,44 @@ void GUI_App::init_app_config()
     if (app_config->get("enable_speed_dial").empty())
         app_config->set_bool("enable_speed_dial", true);
 
-    // Apply a one-shot telemetry opt-out requested from the Windows installer, if any, now that the config
-    // is loaded and before anything could send a census ping.
+    // Installer opt-out marker: the installer's "turn off telemetry" checkbox drops an empty marker file next
+    // to the executable. Any empty file whose name reads as "telemetry off" is accepted -- case, separators
+    // and extension are ignored, so telemetry_off.flag, telemetry-off, TELEMETRY_OFF_FLAG and the like
+    // count, but a non-empty file that happens to match the name does not. Apply it to this user's config,
+    // then remove the marker so it is consumed once.
+    {
+        const auto normalize = [](const std::string& name) {
+            std::string out;
+            for (char c : name) {
+                if (c >= 'A' && c <= 'Z')
+                    out += char(c - 'A' + 'a');
+                else if ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))
+                    out += c;
+            }
+            return out;
+        };
+        const auto                dir = boost::dll::program_location().parent_path();
+        boost::system::error_code ec;
+        boost::filesystem::path   marker;
+        for (boost::filesystem::directory_iterator it(dir, ec), end; ! ec && it != end; it.increment(ec)) {
+            if (! boost::filesystem::is_regular_file(it->status()) ||
+                normalize(it->path().filename().string()).rfind("telemetryoff", 0) != 0)
+                continue;
+            // Only an empty file counts, so a real file that merely happens to match the name is ignored.
+            boost::system::error_code size_ec;
+            if (boost::filesystem::file_size(it->path(), size_ec) == 0 && ! size_ec) {
+                marker = it->path();
+                break;
+            }
+        }
+        if (! marker.empty()) {
+            app_config->set_bool("telemetry", false);
+            boost::filesystem::remove(marker, ec);
+        }
+    }
+
+    // Apply the --turn-telemetry-off command-line flag, if present, now that the config is loaded and before
+    // anything could send a census ping.
     Telemetry::consume_installer_optout(*app_config);
 
     set_logging_level(Slic3r::level_string_to_boost(app_config->get("log_severity_level")));

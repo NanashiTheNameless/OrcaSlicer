@@ -1377,18 +1377,24 @@ set(CPACK_CREATE_DESKTOP_LINKS "orca-slicer")
 set (CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/LICENSE.txt) # must also include in install command
 
 # Finish-page opt-out for anonymous usage statistics. The checkbox (MUI's second finish-page checkbox, the
-# "show readme" slot repurposed) launches the just-installed app with --turn-telemetry-off, which turns
-# telemetry off in that user's config on startup (see Telemetry::consume_installer_optout). Only when
-# checked, so the default is unchanged. CPACK_NSIS_DEFINES lands before the finish page, so the !defines
-# take effect and the function is defined before it is referenced.
+# "show readme" slot repurposed) writes an empty telemetry_off.flag marker in the install dir. It does not
+# launch the app: on a later launch the app, running as the user, sees the marker and turns telemetry off in
+# that user's config (see GUI_App::init_app_config), which keeps the opt-out in the right profile and off
+# the installer's elevated token, then removes the marker. Re-running the installer with the box checked
+# creates a new marker and re-requests the opt-out. Only when checked, so the default is unchanged. CPACK_NSIS_DEFINES
+# lands before the finish page, so the !defines take effect and the function is defined before it is used.
 set(CPACK_NSIS_DEFINES "
 !define MUI_FINISHPAGE_SHOWREADME \"\"
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_FINISHPAGE_SHOWREADME_TEXT \"Turn off anonymous usage statistics (telemetry)\"
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION OrcaTurnTelemetryOff
 Function OrcaTurnTelemetryOff
-  Exec '\"$INSTDIR\\orca-slicer.exe\" --turn-telemetry-off'
+  FileOpen $0 \"$INSTDIR\\telemetry_off.flag\" w
+  FileClose $0
 FunctionEnd
+")
+set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+  Delete \"$INSTDIR\\telemetry_off.flag\"
 ")
 
 set(CPACK_WIX_UPGRADE_GUID "058245e8-20e0-4a95-9ab7-1acfe17ad511")
