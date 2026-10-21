@@ -1,6 +1,8 @@
 #include "GUI_App.hpp"
 #include "InstanceCheck.hpp"
 #include "Plater.hpp"
+#include "slic3r/Utils/Telemetry.hpp"
+#include "libslic3r/AppConfig.hpp"
 #include <boost/bind/bind.hpp>
 #include <boost/regex.hpp>
 #include <string>
@@ -510,6 +512,19 @@ void OtherInstanceMessageHandler::handle_message(const std::string& message)
 	if (! parsed) {
 		BOOST_LOG_TRIVIAL(error) << "message from other instance is incorrectly formatted: " << message;
 		return;
+	}
+
+	// A second launch forwarded here with --turn-telemetry-off cannot re-run init_app_config(), so apply the
+	// opt-out directly. Hop to the GUI thread: this handler may run off it (WM_COPYDATA on Windows, D-Bus on
+	// Linux), and AppConfig is not thread-safe.
+	for (const std::string& arg : args) {
+		if (arg == "--turn-telemetry-off") {
+			wxGetApp().CallAfter([]() {
+				if (AppConfig* cfg = wxGetApp().app_config)
+					Telemetry::turn_off(*cfg);
+			});
+			break;
+		}
 	}
 
 	std::vector<boost::filesystem::path> paths;

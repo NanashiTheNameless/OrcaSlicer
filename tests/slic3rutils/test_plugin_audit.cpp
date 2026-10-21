@@ -285,12 +285,12 @@ TEST_CASE("Plugin audit denies secret/certificate/config-like paths by keyword",
     {
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/plugin/output/model.gcode")));
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/plugin/storage/state.json")));
-        CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/packages/cp312/numpy/__config__.py")));
-        CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/packages/cp312/numpy/_core/_ufunc_config.py")));
+        CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/packages/cp314/numpy/__config__.py")));
+        CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/packages/cp314/numpy/_core/_ufunc_config.py")));
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/Lib/configparser.py")));
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/Lib/sysconfig.py")));
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/Lib/logging/config.py")));
-        CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/packages/cp312/certifi/cacert.pem")));
+        CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/python/packages/cp314/certifi/cacert.pem")));
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/users/Conference/output.txt")));
         CHECK_FALSE(mgr.is_denied_path_keyword(fs::path("/users/Concert/output.txt")));
     }

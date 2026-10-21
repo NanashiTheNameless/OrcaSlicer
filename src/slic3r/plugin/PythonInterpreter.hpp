@@ -61,7 +61,7 @@ public:
     // Bundled uv executable path, or empty when uv is not bundled/found.
     static std::string bundled_uv_path();
 
-    // Python ABI tag for the bundled interpreter, e.g. "cp312".
+    // Python ABI tag for the bundled interpreter, e.g. "cp314".
     static std::string python_abi_tag();
 
     // Finalize the Python interpreter.

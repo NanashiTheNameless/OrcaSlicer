@@ -77,7 +77,7 @@ if(APPLE)
     set(_python_ldflags "${_python_arch_flags} -Wl,-headerpad_max_install_names")
 
     # The macOS 27 SDK declares pipe2() and dup3() as available from macOS 27, so
-    # configure finds them and CPython 3.12 calls them without a runtime check.
+    # configure finds them and CPython 3.14 calls them without a runtime check.
     # Below a macOS 27 deployment target they are weak-linked and resolve to NULL
     # on older systems, where os.pipe() then segfaults -- in `make install`
     # (compileall, ensurepip) and in the shipped app alike. Every configure below
@@ -148,7 +148,7 @@ if(APPLE)
             ${_python_build_tgt}
             ac_cv_func_pipe2=no
             ac_cv_func_dup3=no
-            # Tcl/Tk 9.0 (e.g. from Homebrew) is incompatible with CPython 3.12's
+            # Tcl/Tk 9.0 (e.g. from Homebrew) is incompatible with CPython 3.14's
             # _tkinter; OrcaSlicer's embedded Python does not need tkinter anyway.
             py_cv_module__tkinter=n/a
         )
@@ -193,7 +193,7 @@ else()
         --with-openssl=${DESTDIR}
         --without-static-libpython
         --disable-test-modules
-        # Tcl/Tk 9.0 is incompatible with CPython 3.12's _tkinter; not needed here.
+        # Tcl/Tk 9.0 is incompatible with CPython 3.14's _tkinter; not needed here.
         py_cv_module__tkinter=n/a
         LDFLAGS=-Wl,-rpath,${_python_prefix}/lib
     )

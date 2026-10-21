@@ -13577,6 +13577,13 @@ CLIMiscConfigDef::CLIMiscConfigDef()
     def->label = L("Load config file");
     def->tooltip = L("Load configuration from the specified file. It can be used more than once to load options from multiple files.");*/
 
+    def = this->add("turn_telemetry_off", coBool);
+    def->label = L("Turn telemetry off");
+    def->tooltip = L("Turn anonymous usage statistics off and save that choice, then keep starting normally. "
+                     "The setup wizard's telemetry checkbox starts unchecked and nothing is sent this launch. "
+                     "You can turn it back on later in Preferences.");
+    def->set_default_value(new ConfigOptionBool(false));
+
     def = this->add("load_settings", coStrings);
     def->label = L("Load General Settings");
     def->tooltip = L("Load process/machine settings from the specified file.");

@@ -124,5 +124,24 @@ void send_census(AppConfig& config)
         .perform();
 }
 
+void turn_off(AppConfig& config)
+{
+    config.set_bool("telemetry", false);
+    config.save();
+    BOOST_LOG_TRIVIAL(info) << "Telemetry turned off at the user's request (--turn-telemetry-off).";
+}
+
+void consume_installer_optout(AppConfig& config)
+{
+    // CLI::setup() sets this in-process env var when it parses --turn-telemetry-off, before the GUI starts.
+    // Because this runs in init_app_config() -- before the setup wizard is built and before any census ping
+    // -- the wizard's telemetry checkbox reads the config and shows unchecked, and no ping is sent this
+    // launch. The Windows installer's finish-page checkbox launches the app with the flag, which arrives
+    // here the same way.
+    const char* value = std::getenv("ORCA_TURN_TELEMETRY_OFF");
+    if (value && std::string(value) == "1")
+        turn_off(config);
+}
+
 } // namespace Telemetry
 } // namespace Slic3r

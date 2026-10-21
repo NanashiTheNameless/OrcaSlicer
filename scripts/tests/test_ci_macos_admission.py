@@ -19,7 +19,7 @@ UTC = datetime.timezone.utc
 NOON = datetime.datetime(2026, 10, 10, 12, 0, tzinfo=UTC)
 
 
-def job(name, status="completed", conclusion="success", labels=("macos-15",)):
+def job(name, status="completed", conclusion="success", labels=("macos-26",)):
     return {"name": name, "status": status, "conclusion": conclusion, "labels": list(labels)}
 
 

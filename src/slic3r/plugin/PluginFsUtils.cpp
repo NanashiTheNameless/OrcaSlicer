@@ -1103,7 +1103,7 @@ bool read_wheel_plugin_metadata(const boost::filesystem::path& whl_path, PluginD
             bool compatible = false;
             const std::string abi_tag = PythonInterpreter::python_abi_tag();
             for (const auto& tag : wheel_tags) {
-                // Pure Python wheel: py3-none-any or cp312-none-any
+                // Pure Python wheel: py3-none-any or cp314-none-any
                 if (tag.find("-none-any") != std::string::npos) {
                     compatible = true;
                     break;

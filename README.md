@@ -31,15 +31,9 @@ This fork only officially supports English, and new installs start in English. O
 
 # Telemetry
 
-This fork reports an anonymous usage count to [NamelessTelemetry](https://github.com/NanashiTheNameless/NamelessTelemetry), shown on a public dashboard at <https://telemetry.namelessnanashi.dev/?project=OrcaSlicer-Nanashi>.
+This fork reports an anonymous usage count to [NamelessTelemetry](https://github.com/NanashiTheNameless/NamelessTelemetry), shown on a public dashboard at <https://telemetry.namelessnanashi.dev/?project=OrcaSlicer-Nanashi>. It sends only the project name and a per-install random hash, never your files, settings, printers or accounts, and you can turn it off at any time.
 
-- **What is sent:** the project name `OrcaSlicer-Nanashi` and the SHA-256 hash of a random ID generated for this installation. Nothing else, no files, settings, printers or accounts. The server counts each installation once per UTC day.
-- **When:** at startup and every 2 hours while the program is open. Nothing is sent before the setup wizard is finished.
-- **Turning it off:** uncheck "Send anonymous usage statistics" in the setup wizard or in Preferences > Online. Stealth Mode also turns it off. You can opt out with the environment too: set `DO_NOT_TRACK=1`, `TELEMETRY_OPTOUT=1` or `ORCA_TELEMETRY_OPTOUT=1`, or `TELEMETRY=0`. On Windows, a nonzero `TelemetryOptOut` DWORD under `HKEY_LOCAL_MACHINE\SOFTWARE\Policies\OrcaSlicer` (whole machine, for example by Group Policy) or `HKEY_CURRENT_USER\SOFTWARE\Policies\OrcaSlicer` (one user) also turns it off:
-
-  ```bat
-  reg add "HKLM\SOFTWARE\Policies\OrcaSlicer" /v TelemetryOptOut /t REG_DWORD /d 1 /f
-  ```
+See **[PRIVACY.md](PRIVACY.md)** for exactly what is collected, what it actually risks, and every way to turn it off.
 
 # Wiki
 

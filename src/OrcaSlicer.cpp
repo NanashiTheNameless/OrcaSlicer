@@ -8114,6 +8114,19 @@ bool CLI::setup(int argc, char **argv)
         return false;
     }
 
+    // --turn-telemetry-off (a recognized misc option) turns anonymous usage statistics off for good and
+    // keeps starting normally. It is relayed to the GUI through an in-process env var that init_app_config()
+    // consumes before the setup wizard is built or any census ping is sent; the Windows installer's
+    // finish-page checkbox uses it, but it works on every platform and launch.
+    if (const auto* turn_telemetry_off = m_config.option<ConfigOptionBool>("turn_telemetry_off");
+        turn_telemetry_off && turn_telemetry_off->value) {
+#ifdef _WIN32
+        ::_putenv_s("ORCA_TURN_TELEMETRY_OFF", "1");
+#else
+        ::setenv("ORCA_TURN_TELEMETRY_OFF", "1", 1);
+#endif
+    }
+
     // Orca: resolve here, while the process is still in the directory the user invoked it from.
     // GUI_App's constructor moves the working directory to <data_dir>/log, long before the GUI
     // opens these files in post_init(), and a relative path would then resolve against that.

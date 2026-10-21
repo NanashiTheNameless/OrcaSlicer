@@ -34,6 +34,17 @@ bool is_enabled(AppConfig& config);
 // Sends one census ping in the background if enabled. Failures are ignored.
 void send_census(AppConfig& config);
 
+// Turn telemetry off in the stored config and save -- a normal choice the user can later flip in
+// Preferences, unlike the sticky Policies opt-out. Shared by the two --turn-telemetry-off entry points.
+void turn_off(AppConfig& config);
+
+// Applies the --turn-telemetry-off command-line flag, which CLI::setup() relays via the
+// ORCA_TURN_TELEMETRY_OFF env var, by calling turn_off(). Works on every platform and launch; the Windows
+// installer's finish-page checkbox launches the app with the flag. No-op when the variable is unset, so the
+// default behavior is unchanged. A second launch forwarded to an already-running single instance is handled
+// separately, in OtherInstanceMessageHandler::handle_message().
+void consume_installer_optout(AppConfig& config);
+
 // Repeats send_census() while the app runs, so sessions spanning several UTC days are counted on each.
 class CensusTimer : public wxTimer
 {

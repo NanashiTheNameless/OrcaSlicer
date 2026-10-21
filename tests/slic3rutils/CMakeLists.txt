@@ -101,7 +101,7 @@ elseif (NOT FLATPAK)
     )
 elseif (FLATPAK)
     # Same <testdir>/python home as WIN32/APPLE; symlink since /app/libpython
-    # already ships in the flatpak (the test exe links libpython3.12.so from it).
+    # already ships in the flatpak (the test exe links libpython3.14.so from it).
     add_custom_command(TARGET ${_TEST_NAME}_tests POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E rm -rf
             "$<TARGET_FILE_DIR:${_TEST_NAME}_tests>/python"

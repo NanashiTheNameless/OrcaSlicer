@@ -2808,6 +2808,11 @@ void GUI_App::init_app_config()
     // MainFrame shortcut read the same value; an existing config (true or false) is left untouched.
     if (app_config->get("enable_speed_dial").empty())
         app_config->set_bool("enable_speed_dial", true);
+
+    // Apply a one-shot telemetry opt-out requested from the Windows installer, if any, now that the config
+    // is loaded and before anything could send a census ping.
+    Telemetry::consume_installer_optout(*app_config);
+
     set_logging_level(Slic3r::level_string_to_boost(app_config->get("log_severity_level")));
 
 }
