@@ -712,6 +712,24 @@ std::vector<PyObject*> stack_frames()
     return frames;
 }
 
+// CPython 3.14 may materialize more than one PyFrameObject for a running generator frame.
+// Compare generator owners as well as frame pointers so a resumed lazy stdlib operation still
+// matches the frame saved when its audit event was approved.
+bool same_execution_frame(PyObject* lhs, PyObject* rhs)
+{
+    if (lhs == rhs)
+        return true;
+
+    PyObject* lhs_generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(lhs)); // new reference
+    if (!lhs_generator)
+        return false;
+    PyObject* rhs_generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(rhs)); // new reference
+    const bool same_generator = rhs_generator && lhs_generator == rhs_generator;
+    Py_XDECREF(rhs_generator);
+    Py_DECREF(lhs_generator);
+    return same_generator;
+}
+
 // Moves the held root frames whose operation has returned from `held` to `dropped`. A suspended
 // generator's frame (os.walk between two items) is off the stack, but its operation resumes, so
 // it stays held until the scope ends.
@@ -1276,7 +1294,9 @@ bool PluginAuditManager::covered_by_root_frame() const
     // Only stdlib frames may sit between the event and the operation: plugin or library code
     // the operation calls back into (an os.walk onerror, a urllib handler) acts on its own.
     for (PyObject* frame : PluginAuditDetail::stack_frames()) {
-        if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end()) {
+        if (std::any_of(m_root_frames.begin(), m_root_frames.end(), [frame](PyObject* root) {
+                return PluginAuditDetail::same_execution_frame(root, frame);
+            })) {
             return true;
         }
         if (!PluginAuditDetail::is_stdlib_frame(frame))
