@@ -712,13 +712,6 @@ std::vector<PyObject*> stack_frames()
     return frames;
 }
 
-void release_stack_frames(std::vector<PyObject*>& frames)
-{
-    for (PyObject* frame : frames)
-        Py_DECREF(frame);
-    frames.clear();
-}
-
 // Moves the held root frames whose operation has returned from `held` to `dropped`. A suspended
 // generator's frame (os.walk between two items) is off the stack, but its operation resumes, so
 // it stays held until the scope ends.
@@ -727,7 +720,7 @@ void take_returned_frames(std::vector<PyObject*>& held, std::vector<PyObject*>& 
     if (held.empty())
         return;
 
-    std::vector<PyObject*> stack = stack_frames();
+    const std::vector<PyObject*> stack = stack_frames();
     const auto running = [&stack](PyObject* frame) {
         if (std::find(stack.begin(), stack.end(), frame) != stack.end())
             return true;
@@ -753,7 +746,6 @@ void take_returned_frames(std::vector<PyObject*>& held, std::vector<PyObject*>& 
     const auto returned = std::stable_partition(held.begin(), held.end(), running);
     dropped.insert(dropped.end(), returned, held.end());
     held.erase(returned, held.end());
-    release_stack_frames(stack);
 }
 
 static const std::unordered_set<std::string> two_path_fs_events{
@@ -1267,21 +1259,12 @@ bool PluginAuditManager::request_permissions(const std::string& plugin_key, cons
 
 void PluginAuditManager::record_root_frame()
 {
-    // Audit events can be raised from a nested stdlib helper. Hold the nearest stdlib frame on
-    // the active stack so lazy operations such as pathlib globbing remain covered while they run.
-    std::vector<PyObject*> stack = PluginAuditDetail::stack_frames();
-    const auto frame_it = std::find_if(stack.begin(), stack.end(), PluginAuditDetail::is_stdlib_frame);
-    if (frame_it == stack.end()) {
-        PluginAuditDetail::release_stack_frames(stack);
+    PyObject* frame = reinterpret_cast<PyObject*>(PyEval_GetFrame()); // borrowed reference
+    if (!frame || !PluginAuditDetail::is_stdlib_frame(frame))
         return;
-    }
-    PyObject* frame = *frame_it;
-    Py_INCREF(frame);
-    PluginAuditDetail::release_stack_frames(stack);
-    if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end()) {
-        Py_DECREF(frame);
+    if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end())
         return; // glob.glob and glob.glob/2 share a frame
-    }
+    Py_INCREF(frame);
     m_root_frames.push_back(frame);
 }
 
@@ -1292,18 +1275,14 @@ bool PluginAuditManager::covered_by_root_frame() const
 
     // Only stdlib frames may sit between the event and the operation: plugin or library code
     // the operation calls back into (an os.walk onerror, a urllib handler) acts on its own.
-    std::vector<PyObject*> stack = PluginAuditDetail::stack_frames();
-    bool covered = false;
-    for (PyObject* frame : stack) {
+    for (PyObject* frame : PluginAuditDetail::stack_frames()) {
         if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end()) {
-            covered = true;
-            break;
+            return true;
         }
         if (!PluginAuditDetail::is_stdlib_frame(frame))
-            break;
+            return false;
     }
-    PluginAuditDetail::release_stack_frames(stack);
-    return covered;
+    return false;
 }
 
 bool PluginAuditManager::releasing_frames() const { return m_releasing_frames > 0; }
