@@ -1383,18 +1383,19 @@ set (CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/LICENSE.txt) # must also in
 # the installer's elevated token, then removes the marker. Re-running the installer with the box checked
 # creates a new marker and re-requests the opt-out. Only when checked, so the default is unchanged. CPACK_NSIS_DEFINES
 # lands before the finish page, so the !defines take effect and the function is defined before it is used.
+# CPack writes these values into CPackConfig.cmake unescaped, so quotes and backslashes are escaped twice.
 set(CPACK_NSIS_DEFINES "
-!define MUI_FINISHPAGE_SHOWREADME \"\"
+!define MUI_FINISHPAGE_SHOWREADME \\\"\\\"
 !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
-!define MUI_FINISHPAGE_SHOWREADME_TEXT \"Turn off anonymous usage statistics (telemetry)\"
+!define MUI_FINISHPAGE_SHOWREADME_TEXT \\\"Turn off anonymous usage statistics (telemetry)\\\"
 !define MUI_FINISHPAGE_SHOWREADME_FUNCTION OrcaTurnTelemetryOff
 Function OrcaTurnTelemetryOff
-  FileOpen $0 \"$INSTDIR\\telemetry_off.flag\" w
+  FileOpen $0 \\\"$INSTDIR\\\\telemetry_off.flag\\\" w
   FileClose $0
 FunctionEnd
 ")
 set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
-  Delete \"$INSTDIR\\telemetry_off.flag\"
+  Delete \\\"$INSTDIR\\\\telemetry_off.flag\\\"
 ")
 
 set(CPACK_WIX_UPGRADE_GUID "058245e8-20e0-4a95-9ab7-1acfe17ad511")
