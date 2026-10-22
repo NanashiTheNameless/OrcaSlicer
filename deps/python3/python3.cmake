@@ -41,6 +41,14 @@ if(WIN32)
     return()
 endif()
 
+# CPython's _zstd module uses experimental dictionary APIs, so source-built
+# Python must link to the static Zstandard library on macOS and Linux.
+set(_python_zstd_version "1.5.7")
+set(_python_zstd_prefix "${DESTDIR}/zstd")
+set(_python_zstd_archive "${_python_zstd_prefix}/lib/libzstd.a")
+set(_python_zstd_cflags "-I${_python_zstd_prefix}/include")
+set(_python_zstd_libs "${_python_zstd_archive}")
+
 if(APPLE)
     # macOS configuration
     if(CMAKE_OSX_ARCHITECTURES)
@@ -112,6 +120,8 @@ if(APPLE)
              env \
                CC='${CMAKE_C_COMPILER}' \
                CXX='${CMAKE_CXX_COMPILER}' \
+               LIBZSTD_CFLAGS='${_python_zstd_cflags}' \
+               LIBZSTD_LIBS='${_python_zstd_libs}' \
                CFLAGS='${_python_arch_flags}' \
                CXXFLAGS='${_python_arch_flags}' \
                LDFLAGS='${_python_ldflags}' \
@@ -134,6 +144,8 @@ if(APPLE)
             env
             "CC=${CMAKE_C_COMPILER}"
             "CXX=${CMAKE_CXX_COMPILER}"
+            "LIBZSTD_CFLAGS=${_python_zstd_cflags}"
+            "LIBZSTD_LIBS=${_python_zstd_libs}"
             "CFLAGS=${_python_arch_flags}"
             "CXXFLAGS=${_python_arch_flags}"
             "LDFLAGS=${_python_ldflags}"
@@ -186,7 +198,10 @@ else()
     # in-tree pre-relocation -- and, critically, it reserves enough RUNPATH
     # bytes for the in-place $ORIGIN rewrite at install time (Flatpak's
     # DESTDIR is the short /app) -- see relocate_linux.cmake.
-    set(_conf_cmd ./configure
+    set(_conf_cmd env
+        "LIBZSTD_CFLAGS=${_python_zstd_cflags}"
+        "LIBZSTD_LIBS=${_python_zstd_libs}"
+        ./configure
         --prefix=${_python_prefix}
         --enable-shared
         --enable-optimizations
@@ -205,6 +220,29 @@ else()
             -P "${CMAKE_CURRENT_LIST_DIR}/relocate_linux.cmake"
     )
 endif()
+
+set(_python_zstd_cmake_args
+    -DCMAKE_INSTALL_PREFIX=${_python_zstd_prefix}
+    -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+    -DZSTD_BUILD_SHARED=OFF
+    -DZSTD_BUILD_PROGRAMS=OFF
+    -DZSTD_BUILD_TESTS=OFF
+    -DZSTD_BUILD_CONTRIB=OFF
+)
+if(APPLE)
+    list(APPEND _python_zstd_cmake_args
+        -DCMAKE_OSX_ARCHITECTURES=${_python_arch_flag}
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}
+    )
+endif()
+ExternalProject_Add(dep_Zstd
+    URL "https://github.com/facebook/zstd/releases/download/v${_python_zstd_version}/zstd-${_python_zstd_version}.tar.gz"
+    URL_HASH SHA256=eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
+    DOWNLOAD_DIR ${DEP_DOWNLOAD_DIR}/zstd
+    SOURCE_SUBDIR build/cmake
+    CMAKE_ARGS ${_python_zstd_cmake_args}
+)
+list(APPEND _python_depends dep_Zstd)
 
 ExternalProject_Add(dep_python3
     URL "${_python_url}"
