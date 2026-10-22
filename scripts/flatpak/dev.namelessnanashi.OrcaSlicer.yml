@@ -301,6 +301,12 @@ modules:
         sha256: e02d9ac21cebda6e46435369744a92c65cc7cd8669697694122cf97ffacd1e53
         dest: external-packages/python3
 
+      # Zstandard 1.5.7 (statically linked into CPython's _zstd)
+      - type: file
+        url: https://github.com/facebook/zstd/releases/download/v1.5.7/zstd-1.5.7.tar.gz
+        sha256: eb33e51f49a15e023950cd7825ca74a4a2b43db8354825ac24fc1b7ee09e6fa3
+        dest: external-packages/zstd
+
       # wxInspector 1.0.0
       - type: file
         url: https://github.com/Noisyfox/wxInspector/archive/refs/tags/v1.0.0.zip
