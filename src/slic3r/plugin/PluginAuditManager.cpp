@@ -712,6 +712,13 @@ std::vector<PyObject*> stack_frames()
     return frames;
 }
 
+void release_stack_frames(std::vector<PyObject*>& frames)
+{
+    for (PyObject* frame : frames)
+        Py_DECREF(frame);
+    frames.clear();
+}
+
 // Moves the held root frames whose operation has returned from `held` to `dropped`. A suspended
 // generator's frame (os.walk between two items) is off the stack, but its operation resumes, so
 // it stays held until the scope ends.
@@ -720,19 +727,33 @@ void take_returned_frames(std::vector<PyObject*>& held, std::vector<PyObject*>& 
     if (held.empty())
         return;
 
-    const std::vector<PyObject*> stack = stack_frames();
+    std::vector<PyObject*> stack = stack_frames();
     const auto running = [&stack](PyObject* frame) {
         if (std::find(stack.begin(), stack.end(), frame) != stack.end())
             return true;
-        // NULL once the generator has finished or been deleted: its frame then owns its own data.
+        // A suspended generator's frame is off the stack, but its operation resumes, so keep it
+        // held. In Python 3.14 PyFrame_GetGenerator still returns the owner after it has finished;
+        // check the public frame attribute to distinguish a suspended frame from a closed one.
         PyObject* generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(frame)); // new reference
-        const bool suspended = generator != nullptr;
+        bool suspended = false;
+        if (generator) {
+            const char* frame_attr = PyGen_Check(generator) ? "gi_frame" :
+                                     PyCoro_CheckExact(generator) ? "cr_frame" : "ag_frame";
+            PyObject* generator_frame = PyObject_GetAttrString(generator, frame_attr); // new reference
+            if (generator_frame) {
+                suspended = generator_frame != Py_None;
+                Py_DECREF(generator_frame);
+            } else {
+                PyErr_Clear();
+            }
+        }
         Py_XDECREF(generator);
         return suspended;
     };
     const auto returned = std::stable_partition(held.begin(), held.end(), running);
     dropped.insert(dropped.end(), returned, held.end());
     held.erase(returned, held.end());
+    release_stack_frames(stack);
 }
 
 static const std::unordered_set<std::string> two_path_fs_events{
@@ -1246,12 +1267,21 @@ bool PluginAuditManager::request_permissions(const std::string& plugin_key, cons
 
 void PluginAuditManager::record_root_frame()
 {
-    PyObject* frame = reinterpret_cast<PyObject*>(PyEval_GetFrame()); // borrowed reference
-    if (!frame || !PluginAuditDetail::is_stdlib_frame(frame))
+    // Audit events can be raised from a nested stdlib helper. Hold the nearest stdlib frame on
+    // the active stack so lazy operations such as pathlib globbing remain covered while they run.
+    std::vector<PyObject*> stack = PluginAuditDetail::stack_frames();
+    const auto frame_it = std::find_if(stack.begin(), stack.end(), PluginAuditDetail::is_stdlib_frame);
+    if (frame_it == stack.end()) {
+        PluginAuditDetail::release_stack_frames(stack);
         return;
-    if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end())
-        return; // glob.glob and glob.glob/2 share a frame
+    }
+    PyObject* frame = *frame_it;
     Py_INCREF(frame);
+    PluginAuditDetail::release_stack_frames(stack);
+    if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end()) {
+        Py_DECREF(frame);
+        return; // glob.glob and glob.glob/2 share a frame
+    }
     m_root_frames.push_back(frame);
 }
 
@@ -1262,13 +1292,18 @@ bool PluginAuditManager::covered_by_root_frame() const
 
     // Only stdlib frames may sit between the event and the operation: plugin or library code
     // the operation calls back into (an os.walk onerror, a urllib handler) acts on its own.
-    for (PyObject* frame : PluginAuditDetail::stack_frames()) {
-        if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end())
-            return true;
+    std::vector<PyObject*> stack = PluginAuditDetail::stack_frames();
+    bool covered = false;
+    for (PyObject* frame : stack) {
+        if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end()) {
+            covered = true;
+            break;
+        }
         if (!PluginAuditDetail::is_stdlib_frame(frame))
-            return false;
+            break;
     }
-    return false;
+    PluginAuditDetail::release_stack_frames(stack);
+    return covered;
 }
 
 bool PluginAuditManager::releasing_frames() const { return m_releasing_frames > 0; }
