@@ -145,6 +145,12 @@ static const std::unordered_set<std::string> operation_root_events{
     "shutil.unpack_archive",
 };
 
+// Root events whose operation returns a lazy iterator: in Python 3.14, Path.glob() raises its
+// event and returns before the stdlib generators doing the listing first run.
+static const std::unordered_set<std::string> lazy_operation_root_events{
+    "pathlib.Path.glob", "pathlib.Path.rglob",
+};
+
 // True for the categories whose targets are filesystem paths, as opposed to a network
 // address or a process command line -- the deny-path and allowed-root checks only make sense
 // against a path.
@@ -264,6 +270,7 @@ thread_local std::string PluginAuditManager::m_current_plugin_key = "";
 thread_local std::string PluginAuditManager::m_current_capability_name = "";
 thread_local std::vector<AllowedRoot> PluginAuditManager::m_scoped_allowed_roots;
 thread_local std::vector<PyObject*> PluginAuditManager::m_root_frames;
+thread_local std::vector<std::string> PluginAuditManager::m_lazy_root_targets;
 thread_local int PluginAuditManager::m_releasing_frames = 0;
 thread_local bool PluginAuditManager::m_audit_denial_pending = false;
 thread_local bool PluginAuditManager::m_has_last_violation = false;
@@ -277,11 +284,13 @@ ScopedPluginAuditContext::ScopedPluginAuditContext(const std::string& plugin_key
     , m_previous_capability(PluginAuditManager::instance().current_capability())
     , m_previous_scoped_roots(PluginAuditManager::m_scoped_allowed_roots)
     , m_previous_root_frames(std::move(PluginAuditManager::m_root_frames))
+    , m_previous_lazy_root_targets(std::move(PluginAuditManager::m_lazy_root_targets))
 {
     PluginAuditManager::instance().set_current_plugin(plugin_key);
     PluginAuditManager::instance().set_current_capability(capability_name);
     PluginAuditManager::m_scoped_allowed_roots.clear();
     PluginAuditManager::m_root_frames.clear();
+    PluginAuditManager::m_lazy_root_targets.clear();
 }
 
 ScopedPluginAuditContext::~ScopedPluginAuditContext()
@@ -307,6 +316,7 @@ ScopedPluginAuditContext::~ScopedPluginAuditContext()
     mgr.set_current_capability(m_previous_capability);
     PluginAuditManager::m_scoped_allowed_roots = std::move(m_previous_scoped_roots);
     PluginAuditManager::m_root_frames          = std::move(m_previous_root_frames);
+    PluginAuditManager::m_lazy_root_targets    = std::move(m_previous_lazy_root_targets);
 }
 
 // ---------------------------------------------------------------------------
@@ -712,22 +722,15 @@ std::vector<PyObject*> stack_frames()
     return frames;
 }
 
-// CPython 3.14 may materialize more than one PyFrameObject for a running generator frame.
-// Compare generator owners as well as frame pointers so a resumed lazy stdlib operation still
-// matches the frame saved when its audit event was approved.
-bool same_execution_frame(PyObject* lhs, PyObject* rhs)
+// True while `frame` belongs to a generator or coroutine that can still resume. Its owner is
+// gone once it has finished or been deleted: the frame then owns its own data. Python 3.12
+// reports that as NULL, Python 3.14 as None.
+bool is_generator_frame(PyObject* frame)
 {
-    if (lhs == rhs)
-        return true;
-
-    PyObject* lhs_generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(lhs)); // new reference
-    if (!lhs_generator)
-        return false;
-    PyObject* rhs_generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(rhs)); // new reference
-    const bool same_generator = rhs_generator && lhs_generator == rhs_generator;
-    Py_XDECREF(rhs_generator);
-    Py_DECREF(lhs_generator);
-    return same_generator;
+    PyObject* generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(frame)); // new reference
+    const bool owned = generator && generator != Py_None;
+    Py_XDECREF(generator);
+    return owned;
 }
 
 // Moves the held root frames whose operation has returned from `held` to `dropped`. A suspended
@@ -740,26 +743,7 @@ void take_returned_frames(std::vector<PyObject*>& held, std::vector<PyObject*>& 
 
     const std::vector<PyObject*> stack = stack_frames();
     const auto running = [&stack](PyObject* frame) {
-        if (std::find(stack.begin(), stack.end(), frame) != stack.end())
-            return true;
-        // A suspended generator's frame is off the stack, but its operation resumes, so keep it
-        // held. In Python 3.14 PyFrame_GetGenerator still returns the owner after it has finished;
-        // check the public frame attribute to distinguish a suspended frame from a closed one.
-        PyObject* generator = PyFrame_GetGenerator(reinterpret_cast<PyFrameObject*>(frame)); // new reference
-        bool suspended = false;
-        if (generator) {
-            const char* frame_attr = PyGen_Check(generator) ? "gi_frame" :
-                                     PyCoro_CheckExact(generator) ? "cr_frame" : "ag_frame";
-            PyObject* generator_frame = PyObject_GetAttrString(generator, frame_attr); // new reference
-            if (generator_frame) {
-                suspended = generator_frame != Py_None;
-                Py_DECREF(generator_frame);
-            } else {
-                PyErr_Clear();
-            }
-        }
-        Py_XDECREF(generator);
-        return suspended;
+        return std::find(stack.begin(), stack.end(), frame) != stack.end() || is_generator_frame(frame);
     };
     const auto returned = std::stable_partition(held.begin(), held.end(), running);
     dropped.insert(dropped.end(), returned, held.end());
@@ -1139,7 +1123,7 @@ int audit_plugin_event(PluginAuditManager& mgr, const std::string& event_name, A
     // A nested event of an operation already granted, e.g. socket.connect inside an approved
     // urlopen(), is not asked again. urllib.Request is always judged on its own URL, so a
     // redirect or a nested urlopen() inside a running request is not covered by it.
-    if (event_name != "urllib.Request" && mgr.covered_by_root_frame())
+    if (event_name != "urllib.Request" && mgr.covered_by_root_frame(fs_category ? targets : std::vector<std::string>{}))
         return 0;
 
     // A filesystem target that resolves entirely inside a pre-determined allowed root -- the
@@ -1169,8 +1153,11 @@ int audit_plugin_event(PluginAuditManager& mgr, const std::string& event_name, A
 
     // A granted operation covers its nested events while it runs. A targetless grant names no
     // operation, so it covers nothing else.
-    if (result == 0 && !targets.empty() && operation_root_events.count(event_name))
+    if (result == 0 && !targets.empty() && operation_root_events.count(event_name)) {
         mgr.record_root_frame();
+        if (lazy_operation_root_events.count(event_name))
+            mgr.record_lazy_root(targets);
+    }
     return result;
 }
 
@@ -1286,23 +1273,43 @@ void PluginAuditManager::record_root_frame()
     m_root_frames.push_back(frame);
 }
 
-bool PluginAuditManager::covered_by_root_frame() const
+void PluginAuditManager::record_lazy_root(const std::vector<std::string>& targets)
 {
-    if (m_root_frames.empty())
+    m_lazy_root_targets.insert(m_lazy_root_targets.end(), targets.begin(), targets.end());
+}
+
+bool PluginAuditManager::covered_by_root_frame(const std::vector<std::string>& fs_targets)
+{
+    if (m_root_frames.empty() && m_lazy_root_targets.empty())
         return false;
 
     // Only stdlib frames may sit between the event and the operation: plugin or library code
     // the operation calls back into (an os.walk onerror, a urllib handler) acts on its own.
+    PyObject* outermost_generator = nullptr;
     for (PyObject* frame : PluginAuditDetail::stack_frames()) {
-        if (std::any_of(m_root_frames.begin(), m_root_frames.end(), [frame](PyObject* root) {
-                return PluginAuditDetail::same_execution_frame(root, frame);
-            })) {
+        if (std::find(m_root_frames.begin(), m_root_frames.end(), frame) != m_root_frames.end())
             return true;
-        }
         if (!PluginAuditDetail::is_stdlib_frame(frame))
-            return false;
+            break;
+        if (PluginAuditDetail::is_generator_frame(frame))
+            outermost_generator = frame;
     }
-    return false;
+
+    // A lazy operation's first nested event comes from a stdlib generator it returned, which
+    // becomes the root frame for the rest of the operation.
+    if (!outermost_generator || fs_targets.empty())
+        return false;
+    const auto lazy_root = std::find_if(m_lazy_root_targets.begin(), m_lazy_root_targets.end(), [&fs_targets](const std::string& root) {
+        return std::all_of(fs_targets.begin(), fs_targets.end(), [&root](const std::string& target) {
+            return is_inside_allowed_root(boost::filesystem::path(target), boost::filesystem::path(root));
+        });
+    });
+    if (lazy_root == m_lazy_root_targets.end())
+        return false;
+    m_lazy_root_targets.erase(lazy_root);
+    Py_INCREF(outermost_generator);
+    m_root_frames.push_back(outermost_generator);
+    return true;
 }
 
 bool PluginAuditManager::releasing_frames() const { return m_releasing_frames > 0; }

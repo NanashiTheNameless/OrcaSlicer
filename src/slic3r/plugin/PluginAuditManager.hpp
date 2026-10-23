@@ -162,8 +162,11 @@ public:
     // library code the operation calls back into is judged on its own. A frame is let go once it
     // returns, a suspended generator's (os.walk) when the audit scope ends. Letting a frame go may
     // run finalizers of objects its locals held; they are judged as the plugin and never prompt.
+    // A lazy operation (Path.glob) returns before its generators run, so its targets are held
+    // instead, until a nested event inside them adopts the stdlib generator raising it as root.
     void record_root_frame();
-    bool covered_by_root_frame() const;
+    void record_lazy_root(const std::vector<std::string>& targets);
+    bool covered_by_root_frame(const std::vector<std::string>& fs_targets);
     bool releasing_frames() const;
 
     // True when code from `filename` (a code object's co_filename) is the interpreter's own
@@ -195,6 +198,7 @@ private:
     static thread_local std::string                   m_current_capability_name;
     static thread_local std::vector<AllowedRoot>       m_scoped_allowed_roots;
     static thread_local std::vector<PyObject*>         m_root_frames; // strong references
+    static thread_local std::vector<std::string>       m_lazy_root_targets;
     static thread_local int                            m_releasing_frames;
     static thread_local bool                           m_audit_denial_pending;
     static thread_local bool                           m_has_last_violation;
@@ -233,6 +237,7 @@ private:
     std::string                   m_previous_capability;
     std::vector<AllowedRoot>      m_previous_scoped_roots;
     std::vector<PyObject*>        m_previous_root_frames;
+    std::vector<std::string>      m_previous_lazy_root_targets;
 };
 
 } // namespace Slic3r
