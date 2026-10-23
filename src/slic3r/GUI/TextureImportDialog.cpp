@@ -956,7 +956,7 @@ private:
     wxPanel* create_item_row(wxWindow* parent, TextureAutoMixMode mode, int row_h)
     {
         wxColour row_bg   = StateColor::darkModeColorFor(*wxWHITE);
-        wxColour checked_bg = StateColor::darkModeColorFor(wxColour("#BFE1DE"));
+        wxColour checked_bg = StateColor::darkModeColorFor(wxColour("#F1C9C9"));
         wxColour text_fg  = texture_import_text_colour();
         wxColour accent   = StateColor::darkModeColorFor(wxColour("#C62828"));
 
