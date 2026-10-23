@@ -4,6 +4,8 @@
 
 # DO NOT REPORT BUGS FOUND HERE TO THE OFFICIAL VERSION
 
+# This fork is primarily maintained and managed by [@NanashiTheNameless](<https://github.com/NanashiTheNameless/>)
+
 
 <table border="2" style="border-color: #ffa500; background-color:rgb(232, 220, 180); color: #856404;">
 <tr>
