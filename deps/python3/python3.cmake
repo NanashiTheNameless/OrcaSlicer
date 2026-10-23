@@ -223,6 +223,9 @@ endif()
 
 set(_python_zstd_cmake_args
     -DCMAKE_INSTALL_PREFIX=${_python_zstd_prefix}
+    # Fixed libdir: GNUInstallDirs picks lib64 on some distros and SDKs
+    # (the Flatpak GNOME SDK among them), but _python_zstd_archive is lib/.
+    -DCMAKE_INSTALL_LIBDIR=lib
     -DCMAKE_POSITION_INDEPENDENT_CODE=ON
     -DZSTD_BUILD_SHARED=OFF
     -DZSTD_BUILD_PROGRAMS=OFF
