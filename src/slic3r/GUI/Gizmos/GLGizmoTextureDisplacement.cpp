@@ -4056,10 +4056,11 @@ void GLGizmoTextureDisplacement::ensure_panel_icons()
 
 // Seconds on a real clock, for the tooltips' own timing.
 //
-// Not ImGui::GetTime(): nothing in OrcaSlicer ever sets io.DeltaTime, so it keeps imgui's default of
-// 1/60 per frame and its clock counts frames rather than seconds. On a canvas that renders only when
-// something asks it to, that is not a clock at all - an animation driven by it crawled while the canvas
-// was idle and raced while a moving mouse was rendering it flat out.
+// Not ImGui::GetTime(): ImGuiWrapper::new_frame() feeds io.DeltaTime the real frame time but caps it
+// at 1/60 s, so the idle gaps of the event-driven canvas don't count as time a +/- button is held.
+// That cap also means ImGui's clock stalls while the canvas is idle - a pointer resting still on a
+// control renders nothing, so the tooltip delay would never run out on ImGui's clock. A real clock
+// keeps the tooltip timing and media playback independent of how often the canvas renders.
 static double tip_now()
 {
     using clock = std::chrono::steady_clock;

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Orca Slicer\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-19 09:48-0300\n"
+"POT-Creation-Date: 2026-10-24 15:39-0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Jakub Hencl\n"
 "Language-Team: \n"
@@ -1291,6 +1291,9 @@ msgstr "Nastavit zrcadlení"
 msgid "Embossed text"
 msgstr "Reliéfní text"
 
+msgid "Default font"
+msgstr "Výchozí písmo"
+
 msgid "Enter emboss gizmo"
 msgstr "Otevřít nástroj pro emboss"
 
@@ -1333,9 +1336,6 @@ msgstr "MODERN"
 
 msgid "First font"
 msgstr "První písmo"
-
-msgid "Default font"
-msgstr "Výchozí písmo"
 
 msgid "Advanced"
 msgstr "Pokročilé"
@@ -2546,8 +2546,7 @@ msgstr ""
 "1. Zapněte režim LAN\n"
 "2. Povolte vývojářský režim\n"
 "\n"
-"Vývojářský režim umožňuje tiskárně pracovat výhradně přes lokální síť,\n"
-"což zajišťuje plnou funkčnost s OrcaSlicerem."
+"Vývojářský režim umožňuje tiskárně pracovat výhradně přes lokální síť, což zajišťuje plnou funkčnost s OrcaSlicerem."
 
 msgid "Network Plug-in Restriction"
 msgstr "Omezení síťového plug-inu"
@@ -3096,9 +3095,6 @@ msgstr "Propláchnout do tohoto objektu"
 msgid "Flush into objects' support"
 msgstr "Propláchnout do podpory objektů"
 
-msgid "Edit in Parameter Table"
-msgstr "Upravit v tabulce parametrů"
-
 msgid "Convert from Inches"
 msgstr "Převést z palců"
 
@@ -3120,32 +3116,55 @@ msgstr "Sestavit vybrané objekty do objektu s více částmi"
 msgid "Assemble the selected objects into an object with single part"
 msgstr "Sestavit vybrané objekty do objektu s jednou částí"
 
+msgid "Along X Axis"
+msgstr "Podél osy X"
+
+msgid "Mirror along the X axis"
+msgstr "Zrcadlit podle osy X"
+
+msgid "Along Y Axis"
+msgstr "Podél osy Y"
+
+msgid "Mirror along the Y axis"
+msgstr "Zrcadlit podle osy Y"
+
+msgid "Along Z Axis"
+msgstr "Podél osy Z"
+
+msgid "Mirror along the Z axis"
+msgstr "Zrcadlit podle osy Z"
+
+# AI Translated
+msgid "Transform"
+msgstr "Transformace"
+
+msgid "Split"
+msgstr "Rozdělit"
+
+msgid "To Objects"
+msgstr "Na objekty"
+
+msgid "Split the selected object into multiple objects"
+msgstr "Rozdělit vybraný objekt na více objektů"
+
+msgid "To Parts"
+msgstr "Na části"
+
+msgid "Split the selected object into multiple parts"
+msgstr "Rozdělit vybraný objekt na více částí"
+
 msgid "Mesh boolean"
 msgstr "Booleovská operace se sítí"
 
 msgid "Mesh boolean operations including union and subtraction"
 msgstr "Booleovské operace se sítí včetně sjednocení a odečtení"
 
-msgid "Along X Axis"
-msgstr "Podél osy X"
+# AI Translated
+msgid "Modify"
+msgstr "Upravit"
 
-msgid "Mirror along the X Axis"
-msgstr "Zrcadlit podle osy X"
-
-msgid "Along Y Axis"
-msgstr "Podél osy Y"
-
-msgid "Mirror along the Y Axis"
-msgstr "Zrcadlit podle osy Y"
-
-msgid "Along Z Axis"
-msgstr "Podél osy Z"
-
-msgid "Mirror along the Z Axis"
-msgstr "Zrcadlit podle osy Z"
-
-msgid "Mirror object"
-msgstr "Zrcadlit objekt"
+msgid "More"
+msgstr "Více"
 
 # AI Translated
 msgid "Precise Seam Type"
@@ -3206,29 +3225,18 @@ msgstr "Přidat modely"
 msgid "Show Labels"
 msgstr "Zobrazit popisky"
 
-msgid "To Objects"
-msgstr "Na objekty"
-
-msgid "Split the selected object into multiple objects"
-msgstr "Rozdělit vybraný objekt na více objektů"
-
-msgid "To Parts"
-msgstr "Na části"
-
-msgid "Split the selected object into multiple parts"
-msgstr "Rozdělit vybraný objekt na více částí"
-
-msgid "Split"
-msgstr "Rozdělit"
-
-msgid "Split the selected object"
-msgstr "Rozdělit vybraný objekt"
+# AI Translated
+msgid "Instances"
+msgstr "Instance"
 
 msgid "Auto orientation"
 msgstr "Automatická orientace"
 
 msgid "Auto orient the object to improve print quality"
 msgstr "Automaticky natočit objekt pro zlepšení kvality tisku"
+
+msgid "Paste Process Settings"
+msgstr "Vložit nastavení procesu"
 
 msgid "Edit"
 msgstr "Upravit"
@@ -3267,11 +3275,11 @@ msgstr "Rozložit"
 msgid "Arrange current plate"
 msgstr "Rozložit aktuální desku"
 
-msgid "Reload All"
-msgstr "Obnovit vše"
+msgid "Auto Rotate"
+msgstr "Automatické otočení"
 
-msgid "Reload all from disk"
-msgstr "Znovu načíst vše z disku"
+msgid "Auto rotate current plate"
+msgstr "Automaticky otočit aktuální desku"
 
 # AI Translated
 msgid "Fix All"
@@ -3289,17 +3297,11 @@ msgstr "Opravit všechny desky"
 msgid "Fix all models on all plates"
 msgstr "Opravit všechny modely na všech deskách"
 
-msgid "Auto Rotate"
-msgstr "Automatické otočení"
+msgid "Reload All"
+msgstr "Obnovit vše"
 
-msgid "Auto rotate current plate"
-msgstr "Automaticky otočit aktuální desku"
-
-msgid "Delete Plate"
-msgstr "Smazat desku"
-
-msgid "Remove the selected plate"
-msgstr "Odstranit vybranou desku"
+msgid "Reload all from disk"
+msgstr "Znovu načíst vše z disku"
 
 msgid "Add instance"
 msgstr "Přidat instanci"
@@ -3331,11 +3333,8 @@ msgstr "Klonovat"
 msgid "Simplify Model"
 msgstr "Zjednodušit model"
 
-msgid "Subdivision mesh"
-msgstr "Subdivizní síť"
-
-msgid "(Lost color)"
-msgstr "(Ztracená barva)"
+msgid "Subdivision mesh (Lost color)"
+msgstr "Subdivizní síť (Ztracená barva)"
 
 msgid "Center"
 msgstr "Střed"
@@ -3354,8 +3353,8 @@ msgstr "Upravit nastavení procesu"
 msgid "Copy Process Settings"
 msgstr "Kopírovat nastavení procesu"
 
-msgid "Paste Process Settings"
-msgstr "Vložit nastavení procesu"
+msgid "Edit in Parameter Table"
+msgstr "Upravit v tabulce parametrů"
 
 msgid "Edit print parameters for a single object"
 msgstr "Upravit tiskové parametry pro jeden objekt"
@@ -3377,6 +3376,12 @@ msgstr "Zamknout"
 
 msgid "Edit Plate Name"
 msgstr "Upravit název desky"
+
+msgid "Delete Plate"
+msgstr "Smazat desku"
+
+msgid "Remove the selected plate"
+msgstr "Odstranit vybranou desku"
 
 msgid "Name"
 msgstr "Název"
@@ -3747,9 +3752,6 @@ msgstr "Typ čáry"
 #, c-format, boost-format
 msgid "1x1 Grid: %d mm"
 msgstr "Mřížka 1x1: %d mm"
-
-msgid "More"
-msgstr "Více"
 
 msgid "Open Preferences"
 msgstr "Otevřít předvolby."
@@ -4600,6 +4602,10 @@ msgstr "Skriptový plugin byl přeskočen."
 msgid "Script plugin finished."
 msgstr "Skriptový plugin byl dokončen."
 
+# AI Translated
+msgid "Script plugin started."
+msgstr "Skriptový plugin byl spuštěn."
+
 msgid "Printer"
 msgstr "Tiskárna"
 
@@ -4630,7 +4636,9 @@ msgstr "Zavřít"
 msgid ""
 "Nozzle\n"
 "Temperature"
-msgstr "Teplota trysky"
+msgstr ""
+"Teplota\n"
+"trysky"
 
 # AI Translated
 msgid "max"
@@ -5012,7 +5020,7 @@ msgstr "Vyžadován restart"
 #. TRN %1% marks where the Home button icon is drawn; keep it in the translation.
 #, boost-format
 msgid "Please home all axes (click %1%) to locate the toolhead's position. This prevents device moving beyond the printable boundary and causing equipment wear."
-msgstr "Proveďte referenci všech os (klikněte na %1%) pro určení polohy tiskové hlavy. To zabraňuje pohybu zařízení mimo tisknutelnou oblast a opotřebení zařízení."
+msgstr "Proveďte navedení všech os do výchozí polohy (klikněte na %1%) pro určení polohy tiskové hlavy. To zabraňuje pohybu zařízení mimo tisknutelnou oblast a opotřebení zařízení."
 
 msgid "Go Home"
 msgstr "Na domovskou pozici"
@@ -5854,6 +5862,10 @@ msgstr "Některá rozšíření ve vstupu jsou neplatná"
 msgid "This parameter expects a valid template."
 msgstr "Tento parametr vyžaduje platnou šablonu."
 
+# AI Translated
+msgid "Invalid collision volume format. Use XxY, XxY, ... or ZMIN..ZMAX;XxY, XxY, ... and separate multiple volumes with |."
+msgstr "Neplatný formát kolizního objemu. Použijte XxY, XxY, ... nebo ZMIN..ZMAX;XxY, XxY, ... a více objemů oddělte znakem |."
+
 msgid "Invalid pattern. Use N, N#K, or a comma-separated list with optional #K per entry. Examples: 5, 5#2, 1,7,9, 5,9#2,18."
 msgstr "Neplatný vzor. Použijte N, N#K nebo seznam oddělený čárkami s volitelným #K u každé položky. Příklady: 5, 5#2, 1,7,9, 5,9#2,18."
 
@@ -6407,6 +6419,23 @@ msgstr "Levá tryska: X:%1%-%2%, Y:%3%-%4%, Z:%5%-%6%\n"
 msgid "Right nozzle: X:%1%-%2%, Y:%3%-%4%, Z:%5%-%6%"
 msgstr "Pravá tryska: X:%1%-%2%, Y:%3%-%4%, Z:%5%-%6%"
 
+msgid "Mirror object"
+msgstr "Zrcadlit objekt"
+
+# AI Translated
+# Needs human review: Prime tower glossary cell is unsettled; the catalog mixes 'základní věž' and 'čistící věž', 'základní věž' used here.
+#. TRN %1% is the plate number.
+#, boost-format
+msgid "The prime tower on plate %1% no longer fits where it was placed. There is no free space left on the plate for it, so it was moved onto an object."
+msgstr "Základní věž na desce %1% už nesedí tam, kam byla umístěna. Na desce pro ni nezbývá žádné volné místo, proto byla přesunuta na objekt."
+
+# AI Translated
+# Needs human review: Prime tower glossary cell is unsettled; the catalog mixes 'základní věž' and 'čistící věž', 'základní věž' used here.
+#. TRN %1% is the plate number.
+#, boost-format
+msgid "The prime tower on plate %1% no longer fits where it was placed, so it was moved to free space on the plate."
+msgstr "Základní věž na desce %1% už nesedí tam, kam byla umístěna, proto byla přesunuta na volné místo na desce."
+
 msgid "Tool move"
 msgstr "Posun nástroje"
 
@@ -6676,20 +6705,20 @@ msgid "Tool %d"
 msgstr "Nástroj %d"
 
 # AI Translated
-#, c-format, boost-format
-msgid "Filament %s is placed in the %s, but the generated G-code path exceeds the printable range of the %s."
-msgid_plural "Filaments %s are placed in the %s, but the generated G-code path exceeds the printable range of the %s."
-msgstr[0] "Filament %s je umístěn v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %s."
-msgstr[1] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %s."
-msgstr[2] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %s."
+#, boost-format
+msgid "Filament %1% is placed in the %2%, but the generated G-code path exceeds the printable range of the %2%."
+msgid_plural "Filaments %1% are placed in the %2%, but the generated G-code path exceeds the printable range of the %2%."
+msgstr[0] "Filament %1% je umístěn v %2%, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %2%."
+msgstr[1] "Filamenty %1% jsou umístěny v %2%, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %2%."
+msgstr[2] "Filamenty %1% jsou umístěny v %2%, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %2%."
 
 # AI Translated
-#, c-format, boost-format
-msgid "Filament %s is placed in the %s, but the generated G-code path exceeds the printable height of the %s."
-msgid_plural "Filaments %s are placed in the %s, but the generated G-code path exceeds the printable height of the %s."
-msgstr[0] "Filament %s je umístěn v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %s."
-msgstr[1] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %s."
-msgstr[2] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %s."
+#, boost-format
+msgid "Filament %1% is placed in the %2%, but the generated G-code path exceeds the printable height of the %2%."
+msgid_plural "Filaments %1% are placed in the %2%, but the generated G-code path exceeds the printable height of the %2%."
+msgstr[0] "Filament %1% je umístěn v %2%, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %2%."
+msgstr[1] "Filamenty %1% jsou umístěny v %2%, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %2%."
+msgstr[2] "Filamenty %1% jsou umístěny v %2%, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %2%."
 
 msgid "Open wiki for more information."
 msgstr "Otevřít wiki pro více informací."
@@ -7151,6 +7180,14 @@ msgstr "Zobrazit &Popisky"
 msgid "Show object labels in 3D scene."
 msgstr "Zobrazit označení objektů ve 3D scéně."
 
+# AI Translated
+msgid "Show all collision volumes"
+msgstr "Zobrazit všechny kolizní objemy"
+
+# AI Translated
+msgid "Show the full height of every configured collision volume, including on an empty bed."
+msgstr "Zobrazí celou výšku každého nakonfigurovaného kolizního objemu, i na prázdné podložce."
+
 msgid "Show &Overhang"
 msgstr "Zobrazit &Převis"
 
@@ -7321,8 +7358,8 @@ msgstr "Konfigurační soubory (*.json;*.zip;*.orca_printer;*.orca_bundle;*.orca
 #, c-format, boost-format
 msgid "There is %d config imported. (Only non-system and compatible configs)"
 msgid_plural "There are %d configs imported. (Only non-system and compatible configs)"
-msgstr[0] "Byla importována %d konfigurace. (Pouze nesystémové a kompatibilní konfigurace) "
-msgstr[1] "Byla importována %d konfigurace. (Pouze nesystémové a kompatibilní konfigurace) "
+msgstr[0] "Byla importována %d konfigurace. (Pouze nesystémové a kompatibilní konfigurace)"
+msgstr[1] "Byla importována %d konfigurace. (Pouze nesystémové a kompatibilní konfigurace)"
 msgstr[2] "Bylo importováno %d konfigurací. (Pouze nesystémové a kompatibilní konfigurace)"
 
 msgid ""
@@ -8029,7 +8066,9 @@ msgstr "Můžete vybrat až 16 obrázků."
 msgid ""
 "At least one successful print record of this print profile is required \n"
 "to give a positive rating (4 or 5 stars)."
-msgstr "Pro udělení kladného hodnocení (4 nebo 5 hvězd) je vyžadován alespoň jeden úspěšný záznam tisku tohoto tiskového profilu."
+msgstr ""
+"Pro udělení kladného hodnocení (4 nebo 5 hvězd)\n"
+"je vyžadován alespoň jeden úspěšný záznam tisku tohoto tiskového profilu."
 
 msgid "click to add machine"
 msgstr "Klikněte pro přidání tiskárny"
@@ -8580,10 +8619,6 @@ msgstr "Klikněte pro více informací."
 
 msgid "Cut connectors"
 msgstr "Řezací spoje"
-
-# AI Translated
-msgid "Instances"
-msgstr "Instance"
 
 # AI Translated
 #, c-format, boost-format
@@ -10708,6 +10743,19 @@ msgstr ""
 "Statické: světlo zůstává ve scéně pevné, takže se stíny přepočítávají jen při změně scény.\n"
 "Obíhající: světlo se otáčí s kamerou a stíny se přepočítávají v každém snímku, kdy se kamera pohybuje."
 
+# AI Translated
+msgid "Glossy toolpaths"
+msgstr "Lesklé dráhy nástroje"
+
+# AI Translated
+# Needs human review: 'Highlights ... as glossy plastic' read as giving the Preview toolpaths a glossy-plastic highlight (odlesk); 'plain view' read as the standard non-realistic view. Check against the app.
+msgid ""
+"Highlights the toolpaths in Preview as glossy plastic in realistic view.\n"
+"Off, a translucent filament is matte and an opaque one keeps the highlight of the plain view."
+msgstr ""
+"Zobrazí dráhy nástroje v Náhledu s odleskem lesklého plastu v realistickém zobrazení.\n"
+"Při vypnutí je průsvitný filament matný a neprůhledný si zachová odlesk běžného zobrazení."
+
 msgid "Anti-aliasing"
 msgstr "Anti-aliasing"
 
@@ -10894,6 +10942,14 @@ msgid ""
 msgstr ""
 "Jak jasně se vykreslují ztmavené vrstvy, když je zapnuta volba „Ztmavit nižší vrstvy“.\n"
 "99 % znamená sotva znatelné ztmavení, 0 % je vykreslí černě. Maximum je 99 %, protože 100 % by odpovídalo vypnutí této volby."
+
+# AI Translated
+msgid "Translucent filaments"
+msgstr "Průsvitné filamenty"
+
+# AI Translated
+msgid "Draw the toolpaths of filaments whose color is partly transparent as see-through, as the 3D view draws their objects. Turn it off to draw every filament opaque."
+msgstr "Vykreslit dráhy nástroje filamentů s částečně průhlednou barvou jako průhledné, stejně jako 3D zobrazení vykresluje jejich objekty. Vypnutím se všechny filamenty vykreslí jako neprůhledné."
 
 msgid "Login region"
 msgstr "Oblast přihlášení"
@@ -11423,7 +11479,7 @@ msgstr "Po uložení zvolte akci s předvolbou „%1%“."
 
 #, boost-format
 msgid "For \"%1%\", change \"%2%\" to \"%3%\" "
-msgstr "Pro \"%1%\" změnit \"%2%\" na \"%3%\""
+msgstr "Pro \"%1%\" změnit \"%2%\" na \"%3%\" "
 
 #, boost-format
 msgid "For \"%1%\", add \"%2%\" as a new preset"
@@ -12228,7 +12284,9 @@ msgstr "Neznámé selhání"
 msgid ""
 "Please Find the Pin Code in Account page on printer screen,\n"
 " and type in the Pin Code below."
-msgstr "PIN kód najdete na stránce Účet na obrazovce tiskárny. Zadejte prosím PIN kód níže."
+msgstr ""
+"PIN kód najdete na stránce Účet na obrazovce tiskárny.\n"
+"Zadejte prosím PIN kód níže."
 
 msgid "Can't find Pin Code?"
 msgstr "Nemůžete najít PIN kód?"
@@ -12325,6 +12383,14 @@ msgstr "Parametry s touto ikonou lze nastavit pro každou trysku zvlášť."
 
 msgid "Click to reset all settings to the last saved preset."
 msgstr "Kliknutím obnovíte všechna nastavení na poslední uloženou předvolbu."
+
+# AI Translated
+msgid "This definition contains collision-volume syntax. Add it to the toolhead collision volumes for G-code checking and travel avoidance? The existing excluded bed area will be preserved."
+msgstr "Tato definice obsahuje syntaxi kolizních objemů. Přidat ji ke kolizním objemům tiskové hlavy pro kontrolu G-code a vyhýbání se při přejezdech? Stávající vynechaná oblast podložky bude zachována."
+
+# AI Translated
+msgid "Add collision volumes"
+msgstr "Přidat kolizní objemy"
 
 msgid "Prime tower is required for nozzle changing. There may be flaws on the model without prime tower. Are you sure you want to disable prime tower?"
 msgstr "Věž pro oddělení trysky je vyžadována pro výměnu trysky. Bez věže pro oddělení trysky mohou být na modelu vady. Opravdu chcete zakázat věž pro oddělení trysky?"
@@ -12822,9 +12888,6 @@ msgstr "Šablona vlastního G-code"
 
 msgid "Motion ability"
 msgstr "Možnost pohybu"
-
-msgid "Normal"
-msgstr "Normální"
 
 msgid "Resonance Compensation"
 msgstr "Kompenzace rezonance"
@@ -13865,7 +13928,7 @@ msgstr "Malování"
 
 # AI Translated
 msgid "Available while a painting gizmo is open: supports, seam, fuzzy skin or color painting."
-msgstr "Dostupné, když je otevřeno gizmo malování: podpory, šev, fuzzy skin nebo malování barvou."
+msgstr "Dostupné, když je otevřeno gizmo malování: podpory, šev, fuzzy skin nebo barevné malování."
 
 msgid "Move: press to snap by 1mm"
 msgstr "Pohyb: stiskněte pro posun o 1 mm"
@@ -14254,6 +14317,21 @@ msgstr ""
 "Je disk plný?"
 
 # AI Translated
+#. TRN %1% is the extruder number counted from 1.
+#, boost-format
+msgid "A G-code move intersects a collision volume for extruder %1%. This may cause a printer collision."
+msgstr "Pohyb v G-code protíná kolizní objem extruderu %1%. Může dojít ke kolizi tiskárny."
+
+# AI Translated
+msgid "A G-code move intersects a collision volume. This may cause a printer collision."
+msgstr "Pohyb v G-code protíná kolizní objem. Může dojít ke kolizi tiskárny."
+
+# AI Translated
+#, boost-format
+msgid "The intersecting move is at G-code line %1%. Its Z position is unknown after homing, so Orca checked it against every height."
+msgstr "Protínající pohyb je na řádku %1% v G-code. Jeho poloha Z není po najetí do výchozí polohy známa, proto ji Orca zkontrolovala pro všechny výšky."
+
+# AI Translated
 #. TRN %1% is the temporary file path, %2% the output file path, %3% the system error message.
 #, boost-format
 msgid ""
@@ -14564,6 +14642,18 @@ msgstr ""
 #, boost-format
 msgid "%1% is too close to exclusion area. There may be collisions when printing."
 msgstr "%1% je příliš blízko vyhrazené oblasti, může dojít ke kolizím při tisku."
+
+# AI Translated
+#. TRN %1% is the object name.
+#, boost-format
+msgid "%1% intersects collision volumes for every available extruder."
+msgstr "%1% protíná kolizní objemy všech dostupných extruderů."
+
+# AI Translated
+#. TRN %1% is the object name, %2% the extruder number counted from 1.
+#, boost-format
+msgid "%1% intersects a collision volume for extruder %2%."
+msgstr "%1% protíná kolizní objem extruderu %2%."
 
 #, boost-format
 msgid "%1% is too close to others, and collisions may be caused."
@@ -14961,8 +15051,46 @@ msgstr "Uspořádaný seznam vyloučených oblastí podložky podle počtu paral
 msgid "Excluded bed area"
 msgstr "Vynechaná oblast podložky"
 
-msgid "Unprintable area in XY plane. For example, X1 Series printers use the front left corner to cut filament during filament change. The area is expressed as polygon by points in following format: \"XxY, XxY, ...\""
-msgstr "Netisknutelná oblast v rovině XY. Například tiskárny řady X1 používají přední levý roh ke střihu filamentu při výměně filamentu. Oblast je vyjádřena jako polygon pomocí bodů ve formátu: \"XxY, XxY, ...\""
+# AI Translated
+msgid "Unprintable area in XY plane. For example, X1 Series printers use the front left corner to cut filament during filament change. The area is expressed as a polygon in the format \"XxY, XxY, ...\". It constrains material and model placement, but allows machine travel. Configure toolhead collision volumes separately for G-code checking and travel avoidance."
+msgstr "Netisknutelná oblast v rovině XY. Například tiskárny řady X1 používají přední levý roh k odříznutí filamentu při jeho výměně. Oblast je vyjádřena jako polygon ve formátu „XxY, XxY, ...“. Omezuje umístění materiálu a modelů, ale povoluje přejezdy stroje. Kolizní objemy tiskové hlavy pro kontrolu G-code a vyhýbání se při přejezdech nastavte samostatně."
+
+# AI Translated
+msgid "Toolhead collision volumes"
+msgstr "Kolizní objemy tiskové hlavy"
+
+# AI Translated
+msgid "Collision volumes used for model and generated-material exclusion, G-code checking, and travel avoidance. Use \"XxY, XxY, ...\" for a full-height polygon or \"ZMIN..ZMAX;XxY, XxY, ...\" for a Z-limited volume. Separate multiple volumes with \"|\". These volumes are additional to the excluded bed area. Automatic arrangement conservatively uses the bounding box of a non-convex volume."
+msgstr "Kolizní objemy používané pro vyloučení modelů a generovaného materiálu, kontrolu G-code a vyhýbání se při přejezdech. Pro polygon v plné výšce použijte „XxY, XxY, ...“, pro objem omezený v Z „ZMIN..ZMAX;XxY, XxY, ...“. Více objemů oddělte znakem „|“. Tyto objemy se přidávají k vynechané oblasti podložky. Automatické uspořádání pro nekonvexní objem opatrně používá jeho ohraničující rámeček."
+
+# AI Translated
+msgid "Collision volume behavior"
+msgstr "Chování kolizních objemů"
+
+# AI Translated
+msgid "Choose whether all nozzles use the same collision volumes, derive toolhead-relative volumes from each nozzle's XY offset, or configure independent volumes for every extruder. In individual mode, select each extruder on the Extruder page to configure its volumes."
+msgstr "Vyberte, zda všechny trysky používají stejné kolizní objemy, zda se objemy vztažené k tiskové hlavě odvodí z posunu XY každé trysky, nebo zda se pro každý extruder nastaví nezávislé objemy. V individuálním režimu vyberte každý extruder na stránce Extruder a nastavte jeho objemy."
+
+# AI Translated
+#. TRN Collision volume modes: one set for all nozzles, one set moved by each nozzle's XY offset, or one set per extruder.
+msgid "Shared by all nozzles"
+msgstr "Sdílené všemi tryskami"
+
+# AI Translated
+msgid "Toolhead-relative (nozzle offsets)"
+msgstr "Vztaženo k tiskové hlavě (posuny trysek)"
+
+# AI Translated
+msgid "Individual per extruder"
+msgstr "Individuálně pro každý extruder"
+
+# AI Translated
+msgid "Extruder collision volumes"
+msgstr "Kolizní objemy extruderu"
+
+# AI Translated
+msgid "Collision volumes used only by this extruder in individual mode. Use the same polygon and optional Z-range format as the shared collision volumes. Leave empty for no collision volumes on this extruder. Automatic arrangement conservatively uses the bounding box of a non-convex volume."
+msgstr "Kolizní objemy používané pouze tímto extruderem v individuálním režimu. Použijte stejný formát polygonu a volitelného rozsahu Z jako u sdílených kolizních objemů. Nechte prázdné, pokud tento extruder nemá mít žádné kolizní objemy. Automatické uspořádání pro nekonvexní objem opatrně používá jeho ohraničující rámeček."
 
 msgid "Bed custom texture"
 msgstr "Vlastní textura podložky"
@@ -15200,6 +15328,15 @@ msgstr "Tloušťka spodního pláště"
 
 msgid "The number of bottom solid layers is increased when slicing if the thickness calculated by bottom shell layers is thinner than this value. This can avoid having too thin a shell when layer height is small. 0 means that this setting is disabled and the thickness of the bottom shell is determined simply by the number of bottom shell layers."
 msgstr "Počet spodních pevných vrstev se při slicování zvýší, pokud vypočtená tloušťka spodní skořepiny bude menší než tato hodnota. Tím lze zabránit příliš tenké skořepině při malé výšce vrstvy. Hodnota 0 znamená, že toto nastavení je vypnuté a tloušťka spodní skořepiny je zcela určena spodními skořepinovými vrstvami."
+
+# AI Translated
+# Needs human review: Color Painting setting: how many layers behind a painted bottom surface take the color. 'Průnik barvy' for 'paint penetration' is new wording; check it reads right next to 'Malování barvou'.
+msgid "Bottom paint penetration layers"
+msgstr "Spodní vrstvy průniku barvy"
+
+# AI Translated
+msgid "The number of layers, including the bottom surface layer, that take the color painted on a bottom surface. Set to 0 to use the bottom shell layers. A value larger than the bottom shell also colors the sparse infill above the painted area."
+msgstr "Počet vrstev, včetně vrstvy spodního povrchu, které převezmou barvu nanesenou na spodní povrch. Nastavením na 0 se použijí vrstvy spodního pláště. Hodnota větší než počet vrstev spodního pláště obarví také řídkou výplň nad malovanou oblastí."
 
 msgid "Apply gap fill"
 msgstr "Použít vyplnění mezer"
@@ -16698,7 +16835,7 @@ msgstr "Smrštění (XY)"
 
 #, no-c-format, no-boost-format
 msgid ""
-"Enter the shrinkage percentage that the filament will get after cooling (94% if you measure 94mm instead of 100mm). The part will be scaled in XY to compensate. For multi-material prints, ensure filament shrinkage matches across all used filaments\n"
+"Enter the shrinkage percentage that the filament will get after cooling (94% if you measure 94mm instead of 100mm). The part will be scaled in XY to compensate. For multi-material prints, ensure filament shrinkage matches across all used filaments.\n"
 "Be sure to allow enough space between objects, as this compensation is done after the checks."
 msgstr ""
 "Zadejte procento smrštění filamentu po ochlazení (94 %, pokud naměříte 94 mm místo 100 mm). Model bude v osách XY upraven pro kompenzaci smrštění. U vícebarevného tisku zajistěte, aby smrštění odpovídalo u všech použitých filamentů.\n"
@@ -16782,8 +16919,10 @@ msgstr "Po výměně nástroje nemusí být přesná pozice nově zavedeného fi
 msgid "Wipe tower cooling"
 msgstr "Chlazení čistící věže"
 
-msgid "Temperature drop before entering filament tower"
-msgstr "Snížení teploty před vstupem do filamentové věže"
+# AI Translated
+# Needs human review: Glossary tower cell is unsettled; used 'věž na očištění trysky' for wipe tower, the catalog's most common form.
+msgid "Temperature drop before entering the wipe tower."
+msgstr "Snížení teploty před vstupem do věže na očištění trysky."
 
 msgid "Interface layer pre-extrusion distance"
 msgstr "Vzdálenost předextruze vrstvy rozhraní"
@@ -17232,9 +17371,9 @@ msgstr "Hodnota max_accel_to_decel v Klipperu bude automaticky upravena."
 msgid "accel_to_decel"
 msgstr "accel_to_decel"
 
-#, c-format, boost-format
-msgid "Klipper's max_accel_to_decel will be adjusted to this %% of acceleration."
-msgstr "Hodnota max_accel_to_decel v Klipperu bude upravena na %% z akcelerace."
+#, no-c-format, no-boost-format
+msgid "Klipper's max_accel_to_decel will be adjusted to this % of acceleration."
+msgstr "Hodnota max_accel_to_decel v Klipperu bude upravena na % z akcelerace."
 
 msgid "Default jerk."
 msgstr "Výchozí trhání."
@@ -17434,21 +17573,21 @@ msgstr "Zda aplikovat efekt hrubé textury na první vrstvu."
 msgid "Fuzzy skin generator mode"
 msgstr "Režim generátoru fuzzy skin"
 
-#, c-format, boost-format
+#, no-c-format, no-boost-format
 msgid ""
 "Fuzzy skin generation mode. Works only with Arachne!\n"
 "Displacement: Сlassic mode when the pattern is formed by shifting the nozzle sideways from the original path.\n"
 "Extrusion: The mode when the pattern formed by the amount of extruded plastic. This is the fast and straight algorithm without unnecessary nozzle shake that gives a smooth pattern. But it is more useful for forming loose walls in the entire they array.\n"
 "Combined: Joint mode [Displacement] + [Extrusion]. The appearance of the walls is similar to [Displacement] Mode, but it leaves no pores between the perimeters.\n"
 "\n"
-"Attention! The [Extrusion] and [Combined] modes works only the fuzzy_skin_thickness parameter not more than the thickness of printed loop. At the same time, the width of the extrusion for a particular layer should also not be below a certain level. It is usually equal 15-25%% of a layer height. Therefore, the maximum fuzzy skin thickness with a perimeter width of 0.4 mm and a layer height of 0.2 mm will be 0.4-(0.2*0.25)=±0.35mm! If you enter a higher parameter than this, the error Flow::spacing() will displayed, and the model will not be sliced. You can choose this number until this error is repeated."
+"Attention! The [Extrusion] and [Combined] modes works only the fuzzy_skin_thickness parameter not more than the thickness of printed loop. At the same time, the width of the extrusion for a particular layer should also not be below a certain level. It is usually equal 15-25% of a layer height. Therefore, the maximum fuzzy skin thickness with a perimeter width of 0.4 mm and a layer height of 0.2 mm will be 0.4-(0.2*0.25)=±0.35mm! If you enter a higher parameter than this, the error Flow::spacing() will displayed, and the model will not be sliced. You can choose this number until this error is repeated."
 msgstr ""
 "Režim generování Fuzzy Skin. Funguje pouze s Arachne!\n"
 "Vyosení: Klasický režim, kdy se vzor tvoří posunutím trysky do strany od původní dráhy.\n"
 "Extruze: Režim, ve kterém se vzor tvoří množstvím vytlačeného plastu. Toto je rychlý a přímý algoritmus bez zbytečných vibrací trysky, který vytváří hladký vzor. Je však užitečnější pro tvorbu volných stěn v celé jejich oblasti.\n"
 "Kombinovaný: Spojený režim [Vyosení] + [Extruze]. Vzhled stěn je podobný režimu [Vyosení], ale nezanechává póry mezi obvody.\n"
 "\n"
-"Pozor! Režimy [Extruze] a [Kombinovaný] fungují pouze pokud parametr fuzzy_skin_thickness není větší než tloušťka tištěné smyčky. Současně šířka extruze pro danou vrstvu nesmí být pod určitou úrovní. Obvykle to odpovídá 15–25%% výšky vrstvy. Maximální tloušťka fuzzy skin při šířce obvodu 0,4 mm a výšce vrstvy 0,2 mm bude tedy 0,4-(0,2*0,25)=±0,35 mm! Pokud zadáte vyšší hodnotu, zobrazí se chyba Flow::spacing() a model nebude rozřezán. Tuto hodnotu můžete vybírat, dokud se chyba znovu neobjeví."
+"Pozor! Režimy [Extruze] a [Kombinovaný] fungují pouze pokud parametr fuzzy_skin_thickness není větší než tloušťka tištěné smyčky. Současně šířka extruze pro danou vrstvu nesmí být pod určitou úrovní. Obvykle to odpovídá 15–25% výšky vrstvy. Maximální tloušťka fuzzy skin při šířce obvodu 0,4 mm a výšce vrstvy 0,2 mm bude tedy 0,4-(0,2*0,25)=±0,35 mm! Pokud zadáte vyšší hodnotu, zobrazí se chyba Flow::spacing() a model nebude rozřezán. Tuto hodnotu můžete vybírat, dokud se chyba znovu neobjeví."
 
 msgid "Displacement"
 msgstr "Posun"
@@ -17576,14 +17715,28 @@ msgstr "Zapněte, chcete-li po slicování dosáhnout přesné výšky objektu v
 msgid "Arc fitting"
 msgstr "Prokládání oblouky"
 
+# AI Translated
 msgid ""
-"Enable this to get a G-code file which has G2 and G3 moves. The fitting tolerance is same as the resolution.\n"
+"Fit G2 and G3 arc moves to the toolpaths. Walls and surfaces are fitted within the resolution, while sparse infill, supports and the wipe tower use fixed tolerances.\n"
+" - Disabled: only straight G1 moves are used.\n"
+" - Enabled: arcs are fitted to all toolpaths.\n"
+" - Sparse infill only: arcs are fitted to the sparse infill only, which shortens the G-code of curved infill patterns without affecting the walls and surfaces.\n"
 "\n"
-"Note: For Klipper machines, this option is recommended to be disabled. Klipper does not benefit from arc commands as these are split again into line segments by the firmware. This results in a reduction in surface quality as line segments are converted to arcs by the slicer and then back to line segments by the firmware."
+"Note: For Klipper machines, Disabled is recommended. Klipper splits arcs back into line segments, which lowers the surface quality and can increase the print time."
 msgstr ""
-"Aktivujte tuto volbu pro vytvoření G-code souboru obsahujícího pohyby G2 a G3. Montážní tolerance je stejná jako rozlišení.\n"
+"Proloží dráhy nástroje oblouky G2 a G3. Stěny a povrchy se prokládají v rámci rozlišení, zatímco řídká výplň, podpory a věž na očištění trysky používají pevné tolerance.\n"
+" - Vypnuto: používají se pouze přímé pohyby G1.\n"
+" - Zapnuto: oblouky se prokládají všemi dráhami nástroje.\n"
+" - Pouze řídká výplň: oblouky se prokládají pouze řídkou výplní, což zkracuje G-code zakřivených vzorů výplně, aniž by to ovlivnilo stěny a povrchy.\n"
 "\n"
-"Poznámka: U tiskáren s Klipperem doporučujeme tuto volbu vypnout. Klipper z příkazů oblouků neprofituje, protože jsou firmwarem znovu rozděleny na úsečky. To může vést ke snížení kvality povrchu, protože úsečky jsou slicerem převedeny na oblouky a firmwarem opět zpět na úsečky."
+"Poznámka: Pro stroje s Klipperem se doporučuje Vypnuto. Klipper oblouky opět rozděluje na úsečky, což snižuje kvalitu povrchu a může prodloužit dobu tisku."
+
+msgid "Enabled"
+msgstr "Povoleno"
+
+# AI Translated
+msgid "Sparse infill only"
+msgstr "Pouze řídká výplň"
 
 msgid "Add line number"
 msgstr "Přidat číslo řádku"
@@ -17727,7 +17880,7 @@ msgid "Support controlling chamber temperature"
 msgstr "Podporuje řízení teploty komory"
 
 msgid ""
-"This option is enabled if machine support controlling chamber temperature\n"
+"This option is enabled if the machine supports controlling the chamber temperature\n"
 "G-code command: M141 S(0-255)"
 msgstr ""
 "Tato volba je povolena, pokud zařízení podporuje řízení teploty komory\n"
@@ -17737,7 +17890,7 @@ msgid "Support air filtration"
 msgstr "Filtrace vzduchu podpory"
 
 msgid ""
-"Enable this if printer support air filtration\n"
+"Enable this if the printer supports air filtration\n"
 "G-code command: M106 P3 S(0-255)"
 msgstr ""
 "Povolte tuto možnost, pokud tiskárna podporuje filtraci vzduchu\n"
@@ -17746,7 +17899,7 @@ msgstr ""
 msgid "Use cooling filter"
 msgstr "Použít filtr pro chlazení"
 
-msgid "Enable this if printer support cooling filter"
+msgid "Enable this if the printer supports a cooling filter"
 msgstr "Povolte tuto možnost, pokud tiskárna podpěruje filtr pro chlazení"
 
 # AI Translated
@@ -18179,13 +18332,6 @@ msgstr "Tento G-code je vložen při každé změně vrstvy po zdvihu v ose Z."
 # AI Translated
 msgid "Clumping detection G-code"
 msgstr "G-code detekce shlukování"
-
-# AI Translated
-msgid "Silent Mode"
-msgstr "Tichý režim"
-
-msgid "Whether the machine supports silent mode in which machine uses lower acceleration to print more quietly"
-msgstr "Zda stroj podporuje tichý režim, ve kterém používá nižší zrychlení při tisku."
 
 # AI Translated
 msgid "Emit limits to G-code"
@@ -18684,9 +18830,9 @@ msgstr "Maximální plocha otvoru ve spodní části modelu, než bude vyplněn 
 msgid "Detect overhang walls"
 msgstr "Detekovat převislou stěnu"
 
-#, c-format, boost-format
-msgid "This detects the overhang percentage relative to line width and uses a different speed to print. For 100%% overhang, bridging speed is used."
-msgstr "Detekuje procento převisu vzhledem k šířce čáry a použije odlišnou rychlost tisku. Pro 100%% převis je použita rychlost mostů."
+#, no-c-format, no-boost-format
+msgid "This detects the overhang percentage relative to line width and uses a different speed to print. For 100% overhang, bridging speed is used."
+msgstr "Detekuje procento převisu vzhledem k šířce čáry a použije odlišnou rychlost tisku. Pro 100% převis je použita rychlost mostů."
 
 # AI Translated
 msgid "Print unsupported walls last"
@@ -18909,6 +19055,9 @@ msgstr "Typ Z-hopu"
 msgid "Type of Z-hop."
 msgstr "Typ Z-hopu."
 
+msgid "Normal"
+msgstr "Normální"
+
 msgid "Slope"
 msgstr "Sklon"
 
@@ -19058,12 +19207,13 @@ msgstr "Tato možnost způsobí, že vnitřní švy budou posunuty zpět dle jej
 msgid "Seam gap"
 msgstr "Mezera švu"
 
+# AI Translated
 msgid ""
 "In order to reduce the visibility of the seam in a closed loop extrusion, the loop is interrupted and shortened by a specified amount.\n"
-"This amount can be specified in millimeters or as a percentage of the current extruder diameter. The default value for this parameter is 10%."
+"This amount can be specified in millimeters or as a percentage of the nozzle diameter. The default value for this parameter is 10%."
 msgstr ""
 "Pro snížení viditelnosti spoje v uzavřené smyčce extruze je smyčka přerušena a zkrácena o zadanou hodnotu.\n"
-"Tato hodnota může být uvedena v milimetrech nebo jako procento aktuálního průměru extruderu. Výchozí hodnota tohoto parametru je 10 %."
+"Tato hodnota může být uvedena v milimetrech nebo jako procento průměru trysky. Výchozí hodnota tohoto parametru je 10 %."
 
 msgid "Scarf joint seam (beta)"
 msgstr "Spoj límce na švu (beta)"
@@ -19240,9 +19390,6 @@ msgstr ""
 "Ochranný štít pomáhá chránit tisk z ABS nebo ASA před deformacemi a odtržením od podložky způsobenými průvanem. Obvykle je potřeba jen u tiskáren s otevřeným rámem, tedy bez krytu.\n"
 "\n"
 "Povoleno = okraj je vysoký jako nejvyšší tištěný objekt. Jinak se použije „Výška okraje“."
-
-msgid "Enabled"
-msgstr "Povoleno"
 
 msgid "Skirt type"
 msgstr "Typ okraje"
@@ -20186,7 +20333,8 @@ msgid ""
 "\n"
 "This option relies on the firmware supporting the M191 and M141 commands either via macros or natively and is usually used when an active chamber heater is installed."
 msgstr ""
-"Povolit tuto možnost pro automatizované řízení teploty komory. Tato volba aktivuje odeslání příkazu M191 před \"machine_start_gcode\", který nastaví teplotu komory a čeká, dokud není dosaženo. Navíc předá na konci tisku příkaz M141 k vypnutí topení komory, pokud je k dispozici.\n"
+"Povolit tuto možnost pro automatizované řízení teploty komory. Tato volba aktivuje odeslání příkazu M191 před \"machine_start_gcode\",\n"
+"který nastaví teplotu komory a čeká, dokud není dosaženo. Navíc předá na konci tisku příkaz M141 k vypnutí topení komory, pokud je k dispozici.\n"
 "\n"
 "Tato volba spoléhá na firmware, který podporuje příkazy M191 a M141 nativně nebo přes makra, a je obvykle využívána při instalaci aktivního topení komory."
 
@@ -20259,6 +20407,15 @@ msgstr "Tloušťka horního pláště"
 
 msgid "The number of top solid layers is increased when slicing if the thickness calculated by top shell layers is thinner than this value. This can avoid having too thin a shell when layer height is small. 0 means that this setting is disabled and thickness of top shell is determined simply by the number of top shell layers."
 msgstr "Počet horních pevných vrstev bude při slicování zvýšen, pokud tloušťka vypočtená podle horních vrstev bude menší než tato hodnota. Tím lze předejít příliš tenké skořepině při malé výšce vrstvy. 0 znamená, že je nastavení vypnuté a tloušťka horní skořepiny je určena pouze počtem horních vrstev."
+
+# AI Translated
+# Needs human review: Color Painting setting: how many layers behind a painted top surface take the color. 'Průnik barvy' for 'paint penetration' is new wording; check it reads right next to 'Malování barvou'.
+msgid "Top paint penetration layers"
+msgstr "Horní vrstvy průniku barvy"
+
+# AI Translated
+msgid "The number of layers, including the top surface layer, that take the color painted on a top surface. Set to 0 to use the top shell layers. A value larger than the top shell also colors the sparse infill below the painted area."
+msgstr "Počet vrstev, včetně vrstvy horního povrchu, které převezmou barvu nanesenou na horní povrch. Nastavením na 0 se použijí vrstvy horního pláště. Hodnota větší než počet vrstev horního pláště obarví také řídkou výplň pod malovanou oblastí."
 
 # AI Translated
 msgid "Separated infills"
@@ -20760,6 +20917,18 @@ msgstr "Tato možnost automaticky detekuje úzké vnitřní plochy plné výpln�
 
 msgid "invalid value "
 msgstr "Neplatná hodnota "
+
+# AI Translated
+msgid "Invalid collision volume definition."
+msgstr "Neplatná definice kolizního objemu."
+
+# AI Translated
+msgid "A nozzle offset is required for every extruder when toolhead-relative collision volumes are enabled."
+msgstr "Pokud jsou zapnuty kolizní objemy vztažené k tiskové hlavě, je pro každý extruder vyžadován posun trysky."
+
+# AI Translated
+msgid "Invalid per-extruder collision volume definition."
+msgstr "Neplatná definice kolizního objemu pro jednotlivé extrudery."
 
 msgid "Invalid value when spiral vase mode is enabled: "
 msgstr "Neplatná hodnota při aktivovaném režimu spirálové vázy: "
@@ -21330,11 +21499,13 @@ msgstr "Celková cena čistící věže"
 msgid "Total cost of the material wasted on the wipe tower. Calculated from filament_cost value in Filament Settings."
 msgstr "Celková cena materiálu spotřebovaného na čistící věži. Vypočítáno z hodnoty filament_cost v nastavení filamentu."
 
-msgid "Wipe tower volume"
-msgstr "Objem čistící věže"
+# AI Translated
+msgid "Total wipe tower filament"
+msgstr "Celkový filament věže na očištění trysky"
 
-msgid "Total filament volume extruded on the wipe tower."
-msgstr "Celkový objem filamentu extrudovaného na čistící věži."
+# AI Translated
+msgid "Total length of filament used on the wipe tower, in mm."
+msgstr "Celková délka filamentu použitého na věži na očištění trysky v mm."
 
 msgid "Used filament"
 msgstr "Použitý filament"
@@ -21556,8 +21727,8 @@ msgid "Layer number"
 msgstr "Číslo vrstvy"
 
 # AI Translated
-msgid "Index of the current layer. Zero-based (i.e. first layer is number 0), except in extrusion role change G-code, where it is one-based."
-msgstr "Index aktuální vrstvy. Číslování začíná od nuly (tj. první vrstva má číslo 0), s výjimkou G-code pro změnu role extruze, kde začíná od jedničky."
+msgid "Index of the current layer. The index is zero-based (first layer has index 0). Before the first layer starts, it is -1. In extrusion role change G-code, the index is one-based (first layer has index 1)."
+msgstr "Index aktuální vrstvy. Index začíná od nuly (první vrstva má index 0). Před začátkem první vrstvy je -1. V G-code změny role extruze začíná index od jedné (první vrstva má index 1)."
 
 msgid "Layer Z"
 msgstr "Vrstva Z"
@@ -21574,24 +21745,244 @@ msgstr "Výška poslední vrstvy nad tiskovou podložkou."
 msgid "Filament extruder ID"
 msgstr "ID extruderu filamentu"
 
-msgid "The current extruder ID. The same as current_extruder."
-msgstr "Aktuální ID extruderu. Shodné s current_extruder."
+# AI Translated
+msgid "In filament start G-code, the index of the filament that is being loaded. In filament end G-code, the index of the filament that is being unloaded. The index is zero-based (first filament has index 0). At a tool change, filament end G-code gets the extruder index instead, unless the Type 1 wipe tower does the tool change. Machine end G-code gets the value from the last filament end G-code at the end of the print."
+msgstr "V počátečním G-code filamentu je to index filamentu, který se zavádí. V koncovém G-code filamentu je to index filamentu, který se vysouvá. Index začíná od nuly (první filament má index 0). Při výměně nástroje dostane koncový G-code filamentu místo toho index extruderu, pokud výměnu nástroje neprovádí věž na očištění trysky typu 1. Koncový G-code stroje dostane na konci tisku hodnotu z posledního koncového G-code filamentu."
+
+# AI Translated
+msgid "Current filament ID"
+msgstr "ID aktuálního filamentu"
+
+# AI Translated
+msgid "Index of the currently active filament. The index is zero-based (first filament has index 0)."
+msgstr "Index aktuálně aktivního filamentu. Index začíná od nuly (první filament má index 0)."
+
+# AI Translated
+msgid "Current extruder ID"
+msgstr "ID aktuálního extruderu"
+
+# AI Translated
+msgid "Index of the currently active physical extruder. The index is zero-based (first extruder has index 0)."
+msgstr "Index aktuálně aktivního fyzického extruderu. Index začíná od nuly (první extruder má index 0)."
+
+# AI Translated
+msgid "Current nozzle ID"
+msgstr "ID aktuální trysky"
+
+# AI Translated
+msgid "Index of the currently active nozzle. The index is zero-based (first nozzle has index 0)."
+msgstr "Index aktuálně aktivní trysky. Index začíná od nuly (první tryska má index 0)."
+
+# AI Translated
+msgid "Nozzle diameters"
+msgstr "Průměry trysek"
+
+# AI Translated
+msgid "Nozzle diameters indexed by nozzle ID."
+msgstr "Průměry trysek indexované podle ID trysky."
+
+# AI Translated
+msgid "Nozzle volume types"
+msgstr "Typy objemu trysek"
+
+# AI Translated
+#. TRN The quoted values are G-code identifiers; keep them in English.
+msgid "Nozzle volume types indexed by nozzle ID, such as \"Standard\" or \"High Flow\"."
+msgstr "Typy objemu trysky indexované podle ID trysky, například \"Standard\" nebo \"High Flow\"."
+
+# AI Translated
+msgid "Retraction distance used when cutting filament."
+msgstr "Vzdálenost retrakce použitá při odřezávání filamentu."
+
+# AI Translated
+msgid "Long retraction when cut"
+msgstr "Dlouhá retrakce při odříznutí"
+
+# AI Translated
+msgid "Whether long retraction is used when cutting filament."
+msgstr "Zda se při odřezávání filamentu používá dlouhá retrakce."
+
+# AI Translated
+msgid "Most-used physical extruder ID"
+msgstr "ID nejpoužívanějšího fyzického extruderu"
+
+# AI Translated
+msgid "Index of the physical extruder used most often on the current layer. The index is zero-based (first extruder has index 0)."
+msgstr "Index fyzického extruderu používaného nejčastěji na aktuální vrstvě. Index začíná od nuly (první extruder má index 0)."
+
+# AI Translated
+msgid "Current Y acceleration limit"
+msgstr "Aktuální limit zrychlení Y"
+
+# AI Translated
+msgid "Current Y-axis acceleration limit after the bed-mass adjustment."
+msgstr "Aktuální limit zrychlení osy Y po úpravě podle hmotnosti podložky."
+
+# AI Translated
+msgid "Current accumulated mass"
+msgstr "Aktuální nashromážděná hmotnost"
+
+# AI Translated
+msgid "Accumulated printed mass at the current layer."
+msgstr "Nashromážděná vytištěná hmotnost na aktuální vrstvě."
+
+# AI Translated
+msgid "Previous layer mass"
+msgstr "Hmotnost předchozí vrstvy"
+
+# AI Translated
+msgid "Printed mass of the previous layer."
+msgstr "Vytištěná hmotnost předchozí vrstvy."
+
+# AI Translated
+msgid "Same as previous_layer_mass. Bambu Studio uses this name."
+msgstr "Stejné jako previous_layer_mass. Tento název používá Bambu Studio."
+
+# AI Translated
+msgid "Current physical extruder ID"
+msgstr "ID aktuálního fyzického extruderu"
+
+# AI Translated
+msgid "Index of the physical extruder active for the current layer. The index is zero-based (first extruder has index 0)."
+msgstr "Index fyzického extruderu aktivního na aktuální vrstvě. Index začíná od nuly (první extruder má index 0)."
+
+# AI Translated
+msgid "Timelapse position X"
+msgstr "Pozice časosběru X"
+
+# AI Translated
+msgid "Selected X position for timelapse capture."
+msgstr "Vybraná pozice X pro pořízení snímku časosběru."
+
+# AI Translated
+msgid "Timelapse position Y"
+msgstr "Pozice časosběru Y"
+
+# AI Translated
+msgid "Selected Y position for timelapse capture."
+msgstr "Vybraná pozice Y pro pořízení snímku časosběru."
+
+# AI Translated
+msgid "Has timelapse safe position"
+msgstr "Má bezpečnou pozici časosběru"
+
+# AI Translated
+msgid "Whether a safe timelapse position was found."
+msgstr "Zda byla nalezena bezpečná pozice časosběru."
+
+# AI Translated
+msgid "Timelapse inline photo"
+msgstr "Vložená fotografie časosběru"
+
+# AI Translated
+msgid "Whether the photo is taken where the nozzle already is, without moving to a safe timelapse position first."
+msgstr "Zda se snímek pořizuje tam, kde se tryska právě nachází, bez předchozího přesunu na bezpečnou pozici časosběru."
+
+# AI Translated
+msgid "Farthest-point timelapse enabled"
+msgstr "Časosběr v nejvzdálenějším bodě zapnut"
+
+# AI Translated
+msgid "Whether farthest-point timelapse positioning is active."
+msgstr "Zda je aktivní umísťování časosběru do nejvzdálenějšího bodu."
+
+# AI Translated
+msgid "Clear path to X0"
+msgstr "Volná cesta k X0"
+
+# AI Translated
+msgid "Whether the nozzle can move to X0 at the current height without hitting another printed object."
+msgstr "Zda se tryska může v aktuální výšce přesunout k X0, aniž by narazila do jiného vytištěného objektu."
 
 # AI Translated
 msgid "Previous extruder"
 msgstr "Předchozí extruder"
 
 # AI Translated
-msgid "Index of the extruder that is being unloaded. The index is zero based (first extruder has index 0)."
-msgstr "Index extruderu, který se právě vysouvá. Index začíná od nuly (první extruder má index 0)."
+msgid "Index of the filament that is being unloaded. The index is zero-based (first filament has index 0). At the start of the print, when no filament is loaded yet, it is -1."
+msgstr "Index filamentu, který se vysouvá. Index začíná od nuly (první filament má index 0). Na začátku tisku, kdy ještě není zaveden žádný filament, je -1."
 
 # AI Translated
 msgid "Next extruder"
 msgstr "Další extruder"
 
 # AI Translated
-msgid "Index of the extruder that is being loaded. The index is zero based (first extruder has index 0)."
-msgstr "Index extruderu, který se právě zavádí. Index začíná od nuly (první extruder má index 0)."
+msgid "Index of the filament that is being loaded. The index is zero-based (first filament has index 0)."
+msgstr "Index filamentu, který se zavádí. Index začíná od nuly (první filament má index 0)."
+
+# AI Translated
+msgid "Current hotend"
+msgstr "Aktuální hotend"
+
+# AI Translated
+msgid "Hotend of the outgoing filament, given as its zero-based extruder index. On Bambu printers it is -1, or the nozzle ID when a filament moves between nozzles across layers."
+msgstr "Hotend odcházejícího filamentu, udaný jako index extruderu začínající od nuly. U tiskáren Bambu je -1 nebo ID trysky, pokud filament mezi vrstvami přechází mezi tryskami."
+
+# AI Translated
+msgid "Next hotend"
+msgstr "Další hotend"
+
+# AI Translated
+msgid "Hotend of the incoming filament, given as its zero-based extruder index. On Bambu printers it is -1, or the nozzle ID when a filament moves between nozzles across layers."
+msgstr "Hotend přicházejícího filamentu, udaný jako index extruderu začínající od nuly. U tiskáren Bambu je -1 nebo ID trysky, pokud filament mezi vrstvami přechází mezi tryskami."
+
+# AI Translated
+msgid "Next nozzle ID"
+msgstr "ID další trysky"
+
+# AI Translated
+msgid "Index of the nozzle associated with the incoming filament. The index is zero-based (first nozzle has index 0)."
+msgstr "Index trysky spojené s přicházejícím filamentem. Index začíná od nuly (první tryska má index 0)."
+
+# AI Translated
+msgid "Next filament ID"
+msgstr "ID dalšího filamentu"
+
+# AI Translated
+msgid "Index of the incoming filament. The index is zero-based (first filament has index 0)."
+msgstr "Index přicházejícího filamentu. Index začíná od nuly (první filament má index 0)."
+
+# AI Translated
+msgid "Old extruder variant"
+msgstr "Původní varianta extruderu"
+
+# AI Translated
+#. TRN The quoted value is a G-code identifier; keep it in English.
+msgid "Extruder type and nozzle volume type of the outgoing extruder, such as \"Direct Drive High Flow\"."
+msgstr "Typ extruderu a typ objemu trysky odcházejícího extruderu, například \"Direct Drive High Flow\"."
+
+# AI Translated
+msgid "New extruder variant"
+msgstr "Nová varianta extruderu"
+
+# AI Translated
+#. TRN The quoted value is a G-code identifier; keep it in English.
+msgid "Extruder type and nozzle volume type of the incoming extruder, such as \"Direct Drive High Flow\"."
+msgstr "Typ extruderu a typ objemu trysky přicházejícího extruderu, například \"Direct Drive High Flow\"."
+
+# AI Translated
+msgid "Filament nozzle-change retract length"
+msgstr "Délka retrakce filamentu při výměně trysky"
+
+# AI Translated
+msgid "Nozzle-change retraction length of the outgoing filament."
+msgstr "Délka retrakce odcházejícího filamentu při výměně trysky."
+
+# AI Translated
+msgid "New extruder retracted length"
+msgstr "Délka retrakce nového extruderu"
+
+# AI Translated
+msgid "Retraction length still applied to the incoming extruder from when it was parked."
+msgstr "Délka retrakce, která u přicházejícího extruderu stále platí od doby, kdy byl zaparkován."
+
+# AI Translated
+msgid "Outer wall volumetric speed"
+msgstr "Objemová rychlost vnější stěny"
+
+# AI Translated
+msgid "Volumetric speed used for the outer wall."
+msgstr "Objemová rychlost použitá pro vnější stěnu."
 
 # AI Translated
 msgid "Relative e-axis"
@@ -21608,6 +21999,14 @@ msgstr "Počet výměn nástroje"
 # AI Translated
 msgid "The number of toolchanges throughout the print."
 msgstr "Počet výměn nástroje během tisku."
+
+# AI Translated
+msgid "Toolchange Z"
+msgstr "Z při výměně nástroje"
+
+# AI Translated
+msgid "The Z position during the toolchange."
+msgstr "Pozice Z během výměny nástroje."
 
 # AI Translated
 msgid "Old retract length"
@@ -21686,16 +22085,16 @@ msgid "First flush volume"
 msgstr "První objem čištění"
 
 # AI Translated
-msgid "The first flush volume."
-msgstr "První objem čištění."
+msgid "First half of the planned purge length, in mm of filament."
+msgstr "První polovina plánované délky čištění v mm filamentu."
 
 # AI Translated
 msgid "Second flush volume"
 msgstr "Druhý objem čištění"
 
 # AI Translated
-msgid "The second flush volume."
-msgstr "Druhý objem čištění."
+msgid "Second half of the planned purge length, in mm of filament."
+msgstr "Druhá polovina plánované délky čištění v mm filamentu."
 
 # AI Translated
 msgid "Old filament e feedrate"
@@ -21792,6 +22191,112 @@ msgstr "Délka čištění 4"
 # AI Translated
 msgid "The fourth flush length."
 msgstr "Čtvrtá délka čištění."
+
+# AI Translated
+msgid "Flush length"
+msgstr "Délka čištění"
+
+# AI Translated
+msgid "Total flush length."
+msgstr "Celková délka čištění."
+
+# AI Translated
+msgid "Flush volumetric speeds"
+msgstr "Objemové rychlosti čištění"
+
+# AI Translated
+msgid "Flush volumetric speeds for each filament."
+msgstr "Objemové rychlosti čištění pro jednotlivé filamenty."
+
+# AI Translated
+msgid "Flush temperatures"
+msgstr "Teploty čištění"
+
+# AI Translated
+msgid "Flush temperatures for each filament."
+msgstr "Teploty čištění pro jednotlivé filamenty."
+
+# AI Translated
+msgid "Filament cooling before tower"
+msgstr "Chlazení filamentu před věží"
+
+# AI Translated
+msgid "Avoid wipe perimeter"
+msgstr "Vyhnout se obvodu očištění"
+
+# AI Translated
+msgid "Whether travel should avoid the wipe perimeter."
+msgstr "Zda se mají přejezdy vyhýbat obvodu očištění."
+
+# AI Translated
+# Needs human review: Glossary tower cell is unsettled; used 'věž na očištění trysky' for wipe tower, the catalog's most common form.
+msgid "Wipe tower avoidance X"
+msgstr "Vyhnutí se věži na očištění trysky X"
+
+# AI Translated
+# Needs human review: Glossary tower cell is unsettled; used 'věž na očištění trysky' for wipe tower, the catalog's most common form.
+msgid "X position just beside the wipe tower that the nozzle moves to so it stays clear of the tower."
+msgstr "Pozice X těsně vedle věže na očištění trysky, na kterou se tryska přesune, aby se věži vyhnula."
+
+# AI Translated
+# Needs human review: Prime tower glossary cell is unsettled; 'věž na očištění trysky' used as in most existing wipe tower entries.
+msgid "Prime tower interface"
+msgstr "Rozhraní věže na očištění trysky"
+
+# AI Translated
+# Needs human review: Glossary tower cell is unsettled; kept 'čistící věž' as in the existing prime tower interface layer strings.
+msgid "Whether the current purge is for the prime tower interface layer (where different materials meet)."
+msgstr "Zda je aktuální čištění určeno pro vrstvu rozhraní čistící věže (kde se setkávají různé materiály)."
+
+# AI Translated
+# Needs human review: Glossary tower cell is unsettled; kept 'čistící věž' as in the existing prime tower interface layer strings.
+msgid "Print temperature for prime tower interface layer (where different materials meet)."
+msgstr "Teplota tisku pro vrstvu rozhraní čistící věže (kde se setkávají různé materiály)."
+
+# AI Translated
+msgid "Wipe tower wait position X"
+msgstr "Pozice čekání věže na očištění trysky X"
+
+# AI Translated
+msgid "X coordinate of the nozzle's wipe-tower wait position, 2 mm outside the tower edge."
+msgstr "Souřadnice X čekací pozice trysky u věže na očištění trysky, 2 mm za okrajem věže."
+
+# AI Translated
+msgid "Wipe tower wait position Y"
+msgstr "Pozice čekání věže na očištění trysky Y"
+
+# AI Translated
+msgid "Y coordinate of the nozzle's wipe-tower wait position."
+msgstr "Souřadnice Y čekací pozice trysky u věže na očištění trysky."
+
+# AI Translated
+msgid "Wipe tower wait position valid"
+msgstr "Pozice čekání věže na očištění trysky platná"
+
+# AI Translated
+# Needs human review: Glossary tower cell is unsettled; used 'věž na očištění trysky' for wipe tower, the catalog's most common form.
+msgid "Whether the wait position is set, which is the case when the print has a wipe tower."
+msgstr "Zda je čekací pozice nastavena, což platí, když tisk obsahuje věž na očištění trysky."
+
+# AI Translated
+msgid "Same as wipe_tower_wait_pos_x. Bambu Studio uses this name."
+msgstr "Stejné jako wipe_tower_wait_pos_x. Tento název používá Bambu Studio."
+
+# AI Translated
+msgid "Same as wipe_tower_wait_pos_y. Bambu Studio uses this name."
+msgstr "Stejné jako wipe_tower_wait_pos_y. Tento název používá Bambu Studio."
+
+# AI Translated
+msgid "Same as wipe_tower_wait_pos_valid. Bambu Studio uses this name."
+msgstr "Stejné jako wipe_tower_wait_pos_valid. Tento název používá Bambu Studio."
+
+# AI Translated
+msgid "Nozzle temperatures indexed by filament."
+msgstr "Teploty trysky indexované podle filamentu."
+
+# AI Translated
+msgid "First-layer nozzle temperatures indexed by filament."
+msgstr "Teploty trysky pro první vrstvu indexované podle filamentu."
 
 # AI Translated
 msgid "Extrusion role"
@@ -21988,6 +22493,10 @@ msgstr "Kompilace regulárního výrazu se nezdařila"
 # AI Translated
 msgid "Cannot apply logical operation to non-boolean operands."
 msgstr "Logickou operaci nelze použít na nebooleovské operandy."
+
+# AI Translated
+msgid "This value is known only after the G-code is generated. It can be printed, but not used in a calculation or a comparison."
+msgstr "Tato hodnota je známa až po vygenerování G-code. Lze ji vypsat, ale nelze ji použít ve výpočtu ani v porovnání."
 
 # AI Translated
 msgid "Trying to index a scalar variable"
@@ -23966,9 +24475,9 @@ msgstr ""
 "Typ trysky neodpovídá skutečnému typu trysky tiskárny.\n"
 "Klikněte prosím na tlačítko Synchronizovat výše a spusťte kalibraci znovu."
 
-#, c-format, boost-format
-msgid "Printing %1s material with %2s nozzle may cause nozzle damage."
-msgstr "Tisk materiálu %1s s tryskou %2s může způsobit poškození trysky."
+#, boost-format
+msgid "Printing %1% material with %2% nozzle may cause nozzle damage."
+msgstr "Tisk materiálu %1% s tryskou %2% může způsobit poškození trysky."
 
 msgid "Need select printer"
 msgstr "Je nutné vybrat tiskárnu"
@@ -26099,10 +26608,6 @@ msgstr "(všechny hrany)"
 # AI Translated
 msgid "Placement (transform / mirror / mate)"
 msgstr "Umístění (transformace / zrcadlení / spoj)"
-
-# AI Translated
-msgid "Transform"
-msgstr "Transformace"
 
 # AI Translated
 msgid "Move and/or rotate an existing body"
@@ -29318,10 +29823,6 @@ msgstr "Opakovat"
 # AI Translated
 msgid "Reference"
 msgstr "Referenční geometrie"
-
-# AI Translated
-msgid "Modify"
-msgstr "Upravit"
 
 # AI Translated
 msgctxt "Design"
@@ -35766,19 +36267,6 @@ msgstr "neznámý název"
 # AI Translated
 #, c-format, boost-format
 msgid ""
-"Plugin \"%s\" requests filesystem read access to:\n"
-"%s"
-msgstr ""
-"Plugin „%s“ žádá o přístup ke čtení v souborovém systému:\n"
-"%s"
-
-# AI Translated
-msgid "Plugin permissions"
-msgstr "Oprávnění pluginu"
-
-# AI Translated
-#, c-format, boost-format
-msgid ""
 "Plugin \"%s\" is requesting permission for the Python audit event \"%s\".\n"
 "\n"
 "This operation does not expose a target the audit hook can display."
@@ -35859,23 +36347,21 @@ msgstr[2] ""
 "Plugin „%s“ žádá o odstranění následujících souborů:\n"
 "%s"
 
-# AI Translated
 #, c-format, boost-format
 msgid ""
-"Plugin \"%s\" is requesting to make an HTTP request to:\n"
-"%s"
+"Plugin \"%s\" is requesting network access to:\n"
+"%s\n"
+"\n"
+"Approval covers HTTP or HTTPS access and raw network connections to the listed hosts. It does not restrict ports. A URL with a path, query or port is covered only for that exact URL."
 msgstr ""
-"Plugin „%s“ žádá o odeslání požadavku HTTP na:\n"
-"%s"
 
-# AI Translated
 #, c-format, boost-format
 msgid ""
-"Plugin \"%s\" is requesting to open a network connection to:\n"
-"%s"
+"Plugin \"%s\" is requesting network access to:\n"
+"%s\n"
+"\n"
+"Approval covers raw network connections to the listed hosts. It does not restrict ports."
 msgstr ""
-"Plugin „%s“ žádá o otevření síťového připojení k:\n"
-"%s"
 
 # AI Translated
 #, c-format, boost-format
@@ -35917,6 +36403,10 @@ msgstr "Plugin „%s“ žádá o oprávnění pro auditní událost Pythonu „
 # AI Translated
 msgid "Plugin permission request"
 msgstr "Žádost pluginu o oprávnění"
+
+# AI Translated
+msgid "Plugin permissions"
+msgstr "Oprávnění pluginu"
 
 # AI Translated
 msgid "The preset stores invalid plugin capability configuration JSON."
@@ -36345,8 +36835,16 @@ msgid "Cannot unsubscribe your own plugins. Use Delete to remove the local files
 msgstr "Nelze zrušit odběr vlastních pluginů. Místní soubory odstraníte pomocí Smazat."
 
 # AI Translated
-msgid "Plugin filesystem read permission request denied"
-msgstr "Žádost pluginu o oprávnění ke čtení souborového systému byla zamítnuta"
+msgid "Python interpreter is shutting down."
+msgstr "Interpret Pythonu se vypíná."
+
+# AI Translated
+msgid "Plugin system is shutting down."
+msgstr "Systém pluginů se ukončuje."
+
+# AI Translated
+msgid "Plugin permission request denied"
+msgstr "Žádost pluginu o oprávnění byla zamítnuta"
 
 # AI Translated
 msgid "Profile has fewer than 2 points"
@@ -37081,6 +37579,261 @@ msgid ""
 msgstr ""
 "Zamezte kroucení\n"
 "Víte, že při tisku materiálů náchylných ke kroucení, jako je ABS, může vhodné zvýšení teploty vyhřívané desky snížit pravděpodobnost kroucení?"
+
+#~ msgid "Subdivision mesh"
+#~ msgstr "Subdivizní síť"
+
+#~ msgid "(Lost color)"
+#~ msgstr "(Ztracená barva)"
+
+# AI Translated
+# Needs human review: Short dropdown option for collision volume behavior (same volumes for all nozzles); check it reads right in that dropdown.
+#~ msgid "Shared"
+#~ msgstr "Sdílené"
+
+#, no-c-format, no-boost-format
+#~ msgid ""
+#~ "Enter the shrinkage percentage that the filament will get after cooling (94% if you measure 94mm instead of 100mm). The part will be scaled in XY to compensate. For multi-material prints, ensure filament shrinkage matches across all used filaments\n"
+#~ "Be sure to allow enough space between objects, as this compensation is done after the checks."
+#~ msgstr ""
+#~ "Zadejte procento smrštění filamentu po ochlazení (94 %, pokud naměříte 94 mm místo 100 mm). Model bude v osách XY upraven pro kompenzaci smrštění. U vícebarevného tisku zajistěte, aby smrštění odpovídalo u všech použitých filamentů.\n"
+#~ "Ujistěte se, že mezi objekty ponecháte dostatek prostoru, protože tato kompenzace se provádí až po kontrolách."
+
+#~ msgid "Temperature drop before entering filament tower"
+#~ msgstr "Snížení teploty před vstupem do filamentové věže"
+
+#, c-format, boost-format
+#~ msgid "Klipper's max_accel_to_decel will be adjusted to this %% of acceleration."
+#~ msgstr "Hodnota max_accel_to_decel v Klipperu bude upravena na %% z akcelerace."
+
+#, c-format, boost-format
+#~ msgid ""
+#~ "Fuzzy skin generation mode. Works only with Arachne!\n"
+#~ "Displacement: Сlassic mode when the pattern is formed by shifting the nozzle sideways from the original path.\n"
+#~ "Extrusion: The mode when the pattern formed by the amount of extruded plastic. This is the fast and straight algorithm without unnecessary nozzle shake that gives a smooth pattern. But it is more useful for forming loose walls in the entire they array.\n"
+#~ "Combined: Joint mode [Displacement] + [Extrusion]. The appearance of the walls is similar to [Displacement] Mode, but it leaves no pores between the perimeters.\n"
+#~ "\n"
+#~ "Attention! The [Extrusion] and [Combined] modes works only the fuzzy_skin_thickness parameter not more than the thickness of printed loop. At the same time, the width of the extrusion for a particular layer should also not be below a certain level. It is usually equal 15-25%% of a layer height. Therefore, the maximum fuzzy skin thickness with a perimeter width of 0.4 mm and a layer height of 0.2 mm will be 0.4-(0.2*0.25)=±0.35mm! If you enter a higher parameter than this, the error Flow::spacing() will displayed, and the model will not be sliced. You can choose this number until this error is repeated."
+#~ msgstr ""
+#~ "Režim generování Fuzzy Skin. Funguje pouze s Arachne!\n"
+#~ "Vyosení: Klasický režim, kdy se vzor tvoří posunutím trysky do strany od původní dráhy.\n"
+#~ "Extruze: Režim, ve kterém se vzor tvoří množstvím vytlačeného plastu. Toto je rychlý a přímý algoritmus bez zbytečných vibrací trysky, který vytváří hladký vzor. Je však užitečnější pro tvorbu volných stěn v celé jejich oblasti.\n"
+#~ "Kombinovaný: Spojený režim [Vyosení] + [Extruze]. Vzhled stěn je podobný režimu [Vyosení], ale nezanechává póry mezi obvody.\n"
+#~ "\n"
+#~ "Pozor! Režimy [Extruze] a [Kombinovaný] fungují pouze pokud parametr fuzzy_skin_thickness není větší než tloušťka tištěné smyčky. Současně šířka extruze pro danou vrstvu nesmí být pod určitou úrovní. Obvykle to odpovídá 15–25%% výšky vrstvy. Maximální tloušťka fuzzy skin při šířce obvodu 0,4 mm a výšce vrstvy 0,2 mm bude tedy 0,4-(0,2*0,25)=±0,35 mm! Pokud zadáte vyšší hodnotu, zobrazí se chyba Flow::spacing() a model nebude rozřezán. Tuto hodnotu můžete vybírat, dokud se chyba znovu neobjeví."
+
+#~ msgid ""
+#~ "This option is enabled if machine support controlling chamber temperature\n"
+#~ "G-code command: M141 S(0-255)"
+#~ msgstr ""
+#~ "Tato volba je povolena, pokud zařízení podporuje řízení teploty komory\n"
+#~ "G-code příkaz: M141 S(0-255)"
+
+#~ msgid ""
+#~ "Enable this if printer support air filtration\n"
+#~ "G-code command: M106 P3 S(0-255)"
+#~ msgstr ""
+#~ "Povolte tuto možnost, pokud tiskárna podporuje filtraci vzduchu\n"
+#~ "G-code příkaz: M106 P3 S(0-255)"
+
+#~ msgid "Enable this if printer support cooling filter"
+#~ msgstr "Povolte tuto možnost, pokud tiskárna podpěruje filtr pro chlazení"
+
+#, c-format, boost-format
+#~ msgid "This detects the overhang percentage relative to line width and uses a different speed to print. For 100%% overhang, bridging speed is used."
+#~ msgstr "Detekuje procento převisu vzhledem k šířce čáry a použije odlišnou rychlost tisku. Pro 100%% převis je použita rychlost mostů."
+
+# AI Translated
+#~ msgid "Nozzle volume variants indexed by nozzle ID."
+#~ msgstr "Varianty objemu trysek indexované podle ID trysky."
+
+# AI Translated
+#~ msgid "Current layer mass"
+#~ msgstr "Hmotnost aktuální vrstvy"
+
+# AI Translated
+#~ msgid "Whether the timelapse photo is captured at the inline position."
+#~ msgstr "Zda se fotografie časosběru pořizuje na vložené pozici."
+
+# AI Translated
+# Needs human review: Variable label for the timelapse move being clear to X0; check it reads right in the G-code placeholder list.
+#~ msgid "Clear to X0"
+#~ msgstr "Volno do X0"
+
+# AI Translated
+#~ msgid "Whether the timelapse move is clear to X0."
+#~ msgstr "Zda je pohyb časosběru volný do X0."
+
+# AI Translated
+#~ msgid "Zero-based extruder index of the outgoing filament. On Bambu printers it is -1, or the nozzle ID when a filament moves between nozzles across layers."
+#~ msgstr "Index odcházejícího filamentu, počítaný od nuly, vztažený k extruderu. U tiskáren Bambu je to -1 nebo ID trysky, pokud se filament mezi vrstvami přesouvá mezi tryskami."
+
+# AI Translated
+#~ msgid "Zero-based extruder index of the incoming filament. On Bambu printers it is -1, or the nozzle ID when a filament moves between nozzles across layers."
+#~ msgstr "Index přicházejícího filamentu, počítaný od nuly, vztažený k extruderu. U tiskáren Bambu je to -1 nebo ID trysky, pokud se filament mezi vrstvami přesouvá mezi tryskami."
+
+# AI Translated
+#~ msgid "Nozzle-volume variant of the outgoing extruder."
+#~ msgstr "Varianta objemu trysky odcházejícího extruderu."
+
+# AI Translated
+#~ msgid "Nozzle-volume variant of the incoming extruder."
+#~ msgstr "Varianta objemu trysky přicházejícího extruderu."
+
+# AI Translated
+#~ msgid "Currently parked retraction length of the incoming extruder."
+#~ msgstr "Aktuální délka zaparkované retrakce přicházejícího extruderu."
+
+# AI Translated
+#~ msgid "The first flush volume."
+#~ msgstr "První objem čištění."
+
+# AI Translated
+#~ msgid "The second flush volume."
+#~ msgstr "Druhý objem čištění."
+
+# AI Translated
+#~ msgid "Wipe avoidance X"
+#~ msgstr "Vyhnutí se očištění X"
+
+# AI Translated
+#~ msgid "X position used to avoid the wipe area."
+#~ msgstr "Pozice X použitá k vyhnutí se oblasti očištění."
+
+# AI Translated
+# Needs human review: Prime tower glossary cell is unsettled; 'věž na očištění trysky' used as in most existing wipe tower entries.
+#~ msgid "Whether the current purge is for a prime-tower interface."
+#~ msgstr "Zda je aktuální čištění určeno pro rozhraní věže na očištění trysky."
+
+# AI Translated
+#~ msgid "Filament tower interface print temperature"
+#~ msgstr "Tisková teplota rozhraní věže pro filament"
+
+# AI Translated
+#~ msgid "Print temperature used for the filament tower interface."
+#~ msgstr "Tisková teplota použitá pro rozhraní věže pro daný filament."
+
+# AI Translated
+#~ msgid "Whether the print has a wipe tower."
+#~ msgstr "Zda tisk obsahuje věž na očištění trysky."
+
+# AI Translated
+#~ msgid "Nozzle temperature initial layer"
+#~ msgstr "Teplota trysky pro první vrstvu"
+
+#, c-format, boost-format
+#~ msgid "Printing %1s material with %2s nozzle may cause nozzle damage."
+#~ msgstr "Tisk materiálu %1s s tryskou %2s může způsobit poškození trysky."
+
+# AI Translated
+#~ msgid "Python interpreter is shutting down"
+#~ msgstr "Interpret Pythonu se ukončuje"
+
+# AI Translated
+#, c-format, boost-format
+#~ msgid "Filament %s is placed in the %s, but the generated G-code path exceeds the printable range of the %s."
+#~ msgid_plural "Filaments %s are placed in the %s, but the generated G-code path exceeds the printable range of the %s."
+#~ msgstr[0] "Filament %s je umístěn v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %s."
+#~ msgstr[1] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %s."
+#~ msgstr[2] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou oblast %s."
+
+# AI Translated
+#, c-format, boost-format
+#~ msgid "Filament %s is placed in the %s, but the generated G-code path exceeds the printable height of the %s."
+#~ msgid_plural "Filaments %s are placed in the %s, but the generated G-code path exceeds the printable height of the %s."
+#~ msgstr[0] "Filament %s je umístěn v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %s."
+#~ msgstr[1] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %s."
+#~ msgstr[2] "Filamenty %s jsou umístěny v %s, ale vygenerovaná dráha G-code přesahuje tisknutelnou výšku %s."
+
+#~ msgid "Mirror along the X Axis"
+#~ msgstr "Zrcadlit podle osy X"
+
+#~ msgid "Mirror along the Y Axis"
+#~ msgstr "Zrcadlit podle osy Y"
+
+#~ msgid "Mirror along the Z Axis"
+#~ msgstr "Zrcadlit podle osy Z"
+
+#~ msgid "Split the selected object"
+#~ msgstr "Rozdělit vybraný objekt"
+
+#~ msgid "Unprintable area in XY plane. For example, X1 Series printers use the front left corner to cut filament during filament change. The area is expressed as polygon by points in following format: \"XxY, XxY, ...\""
+#~ msgstr "Netisknutelná oblast v rovině XY. Například tiskárny řady X1 používají přední levý roh ke střihu filamentu při výměně filamentu. Oblast je vyjádřena jako polygon pomocí bodů ve formátu: \"XxY, XxY, ...\""
+
+#~ msgid ""
+#~ "Enable this to get a G-code file which has G2 and G3 moves. The fitting tolerance is same as the resolution.\n"
+#~ "\n"
+#~ "Note: For Klipper machines, this option is recommended to be disabled. Klipper does not benefit from arc commands as these are split again into line segments by the firmware. This results in a reduction in surface quality as line segments are converted to arcs by the slicer and then back to line segments by the firmware."
+#~ msgstr ""
+#~ "Aktivujte tuto volbu pro vytvoření G-code souboru obsahujícího pohyby G2 a G3. Montážní tolerance je stejná jako rozlišení.\n"
+#~ "\n"
+#~ "Poznámka: U tiskáren s Klipperem doporučujeme tuto volbu vypnout. Klipper z příkazů oblouků neprofituje, protože jsou firmwarem znovu rozděleny na úsečky. To může vést ke snížení kvality povrchu, protože úsečky jsou slicerem převedeny na oblouky a firmwarem opět zpět na úsečky."
+
+# AI Translated
+#~ msgid "Silent Mode"
+#~ msgstr "Tichý režim"
+
+#~ msgid "Whether the machine supports silent mode in which machine uses lower acceleration to print more quietly"
+#~ msgstr "Zda stroj podporuje tichý režim, ve kterém používá nižší zrychlení při tisku."
+
+#~ msgid ""
+#~ "In order to reduce the visibility of the seam in a closed loop extrusion, the loop is interrupted and shortened by a specified amount.\n"
+#~ "This amount can be specified in millimeters or as a percentage of the current extruder diameter. The default value for this parameter is 10%."
+#~ msgstr ""
+#~ "Pro snížení viditelnosti spoje v uzavřené smyčce extruze je smyčka přerušena a zkrácena o zadanou hodnotu.\n"
+#~ "Tato hodnota může být uvedena v milimetrech nebo jako procento aktuálního průměru extruderu. Výchozí hodnota tohoto parametru je 10 %."
+
+#~ msgid "Wipe tower volume"
+#~ msgstr "Objem čistící věže"
+
+#~ msgid "Total filament volume extruded on the wipe tower."
+#~ msgstr "Celkový objem filamentu extrudovaného na čistící věži."
+
+# AI Translated
+#~ msgid "Index of the current layer. Zero-based (i.e. first layer is number 0), except in extrusion role change G-code, where it is one-based."
+#~ msgstr "Index aktuální vrstvy. Číslování začíná od nuly (tj. první vrstva má číslo 0), s výjimkou G-code pro změnu role extruze, kde začíná od jedničky."
+
+#~ msgid "The current extruder ID. The same as current_extruder."
+#~ msgstr "Aktuální ID extruderu. Shodné s current_extruder."
+
+# AI Translated
+#~ msgid "Index of the extruder that is being unloaded. The index is zero based (first extruder has index 0)."
+#~ msgstr "Index extruderu, který se právě vysouvá. Index začíná od nuly (první extruder má index 0)."
+
+# AI Translated
+#~ msgid "Index of the extruder that is being loaded. The index is zero based (first extruder has index 0)."
+#~ msgstr "Index extruderu, který se právě zavádí. Index začíná od nuly (první extruder má index 0)."
+
+# AI Translated
+#, c-format, boost-format
+#~ msgid ""
+#~ "Plugin \"%s\" requests filesystem read access to:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Plugin „%s“ žádá o přístup ke čtení v souborovém systému:\n"
+#~ "%s"
+
+# AI Translated
+#, c-format, boost-format
+#~ msgid ""
+#~ "Plugin \"%s\" is requesting to make an HTTP request to:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Plugin „%s“ žádá o odeslání požadavku HTTP na:\n"
+#~ "%s"
+
+# AI Translated
+#, c-format, boost-format
+#~ msgid ""
+#~ "Plugin \"%s\" is requesting to open a network connection to:\n"
+#~ "%s"
+#~ msgstr ""
+#~ "Plugin „%s“ žádá o otevření síťového připojení k:\n"
+#~ "%s"
+
+# AI Translated
+#~ msgid "Plugin filesystem read permission request denied"
+#~ msgstr "Žádost pluginu o oprávnění ke čtení souborového systému byla zamítnuta"
 
 # AI Translated
 #~ msgid "Dalmatian yellow"
