@@ -30,6 +30,10 @@ on:
      - 'scripts/retry.sh'
      - 'scripts/check_appimage_libs.sh'
      - 'scripts/appimage_lib_policy.sh'
+     - 'scripts/check_exception_throw_info.ps1'
+     - 'scripts/test_check_exception_throw_info.ps1'
+     - 'scripts/prune_cached_presets.ps1'
+     - 'scripts/test_prune_cached_presets.ps1'
      - 'scripts/flatpak/**'
      - 'scripts/msix/**'
      - 'tests/**'
@@ -52,6 +56,10 @@ on:
      - 'scripts/test_build_win.ps1'
      - 'build_release_macos.sh'
      - 'scripts/build_preset_cache.*'
+     - 'scripts/check_exception_throw_info.ps1'
+     - 'scripts/test_check_exception_throw_info.ps1'
+     - 'scripts/prune_cached_presets.ps1'
+     - 'scripts/test_prune_cached_presets.ps1'
      - 'scripts/flatpak/**'
      - 'scripts/msix/**'
      - 'tests/**'
@@ -86,6 +94,14 @@ jobs:
       - name: Run the build script test suite
         shell: powershell
         run: .\scripts\test_build_win.ps1
+
+      - name: Run the exception throw info check tests
+        shell: powershell
+        run: .\scripts\test_check_exception_throw_info.ps1
+
+      - name: Run the preset prune tests
+        shell: powershell
+        run: .\scripts\test_prune_cached_presets.ps1
 
   build_linux:
     strategy:
