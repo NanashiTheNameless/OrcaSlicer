@@ -62,7 +62,8 @@ jobs:
           if ! git diff --quiet HEAD^1 -- deps; then
             echo "deps=true" >> "$GITHUB_OUTPUT"
           fi
-          echo "deps-key=linux-clang-cache-orcaslicer_deps-build-${{ hashFiles('deps/**') }}" >> "$GITHUB_OUTPUT"
+          # Same key build_check_cache.yml saves for the matching build_linux leg.
+          echo "deps-key=linux-clang-${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}-cache-orcaslicer_deps-build-${{ hashFiles('deps/**', '.github/actions/build-deps/**', 'build_win.bat', 'build_linux.sh', 'build_release_macos.sh') }}" >> "$GITHUB_OUTPUT"
 
       # Parsing needs the dependency headers, not a build of this PR's deps/.
       # Without an exact match the job waits for the build that saves it: this
@@ -121,7 +122,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/deps/build/OrcaSlicer_dep
           key: ${{ steps.changes.outputs.deps-key }}
-          restore-keys: linux-clang-cache-orcaslicer_deps-build-
+          restore-keys: linux-clang-${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}-cache-orcaslicer_deps-build-
           fail-on-cache-miss: true
 
       - name: Warn about older deps
