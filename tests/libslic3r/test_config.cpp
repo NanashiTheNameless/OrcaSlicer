@@ -927,7 +927,7 @@ TEST_CASE_METHOD(PluginResolverFixture,
     CHECK(config->option<ConfigOptionStrings>("plugins")->values == expected);
 
     std::ostringstream output;
-    config->save_to_json(output);
+    config->save_to_json(output, "test_preset", "User", "1.0.0.0");
     CHECK(nlohmann::json::parse(output.str())["plugins"] == nlohmann::json(expected));
 }
 
