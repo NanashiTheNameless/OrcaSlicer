@@ -1588,7 +1588,10 @@ void ConfigBase::save_to_json(std::ostream &os, const std::string &name, const s
     // Serialize the top-level "plugins" manifest: the individual plugin-backed options keep bare
     // capability names; the full "name;uuid;capability" references are derived here (same helper as
     // update_plugin_manifest). Only with a resolver (GUI); without one (CLI/headless) leave whatever
-    // the "plugins" option already serialized above, so a round-trip never drops the manifest.
+    // the "plugins" option already serialized above, so a round-trip never drops the manifest. A value
+    // with neither a resolver mapping nor a stored reference is omitted;
+    // unresolved_plugin_capabilities() reports it so a GUI save
+    // entry point can prompt before writing.
     if (resolve_capability_fn) {
         std::vector<std::string> unique_refs = this->collect_plugin_manifest();
         if (unique_refs.empty())
@@ -1623,52 +1626,32 @@ void ConfigBase::null_nullables()
     }
 }
 
-void ConfigBase::save_plugin_collection(const std::string& opt_key, const ConfigOption* opt, std::vector<std::string>& plugin_refs) const {
-    // Full plugin capability references ("name;uuid;capability") can only be derived through the
-    // resolver registered by the GUI once plugins are loaded. In non-GUI/headless contexts (e.g.
-    // the CLI) it stays null, so skip silently rather than calling an empty std::function.
-    if (!resolve_capability_fn)
-        return;
-
+void ConfigBase::for_each_plugin_capability(const std::function<void(const std::string& opt_key, const std::string& plugin_type, const std::string& capability_name)>& fn) const
+{
     // A plugin-backed option declares its capability type via ConfigOptionDef::plugin_type (the same
     // metadata PluginResolver::find_option_for_capability scans). Deriving off the def rather than a
     // per-key branch keeps this generic across every plugin-backed option.
-    const ConfigDef*       def     = this->def();
-    const ConfigOptionDef* opt_def = def ? def->get(opt_key) : nullptr;
-    if (opt_def == nullptr || !opt_def->is_plugin_backed())
+    const ConfigDef* def = this->def();
+    if (def == nullptr)
         return;
-    const std::string& type = opt_def->plugin_type;
 
-    // Resolve a single bare capability value into its full reference and append it, skipping unset
-    // values, capabilities that could not be resolved (resolver returns "" and no stored manifest
-    // entry matches), and duplicates already collected (preserving insertion order).
-    const auto append_ref = [this, &plugin_refs, &type](const std::string& capability_value) {
-        if (capability_value.empty())
-            return;
-        std::string ref = resolve_capability_fn(capability_value, type);
-        if (ref.empty()) {
-            // The referenced plugin is not currently loaded/installed, so the resolver cannot
-            // derive a fresh reference. Fall back to the already-stored manifest entry for this
-            // capability: dropping it would lose the name/uuid PluginResolver needs to report or
-            // reinstall the missing plugin on the next load.
-            if (const auto* manifest = dynamic_cast<const ConfigOptionStrings*>(this->option("plugins")))
-                for (const std::string& stored : manifest->values)
-                    if (auto parsed = parse_capability_ref(stored); parsed && parsed->capability_name == capability_value) {
-                        ref = stored;
-                        break;
-                    }
+    for (const std::string& opt_key : this->keys()) {
+        const ConfigOptionDef* opt_def = def->get(opt_key);
+        const ConfigOption*    opt     = this->option(opt_key);
+        if (opt_def == nullptr || opt == nullptr || !opt_def->is_plugin_backed())
+            continue;
+
+        // Scalar options carry a single capability name; vector options carry a list. Same
+        // scalar/vector dispatch as PluginResolver::find_option_for_capability.
+        if (const auto* scalar_option = dynamic_cast<const ConfigOptionString*>(opt)) {
+            if (!scalar_option->value.empty())
+                fn(opt_key, opt_def->plugin_type, scalar_option->value);
+        } else if (const auto* vector_option = dynamic_cast<const ConfigOptionVectorBase*>(opt)) {
+            for (const std::string& capability_name : vector_option->vserialize())
+                if (!capability_name.empty())
+                    fn(opt_key, opt_def->plugin_type, capability_name);
         }
-        if (!ref.empty() && std::find(plugin_refs.begin(), plugin_refs.end(), ref) == plugin_refs.end())
-            plugin_refs.emplace_back(std::move(ref));
-    };
-
-    // Scalar options carry a single capability name; vector options carry a list. Same scalar/vector
-    // dispatch as PluginResolver::find_option_for_capability.
-    if (const auto* string_option = dynamic_cast<const ConfigOptionString*>(opt))
-        append_ref(string_option->value);
-    else if (const auto* vector_option = dynamic_cast<const ConfigOptionVectorBase*>(opt))
-        for (const std::string& val : vector_option->vserialize())
-            append_ref(val);
+    }
 }
 
 std::vector<std::string> ConfigBase::collect_plugin_manifest() const
@@ -1677,13 +1660,48 @@ std::vector<std::string> ConfigBase::collect_plugin_manifest() const
     if (!resolve_capability_fn)
         return refs;
 
-    // Each plugin-backed option (ConfigOptionDef::is_plugin_backed) contributes its resolved
-    // reference(s) via save_plugin_collection, which appends in order and skips duplicates, so no
-    // second de-duplication pass is needed here.
-    for (const std::string& opt_key : this->keys())
-        if (const ConfigOption* opt = this->option(opt_key))
-            this->save_plugin_collection(opt_key, opt, refs);
+    // Resolve each capability value and append its full reference, dropping duplicates (preserving
+    // insertion order). Keep stored references for unavailable plugins so they can be reinstalled.
+    // Values with no resolved or stored reference are reported by unresolved_plugin_capabilities().
+    this->for_each_plugin_capability([this, &refs](const std::string& /* opt_key */, const std::string& plugin_type, const std::string& capability_name) {
+        std::string ref = resolve_capability_fn(capability_name, plugin_type);
+        if (ref.empty()) {
+            if (const auto* manifest = dynamic_cast<const ConfigOptionStrings*>(this->option("plugins")))
+                for (const std::string& stored : manifest->values)
+                    if (auto parsed = parse_capability_ref(stored); parsed && parsed->capability_name == capability_name) {
+                        ref = stored;
+                        break;
+                    }
+        }
+        if (!ref.empty() && std::find(refs.begin(), refs.end(), ref) == refs.end())
+            refs.emplace_back(std::move(ref));
+    });
     return refs;
+}
+
+std::vector<UnresolvedPluginCapability> ConfigBase::unresolved_plugin_capabilities() const
+{
+    std::vector<UnresolvedPluginCapability> unresolved;
+    // Without a resolver (CLI/headless) serialization leaves the manifest loaded from disk untouched,
+    // so no value is lost and there is nothing to warn about.
+    if (!resolve_capability_fn)
+        return unresolved;
+
+    // Report only values the serializer would omit, including its stored-reference fallback.
+    const std::vector<std::string> refs = this->collect_plugin_manifest();
+    this->for_each_plugin_capability([&unresolved, &refs](const std::string& opt_key, const std::string& plugin_type, const std::string& capability_name) {
+        if (!resolve_capability_fn(capability_name, plugin_type).empty())
+            return;
+        for (const std::string& ref : refs)
+            if (auto parsed = parse_capability_ref(ref); parsed && parsed->capability_name == capability_name)
+                return;
+        const auto matches = [&opt_key, &capability_name](const UnresolvedPluginCapability& entry) {
+            return entry.opt_key == opt_key && entry.capability_name == capability_name;
+        };
+        if (std::none_of(unresolved.begin(), unresolved.end(), matches))
+            unresolved.push_back(UnresolvedPluginCapability{ opt_key, capability_name });
+    });
+    return unresolved;
 }
 
 void ConfigBase::update_plugin_manifest()
