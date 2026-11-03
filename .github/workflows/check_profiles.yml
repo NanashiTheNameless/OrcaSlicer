@@ -89,7 +89,8 @@ jobs:
         run: |
           set -o pipefail
           base="${{ runner.temp }}/v2.4.2"
-          git fetch --no-tags --depth=1 origin refs/tags/v2.4.2:refs/tags/v2.4.2
+          # From upstream, as scripts/check_profile.sh does: a fork may not carry the tag.
+          git fetch --no-tags --depth=1 https://github.com/OrcaSlicer/OrcaSlicer.git refs/tags/v2.4.2:refs/tags/v2.4.2
           mkdir -p "$base"
           git archive v2.4.2 resources/profiles | tar -x -C "$base"
           python3 ./scripts/orca_profile_tool.py legacy-compat --base "$base/resources/profiles" --check 2>&1 | tee ${{ runner.temp }}/legacy_compat.log
