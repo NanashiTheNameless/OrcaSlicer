@@ -1,0 +1,41 @@
+name: Retry unacquired runners
+
+on:
+  workflow_run:
+    workflows: ["**"]
+    types: [completed]
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: "Run id to evaluate (empty: sweep recent runs)"
+        required: false
+        default: ""
+
+permissions:
+  actions: write
+  checks: read
+
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{
+      (github.event_name == 'workflow_run' && format('run-{0}', github.event.workflow_run.id))
+      || (inputs.run_id != '' && format('run-{0}', inputs.run_id))
+      || 'sweep' }}
+  cancel-in-progress: false
+
+jobs:
+  retry:
+    # Skip this workflow's own completions, and runs that did not fail.
+    if: >-
+      github.event_name != 'workflow_run' || (
+        github.event.workflow_run.name != github.workflow &&
+        (github.event.workflow_run.conclusion == 'failure' ||
+         github.event.workflow_run.conclusion == 'cancelled'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: NanashiTheNameless/retry-unacquired-runners@main
+        with:
+          run-id: ${{ inputs.run_id }}
