@@ -1,0 +1,15 @@
+{
+  "publisher": "NamelessNanashi",
+  "algorithm": "RSA-4096",
+  "detached_signature_format": "binary RSA PKCS#1 v1.5 with SHA-256",
+  "detached_signature_suffix": ".nn-signature",
+  "certificate_sha1_thumbprint": "E0567834C106BDB6438E821231FD63527679FE45",
+  "certificate_sha256": "A88462D347F9DE6A30EA1347F0687814322AF558ED05F3E0046900977BF4DB41",
+  "public_key_sha256_spki_der": "a05d50a31196e02216674a1ec45b5194388781423a97ee0e5d2aef468c77bdb0",
+  "certificate_dates": [
+    "notBefore=Nov  5 22:26:02 2026 GMT",
+    "notAfter=Nov  2 22:26:02 2036 GMT"
+  ],
+  "generated_at_utc": "2026-11-05T22:26:29.138158+00:00",
+  "publicly_trusted": false
+}

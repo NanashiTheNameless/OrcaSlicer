@@ -17,6 +17,7 @@ on:
      - ".github/workflows/build_*.yml"
      - '.github/workflows/unit_tests.yml'
      - '.github/actions/**'
+     - 'signing/**'
      - ".github/workflows/unit_tests*.yml"
      - 'build_linux.sh'
      - 'build_release_macos.sh'
@@ -38,6 +39,7 @@ on:
      - 'scripts/test_prune_cached_presets.ps1'
      - 'scripts/flatpak/**'
      - 'scripts/msix/**'
+     - 'scripts/tests/test_app_signing.py'
      - 'tests/**'
 
   pull_request:
@@ -57,6 +59,8 @@ on:
      - 'build_win.bat'
      - 'scripts/test_build_win.ps1'
      - 'build_release_macos.sh'
+     - '.github/actions/**'
+     - 'signing/**'
      - 'scripts/build_preset_cache.*'
      - 'scripts/check_exception_throw_info.ps1'
      - 'scripts/test_check_exception_throw_info.ps1'
@@ -64,6 +68,7 @@ on:
      - 'scripts/test_prune_cached_presets.ps1'
      - 'scripts/flatpak/**'
      - 'scripts/msix/**'
+     - 'scripts/tests/test_app_signing.py'
      - 'tests/**'
 
   workflow_dispatch: # allows for manual dispatch
@@ -81,6 +86,15 @@ concurrency:
   
 
 jobs:
+  check_app_signing:
+    name: App signing tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          lfs: 'false'
+      - run: python3 -m unittest scripts.tests.test_app_signing -v
+
   # build_win.bat ships a test suite. Run it before the Windows builds.
   check_build_script:
     name: Windows build script tests
@@ -301,6 +315,7 @@ jobs:
       date:
       ver:
       ver_pure:
+      NN_SIGNING_ENABLED: ${{ github.repository == 'NanashiTheNameless/OrcaSlicer' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
     steps:
     - name: "Remove unneeded stuff to free disk space"
       run:
@@ -494,6 +509,15 @@ jobs:
               curl -sSf -X DELETE -H "Authorization: Bearer $GH_TOKEN" "$api/$id"
             done
       shell: bash
+    - name: Sign Flatpak download
+      if: env.NN_SIGNING_ENABLED == 'true'
+      uses: ./.github/actions/sign-downloads
+      with:
+        key: ${{ secrets.NN_SIGNING_KEY_PEM_BASE64 }}
+        password: ${{ secrets.NN_SIGNING_PASSWORD }}
+        artifact-name: NamelessNanashi-signatures-Flatpak-${{ matrix.variant.arch }}
+        files: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
+
     - name: Upload artifacts Flatpak
       uses: actions/upload-artifact@v7
       with:
@@ -503,7 +527,7 @@ jobs:
         if-no-files-found: error
     - name: Deploy Flatpak to nightly release
       if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-      uses: NanashiTheNameless/deploy-nightly@master
+      uses: ./.github/actions/deploy-signed-nightly
       with:
         token: ${{ secrets.GH_TOKEN }}
         upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -562,6 +586,7 @@ jobs:
   deploy_nightly_rolling_tag:
     name: Deploy Nightly-Rolling release tag
     needs:
+      - check_app_signing
       - check_build_script
       - build_linux
       - build_windows
@@ -651,6 +676,13 @@ jobs:
           asset_name: latest.json
           asset_content_type: application/json
           max_releases: 1
+      - name: Publish signing public key and verification instructions
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          gh release upload Nightly-Rolling --repo "$GITHUB_REPOSITORY" --clobber \
+            signing/public/release-public-key.pem signing/public/PUBLIC-KEY-SHA256.txt \
+            signing/public/identity.cer signing/public/identity.json signing/README.md
       - name: Deploy Nightly-Rolling release tag
         uses: NanashiTheNameless/action-create-tag@main
         with:

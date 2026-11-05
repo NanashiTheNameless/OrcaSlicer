@@ -1,0 +1,48 @@
+name: Deploy signed nightly asset
+description: Publish a download and its detached signature under matching release names
+inputs:
+  token:
+    required: true
+    description: Release upload token
+  upload_url:
+    required: true
+    description: Release upload URL
+  release_id:
+    required: true
+    description: Release ID
+  asset_path:
+    required: true
+    description: Finished download path
+  asset_name:
+    required: true
+    description: Published download name
+  asset_content_type:
+    required: true
+    description: Download content type
+  max_releases:
+    default: '1'
+    description: Number of matching assets to retain
+runs:
+  using: composite
+  steps:
+    - name: Deploy download
+      uses: NanashiTheNameless/deploy-nightly@master
+      with:
+        token: ${{ inputs.token }}
+        upload_url: ${{ inputs.upload_url }}
+        release_id: ${{ inputs.release_id }}
+        asset_path: ${{ inputs.asset_path }}
+        asset_name: ${{ inputs.asset_name }}
+        asset_content_type: ${{ inputs.asset_content_type }}
+        max_releases: ${{ inputs.max_releases }}
+    - name: Deploy detached signature
+      if: env.NN_SIGNING_ENABLED == 'true'
+      uses: NanashiTheNameless/deploy-nightly@master
+      with:
+        token: ${{ inputs.token }}
+        upload_url: ${{ inputs.upload_url }}
+        release_id: ${{ inputs.release_id }}
+        asset_path: ${{ inputs.asset_path }}.nn-signature
+        asset_name: ${{ inputs.asset_name }}.nn-signature
+        asset_content_type: application/octet-stream
+        max_releases: ${{ inputs.max_releases }}

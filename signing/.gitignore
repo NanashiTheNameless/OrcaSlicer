@@ -1,0 +1,5 @@
+SECRET/
+*.pfx
+*.p12
+*.key.pem
+password.txt

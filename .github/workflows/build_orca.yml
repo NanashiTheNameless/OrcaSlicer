@@ -31,6 +31,9 @@ jobs:
       ver: ""
       ver_pure: ""
       ubuntu-ver: ""
+      # Private material is passed only to signing steps on trusted refs.
+      # PRs (including same-repository PRs) and other forks never import this key.
+      NN_SIGNING_ENABLED: ${{ github.repository == 'NanashiTheNameless/OrcaSlicer' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
       ORCA_UPDATER_SIG_KEY: ${{ secrets.ORCA_UPDATER_SIG_KEY }}
       # Overridable from repo variables so the NSIS stub version can be A/B-tested
       # (some antivirus engines flag the stub a given NSIS release emits) without
@@ -364,6 +367,19 @@ jobs:
             retry xcrun stapler staple OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           fi
 
+      - name: Sign NamelessNanashi macOS apps
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'macOS' && inputs.macos-combine-only
+        env:
+          NN_SIGNING_MACOS_P12_BASE64: ${{ secrets.NN_SIGNING_MACOS_P12_BASE64 }}
+          NN_SIGNING_PASSWORD: ${{ secrets.NN_SIGNING_PASSWORD }}
+        shell: bash
+        run: |
+          test -n "$NN_SIGNING_MACOS_P12_BASE64" && test -n "$NN_SIGNING_PASSWORD"
+          apps=(build/universal/OrcaSlicer/OrcaSlicer.app)
+          validator=build/universal/OrcaSlicer/OrcaSlicer_profile_validator.app
+          if [ -d "$validator" ]; then apps+=("$validator"); fi
+          python3 signing/scripts/sign-macos-build.py "${apps[@]}"
+
       - name: Create DMG without notary
         # Upstream skips this on main because its "Sign app and notary" step
         # (Apple notarization, needs org secrets) builds the DMG there instead. This fork
@@ -403,6 +419,18 @@ jobs:
             rm -rf "$validator_dmg_dir"
           fi
 
+      - name: Sign macOS downloads
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'macOS' && inputs.macos-combine-only
+        uses: ./.github/actions/sign-downloads
+        with:
+          key: ${{ secrets.NN_SIGNING_KEY_PEM_BASE64 }}
+          password: ${{ secrets.NN_SIGNING_PASSWORD }}
+          artifact-name: NamelessNanashi-signatures-macOS-universal
+          files: |
+            OrcaSlicer_Mac_universal_${{ env.ver }}.dmg
+            OrcaSlicer_Mac_universal_${{ env.ver }}.app.tar.gz
+          optional-files: OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
+
       # Delete the per-arch bundles only after DMG creation succeeded, so a
       # failed run keeps them available for a re-run instead of forcing a full rebuild.
       - name: Delete intermediate per-arch artifacts
@@ -432,7 +460,7 @@ jobs:
 
       - name: Deploy Mac release
         if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -444,7 +472,7 @@ jobs:
 
       - name: Deploy Mac app archive
         if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && hashFiles(format('OrcaSlicer_Mac_universal_{0}.app.tar.gz', env.ver)) != ''
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -457,7 +485,7 @@ jobs:
       # The DMG is only built when the validator app was.
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
         if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && hashFiles(format('OrcaSlicer_profile_validator_Mac_universal_{0}.dmg', env.ver)) != ''
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -559,6 +587,16 @@ jobs:
           retention-days: 5
           if-no-files-found: error
 
+      - name: Sign Windows application binaries
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'Windows'
+        shell: pwsh
+        env:
+          NN_SIGNING_PFX_BASE64: ${{ secrets.NN_SIGNING_PFX_BASE64 }}
+          NN_SIGNING_PASSWORD: ${{ secrets.NN_SIGNING_PASSWORD }}
+        run: |
+          if (-not $env:NN_SIGNING_PFX_BASE64 -or -not $env:NN_SIGNING_PASSWORD) { throw 'Missing Windows signing secrets.' }
+          ./signing/scripts/sign-windows-build.ps1 -BuildDir $env:BUILD_DIR
+
       # NSIS is x86-only; it runs (and the installer it emits runs) under ARM64's
       # x86 emulation, packaging the native arm64 payload from build-arm64.
       - name: Create installer Win
@@ -566,6 +604,16 @@ jobs:
         working-directory: ${{ github.workspace }}/${{ env.BUILD_DIR }}
         run: |
           cpack -G NSIS
+
+      - name: Sign Windows installer
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'Windows' && !vars.SELF_HOSTED
+        shell: pwsh
+        env:
+          NN_SIGNING_PFX_BASE64: ${{ secrets.NN_SIGNING_PFX_BASE64 }}
+          NN_SIGNING_PASSWORD: ${{ secrets.NN_SIGNING_PASSWORD }}
+        run: |
+          if (-not $env:NN_SIGNING_PFX_BASE64 -or -not $env:NN_SIGNING_PASSWORD) { throw 'Missing Windows signing secrets.' }
+          ./signing/scripts/sign-windows-build.ps1 -BuildDir $env:BUILD_DIR -Stage Installer
 
       - name: Pack app
         if: runner.os == 'Windows'
@@ -579,12 +627,24 @@ jobs:
         shell: cmd
         run: '"C:/Program Files/7-Zip/7z.exe" a -m0=lzma2 -mx9 Debug_PDB_${{ env.ver }}_for_developers_only.7z  *.pdb'
 
+      - name: Sign Windows downloads
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'Windows'
+        uses: ./.github/actions/sign-downloads
+        with:
+          key: ${{ secrets.NN_SIGNING_KEY_PEM_BASE64 }}
+          password: ${{ secrets.NN_SIGNING_PASSWORD }}
+          artifact-name: NamelessNanashi-signatures-Windows-${{ inputs.arch }}
+          files: ${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable.zip
+          optional-files: |
+            ${{ env.BUILD_DIR }}/OrcaSlicer_Windows_Installer_${{ env.ver }}${{ env.ARCH_SUFFIX }}.exe
+            ${{ env.BUILD_DIR }}/src/Release/OrcaSlicer_profile_validator.exe
+
       - name: Upload artifacts Win zip
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
           name: OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable
-          path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer
+          path: ${{ github.workspace }}/${{ env.BUILD_DIR }}/OrcaSlicer_Windows_${{ env.ver }}${{ env.ARCH_SUFFIX }}_portable.zip
           retention-days: 7
 
       - name: Upload artifacts Win installer
@@ -620,7 +680,7 @@ jobs:
 
       - name: Deploy Windows release portable (x64)
         if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -632,7 +692,7 @@ jobs:
 
       - name: Deploy Windows release portable (arm64)
         if: runner.os == 'Windows' && inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -644,7 +704,7 @@ jobs:
 
       - name: Deploy Windows release installer (x64)
         if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -656,7 +716,7 @@ jobs:
 
       - name: Deploy Windows release installer (arm64)
         if: runner.os == 'Windows' && inputs.arch == 'arm64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -668,7 +728,7 @@ jobs:
 
       - name: Deploy Windows OrcaSlicer_profile_validator release (x64 only)
         if: runner.os == 'Windows' && inputs.arch == 'x64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -690,6 +750,16 @@ jobs:
             -IdentityName "${{ vars.ORCA_MSIX_IDENTITY_NAME || 'OrcaSlicer.OrcaSlicer' }}" `
             -Publisher "${{ vars.ORCA_MSIX_PUBLISHER || 'CN=38F7EA55-C73B-4072-B3B2-C8E0EA15BB82' }}" `
             -PublisherDisplayName "${{ vars.ORCA_MSIX_PUBLISHER_DISPLAY_NAME || 'OrcaSlicer' }}"
+
+      # Keep the Store Publisher: Microsoft re-signs Store submissions.
+      - name: Sign Windows MSIX download
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'Windows' && !vars.SELF_HOSTED
+        uses: ./.github/actions/sign-downloads
+        with:
+          key: ${{ secrets.NN_SIGNING_KEY_PEM_BASE64 }}
+          password: ${{ secrets.NN_SIGNING_PASSWORD }}
+          artifact-name: NamelessNanashi-signatures-MSIX-${{ inputs.arch }}
+          files: ${{ env.BUILD_DIR }}/OrcaSlicer_Windows_MSIX_${{ env.ver }}${{ env.ARCH_SUFFIX }}.msix
 
       - name: Upload artifacts Win MSIX
         if: runner.os == 'Windows' && !vars.SELF_HOSTED
@@ -790,6 +860,19 @@ jobs:
           cd ${{ github.workspace }}/resources/profiles
           zip -r orca_custom_preset_tests.zip user/
 
+      - name: Sign Linux downloads
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'Linux'
+        uses: ./.github/actions/sign-downloads
+        with:
+          key: ${{ secrets.NN_SIGNING_KEY_PEM_BASE64 }}
+          password: ${{ secrets.NN_SIGNING_PASSWORD }}
+          artifact-name: NamelessNanashi-signatures-Linux-${{ inputs.arch || 'x86_64' }}
+          files: build/OrcaSlicer_Linux_AppImage${{ env.arch_suffix }}_${{ env.ver }}.AppImage
+          optional-files: |
+            build/src/Release/OrcaSlicer_profile_validator
+            build/src/dev-utils/Release/generate_system_cache
+            resources/profiles/orca_custom_preset_tests.zip
+
       - name: Upload artifacts Ubuntu
         if: ${{ ! env.ACT && runner.os == 'Linux' }}
         uses: actions/upload-artifact@v7
@@ -820,7 +903,7 @@ jobs:
 
       - name: Deploy Ubuntu release (amd64)
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -831,7 +914,7 @@ jobs:
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
       - name: Deploy Ubuntu release (aarch64)
         if: ${{ inputs.arch == 'aarch64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -843,7 +926,7 @@ jobs:
 
       - name: Deploy Ubuntu OrcaSlicer_profile_validator release (amd64 only)
         if: ${{ (inputs.arch == '' || inputs.arch == null) && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -855,7 +938,7 @@ jobs:
 
       - name: Deploy Ubuntu generate_system_cache release
         if: ${{ github.repository == 'NanashiTheNameless/OrcaSlicer' && github.event_name == 'push' && ! env.ACT && github.ref == 'refs/heads/main' && runner.os == 'Linux' && !vars.SELF_HOSTED && inputs.arch != 'aarch64' }}
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
@@ -867,7 +950,7 @@ jobs:
 
       - name: Deploy orca_custom_preset_tests
         if: ${{ runner.os == 'Linux' && !vars.SELF_HOSTED && inputs.arch != 'aarch64' && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' }}
-        uses: NanashiTheNameless/deploy-nightly@master
+        uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
           upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}

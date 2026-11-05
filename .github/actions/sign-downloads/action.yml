@@ -1,0 +1,42 @@
+name: Sign finished downloads
+description: Sign and verify exact release bytes with the pinned NamelessNanashi RSA identity
+inputs:
+  files:
+    description: Required files or glob patterns, one per line
+    required: true
+  optional-files:
+    description: Optional helper downloads or glob patterns, one per line
+    default: ''
+  artifact-name:
+    description: Unique artifact name for this job's detached signatures
+    required: true
+  key:
+    description: Base64 encrypted PEM from NN_SIGNING_KEY_PEM_BASE64
+    required: true
+  password:
+    description: NN_SIGNING_PASSWORD
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Sign and verify downloads
+      id: signatures
+      shell: bash
+      env:
+        SIGNING_FILES: ${{ inputs.files }}
+        SIGNING_OPTIONAL_FILES: ${{ inputs.optional-files }}
+        NN_SIGNING_KEY_PEM_BASE64: ${{ inputs.key }}
+        NN_SIGNING_PASSWORD: ${{ inputs.password }}
+      run: |
+        if [ "$RUNNER_OS" = Windows ]; then
+          python signing/scripts/sign-downloads.py
+        else
+          python3 signing/scripts/sign-downloads.py
+        fi
+    - name: Upload detached signatures
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ steps.signatures.outputs.directory }}/*.nn-signature
+        retention-days: 7
+        if-no-files-found: error
