@@ -1,0 +1,92 @@
+name: 'Restore compiler cache'
+description: >
+  Install ccache, restore the newest cache entry of this build leg and point CMake at it.
+  Pair with ccache-save at the end of the job.
+inputs:
+  prefix:
+    description: 'Cache key prefix; each kind of build (OrcaSlicer, deps) keeps its own entries'
+    required: false
+    default: 'ccache'
+  os:
+    description: 'Runner label, which tells the Ubuntu versions apart'
+    required: true
+  arch:
+    required: false
+  compiler:
+    required: false
+  sloppiness:
+    description: 'CCACHE_SLOPPINESS for the build'
+    required: false
+    # Headers a fresh checkout has just written, the few files that use __DATE__
+    # or __TIME__, and the precompiled header, whose macros ccache cannot see.
+    default: 'pch_defines,time_macros,include_file_mtime,include_file_ctime'
+outputs:
+  restored:
+    description: 'Whether ccache is enabled, which ccache-save needs to know'
+    value: ${{ steps.restore.outcome == 'success' }}
+runs:
+  using: 'composite'
+  steps:
+    # Objects are keyed on the preprocessed source, the compiler and the flags, so a
+    # leg only ever hits its own entries.
+    - name: Name the compiler cache leg
+      shell: bash
+      run: |
+        leg="${{ runner.os }}-${{ inputs.arch || 'amd64' }}${{ runner.os == 'Windows' && format('-{0}', inputs.compiler) || '' }}"
+        # Legs that build concurrently must not save to the same key.
+        if [ "${{ runner.os }}" = Linux ]; then
+          leg="$leg-${{ inputs.os }}"
+        fi
+        # clang-cl refuses a precompiled header from another cl.exe build and ccache
+        # does not hash that build, so each one gets its own cache. The build number
+        # is read from cl.exe itself; the toolset directory keeps its name across patches.
+        if [ "${{ runner.os }}" = Windows ]; then
+          vswhere='/c/Program Files (x86)/Microsoft Visual Studio/Installer/vswhere.exe'
+          toolset=$(tr -d '\r\n' < "$("$vswhere" -latest -products '*' -find 'VC\Auxiliary\Build\Microsoft.VCToolsVersion.default.txt' | tr -d '\r')")
+          cl=$("$vswhere" -latest -products '*' -find 'VC\Tools\MSVC\'"$toolset"'\**\cl.exe' | tr -d '\r' | head -1)
+          leg="$leg-vc$("$cl" 2>&1 | grep -o -E 'Version [0-9.]+' | cut -d' ' -f2)"
+        fi
+        echo "CCACHE_LEG=${{ inputs.prefix }}-$leg" >> "$GITHUB_ENV"
+        echo "CCACHE_ENTRY=${{ inputs.prefix }}-$leg-${{ github.run_id }}-${{ github.run_attempt }}" >> "$GITHUB_ENV"
+
+    # The action only installs and configures ccache. Restore and save go through
+    # actions/cache with one path string, since the cache service only matches
+    # entries saved under the identical path and the action spells it differently
+    # on Windows. A failed install costs the caching, not the build.
+    - name: Install ccache
+      id: install
+      continue-on-error: true
+      uses: hendrikmuhs/ccache-action@v1.2.24
+      with:
+        key: ${{ env.CCACHE_LEG }}
+        max-size: 3G
+        restore: false
+        save: false
+        # ccache -s runs in ccache-save; no summary table per job.
+        job-summary: ''
+
+    - name: Restore compiler cache
+      id: restore
+      if: ${{ steps.install.outcome == 'success' }}
+      uses: actions/cache/restore@v6
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ${{ env.CCACHE_ENTRY }}
+        restore-keys: ${{ env.CCACHE_LEG }}-
+
+    - name: Enable compiler cache
+      if: ${{ steps.restore.outcome == 'success' }}
+      shell: bash
+      run: |
+        # CMake reads these for every project it configures, the dependencies'
+        # external projects included.
+        echo "CMAKE_C_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
+        echo "CMAKE_CXX_COMPILER_LAUNCHER=ccache" >> "$GITHUB_ENV"
+        echo "CCACHE_SLOPPINESS=${{ inputs.sloppiness }}" >> "$GITHUB_ENV"
+        # Hash the includes the compiler reports instead of preprocessing every
+        # miss before compiling it.
+        echo "CCACHE_DEPEND=1" >> "$GITHUB_ENV"
+        # ccache-save keeps only what this build used, by age.
+        echo "CCACHE_JOB_START=$(date +%s)" >> "$GITHUB_ENV"
+        # The restored directory carries the previous run's counters.
+        ccache -z

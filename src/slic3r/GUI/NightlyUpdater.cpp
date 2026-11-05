@@ -90,7 +90,8 @@ NightlyTarget running_target()
         target.kinds = { "flatpak" };
     } else {
         target.kinds = { "appimage" };
-        // The AppImages are built on two Ubuntu bases, and the running one names its base.
+        // Earlier AppImages were built on two Ubuntu bases and name theirs. The current
+        // one names none and matches either.
         if (const char *appimage = std::getenv("APPIMAGE"); appimage != nullptr) {
             const std::string name = boost::filesystem::path(appimage).filename().string();
             if (name.find("2204") != std::string::npos)

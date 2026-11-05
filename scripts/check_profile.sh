@@ -30,7 +30,7 @@
 
 set -uo pipefail
 
-VALIDATOR_RELEASE_URL="https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling"
+VALIDATOR_RELEASE_URL="https://github.com/NanashiTheNameless/OrcaSlicer/releases/download/Nightly-Rolling"
 FIXTURE_RELEASE_URL="https://github.com/NanashiTheNameless/OrcaSlicer-profile-validator/releases/download/fixture-archive"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -337,7 +337,7 @@ download_validator() {
                 arm64|aarch64) msg "the nightly Linux validator is x86_64; build it locally for ${HOST_ARCH}" ;;
             esac
             binary="${dest}/OrcaSlicer_profile_validator"
-            fetch "${VALIDATOR_RELEASE_URL}/OrcaSlicer_profile_validator_Linux_Ubuntu2404_nightly" "${binary}" || return 1
+            fetch "${VALIDATOR_RELEASE_URL}/OrcaSlicer_profile_validator_Linux" "${binary}" || return 1
             chmod +x "${binary}" || return 1
             ;;
         Darwin)

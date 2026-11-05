@@ -30,6 +30,8 @@ class ManifestTest(unittest.TestCase):
         names = [
             "OrcaSlicer_Linux_AppImage_Ubuntu2204_nightly.AppImage",
             "OrcaSlicer_Linux_AppImage_Ubuntu2404_nightly_aarch64.AppImage",
+            "OrcaSlicer_Linux_AppImage_nightly.AppImage",
+            "OrcaSlicer_Linux_AppImage_nightly_aarch64.AppImage",
             "OrcaSlicer-Linux-flatpak_nightly_x86_64.flatpak",
             "OrcaSlicer-Linux-flatpak_nightly_aarch64.flatpak",
             "OrcaSlicer_Windows_Installer_nightly.exe",
@@ -44,12 +46,14 @@ class ManifestTest(unittest.TestCase):
         self.assertEqual(sorted(by_name), sorted(names))
         self.assertEqual(by_name[names[0]]["distro"], "ubuntu2204")
         self.assertEqual((by_name[names[1]]["arch"], by_name[names[1]]["distro"]), ("arm64", "ubuntu2404"))
-        self.assertEqual(by_name[names[5]]["kind"], "installer")
-        self.assertEqual(by_name[names[9]]["kind"], "app")
+        self.assertNotIn("distro", by_name[names[2]])
+        self.assertEqual((by_name[names[3]]["arch"], by_name[names[3]].get("distro")), ("arm64", None))
+        self.assertEqual(by_name[names[7]]["kind"], "installer")
+        self.assertEqual(by_name[names[11]]["kind"], "app")
 
     def test_files_that_are_not_the_app_are_left_out(self):
         m = manifest(asset("OrcaSlicer_profile_validator_Windows_nightly.exe"),
-                     asset("generate_system_cache_Linux_Ubuntu2404_nightly"),
+                     asset("generate_system_cache_Linux_nightly"),
                      asset("orca_custom_preset_tests.zip"),
                      asset("latest.json"))
         self.assertEqual(m["assets"], [])
