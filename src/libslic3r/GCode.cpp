@@ -9718,8 +9718,8 @@ std::string GCode::_extrude_piece(const ExtrusionPath &path, const std::string &
         }
     }
 
-    // The outer wall is raised only when the stagger direction is reversed.
-    if ((path.role() == erPerimeter || path.role() == erExternalPerimeter) && should_apply_staggered_offset) {
+    // Scarf paths apply the Z offset through get_sloped_z(), but still need the raised wall's flow ratio.
+    if ((path.role() == erPerimeter || path.role() == erExternalPerimeter) && !is_approx(path.z_offset, 0.0f)) {
         _mm3_per_mm *= m_config.staggered_perimeter_flow_ratio;
     }
 

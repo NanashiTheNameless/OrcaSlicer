@@ -1685,3 +1685,101 @@ TEST_CASE("Staggered walls are extruded after the unstaggered walls of their isl
     // Without raised loops the ordering check above would pass on nothing.
     CHECK(raised_loops > 0);
 }
+
+TEST_CASE("Layers excluded from staggering keep the selected sandwich wall order", "[Perimeters][Regression]")
+{
+    const auto [first, last] = GENERATE(table<int, int>({ { 0, 0 }, { 2, 2 }, { 4, 4 } }));
+    const bool reverse = GENERATE(false, true);
+    CAPTURE(first, last, reverse);
+
+    DynamicPrintConfig config = tube_config("arachne", 3);
+    config.set_deserialize_strict({
+        { "wall_sequence",                   "inner-outer-inner wall" },
+        { "staggered_perimeters",             true },
+        { "staggered_perimeters_reverse",     reverse },
+        { "staggered_perimeter_first_layers", first },
+        { "staggered_perimeter_last_layers",  last },
+    });
+    Print print;
+    Model model;
+    round_tube(print, model, config, 3.);
+    const auto layers = tube_loops(print, 3.);
+    REQUIRE(layers.size() == 10); // 2 mm at 0.2 mm layers.
+
+    const int count = int(layers.size()) - first - last;
+    for (size_t i = 0; i < layers.size(); ++i) {
+        const int index = int(i) - first;
+        if (count >= 4 && index > 0 && index < count - 1)
+            continue;
+        for (const TubeSide side : { TubeSide::Contour, TubeSide::Hole }) {
+            CAPTURE(i, side);
+            const auto insets = side_insets(layers[i], side);
+            REQUIRE(insets.size() == 3);
+            CHECK(insets == wall_sequence_insets("inner-outer-inner wall", i == 0, 2));
+        }
+    }
+}
+
+TEST_CASE("Raised scarf walls receive the staggered flow ratio on every segment", "[Perimeters][Regression]")
+{
+    const bool reverse = GENERATE(false, true);
+    const bool entire_loop = GENERATE(false, true);
+    CAPTURE(reverse, entire_loop);
+
+    DynamicPrintConfig config = base_config("arachne");
+    config.set_deserialize_strict({
+        { "layer_height",                     0.25 },
+        { "initial_layer_print_height",       0.25 },
+        { "wall_loops",                       2 },
+        { "staggered_perimeters",             true },
+        { "staggered_perimeters_reverse",     reverse },
+        { "staggered_perimeter_first_layers", 0 },
+        { "staggered_perimeter_last_layers",  0 },
+        { "seam_position",                    "back" },
+        { "seam_slope_type",                  "external" },
+        { "seam_slope_conditional",           false },
+        { "seam_slope_inner_walls",           true },
+        { "seam_slope_entire_loop",           entire_loop },
+        { "seam_slope_start_height",          0. },
+        { "seam_slope_min_length",            5. },
+        { "scarf_joint_flow_ratio",           0.8 },
+        { "enable_arc_fitting",               "disabled" },
+        { "use_relative_e_distances",         true },
+    });
+
+    // Extruded filament on the third layer, grouped by wall role and whether Z changes.
+    // That layer is past the initial 1.5x transition and still has raised walls.
+    const auto extrusions_for = [&config](double ratio) {
+        config.set_deserialize_strict("staggered_perimeter_flow_ratio", std::to_string(ratio));
+        const std::string gcode = slice({ make_cube(10., 10., 2.5) }, config);
+        std::array<std::array<double, 2>, 2> amounts{};
+        int layer = 0;
+        int wall = -1;
+        GCodeReader reader;
+        reader.apply_config(config);
+        reader.parse_buffer(gcode, [&](GCodeReader &self, const GCodeReader::GCodeLine &line) {
+            const auto comment = line.comment();
+            if (comment.find("LAYER_CHANGE") != std::string::npos)
+                ++layer;
+            if (comment.find("TYPE:") != std::string::npos)
+                wall = comment.find("Outer wall") != std::string::npos ? 0 :
+                       comment.find("Inner wall") != std::string::npos ? 1 : -1;
+            if (layer == 3 && wall >= 0 && line.extruding(self) && line.dist_XY(self) > EPSILON)
+                amounts[wall][std::abs(line.dist_Z(self)) > EPSILON] += line.dist_E(self);
+        });
+        return amounts;
+    };
+    const auto baseline = extrusions_for(1.);
+    const auto reduced = extrusions_for(0.75);
+    for (int wall = 0; wall < 2; ++wall) {
+        CAPTURE(wall);
+        REQUIRE(baseline[wall][1] > 0.); // Both walls actually contain a scarf ramp.
+        if (!entire_loop)
+            REQUIRE(baseline[wall][0] > 0.);
+        const double expected_ratio = wall == (reverse ? 0 : 1) ? 0.75 : 1.;
+        for (int ramp = 0; ramp < 2; ++ramp) {
+            CAPTURE(ramp);
+            CHECK_THAT(reduced[wall][ramp], Catch::Matchers::WithinAbs(baseline[wall][ramp] * expected_ratio, 5e-4));
+        }
+    }
+}

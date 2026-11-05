@@ -3456,7 +3456,8 @@ void PerimeterGenerator::process_arachne()
             }
 
             int stagger_range_size = 0;
-            if (this->staggered_layer_index(stagger_range_size) >= 0) { // On staggered layers, the staggered perimeters should be printed after the non staggered perimeters
+            const bool staggered_layer = this->staggered_layer_index(stagger_range_size) >= 0;
+            if (staggered_layer) { // On staggered layers, the staggered perimeters should be printed after the non staggered perimeters
                 // Raised walls are odd by default and even when reversed. The comparator must stay strict for the sort.
                 const bool reverse = this->config->staggered_perimeters_reverse;
                 std::stable_sort(ordered_extrusions.begin(), ordered_extrusions.end(),
@@ -3468,7 +3469,7 @@ void PerimeterGenerator::process_arachne()
             }
 
            // printf("New Layer: Layer ID %d\n",layer_id); //debug - new layer
-            if (this->config->wall_sequence == WallSequence::InnerOuterInner && layer_id > 0 && !this->config->staggered_perimeters ) { // only enable inner outer inner algorithm after first layer
+            if (this->config->wall_sequence == WallSequence::InnerOuterInner && layer_id > 0 && !staggered_layer) { // only enable inner outer inner algorithm after first layer
                 if (ordered_extrusions.size() > 2) { // 3 walls minimum needed to do inner outer inner ordering
                     int position = 0; // index to run the re-ordering for multiple external perimeters in a single island.
                     int arr_i, arr_j = 0;    // indexes to run through the walls in the for loops
