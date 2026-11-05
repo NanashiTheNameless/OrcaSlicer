@@ -335,7 +335,7 @@ std::tuple<wxBoxSizer*, ComboBox*> PreferencesDialog::create_item_combobox_base(
 
     wxBoxSizer *m_sizer = create_item_label(title, tip, wiki_url);
 
-    auto combobox = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, DESIGN_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
+    auto combobox = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, PREFERENCES_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
     combobox->GetDropDown().SetUseContentWidth(true);
     combobox->SetToolTip(tip);
     combobox->SetName(param);   // select_tab() finds the row by this name
@@ -452,7 +452,7 @@ wxBoxSizer *PreferencesDialog::create_item_language_combobox(wxString title, wxS
 
     wxBoxSizer *m_sizer = create_item_label(title, tip);
 
-    auto combobox = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, DESIGN_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
+    auto combobox = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, PREFERENCES_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
     combobox->GetDropDown().SetUseContentWidth(true);
     combobox->SetToolTip(tip);
 
@@ -618,7 +618,7 @@ wxBoxSizer *PreferencesDialog::create_item_region_combobox(wxString title, wxStr
 
     wxBoxSizer *m_sizer = create_item_label(title, tip);
 
-    auto combobox = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, DESIGN_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
+    auto combobox = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, PREFERENCES_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
     combobox->GetDropDown().SetUseContentWidth(true);
     combobox->SetToolTip(tip);
 
@@ -1386,7 +1386,7 @@ wxBoxSizer *PreferencesDialog::create_item_network_plugin_version(wxString title
 {
     wxBoxSizer *m_sizer = create_item_label(title, tooltip);
 
-    m_network_version_combo = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, DESIGN_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
+    m_network_version_combo = new ::ComboBox(m_parent, wxID_ANY, wxEmptyString, wxDefaultPosition, PREFERENCES_LARGE_COMBOBOX_SIZE, 0, nullptr, wxCB_READONLY);
     m_network_version_combo->GetDropDown().SetUseContentWidth(true);
     m_network_version_combo->SetToolTip(tooltip);
 
@@ -1563,7 +1563,7 @@ wxBoxSizer* PreferencesDialog::create_item_link_association( wxString url_prefix
         }
 
         registered_instance_title->SetLabel(current_association_str);
-        registered_instance_title->SetMaxSize(wxSize(DESIGN_WINDOW_SIZE.x - FromDIP(DESIGN_LEFT_MARGIN) - FromDIP(40), -1)); // prevent horizontal scroll
+        registered_instance_title->SetMaxSize(wxSize(PREFERENCES_WINDOW_SIZE.x - FromDIP(DESIGN_LEFT_MARGIN) - FromDIP(40), -1)); // prevent horizontal scroll
     };
     update_current_association_str();
 
@@ -1586,7 +1586,7 @@ PreferencesDialog::PreferencesDialog(wxWindow *parent, wxWindowID id, const wxSt
     : DPIDialog(parent, id, _L("Preferences"), pos, size, style)
 {
     SetBackgroundColour(*wxWHITE);
-    SetMinSize(DESIGN_WINDOW_SIZE);
+    SetMinSize(PREFERENCES_WINDOW_SIZE);
     create();
     wxGetApp().UpdateDlgDarkUI(this);
 }
