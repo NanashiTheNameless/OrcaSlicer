@@ -44,8 +44,13 @@ else ()
     # covers the top-level Makefile.in (make doesn't propagate -o to the
     # per-subdir sub-makes for doc/src/tests/tune), so touch every generated
     # autotools file everywhere instead, which covers all of them at once.
+    # They get one shared timestamp from a reference file: touching each with
+    # the current time leaves them nanoseconds apart in find's order, and
+    # whenever configure or Makefile.in comes before aclocal.m4, make still
+    # sees it as older than aclocal.m4 and regenerates it.
     set(_mpfr_patch_cmd
-        find . "(" -name "configure" -o -name "aclocal.m4" -o -name "Makefile.in" -o -name "config.h.in" ")" -exec touch "{}" +
+        ${CMAKE_COMMAND} -E touch orca_autotools_stamp
+        COMMAND find . "(" -name "configure" -o -name "aclocal.m4" -o -name "Makefile.in" -o -name "config.h.in" ")" -exec touch -r orca_autotools_stamp "{}" +
     )
 
     ExternalProject_Add(dep_MPFR
