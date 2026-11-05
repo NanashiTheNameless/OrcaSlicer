@@ -1,5 +1,6 @@
 <!--
 # THIS FORK IS UNSTABLE AND UNOFFICIAL DO NOT REPORT BUGS FOUND HERE TO THE OFFICIAL VERSION
+> Please read How to Contribute: https://github.com/NanashiTheNameless/OrcaSlicer_WIKI/blob/main/developer_reference/how_to_contribute.md
 -->
 
 # Pull Request
@@ -34,6 +35,9 @@ Add the extra context from above here
 ## Screenshots / Videos (optional)
 
 <!--
+> UI changes need before and after screenshots, on each platform you tested.
+> See what each kind of PR needs: https://github.com/NanashiTheNameless/OrcaSlicer/blob/main/CONTRIBUTING.md#what-each-kind-of-pr-needs
+> For other changes, please attach images that can help explain them.
 - Before: <img>
 - After: <img>
 - Video: <vid>
