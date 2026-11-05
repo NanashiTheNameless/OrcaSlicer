@@ -1,0 +1,37 @@
+name: 'Get CMake'
+description: 'Install CMake 4.3.x and Ninja with lukka/get-cmake, retrying through download outages'
+# get-cmake downloads from GitHub releases and fails on the first 504, which
+# GitHub can return for minutes at a time. Composite actions have no step
+# retry, so the attempts are spelled out, each after a pause.
+runs:
+  using: 'composite'
+  steps:
+    - id: attempt1
+      continue-on-error: true
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "~4.3.0"  # use most recent 4.3.x version
+        useLocalCache: true
+        useCloudCache: false  # Downloading CMake takes seconds; Actions cache space is better spent on deps.
+
+    - if: steps.attempt1.outcome == 'failure'
+      shell: bash
+      run: echo "CMake download failed, retrying in 60s"; sleep 60
+    - id: attempt2
+      if: steps.attempt1.outcome == 'failure'
+      continue-on-error: true
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "~4.3.0"
+        useLocalCache: true
+        useCloudCache: false
+
+    - if: steps.attempt2.outcome == 'failure'
+      shell: bash
+      run: echo "CMake download failed, retrying in 120s"; sleep 120
+    - if: steps.attempt2.outcome == 'failure'
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: "~4.3.0"
+        useLocalCache: true
+        useCloudCache: false

@@ -44,11 +44,7 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: ${{ inputs.artifact }}
-      - uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~4.3.0"  # use most recent 4.3.x version
-          useLocalCache: true
-          useCloudCache: false  # Downloading CMake takes seconds; Actions cache space is better spent on deps.
+      - uses: ./.github/actions/get-cmake
       # Skips self-hosted runners, where this machine-wide setting would stay after the job ends.
       - name: Enable Crash Dumps
         if: runner.os == 'Windows' && !vars.SELF_HOSTED

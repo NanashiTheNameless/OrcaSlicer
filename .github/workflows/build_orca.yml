@@ -87,11 +87,7 @@ jobs:
           compiler: ${{ inputs.compiler }}
           self-hosted: ${{ vars.SELF_HOSTED }}
 
-      - uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~4.3.0"  # use most recent 4.3.x version
-          useLocalCache: true         # <--= Use the local cache (default is 'false').
-          useCloudCache: false  # Downloading CMake takes seconds; Actions cache space is better spent on deps.
+      - uses: ./.github/actions/get-cmake
 
       # Compiler cache. Pushes save it, so main keeps it warm; pull requests
       # restore it and discard what they compiled. Objects are keyed on the

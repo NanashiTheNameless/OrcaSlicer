@@ -13,13 +13,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: lukka/get-cmake@latest
+    - uses: ./.github/actions/get-cmake
       # The windows-11-arm runner needs CMake <= 3.31 (handled in the next step).
       if: ${{ !(runner.os == 'Windows' && inputs.arch == 'arm64') }}
-      with:
-        cmakeVersion: "~4.3.0"  # use most recent 4.3.x version
-        useLocalCache: true         # <--= Use the local cache (default is 'false').
-        useCloudCache: false  # Downloading CMake takes seconds; Actions cache space is better spent on deps.
 
     - name: Install CMake 3.31.x (Windows ARM64)
       # windows-11-arm ships CMake 4.x, which removed pre-3.5 policy
