@@ -66,6 +66,13 @@ then
             sudo apt update
             REQUIRED_DEV_PACKAGES+=(clang-18)
         fi
+        # appimagetool validates the AppImage's metainfo with appstreamcli when it
+        # is installed, and aborts on any warning. 22.x/23.x ship AppStream 0.15,
+        # which rejects the contribute and vcs-browser URL types the metainfo uses,
+        # so only install it where AppStream is 1.0 or newer.
+        if dpkg --compare-versions "${VERSION_ID}" ge 24 ; then
+            REQUIRED_DEV_PACKAGES+=(appstream)
+        fi
     fi
 
     if [[ -n "$BUILD_DEBUG" ]]
