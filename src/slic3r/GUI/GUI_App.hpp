@@ -116,6 +116,7 @@ class TerminalDialog;
 class ActionRegistry;
 class HttpServer;
 class ImGuiWrapper;
+class NightlyUpdater;
 class OpenGLManager;
 class UpgradeNetworkJob;
 
@@ -317,6 +318,7 @@ private:
     std::unique_ptr<RemovableDriveManager> m_removable_drive_manager;
 
     std::unique_ptr<ImGuiWrapper> m_imgui;
+    std::unique_ptr<NightlyUpdater> m_nightly_updater;
     std::unique_ptr<ShortcutRegistry> m_shortcuts;
     std::unique_ptr<PrintHostJobQueue> m_printhost_job_queue;
 	std::unique_ptr <OtherInstanceMessageHandler> m_other_instance_message_handler;
@@ -612,6 +614,9 @@ public:
     void            check_update(bool show_tips, int by_user);
     void            check_new_version(bool show_tips = false, int by_user = 0);
     void            check_new_version_sf(bool show_tips = false, int by_user = 0);
+    // Orca fork: the nightly updater, made by the first update check; the main window's close handler tells it
+    // the app is closing. Null until then.
+    NightlyUpdater* nightly_updater() { return m_nightly_updater.get(); }
     // Offers to migrate user filament presets made against an older release that lost printers their parent
     // listed then. At startup it asks on every start that finds such presets, unless the user chose not to be
     // reminded; while the user presets sync with the cloud, it waits until they have been pulled. by_user also
@@ -622,6 +627,8 @@ public:
     void            enter_force_upgrade();
     void            set_skip_version(bool skip = true);
     void            no_new_version();
+    // Orca fork: shows the new version dialog for info. by_user hides its skip button, as for a check the user asked for.
+    void            show_new_version(const VersionInfo &info, bool by_user);
     static std::string format_display_version();
     std::string     format_IP(const std::string& ip);
     void            show_dialog(wxString msg);

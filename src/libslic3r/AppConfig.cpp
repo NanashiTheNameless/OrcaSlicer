@@ -59,7 +59,8 @@ using namespace nlohmann;
 
 namespace Slic3r {
 
-static const std::string VERSION_CHECK_URL = "https://check-version.orcaslicer.com/latest";
+// Orca fork: the manifest CI writes onto the nightly release, see docs/HLSD/nightly_updates.md.
+static const std::string VERSION_CHECK_URL = "https://github.com/NanashiTheNameless/OrcaSlicer/releases/download/Nightly-Rolling/latest.json";
 static const std::string PROFILE_UPDATE_URL = "https://check-version.orcaslicer.com/profile";
 
 constexpr const char* CONFIG_ORCA_UPDATER_URL = "orca_updater_url";
@@ -651,6 +652,16 @@ void AppConfig::set_defaults()
     if (get("sync_system_preset").empty()) {
         set_bool("sync_system_preset", true);
     }
+
+    // Orca fork: nightly updates, see docs/HLSD/nightly_updates.md.
+    if (get("nightly_check_on_launch").empty())
+        set_bool("nightly_check_on_launch", true);
+    if (get("nightly_check_periodically").empty())
+        set_bool("nightly_check_periodically", true);
+    if (get("nightly_update_mode").empty())
+        set("nightly_update_mode", "download");
+    if (get("nightly_check_interval_hours").empty())
+        set("nightly_check_interval_hours", "6");
 
     if (get("backup_switch").empty() || get("version") < "01.06.00.00") {
         set_bool("backup_switch", true);

@@ -39,6 +39,9 @@ finish-args:
   - --talk-name=dev.namelessnanashi.OrcaSlicer.InstanceCheck.*
   - --own-name=dev.namelessnanashi.OrcaSlicer.InstanceCheck.*
   - --system-talk-name=org.freedesktop.UDisks2
+  # The nightly updater installs the downloaded bundle with `flatpak-spawn --host flatpak install`
+  # (docs/HLSD/nightly_updates.md). This lets the app run commands outside the sandbox.
+  - --talk-name=org.freedesktop.Flatpak
   - --env=SPNAV_SOCKET=/run/spnav.sock
 
 modules:

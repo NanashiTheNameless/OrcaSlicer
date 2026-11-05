@@ -1,4 +1,5 @@
 #include "Preferences.hpp"
+#include "NightlyUpdater.hpp"
 #include "CloudProvider.hpp"
 #include "OptionsGroup.hpp"
 #include "GUI_App.hpp"
@@ -2395,6 +2396,31 @@ void PreferencesDialog::create_items()
 
     //// ONLINE > Update & sync
     g_sizer->Add(create_item_title(_L("Update & sync")), 1, wxEXPAND);
+
+    // Orca fork: nightly updates, see docs/HLSD/nightly_updates.md.
+    auto item_update_on_launch = create_item_checkbox(_L("Check for updates when OrcaSlicer starts"), "", "nightly_check_on_launch");
+    g_sizer->Add(item_update_on_launch);
+    auto item_update_periodic  = create_item_checkbox(_L("Check for updates while OrcaSlicer is running"), "",
+                                                      "nightly_check_periodically");
+    g_sizer->Add(item_update_periodic);
+    auto item_update_interval  = create_item_spinctrl(_L("Time between update checks"), "", _L("hours"),
+                                                      _L("How often OrcaSlicer checks for updates while it is running."),
+                                                      "nightly_check_interval_hours", 1, 168, [](int) {
+                                                          if (NightlyUpdater *updater = wxGetApp().nightly_updater())
+                                                              updater->reschedule();
+                                                      });
+    g_sizer->Add(item_update_interval);
+    auto item_update_mode      = create_item_combobox(
+        _L("When an update is found"),
+        _L("Download first: downloads and verifies the update in the background, then asks whether to install it now or when "
+           "OrcaSlicer closes.\n"
+           "Only tell me: shows the update and a link to the release page.\n"
+           "Install at startup without asking: when the update is found as OrcaSlicer starts, installs it and restarts at once. "
+           "Updates found later still ask first."),
+        "nightly_update_mode",
+        { _L("Download first, then ask"), _L("Only tell me"), _L("Install at startup without asking") },
+        std::vector<std::string>{ "download", "notify", "install_on_launch" });
+    g_sizer->Add(item_update_mode);
 
     auto item_user_sync        = create_item_checkbox(_L("Auto sync user presets (Printer/Filament/Process)"), "", "sync_user_preset");
     g_sizer->Add(item_user_sync);

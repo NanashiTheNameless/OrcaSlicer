@@ -107,6 +107,11 @@ public:
 	// Sets a maximum size of the data that can be received.
 	// A value of zero sets the default limit, which is is 5MB.
 	Http& size_limit(size_t sizeLimit);
+	// Writes the body to path as it arrives instead of keeping it in memory, so a large download needs no more
+	// memory than a small one. The size limit still applies. The body passed to on_complete and on_error is then
+	// empty, and Progress::buffer stays empty. If the file cannot be written, the request fails. append adds to
+	// what the file holds, for resuming a download together with set_range().
+	Http& body_to_file(const boost::filesystem::path &path, bool append = false);
 	// range  of donloaded bytes. example: curl_easy_setopt(curl, CURLOPT_RANGE, "0-199");
 	Http& set_range(const std::string& range);
 	// Sets a HTTP header field.

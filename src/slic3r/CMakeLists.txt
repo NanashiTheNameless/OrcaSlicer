@@ -426,6 +426,8 @@ set(SLIC3R_GUI_SOURCES
     GUI/MultiTaskManagerPage.hpp
     GUI/NetworkTestDialog.cpp
     GUI/NetworkTestDialog.hpp
+    GUI/NightlyUpdater.cpp
+    GUI/NightlyUpdater.hpp
     GUI/Notebook.cpp
     GUI/Notebook.hpp
     GUI/NotificationManager.cpp

@@ -387,6 +387,8 @@ set(lisbslic3r_sources
     MutablePolygon.cpp
     MutablePolygon.hpp
     MutablePriorityQueue.hpp
+    NightlyManifest.cpp
+    NightlyManifest.hpp
     NormalUtils.cpp
     NormalUtils.hpp
     NSVGUtils.cpp
