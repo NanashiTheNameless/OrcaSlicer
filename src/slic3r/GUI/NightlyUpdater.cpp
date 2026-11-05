@@ -173,6 +173,19 @@ std::string size_mb(std::uint64_t size)
     return text;
 }
 
+wxString check_failed_message(unsigned status, const std::string &error)
+{
+    if (status == 404)
+        return _L("Could not check for updates: no nightly update information is published yet.");
+    if (status != 0)
+        // TRN: %1% is an HTTP status code, such as 500.
+        return format_wxstr(_L("Could not check for updates: the server answered with HTTP status %1%."), status);
+    if (!error.empty())
+        // TRN: %1% is a network error message, in English.
+        return format_wxstr(_L("Could not check for updates: %1%"), error);
+    return _L("Could not check for updates.");
+}
+
 } // namespace
 
 NightlyUpdater::NightlyUpdater()
@@ -215,15 +228,15 @@ void NightlyUpdater::check(Trigger trigger)
         .timeout_max(30)
         .on_error([this, trigger](std::string, std::string error, unsigned status) {
             BOOST_LOG_TRIVIAL(error) << "Nightly update check failed: HTTP " << status << ", " << error;
-            wxGetApp().CallAfter([this, trigger] {
-                report(trigger, _L("Could not check for updates."));
+            wxGetApp().CallAfter([this, trigger, error, status] {
+                report(trigger, check_failed_message(status, error));
                 finish();
             });
         })
         .on_complete([this, trigger, url](std::string body, unsigned status) {
             if (status != 200) {
-                wxGetApp().CallAfter([this, trigger] {
-                    report(trigger, _L("Could not check for updates."));
+                wxGetApp().CallAfter([this, trigger, status] {
+                    report(trigger, check_failed_message(status, std::string()));
                     finish();
                 });
                 return;

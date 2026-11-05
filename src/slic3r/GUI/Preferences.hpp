@@ -29,10 +29,10 @@ namespace Slic3r { namespace GUI {
 #define DESIGN_GRAY900_COLOR wxColour("#363636") // Label color
 #define DESIGN_GRAY600_COLOR wxColour("#ACACAC") // Dimmed text color
 
-#define DESIGN_WINDOW_SIZE wxSize(FromDIP(640), FromDIP(640))
+#define DESIGN_WINDOW_SIZE wxSize(FromDIP(760), FromDIP(640))
 #define DESIGN_TITLE_SIZE wxSize(FromDIP(280), -1)
 #define DESIGN_COMBOBOX_SIZE wxSize(FromDIP(120), -1)
-#define DESIGN_LARGE_COMBOBOX_SIZE wxSize(FromDIP(120), -1)
+#define DESIGN_LARGE_COMBOBOX_SIZE wxSize(FromDIP(240), -1)
 #define DESIGN_INPUT_SIZE wxSize(FromDIP(120), -1)
 #define DESIGN_LEFT_MARGIN 25
 

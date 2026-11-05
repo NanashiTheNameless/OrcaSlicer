@@ -411,7 +411,8 @@ static void add_msg_content(wxWindow   *parent,
         } else {
             wxClientDC dc(parent);
             dc.SetFont(font); // ORCA without this it calculates bigger size
-            msg_sz = dc.GetMultiLineTextExtent(msg);
+            // The link is appended to the message, so it needs room too.
+            msg_sz = dc.GetMultiLineTextExtent(link_text.IsEmpty() ? msg : msg + " " + link_text);
         }
         msg_sz += parent->FromDIP(wxSize(10,5)); // added extra spacing to prevent wrapping
 
