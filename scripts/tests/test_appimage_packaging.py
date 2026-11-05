@@ -53,15 +53,24 @@ if [ -n "${FAIL_ONCE_MARKER:-}" ] && [ ! -e "$FAIL_ONCE_MARKER" ]; then
 fi
 cp "$FAKE_APPIMAGETOOL" "$output"
 """)
+        # Records how the metainfo was validated; the real validator would reject
+        # the minimal metadata above.
+        self.write_script(bin_dir / "appstreamcli", """#!/usr/bin/env bash
+printf '%s\\n' "$*" > "$APPSTREAMCLI_LOG"
+""")
         tool = root / "fake-appimagetool"
         self.write_script(tool, """#!/usr/bin/env bash
 set -eu
 if [ "${FAIL_TOOL:-0}" = 1 ]; then exit 42; fi
+printf '%s\\n' "$*" > "$APPIMAGETOOL_LOG"
 test -f usr/share/metainfo/dev.namelessnanashi.OrcaSlicer.metainfo.xml
 printf appimage > "OrcaSlicer-$(uname -m).AppImage"
 """)
         self.env = dict(os.environ, PATH=f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
-                        FAKE_APPIMAGETOOL=str(tool), APPIMAGETOOL_RETRY_DELAY="0")
+                        FAKE_APPIMAGETOOL=str(tool), APPIMAGETOOL_RETRY_DELAY="0",
+                        APPSTREAMCLI_LOG=str(root / "appstreamcli.log"),
+                        APPIMAGETOOL_LOG=str(root / "appimagetool.log"))
+        self.root = root
         self.env.pop("container", None)
 
     @staticmethod
@@ -88,6 +97,12 @@ printf appimage > "OrcaSlicer-$(uname -m).AppImage"
         for suffix in ("metainfo.xml", "appdata.xml"):
             installed = self.package / f"usr/share/metainfo/dev.namelessnanashi.OrcaSlicer.{suffix}"
             self.assertEqual(installed.read_bytes(), self.metadata.read_bytes())
+
+    def test_metainfo_is_validated_offline(self):
+        result = self.run_packager()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual((self.root / "appstreamcli.log").read_text(), "validate-tree --no-net .\n")
+        self.assertIn("--no-appstream", (self.root / "appimagetool.log").read_text().split())
 
     def test_failed_download_preserves_previous_tool_and_package(self):
         previous = self.build / "appimagetool.AppImage"

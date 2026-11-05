@@ -56,7 +56,13 @@ cp "${REPO_ROOT}/scripts/flatpak/dev.namelessnanashi.@SLIC3R_APP_KEY@.metainfo.x
 
 export ARCH=$(uname -m)
 
-appimage_args=()
+# appimagetool validates the metainfo with appstreamcli when it is installed and
+# aborts on any warning, including a metainfo URL that GitHub answers with a 504
+# at that moment. Validate here without the network checks instead.
+appimage_args=(--no-appstream)
+if command -v appstreamcli >/dev/null; then
+  appstreamcli validate-tree --no-net .
+fi
 if [ -f /.dockerenv ] || [ -n "${container:-}" ]; then
   appimage_args+=(--appimage-extract-and-run)
 fi
