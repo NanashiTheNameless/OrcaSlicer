@@ -25,6 +25,7 @@
 #include "format.hpp"
 #include "libslic3r_version.h"
 #include "BuildCommit.hpp"
+#include "NightlyUpdater.hpp"
 #include "Downloader.hpp"
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -51,6 +52,7 @@
 #include <filesystem>
 #include <ctime>
 #include "libslic3r/AppConfig.hpp"
+#include "libslic3r/NightlyManifest.hpp"
 #include <ios>
 #include <chrono>
 #include <functional>
@@ -3555,7 +3557,8 @@ bool GUI_App::on_init_inner()
                 bool skip_this_version = false;
                 if (!skip_version_str.empty()) {
                     BOOST_LOG_TRIVIAL(info) << "new version = " << version_info.version_str << ", skip version = " << skip_version_str;
-                    if (version_info.version_str <= skip_version_str) {
+                    // Orca fork: nightly builds record the commit they skipped.
+                    if (nightly_commit_skipped(version_info.version_str, skip_version_str)) {
                         skip_this_version = true;
                     } else {
                         app_config->set("skip_version", "");
@@ -3566,7 +3569,8 @@ bool GUI_App::on_init_inner()
                     || evt.GetInt() != 0) {
                     UpdateVersionDialog dialog(this->mainframe);
                     wxString            extmsg = wxString::FromUTF8(version_info.description);
-                    dialog.update_version_info(extmsg, version_info.version_str);
+                    dialog.update_version_info(extmsg, version_info.version_name.empty() ? wxString(version_info.version_str) :
+                                                                                           wxString::FromUTF8(version_info.version_name));
                     //dialog.update_version_info(version_info.description);
                     if (evt.GetInt() != 0) {
                         dialog.m_button_skip_version->Hide();
@@ -6673,17 +6677,11 @@ void maybe_attach_updater_signature(Http& http, const std::string& canonical_que
 
 void GUI_App::check_new_version_sf(bool show_tips, int by_user)
 {
-    // This unofficial fork has no update server: never query upstream, only point the user to the fork's releases.
-    if (by_user != 0) {
-        MessageDialog(mainframe,
-            _L("This unofficial fork does not support automatic update checking.\n"),
-            wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Check for Updates"),
-            wxOK | wxICON_INFORMATION,
-            "", _L("Check the nightly release page on GitHub to update manually."),
-            [](const wxString&) {
-                wxLaunchDefaultBrowser("https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling", wxBROWSER_NEW_WINDOW);
-            }).ShowModal();
-    }
+    // Orca fork: the fork has no update server, only the manifest on its nightly release. The upstream check below
+    // is kept unreachable so upstream changes to it still merge.
+    if (!m_nightly_updater)
+        m_nightly_updater = std::make_unique<NightlyUpdater>();
+    m_nightly_updater->check(by_user != 0 ? NightlyUpdater::Trigger::User : NightlyUpdater::Trigger::Launch);
     return;
 
     AppConfig* app_config = wxGetApp().app_config;
@@ -7089,6 +7087,15 @@ void GUI_App::no_new_version()
 {
     wxCommandEvent* evt = new wxCommandEvent(EVT_SHOW_NO_NEW_VERSION);
     GUI::wxGetApp().QueueEvent(evt);
+}
+
+void GUI_App::show_new_version(const VersionInfo &info, bool by_user)
+{
+    version_info        = info;
+    wxCommandEvent *evt = new wxCommandEvent(EVT_SLIC3R_VERSION_ONLINE);
+    evt->SetString(info.version_str);
+    evt->SetInt(by_user ? 1 : 0);
+    QueueEvent(evt);
 }
 
 std::string GUI_App::version_display = "";

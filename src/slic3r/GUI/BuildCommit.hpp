@@ -12,4 +12,11 @@ extern const char *const build_commit_hash;
 // wherever the build is shown to a person.
 extern const char *const build_commit_label;
 
+// The committer time of the commit, in seconds since the epoch, or 0 when unknown.
+// The update check compares it with the commit of the nightly manifest.
+extern const long long build_commit_time;
+
+// Whether CI built this for the nightly release. Only those builds check for updates.
+extern const bool build_is_nightly;
+
 }} // namespace Slic3r::GUI

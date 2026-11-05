@@ -320,6 +320,13 @@ jobs:
         echo "ver_pure=$ver_pure" >> $GITHUB_ENV
         echo "date=$(date +'%Y%m%d')" >> $GITHUB_ENV
         echo "git_commit_hash=$git_commit_hash" >> $GITHUB_ENV
+        # The sandboxed build has no .git directory to read these from; see src/slic3r/GitCommitHash.cmake.
+        echo "git_commit_time=$(git log -1 --format=%ct)" >> $GITHUB_ENV
+        if [[ "${{ github.event_name }}" == "push" && "${{ github.ref }}" == "refs/heads/main" && "${{ github.repository }}" == "NanashiTheNameless/OrcaSlicer" ]]; then
+          echo "orca_nightly_build=1" >> $GITHUB_ENV
+        else
+          echo "orca_nightly_build=0" >> $GITHUB_ENV
+        fi
       shell: bash
     - name: Compute the flatpak-builder cache key
       id: fp_cache_key
@@ -376,7 +383,7 @@ jobs:
       env:
         flatpak_builder_cache_buster: ${{ github.run_id }}-${{ github.run_attempt }}
       run: |
-        sed -i "/name: OrcaSlicer/{n;s|buildsystem: simple|buildsystem: simple\n    run-tests: true\n    build-options:\n      env:\n        flatpak_builder_cache_buster: \"$flatpak_builder_cache_buster\"\n        git_commit_hash: \"$git_commit_hash\"|}" \
+        sed -i "/name: OrcaSlicer/{n;s|buildsystem: simple|buildsystem: simple\n    run-tests: true\n    build-options:\n      env:\n        flatpak_builder_cache_buster: \"$flatpak_builder_cache_buster\"\n        git_commit_hash: \"$git_commit_hash\"\n        git_commit_time: \"$git_commit_time\"\n        orca_nightly_build: \"$orca_nightly_build\"|}" \
           scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml
       shell: bash
     # flatpak-builder's --ccache only wraps cc and gcc, and the manifest builds
@@ -583,6 +590,67 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: 'false'
+      # The manifest nightly builds check for updates (docs/HLSD/nightly_updates.md). It is written here, once
+      # every build of the run has uploaded its file, so it only names files that are on the release.
+      - name: Write the nightly manifest
+        id: manifest
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NIGHTLY_MANIFEST_KEY: ${{ secrets.NIGHTLY_MANIFEST_KEY }}
+        run: |
+          set -euo pipefail
+          commit_time=$(git log -1 --format=%ct)
+          # Runs of main take turns, but a re-run of an older one can still finish last; it must not put its
+          # older manifest back.
+          if curl -fsSL "https://github.com/${{ github.repository }}/releases/download/Nightly-Rolling/latest.json" -o "$RUNNER_TEMP/published.json"; then
+            published=$(jq -r '.commit_time // 0' "$RUNNER_TEMP/published.json")
+            if [ "$published" -gt "$commit_time" ]; then
+              echo "A manifest for a newer commit is already published; leaving it."
+              exit 0
+            fi
+          fi
+          gh api "repos/${{ github.repository }}/releases/242055857" > "$RUNNER_TEMP/release.json"
+          # Files uploaded since the first attempt of this run started are its own: the previous run of main
+          # had finished by then. A re-run attempt starts later, so it would miss what the first one uploaded.
+          since=$(gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/1" --jq .run_started_at)
+          ver=$(grep 'set(SoftFever_VERSION' version.inc | cut -d '"' -f2)
+          python3 -I scripts/nightly_manifest.py --release "$RUNNER_TEMP/release.json" \
+            --commit "${{ github.sha }}" --commit-time "$commit_time" --commit-date "$(git log -1 --format=%cI)" \
+            --since "$since" --version "$ver" --output latest.json
+          if [ -n "$NIGHTLY_MANIFEST_KEY" ]; then
+            printf '%s\n' "$NIGHTLY_MANIFEST_KEY" > "$RUNNER_TEMP/manifest_key.pem"
+            openssl pkeyutl -sign -rawin -inkey "$RUNNER_TEMP/manifest_key.pem" -in latest.json -out "$RUNNER_TEMP/latest.json.sig.bin"
+            rm -f "$RUNNER_TEMP/manifest_key.pem"
+            base64 -w0 "$RUNNER_TEMP/latest.json.sig.bin" > latest.json.sig
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::NIGHTLY_MANIFEST_KEY is not set, so latest.json is unsigned and builds only notify about it."
+          fi
+          echo "written=true" >> "$GITHUB_OUTPUT"
+      # The signature goes up first: a build that fetches the new manifest with the old signature rejects it and
+      # tries again later, while the other order would leave a moment where neither matches.
+      - name: Deploy the nightly manifest signature
+        if: steps.manifest.outputs.signed == 'true'
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ${{ github.workspace }}/latest.json.sig
+          asset_name: latest.json.sig
+          asset_content_type: text/plain
+          max_releases: 1
+      - name: Deploy the nightly manifest
+        if: steps.manifest.outputs.written == 'true'
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ${{ github.workspace }}/latest.json
+          asset_name: latest.json
+          asset_content_type: application/json
+          max_releases: 1
       - name: Deploy Nightly-Rolling release tag
         uses: NanashiTheNameless/action-create-tag@main
         with:

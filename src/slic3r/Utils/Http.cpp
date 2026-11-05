@@ -135,6 +135,10 @@ struct Http::priv
 	std::string method;
 	// Used for reading the body
 	std::string buffer;
+	// Set by body_to_file(): the body goes here instead of into buffer.
+	std::unique_ptr<boost::filesystem::ofstream> body_file;
+	size_t body_file_size = 0;
+	bool   body_file_failed = false;
 	// Used for storing file streams added as multipart form parts
 	// Using a deque here because unlike vector it doesn't ivalidate pointers on insertion
 	std::deque<form_file> form_files;
@@ -258,6 +262,16 @@ size_t Http::priv::writecb(void *data, size_t size, size_t nmemb, void *userp)
 	const size_t realsize = size * nmemb;
 
 	const size_t limit = self->limit > 0 ? self->limit : DEFAULT_SIZE_LIMIT;
+	if (self->body_file) {
+		if (self->body_file_size + realsize > limit)
+			return 0;
+		if (!self->body_file->write(cdata, std::streamsize(realsize))) {
+			self->body_file_failed = true;
+			return 0;
+		}
+		self->body_file_size += realsize;
+		return realsize;
+	}
 	if (self->buffer.size() + realsize > limit) {
 		// This makes curl_easy_perform return CURLE_WRITE_ERROR
 		return 0;
@@ -498,6 +512,14 @@ void Http::priv::http_perform()
 	CURLcode res = ::curl_easy_perform(curl);
 
     putFile.reset();
+	// The callbacks may read the file, so it is complete and closed before they run.
+	if (body_file) {
+		body_file->close();
+		if (body_file->fail())
+			body_file_failed = true;
+		if (res == CURLE_OK && body_file_failed)
+			res = CURLE_WRITE_ERROR;
+	}
 
 	if (res != CURLE_OK) {
 		if (res == CURLE_ABORTED_BY_CALLBACK) {
@@ -512,7 +534,7 @@ void Http::priv::http_perform()
 			}
 		}
 		else if (res == CURLE_WRITE_ERROR) {
-			if (errorfn) { errorfn(std::move(buffer), body_size_error(), 0); }
+			if (errorfn) { errorfn(std::move(buffer), body_file_failed ? std::string("Error writing the body to a file") : body_size_error(), 0); }
 		} else {
 			if (errorfn) { errorfn(std::move(buffer), curl_error(res), 0); }
 		};
@@ -577,6 +599,16 @@ Http& Http::timeout_max(long timeout)
 Http& Http::size_limit(size_t sizeLimit)
 {
 	if (p) { p->limit = sizeLimit; }
+	return *this;
+}
+
+Http& Http::body_to_file(const boost::filesystem::path &path, bool append)
+{
+	if (p) {
+		p->body_file = std::make_unique<boost::filesystem::ofstream>(path, std::ios::binary | (append ? std::ios::app : std::ios::trunc));
+		if (!*p->body_file)
+			p->body_file_failed = true;
+	}
 	return *this;
 }
 

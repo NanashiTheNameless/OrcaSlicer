@@ -1,4 +1,5 @@
 #include "MainFrame.hpp"
+#include "NightlyUpdater.hpp"
 
 #include <wx/event.h>
 #include "slic3r/GUI/Event.hpp"
@@ -735,6 +736,10 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
         //    }
         //}
     #endif
+
+        // Orca fork: an update the user chose to install on close starts once the close is certain.
+        if (NightlyUpdater *updater = wxGetApp().nightly_updater())
+            updater->on_app_closing();
 
         MarkdownTip::ExitTip();
         // Prevent queued selection/UI refresh work from running as normal during reset.

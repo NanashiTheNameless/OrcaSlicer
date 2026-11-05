@@ -204,6 +204,13 @@ jobs:
           echo "date: ${{ env.date }} version: ${{ env.ver }}"
         shell: pwsh
 
+      # Builds uploaded to the nightly release check it for updates, and only those; see docs/HLSD/nightly_updates.md.
+      # The condition matches the Deploy steps that upload them.
+      - name: Mark the build as a nightly
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
+        run: echo "orca_nightly_build=1" >> "$GITHUB_ENV"
+        shell: bash
+
 #   Mac
       - name: Install tools mac
         if: runner.os == 'macOS' && !inputs.macos-combine-only
@@ -451,6 +458,9 @@ jobs:
           mv "${{ github.workspace }}/build/universal/OrcaSlicer/OrcaSlicer.app" "$main_dmg_dir/"
           ln -sfn /Applications "$main_dmg_dir/Applications"
           retry hdiutil create -volname "OrcaSlicer" -srcfolder "$main_dmg_dir" -size "$(dmg_size "$main_dmg_dir")" -ov -format UDZO "OrcaSlicer_Mac_universal_${{ env.ver }}.dmg"
+          # The in-app updater replaces the installed app with this archive; see docs/HLSD/nightly_updates.md.
+          # COPYFILE_DISABLE keeps macOS metadata (._ files) out of it.
+          COPYFILE_DISABLE=1 tar -czf "OrcaSlicer_Mac_universal_${{ env.ver }}.app.tar.gz" -C "$main_dmg_dir" OrcaSlicer.app
           rm -rf "$main_dmg_dir"
           df -h "${{ github.workspace }}"
 
@@ -503,6 +513,18 @@ jobs:
           asset_name: OrcaSlicer_Mac_universal_nightly.dmg
           asset_content_type: application/octet-stream
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
+
+      - name: Deploy Mac app archive
+        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && hashFiles(format('OrcaSlicer_Mac_universal_{0}.app.tar.gz', env.ver)) != ''
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          upload_url: https://uploads.github.com/repos/NanashiTheNameless/OrcaSlicer/releases/242055857/assets{?name,label}
+          release_id: 242055857
+          asset_path: ${{ github.workspace }}/OrcaSlicer_Mac_universal_${{ env.ver }}.app.tar.gz
+          asset_name: OrcaSlicer_Mac_universal_nightly.app.tar.gz
+          asset_content_type: application/gzip
+          max_releases: 1
 
       # The DMG is only built when the validator app was.
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
