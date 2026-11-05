@@ -5,7 +5,7 @@ on:
     workflows: ["**"]
     types: [completed]
   schedule:
-    - cron: "17 * * * *"
+    - cron: "17 */4 * * *"
   workflow_dispatch:
     inputs:
       run_id:
