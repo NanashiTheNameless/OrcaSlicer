@@ -393,7 +393,9 @@ jobs:
         grep -q '^        CMAKE_CXX_COMPILER_LAUNCHER: ccache$' scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml
         mkdir -p .flatpak-builder/ccache
         export CCACHE_DIR=$PWD/.flatpak-builder/ccache
-        ccache --set-config=max_size=3G
+        # Kept small: the repo's Actions cache is capped at 10 GB, and an oversized
+        # entry here pushes out the deps caches, which take far longer to rebuild.
+        ccache --set-config=max_size=1G
         # The compiler is reinstalled every run, so its mtime means nothing.
         ccache --set-config=compiler_check=content
         # Headers a fresh checkout has just written, the few files that use

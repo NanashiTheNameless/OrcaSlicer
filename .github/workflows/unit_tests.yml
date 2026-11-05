@@ -48,7 +48,7 @@ jobs:
         with:
           cmakeVersion: "~4.3.0"  # use most recent 4.3.x version
           useLocalCache: true
-          useCloudCache: true
+          useCloudCache: false  # Downloading CMake takes seconds; Actions cache space is better spent on deps.
       # Skips self-hosted runners, where this machine-wide setting would stay after the job ends.
       - name: Enable Crash Dumps
         if: runner.os == 'Windows' && !vars.SELF_HOSTED
