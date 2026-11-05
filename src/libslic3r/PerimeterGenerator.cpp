@@ -437,6 +437,23 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
     bool overhangs_reverse = perimeter_generator.config->overhang_reverse &&
                              perimeter_generator.layer_id % 2 == 1;  // Only calculate overhang degree on even (from GUI POV) layers
 
+    // The second layer of the staggered range is extruded thicker to fill under the raised walls, and the second
+    // to last layer thinner and not raised, so the walls end level on the last layer of the range.
+    int        stagger_count    = 0;
+    const int  stagger_layer    = perimeter_generator.staggered_layer_index(stagger_count);
+    const bool stagger_layer_on = stagger_layer >= 0;
+    // By default the odd walls are raised; reversed, the outer wall and the other even walls are.
+    const int  stagger_parity   = perimeter_generator.config->staggered_perimeters_reverse ? 0 : 1;
+
+    auto check_and_stagger_path = [stagger_layer, stagger_count](ExtrusionPath& cur_path) {
+        if (stagger_layer == 1)
+            cur_path.extrusion_multiplier = 1.5;
+        if (stagger_layer == stagger_count - 2)
+            cur_path.extrusion_multiplier = 0.5;
+        else
+            cur_path.z_offset = 0.5;
+    };
+
     ExtrusionEntityCollection extrusion_coll;
     for (PerimeterGeneratorArachneExtrusion& pg_extrusion : pg_extrusions) {
         Arachne::ExtrusionLine* extrusion = pg_extrusion.extrusion;
@@ -591,29 +608,6 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
             extrusion_paths_append(paths, *extrusion, role, is_external ? perimeter_generator.ext_perimeter_flow : perimeter_generator.perimeter_flow);
         }
 
-        auto check_and_stagger_path = [perimeter_generator](ExtrusionPath& cur_path) {
-            bool was_staggered = false;
-            if (perimeter_generator.layer_id == 1 && perimeter_generator.number_of_layers >= 4) // i.e. layer after the first one
-            {
-                cur_path.extrusion_multiplier = 1.5;
-                was_staggered                 = true;
-            } else if (perimeter_generator.layer_id == perimeter_generator.number_of_layers - 2 &&
-                       perimeter_generator.number_of_layers >= 4) // i.e. last layer before the last one
-            {
-                cur_path.extrusion_multiplier = 0.5;
-                was_staggered                 = true;
-            }
-
-			if (perimeter_generator.layer_id != perimeter_generator.number_of_layers - 2 &&
-			perimeter_generator.number_of_layers >= 4) // i.e. last layer
-            {
-                cur_path.z_offset = 0.5;
-                was_staggered     = true;
-            }
-
-			return was_staggered;
-		};
-
         // Append paths to collection.
         if (!paths.empty()) {
 
@@ -646,8 +640,8 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 assert(extrusion_loop.paths.front().first_point() == extrusion_loop.paths.back().last_point());
 
 				//This is for staggered layers.
-				//All odd perimeters are staggerd up by half the layer height
-                if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
+				//Every second perimeter is staggered up by half the layer height
+                if (stagger_layer_on && extrusion->inset_idx % 2 == stagger_parity) {
                     for (size_t path_idx = 0; path_idx < extrusion_loop.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = extrusion_loop.paths[path_idx];
                         check_and_stagger_path(cur_path);
@@ -682,8 +676,8 @@ static ExtrusionEntityCollection traverse_extrusions(const PerimeterGenerator& p
                 }
 
 				//This is for staggered layers.
-				//All odd perimeters are staggerd up by half the layer height
-                if (extrusion->inset_idx % 2 == 1 && perimeter_generator.config->staggered_perimeters) {
+				//Every second perimeter is staggered up by half the layer height
+                if (stagger_layer_on && extrusion->inset_idx % 2 == stagger_parity) {
                     for (size_t path_idx = 0; path_idx < multi_path.paths.size(); path_idx++) {
                         ExtrusionPath& cur_path = multi_path.paths[path_idx];
                         check_and_stagger_path(cur_path);
@@ -3461,10 +3455,15 @@ void PerimeterGenerator::process_arachne()
                 }
             }
 
-            if (this->config->staggered_perimeters) { // If staggered layers are on, all odd perimeters will be staggered and should be printed after the non staggered perimeters
+            int stagger_range_size = 0;
+            if (this->staggered_layer_index(stagger_range_size) >= 0) { // On staggered layers, the staggered perimeters should be printed after the non staggered perimeters
+                // Raised walls are odd by default and even when reversed. The comparator must stay strict for the sort.
+                const bool reverse = this->config->staggered_perimeters_reverse;
                 std::stable_sort(ordered_extrusions.begin(), ordered_extrusions.end(),
-                    [](PerimeterGeneratorArachneExtrusion extrusion_1, PerimeterGeneratorArachneExtrusion extrusion_2) -> bool {
-                    return extrusion_1.extrusion->inset_idx % 2 < extrusion_2.extrusion->inset_idx % 2;
+                    [reverse](const PerimeterGeneratorArachneExtrusion &extrusion_1, const PerimeterGeneratorArachneExtrusion &extrusion_2) -> bool {
+                    const int parity_1 = extrusion_1.extrusion->inset_idx % 2;
+                    const int parity_2 = extrusion_2.extrusion->inset_idx % 2;
+                    return reverse ? parity_1 > parity_2 : parity_1 < parity_2;
                     });
             }
 

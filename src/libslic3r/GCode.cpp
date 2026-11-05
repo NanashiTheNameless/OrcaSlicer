@@ -9718,7 +9718,8 @@ std::string GCode::_extrude_piece(const ExtrusionPath &path, const std::string &
         }
     }
 
-    if (path.role() == erPerimeter && should_apply_staggered_offset) {
+    // The outer wall is raised only when the stagger direction is reversed.
+    if ((path.role() == erPerimeter || path.role() == erExternalPerimeter) && should_apply_staggered_offset) {
         _mm3_per_mm *= m_config.staggered_perimeter_flow_ratio;
     }
 

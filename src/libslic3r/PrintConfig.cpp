@@ -8680,12 +8680,40 @@ void PrintConfigDef::init_fff_params()
     def = this->add("staggered_perimeter_flow_ratio", coFloat);
     def->label = L("Staggered wall flow ratio");
     def->category = L("Strength");
-    def->tooltip = L("This factor affects the amount of material for staggered inner walls.\n\n"
-                     "The actual staggered inner wall flow used is calculated by multiplying this value by the current wall flow.");
+    def->tooltip = L("This factor affects the amount of material for staggered walls.\n\n"
+                     "The actual staggered wall flow used is calculated by multiplying this value by the current wall flow.");
     def->min = 0;
     def->max = 2;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionFloat(1));
+
+    def = this->add("staggered_perimeters_reverse", coBool);
+    def->label = L("Reverse stagger direction");
+    def->category = L("Strength");
+    def->tooltip = L("Raise the outer wall and every second wall inward from it by half a layer, instead of the walls between them. "
+                     "The outer wall is then printed on top of the lower wall next to it, which supports it on small overhangs.");
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionBool(false));
+
+    def = this->add("staggered_perimeter_first_layers", coInt);
+    def->label = L("Unstaggered bottom layers");
+    def->category = L("Strength");
+    def->tooltip = L("Number of layers at the bottom of the object that are printed with normal, unstaggered walls. "
+                     "Staggering starts on the layer above them.");
+    def->sidetext = L("layers");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionInt(0));
+
+    def = this->add("staggered_perimeter_last_layers", coInt);
+    def->label = L("Unstaggered top layers");
+    def->category = L("Strength");
+    def->tooltip = L("Number of layers at the top of the object that are printed with normal, unstaggered walls. "
+                     "The staggered walls are leveled off on the layer below them.");
+    def->sidetext = L("layers");
+    def->min = 0;
+    def->mode = comAdvanced;
+    def->set_default_value(new ConfigOptionInt(0));
 
     def = this->add("change_filament_gcode", coString);
     def->label = L("Change filament G-code");

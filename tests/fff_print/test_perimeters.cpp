@@ -14,6 +14,7 @@
 #include "libslic3r/TriangleMesh.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include "libslic3r/PrintConfig.hpp"
 #include <cstddef>
@@ -1565,4 +1566,122 @@ TEST_CASE("Changing the brim updates the wall order of the first layer", "[Perim
     // The change does turn the first layer around.
     REQUIRE(before != fresh);
     CHECK(after == fresh);
+}
+
+namespace {
+
+// How the walls of one inset parity (even: outer wall, 2nd inner wall, ...; odd: 1st inner wall, ...) are
+// extruded on one layer.
+struct StaggeredWalls
+{
+    bool   raised     = false;
+    double multiplier = 1.;
+};
+
+// Per layer, per inset parity.
+std::vector<std::array<StaggeredWalls, 2>> staggered_walls(const Print &print)
+{
+    std::vector<std::array<StaggeredWalls, 2>> layers;
+    for (const Layer *layer : print.objects().front()->layers()) {
+        std::array<StaggeredWalls, 2> walls;
+        for (const LayerRegion *region : layer->regions())
+            for (const ExtrusionEntity *entity : region->perimeters.flatten().entities)
+                if (const auto *loop = dynamic_cast<const ExtrusionLoop *>(entity); loop != nullptr && loop->inset_idx >= 0)
+                    for (const ExtrusionPath &path : loop->paths) {
+                        StaggeredWalls &w = walls[loop->inset_idx % 2];
+                        w.raised = w.raised || path.z_offset > 0.f;
+                        if (path.extrusion_multiplier != 1.)
+                            w.multiplier = path.extrusion_multiplier;
+                    }
+        layers.push_back(walls);
+    }
+    return layers;
+}
+
+} // namespace
+
+// Between the excluded bottom and top layers every second wall is raised by half a layer. The second layer of
+// that range fills under the raised walls and the second to last one levels them off, unraised. The first and
+// last layers of the range stay flat, so the walls start on and end with a level layer.
+TEST_CASE("Staggered perimeters raise every second wall over the layers they are not excluded from", "[Perimeters]")
+{
+    const bool reverse      = GENERATE(false, true);
+    const int  first_layers = GENERATE(0, 3);
+    const int  last_layers  = GENERATE(0, 2);
+    CAPTURE(reverse, first_layers, last_layers);
+
+    DynamicPrintConfig config = base_config("arachne");
+    config.set_deserialize_strict({
+        { "layer_height",                     0.25 },
+        { "initial_layer_print_height",       0.25 },
+        { "staggered_perimeters",             true },
+        { "staggered_perimeters_reverse",     reverse },
+        { "staggered_perimeter_first_layers", first_layers },
+        { "staggered_perimeter_last_layers",  last_layers },
+    });
+    Print print;
+    // 5 mm at 0.25 mm layers is 20 layers.
+    init_and_process_print({ make_cube(10., 10., 5.) }, print, config);
+    const std::vector<std::array<StaggeredWalls, 2>> layers = staggered_walls(print);
+    REQUIRE(layers.size() == 20);
+
+    // Reversed, the outer wall and the other even walls are raised; otherwise the odd ones.
+    const int staggered = reverse ? 0 : 1;
+    const int flat      = 1 - staggered;
+    const int count     = int(layers.size()) - first_layers - last_layers;
+    for (int layer_id = 0; layer_id < int(layers.size()); ++layer_id) {
+        CAPTURE(layer_id);
+        const int idx = layer_id - first_layers;
+        CHECK_FALSE(layers[layer_id][flat].raised);
+        CHECK_THAT(layers[layer_id][flat].multiplier, Catch::Matchers::WithinAbs(1., EPSILON));
+        const bool flat_edge = idx == 0 || idx == count - 1;
+        if (idx < 0 || idx >= count || flat_edge) {
+            CHECK_FALSE(layers[layer_id][staggered].raised);
+            CHECK_THAT(layers[layer_id][staggered].multiplier, Catch::Matchers::WithinAbs(1., EPSILON));
+        } else if (idx == count - 2) {
+            CHECK_FALSE(layers[layer_id][staggered].raised);
+            CHECK_THAT(layers[layer_id][staggered].multiplier, Catch::Matchers::WithinAbs(0.5, EPSILON));
+        } else {
+            CHECK(layers[layer_id][staggered].raised);
+            CHECK_THAT(layers[layer_id][staggered].multiplier, Catch::Matchers::WithinAbs(idx == 1 ? 1.5 : 1., EPSILON));
+        }
+    }
+}
+
+// The raised walls go down after the walls they sit beside, so the walls under them are already in place.
+TEST_CASE("Staggered walls are extruded after the unstaggered walls of their island", "[Perimeters]")
+{
+    const bool reverse = GENERATE(false, true);
+    CAPTURE(reverse);
+
+    DynamicPrintConfig config = base_config("arachne");
+    config.set_deserialize_strict({
+        { "layer_height",                 0.25 },
+        { "initial_layer_print_height",   0.25 },
+        { "staggered_perimeters",         true },
+        { "staggered_perimeters_reverse", reverse },
+    });
+    Print print;
+    init_and_process_print({ make_cube(10., 10., 5.) }, print, config);
+
+    size_t raised_loops = 0;
+    for (const Layer *layer : print.objects().front()->layers())
+        for (const LayerRegion *region : layer->regions())
+            for (const ExtrusionEntity *island : region->perimeters.entities) {
+                const auto *coll = dynamic_cast<const ExtrusionEntityCollection *>(island);
+                if (coll == nullptr)
+                    continue;
+                bool seen_raised = false;
+                for (const ExtrusionEntity *entity : coll->flatten().entities)
+                    if (const auto *loop = dynamic_cast<const ExtrusionLoop *>(entity)) {
+                        const bool raised = std::any_of(loop->paths.begin(), loop->paths.end(),
+                                                        [](const ExtrusionPath &p) { return p.z_offset > 0.f; });
+                        raised_loops += raised;
+                        if (!raised)
+                            CHECK_FALSE(seen_raised);
+                        seen_raised = seen_raised || raised;
+                    }
+            }
+    // Without raised loops the ordering check above would pass on nothing.
+    CHECK(raised_loops > 0);
 }

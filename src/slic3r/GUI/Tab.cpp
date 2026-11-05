@@ -3163,6 +3163,9 @@ void TabPrint::build()
         optgroup->append_single_option_line("detect_thin_wall", "strength_settings_walls#detect-thin-wall");
         optgroup->append_single_option_line("staggered_perimeters", "staggered-perimeters-known-issues");
         optgroup->append_single_option_line("staggered_perimeter_flow_ratio", "staggered-perimeters-known-issues");
+        optgroup->append_single_option_line("staggered_perimeters_reverse", "staggered-perimeters-known-issues");
+        optgroup->append_single_option_line("staggered_perimeter_first_layers", "staggered-perimeters-known-issues");
+        optgroup->append_single_option_line("staggered_perimeter_last_layers", "staggered-perimeters-known-issues");
 
         optgroup = page->new_optgroup(L("Top/bottom shells"), L"param_shell");
 

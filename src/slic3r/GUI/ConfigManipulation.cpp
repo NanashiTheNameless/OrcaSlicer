@@ -818,6 +818,8 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
         toggle_field(el, have_perimeters, -1, wall_loops_reason);
     for (auto el : { "inner_wall_speed", "outer_wall_speed", "small_perimeter_speed", "small_perimeter_threshold" })
         toggle_field(el, have_perimeters, variant_index, wall_loops_reason);
+    for (auto el : { "staggered_perimeters_reverse", "staggered_perimeter_first_layers", "staggered_perimeter_last_layers" })
+        toggle_line(el, config->opt_bool("staggered_perimeters"), -1, _L("Enable staggered perimeters to use this setting."));
 
     bool have_infill = config->option<ConfigOptionPercent>("sparse_infill_density")->value > 0;
     // sparse_infill_filament_id uses the same logic as in Print::extruders()
