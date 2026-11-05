@@ -813,7 +813,7 @@ body.cloud-mode #LeftBoard
 .CT_Item:hover
 {
 	cursor: pointer;
-	background-color:var(--main-color); /*ORCA color*/
+	background-color:var(--main-color);
 	border-radius: 4px;
 	color: #fff;
 }

@@ -89,7 +89,7 @@ env:
   # by build_orca.yml's Linux leg. The job guard pins github.repository to
   # OrcaSlicer/OrcaSlicer, so this resolves there.
   TOOL_REPO: ${{ github.repository }}
-  TOOL_ASSET: generate_system_cache_Linux_Ubuntu2404_nightly
+  TOOL_ASSET: generate_system_cache_Linux_nightly
   # Where per-vendor ZIP assets are published; OrcaCloud's OTA reads this repo.
   PROFILES_OWNER: OrcaSlicer
   PROFILES_REPO: orcaslicer-profiles

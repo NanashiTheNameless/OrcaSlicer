@@ -50,6 +50,22 @@ jobs:
 
       - uses: ./.github/actions/get-cmake
 
+      # A change to deps/ or the build script rebuilds every dependency; the
+      # compiler cache keeps that to the ones whose sources or flags changed.
+      # The superbuild forwards the launcher to each dependency's own CMake.
+      # Unlike OrcaSlicer's build, the precompiled-header compiles stay out:
+      # wxWidgets' are made without -fno-pch-timestamp, so clang would reject a
+      # cached header against the freshly fetched sources' modification times.
+      - name: Compiler cache
+        id: ccache
+        uses: ./.github/actions/ccache-restore
+        with:
+          prefix: ccache-deps
+          os: ${{ inputs.os }}
+          arch: ${{ inputs.arch }}
+          compiler: ${{ inputs.compiler }}
+          sloppiness: time_macros,include_file_mtime,include_file_ctime
+
       - name: setup dev on Windows
         if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v3
@@ -148,6 +164,13 @@ jobs:
             ./build_linux.sh -drlL
             cd deps/build
             tar -czvf OrcaSlicer_dep_ubuntu_$(date +"%Y%m%d").tar.gz destdir
+
+      - name: Save compiler cache
+        if: ${{ always() }}
+        uses: ./.github/actions/ccache-save
+        with:
+          restored: ${{ steps.ccache.outputs.restored }}
+          job-status: ${{ job.status }}
 
 
       # Upload Artifacts

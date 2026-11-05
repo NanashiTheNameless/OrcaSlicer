@@ -99,8 +99,11 @@ jobs:
       - name: Download
         working-directory: ${{ github.workspace }}
         run: |
-          curl -LJO https://github.com/NanashiTheNameless/OrcaSlicer/releases/download/Nightly-Rolling/OrcaSlicer_profile_validator_Linux_Ubuntu2404
-          mv OrcaSlicer_profile_validator_Linux_Ubuntu2404 OrcaSlicer_profile_validator
+          # The Ubuntu2404 name is what the nightly carried before the Linux build
+          # went down to one Ubuntu version; it is stale once the new name exists.
+          url=https://github.com/NanashiTheNameless/OrcaSlicer/releases/download/Nightly-Rolling
+          curl -fL -o OrcaSlicer_profile_validator "$url/OrcaSlicer_profile_validator_Linux" ||
+            curl -fL -o OrcaSlicer_profile_validator "$url/OrcaSlicer_profile_validator_Linux_Ubuntu2404"
           chmod +x ./OrcaSlicer_profile_validator
 
       # Validate all system profiles.

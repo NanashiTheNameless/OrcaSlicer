@@ -812,7 +812,9 @@ if (SLIC3R_CAD)
 endif ()
 
 if(WIN32)
-    target_link_libraries(libslic3r PRIVATE Psapi.lib bcrypt.lib)
+    # crypt32: the static libcrypto's CAPI engine calls the Windows certificate store,
+    # and anything linking libslic3r without libcurl (the unit tests) gets no other copy.
+    target_link_libraries(libslic3r PRIVATE Psapi.lib bcrypt.lib crypt32.lib)
 endif()
 
 if(SLIC3R_PROFILE)

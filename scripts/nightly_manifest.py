@@ -19,6 +19,13 @@ from datetime import datetime
 # File name -> what it is. Files not listed here (test bundles, the profile
 # validator, cache generators) are left out of the manifest.
 ASSET_KINDS = [
+    # One AppImage per arch, for every supported Ubuntu, so it names no base.
+    (r"^OrcaSlicer_Linux_AppImage_nightly\.AppImage$",
+     lambda _: dict(platform="linux", arch="x86_64", kind="appimage")),
+    (r"^OrcaSlicer_Linux_AppImage_nightly_aarch64\.AppImage$",
+     lambda _: dict(platform="linux", arch="arm64", kind="appimage")),
+    # Earlier nightlies built one AppImage per Ubuntu base. Such files left on the
+    # release are no longer rebuilt, so they are listed as not current.
     (r"^OrcaSlicer_Linux_AppImage_Ubuntu(\d{2})(\d{2})_nightly\.AppImage$",
      lambda m: dict(platform="linux", arch="x86_64", kind="appimage", distro=f"ubuntu{m[1]}{m[2]}")),
     (r"^OrcaSlicer_Linux_AppImage_Ubuntu(\d{2})(\d{2})_nightly_aarch64\.AppImage$",

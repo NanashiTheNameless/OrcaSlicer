@@ -1,0 +1,63 @@
+name: 'Save compiler cache'
+description: >
+  Trim the compiler cache restored by ccache-restore to what this build used and save it.
+  Call it with if: always(), so a failed or cancelled build still saves what it compiled.
+inputs:
+  restored:
+    description: 'The restored output of ccache-restore'
+    required: true
+  job-status:
+    description: 'job.status of the calling job'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    # A build that finished touched every object it can use, so anything older than
+    # the job is dead: kept, it only pushes other caches out of the repository's
+    # cache storage. A build that stopped early did not reach everything it can use,
+    # so it keeps a week, which drops what a flag change orphaned.
+    - name: Trim compiler cache
+      if: ${{ always() && inputs.restored == 'true' }}
+      shell: bash
+      run: |
+        if [ "${{ inputs.job-status }}" = success ] && [ -n "${CCACHE_JOB_START:-}" ]; then
+          ccache --evict-older-than "$(( $(date +%s) - CCACHE_JOB_START + 60 ))s"
+        else
+          ccache --evict-older-than 7d
+        fi
+        ccache -s -v || ccache -s
+
+    # Entries are immutable, so the new one is saved first and the older ones for
+    # this leg on this ref are dropped afterwards: a failed save leaves the previous
+    # entry in place. Pull requests restore the base branch's entry and discard what
+    # they compiled.
+    - name: Save compiler cache
+      id: save
+      if: ${{ always() && inputs.restored == 'true' && github.event_name != 'pull_request' }}
+      uses: actions/cache/save@v6
+      with:
+        path: ${{ github.workspace }}/.ccache
+        key: ${{ env.CCACHE_ENTRY }}
+
+    - name: Drop older compiler cache entries
+      if: ${{ always() && steps.save.outcome == 'success' }}
+      # A read-only token cannot delete; that only costs storage. Older means a lower
+      # run id, so two runs finishing close together keep the newer entry whichever
+      # of them cleans up last.
+      continue-on-error: true
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        # The save step reports success even when its tar failed, so keep the
+        # older entries unless the new one is listed.
+        if ! gh cache list --ref "$GITHUB_REF" --key "$CCACHE_ENTRY" --json key \
+            | jq -e --arg entry "$CCACHE_ENTRY" 'any(.[]; .key == $entry)' > /dev/null; then
+          echo "$CCACHE_ENTRY was not saved; keeping the older entries."
+          exit 0
+        fi
+        gh cache list --ref "$GITHUB_REF" --key "$CCACHE_LEG-" --limit 100 --json id,key \
+          | jq -r --arg prefix "$CCACHE_LEG-" --argjson run "$GITHUB_RUN_ID" \
+              '.[] | select((.key | ltrimstr($prefix) | split("-")[0] | tonumber?) < $run) | .id' \
+          | tr -d '\r' \
+          | while read -r id; do gh cache delete "$id"; done

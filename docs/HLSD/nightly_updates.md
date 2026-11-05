@@ -58,8 +58,10 @@ for updates; asked to, they say so and link the release page.
 without a GUI (`tests/libslic3r/test_nightly_manifest.cpp`):
 
 - a build is offered an update when the manifest's commit is newer than its own,
-  and the release has a current file for its platform, architecture, package
-  kind and, for an AppImage, Ubuntu base;
+  and the release has a current file for its platform, architecture and package
+  kind. One AppImage per architecture serves every supported Ubuntu; an
+  AppImage named for an Ubuntu base, as earlier nightlies were, also matches a
+  file that names none;
 - "Skip this build" records the manifest's commit, so the next nightly is
   offered again;
 - signatures and file hashes are checked with OpenSSL.

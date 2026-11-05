@@ -108,20 +108,19 @@ jobs:
   build_linux:
     strategy:
       fail-fast: false
-      # SELF_HOSTED skips arm64 (no arm self-hosted server). amd64's empty arch
-      # is load-bearing: it keeps the deps cache key unsuffixed
+      # One AppImage per arch, built on the oldest supported Ubuntu: it needs the
+      # host's glibc, GTK and WebKitGTK to be at least as new as the build's, so a
+      # 22.04 build also runs on 24.04 and later, and a 24.04 build would not run
+      # on 22.04. SELF_HOSTED skips arm64 (no arm self-hosted server). amd64's
+      # empty arch is load-bearing: it keeps the deps cache key unsuffixed
       # ('linux-clang-<os>', which clang_tidy.yml restores) and the unsuffixed
       # asset names.
       matrix:
         include:
           - arch: ""
             os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }}
-          - arch: ""
-            os: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
           - arch: "aarch64"
             os: ubuntu-22.04-arm
-          - arch: "aarch64"
-            os: ubuntu-24.04-arm
     # Don't run scheduled builds on forks:
     if: ${{ !cancelled() && (github.event_name != 'schedule' || github.repository == 'OrcaSlicer/OrcaSlicer') }}
     uses: ./.github/workflows/build_check_cache.yml
@@ -176,7 +175,8 @@ jobs:
       arch: universal
       macos-combine-only: true
     secrets: inherit
-  # One test job per built arch, on the runner that built it.
+  # One test job per built arch. The Linux tests are built on 22.04 and run on
+  # 24.04, which also checks that what 22.04 builds runs on the newer release.
   unit_tests_linux_x86_64:
     name: Linux x86_64
     needs: build_linux
