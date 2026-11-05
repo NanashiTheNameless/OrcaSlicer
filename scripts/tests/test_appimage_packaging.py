@@ -46,6 +46,11 @@ if [ "${FAIL_DOWNLOAD:-0}" = 1 ]; then
     printf partial > "$output"
     exit 8
 fi
+if [ -n "${FAIL_ONCE_MARKER:-}" ] && [ ! -e "$FAIL_ONCE_MARKER" ]; then
+    touch "$FAIL_ONCE_MARKER"
+    printf partial > "$output"
+    exit 8
+fi
 cp "$FAKE_APPIMAGETOOL" "$output"
 """)
         tool = root / "fake-appimagetool"
@@ -56,7 +61,7 @@ test -f usr/share/metainfo/dev.namelessnanashi.OrcaSlicer.metainfo.xml
 printf appimage > "OrcaSlicer-$(uname -m).AppImage"
 """)
         self.env = dict(os.environ, PATH=f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
-                        FAKE_APPIMAGETOOL=str(tool))
+                        FAKE_APPIMAGETOOL=str(tool), APPIMAGETOOL_RETRY_DELAY="0")
         self.env.pop("container", None)
 
     @staticmethod
@@ -92,6 +97,13 @@ printf appimage > "OrcaSlicer-$(uname -m).AppImage"
         self.assertEqual(previous.read_text(), "previous tool")
         self.assertTrue((self.package / "orca-slicer").is_file())
         self.assertFalse((self.package / "AppRun").exists())
+
+    def test_transient_download_failure_is_retried(self):
+        marker = self.build / "failed-once"
+        result = self.run_packager(FAIL_ONCE_MARKER=str(marker))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(marker.exists())
+        self.assertTrue((self.package / "OrcaSlicer_Linux_Vtest.AppImage").is_file())
 
     def test_missing_metadata_stops_packaging(self):
         self.metadata.unlink()

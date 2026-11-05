@@ -7,9 +7,20 @@ REPO_ROOT="@CMAKE_SOURCE_DIR@"
 
 APP_IMAGE="@SLIC3R_APP_KEY@_Linux_V@SoftFever_VERSION@.AppImage"
 
-wget --tries=5 --waitretry=5 --timeout=60 --retry-connrefused \
-  --retry-on-http-error=429,500,502,503,504 \
-  "${APPIMAGETOOLURL}" -O ../appimagetool.AppImage.part
+# wget's own retries span only seconds, and GitHub's release CDN can return
+# 504s for minutes, so retry the whole download a few times with a long pause.
+attempt=1
+until wget --tries=5 --waitretry=5 --timeout=60 --retry-connrefused \
+    --retry-on-http-error=429,500,502,503,504 \
+    "${APPIMAGETOOLURL}" -O ../appimagetool.AppImage.part; do
+  status=$?
+  if [ "$attempt" -ge "${APPIMAGETOOL_DOWNLOAD_ATTEMPTS:-4}" ]; then
+    exit "$status"
+  fi
+  echo "appimagetool download failed (attempt $attempt), retrying..." >&2
+  sleep "${APPIMAGETOOL_RETRY_DELAY:-60}"
+  attempt=$((attempt + 1))
+done
 mv ../appimagetool.AppImage.part ../appimagetool.AppImage
 chmod +x ../appimagetool.AppImage
 

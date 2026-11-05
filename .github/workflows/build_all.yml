@@ -414,6 +414,22 @@ jobs:
     - name: Pack deps/ for the Flatpak manifest
       run: ./scripts/flatpak/make_deps_tar.sh
       shell: bash
+    # flatpak-builder fails the whole build on the first source that does not
+    # download, and GitHub's archive and release hosts return 504s for minutes
+    # at a time. Fetch the sources first with retries; downloads that succeeded
+    # are kept in .flatpak-builder, so each retry and the build reuse them.
+    - name: Download Flatpak sources
+      run: |
+        for attempt in 1 2 3 4 5; do
+          if flatpak-builder --download-only --allow-missing-runtimes \
+              --arch=${{ matrix.variant.arch }} \
+              "$RUNNER_TEMP/flatpak-download" scripts/flatpak/dev.namelessnanashi.OrcaSlicer.yml; then
+            exit 0
+          fi
+          [ "$attempt" -lt 5 ] && { echo "Source download failed (attempt $attempt), retrying in 60s"; sleep 60; }
+        done
+        exit 1
+      shell: bash
     - uses: flatpak/flatpak-github-actions/flatpak-builder@master
       with:
         bundle: OrcaSlicer-Linux-flatpak_${{ env.ver }}_${{ matrix.variant.arch }}.flatpak
