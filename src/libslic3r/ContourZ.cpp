@@ -42,6 +42,11 @@ static bool contour_extrusion_path(LayerRegion *region, const sla::IndexedMesh &
     if (path.role() != erTopSolidInfill && path.role() != erIroning && path.role() != erExternalPerimeter && path.role() != erPerimeter) {
 		return false;
 	}
+	// A staggered wall is raised by half a layer, so contouring it from the nominal layer top would sink it into the
+	// wall below. G-code also ignores the stagger offset of a contoured path, so leave staggered walls flat.
+	if (!is_approx(path.z_offset, 0.0f)) {
+		return false;
+	}
 
 	Layer *layer = region->layer();
 	coordf_t mesh_slice_z = layer->slice_z + mesh.ground_level();

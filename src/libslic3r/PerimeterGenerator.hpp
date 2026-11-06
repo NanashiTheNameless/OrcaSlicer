@@ -178,6 +178,21 @@ public:
     //BBS
     double      smaller_width_ext_mm3_per_mm()   const { return m_ext_mm3_per_mm_smaller_width; }
     Polygons    lower_slices_polygons() const { return m_lower_slices_polygons; }
+
+    // Staggering runs over the object layers left after the bottom and top exclusions, and needs at least 4 of them.
+    // Returns the index of this layer within that range and its size, or -1 when the walls of this layer are not staggered.
+    // The first and last layers of the range stay flat, so the walls start on and end with a level layer.
+    int         staggered_layer_index(int &range_size) const {
+        const int first = config->staggered_perimeter_first_layers.value;
+        const int last  = config->staggered_perimeter_last_layers.value;
+        range_size      = int(number_of_layers) - first - last;
+        // layer_id counts the raft layers too, number_of_layers does not.
+        const int index = layer_id - object_config->raft_layers.value - first;
+        if (!config->staggered_perimeters || range_size < 4 || index <= 0 || index >= range_size - 1)
+            return -1;
+        return index;
+    }
+
     // ORCA: the slices less the slivers the wall generator prints nothing for, so they never count as support.
     ExPolygons  printable_slices(const ExPolygons &slices) const;
     // ORCA: whether this layer prints its outer walls first for the brim, see brim_puts_outer_walls_first().
