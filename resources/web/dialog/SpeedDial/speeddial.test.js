@@ -614,7 +614,8 @@ var fakeNow = 0;
 var fakeTimers = [];
 var nextTimerId = 1;
 ctx.document = { body: null };                // requestResize stops at the missing body
-ctx.Date.now = function () { return fakeNow; };
+// The context has its own Date, which the sandbox object does not expose as ctx.Date.
+vm.runInContext("Date", ctx).now = function () { return fakeNow; };
 ctx.setTimeout = function (fn, ms) {
     var t = { id: nextTimerId++, at: fakeNow + Math.max(0, ms || 0), fn: fn };
     fakeTimers.push(t);
