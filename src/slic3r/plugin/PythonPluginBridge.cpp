@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <boost/log/trivial.hpp>
 #include <exception>
+#include <initializer_list>
 #include "libslic3r/LifecycleEvents.hpp"
 #include <memory>
 #include <mutex>
@@ -694,21 +695,23 @@ void install_python_thread_audit_shim()
         if (installed < 0)
             PyErr_Clear();
 
-        py::object original = py::reinterpret_steal<py::object>(
-            PyObject_GetAttrString(thread_module.ptr(), "start_new_thread"));
-        if (!original || !PyCallable_Check(original.ptr())) {
-            PyErr_Clear();
-            BOOST_LOG_TRIVIAL(error) << "[AUDIT] _thread.start_new_thread is missing or not callable; "
-                                        "plugin threads will run without audit attribution";
-            return;
-        }
+        // Python 3.13 added start_joinable_thread, which threading.Thread.start() calls instead of
+        // start_new_thread; start_new is the old alias of start_new_thread. Wrap every start function this interpreter has: one left unwrapped
+        // starts plugin threads with no audit context, so their events are not checked as the
+        // plugin's. Each takes the thread function first; the rest is passed through unchanged.
+        bool wrapped_any = false;
+        for (const char* name : {"start_new_thread", "start_new", "start_joinable_thread"}) {
+            py::object original = py::reinterpret_steal<py::object>(PyObject_GetAttrString(thread_module.ptr(), name));
+            if (!original || !PyCallable_Check(original.ptr())) {
+                PyErr_Clear();
+                continue;
+            }
 
-        py::object shim = py::cpp_function(
-            [original](py::object function, py::object args, py::object kwargs) -> py::object {
-                const std::string plugin_key  = PluginAuditManager::instance().current_plugin();
+            py::object shim = py::cpp_function([original](py::object function, py::args args, py::kwargs kwargs) -> py::object {
+                const std::string plugin_key = PluginAuditManager::instance().current_plugin();
                 if (plugin_key.empty()) {
                     // Not called from a plugin: preserve the stock implementation untouched.
-                    return kwargs.is_none() ? original(function, args) : original(function, args, kwargs);
+                    return original(function, *args, **kwargs);
                 }
                 const std::string capability = PluginAuditManager::instance().current_capability();
 
@@ -720,41 +723,46 @@ void install_python_thread_audit_shim()
                             throw py::error_already_set();
                         return py::reinterpret_steal<py::object>(result);
                     });
-                return kwargs.is_none() ? original(guarded, args) : original(guarded, args, kwargs);
-            },
-            py::arg("function"), py::arg("args"), py::arg("kwargs") = py::none());
+                return original(guarded, *args, **kwargs);
+            });
 
-        if (PyObject_SetAttrString(thread_module.ptr(), "start_new_thread", shim.ptr()) < 0) {
-            PyErr_Clear();
-            BOOST_LOG_TRIVIAL(error)
-                << "[AUDIT] Failed to install Python thread attribution shim on _thread.start_new_thread";
-            return;
-        }
-        if (PyObject_SetAttrString(thread_module.ptr(), "_orca_thread_audit_shim_installed", Py_True) < 0)
-            PyErr_Clear();
+            if (PyObject_SetAttrString(thread_module.ptr(), name, shim.ptr()) < 0) {
+                PyErr_Clear();
+                BOOST_LOG_TRIVIAL(error) << "[AUDIT] Failed to install Python thread attribution shim on _thread." << name;
+                continue;
+            }
+            wrapped_any = true;
 
-        // threading.py caches the function at import time (as `_start_new_thread` in 3.12, and as
-        // `start_new_thread` in older versions). Patch the cached reference too when the module is
-        // already loaded; otherwise its Thread.start() would keep calling the unwrapped original.
-        py::object sys_modules = py::module_::import("sys").attr("modules");
-        PyObject*  threading_module = PyDict_GetItemString(sys_modules.ptr(), "threading");
-        if (threading_module && threading_module != Py_None) {
-            const char* cached_names[] = {"_start_new_thread", "start_new_thread"};
-            for (const char* cached_name : cached_names) {
-                const int has_cached_name = PyObject_HasAttrString(threading_module, cached_name);
+            // threading.py caches the function at import time (start_new_thread as
+            // `_start_new_thread`, or under its own name in older versions; start_joinable_thread
+            // as `_start_joinable_thread`). Patch the cached reference too when the module is
+            // already loaded; otherwise its Thread.start() would keep calling the unwrapped original.
+            py::object sys_modules      = py::module_::import("sys").attr("modules");
+            PyObject*  threading_module = PyDict_GetItemString(sys_modules.ptr(), "threading");
+            if (!threading_module || threading_module == Py_None)
+                continue;
+            for (const std::string cached_name : {std::string("_") + name, std::string(name)}) {
+                const int has_cached_name = PyObject_HasAttrString(threading_module, cached_name.c_str());
                 if (has_cached_name < 0) {
                     PyErr_Clear();
                     continue;
                 }
                 if (has_cached_name != 1)
                     continue;
-                if (PyObject_SetAttrString(threading_module, cached_name, shim.ptr()) < 0) {
+                if (PyObject_SetAttrString(threading_module, cached_name.c_str(), shim.ptr()) < 0) {
                     PyErr_Clear();
                     BOOST_LOG_TRIVIAL(warning) << "[AUDIT] Failed to update threading." << cached_name
                                                << " with the Python thread attribution shim";
                 }
             }
         }
+        if (!wrapped_any) {
+            BOOST_LOG_TRIVIAL(error) << "[AUDIT] _thread has no thread start function to wrap; "
+                                        "plugin threads will run without audit attribution";
+            return;
+        }
+        if (PyObject_SetAttrString(thread_module.ptr(), "_orca_thread_audit_shim_installed", Py_True) < 0)
+            PyErr_Clear();
 
         BOOST_LOG_TRIVIAL(info) << "[AUDIT] Python thread attribution shim installed";
     } catch (const std::exception& ex) {

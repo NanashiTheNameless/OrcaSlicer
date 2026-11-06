@@ -132,6 +132,8 @@ static const std::unordered_map<std::string, AuditEventCategory> audit_event_cat
 
     // threading
     {"_thread.start_new_thread", AuditEventCategory::Threading},
+    // Python 3.13+: threading.Thread.start() raises this one instead.
+    {"_thread.start_joinable_thread", AuditEventCategory::Threading},
     // processreplace: exec* replaces the current process image rather than spawning a child
     {"os.exec", AuditEventCategory::ProcessReplace},
 };

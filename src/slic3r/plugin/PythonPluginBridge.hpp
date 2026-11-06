@@ -13,8 +13,8 @@ namespace Slic3r { class PluginCapabilityInterface; }
 
 namespace Slic3r {
 
-// Install the thread-attribution shim: wraps `_thread.start_new_thread` (and the reference
-// cached by an already-imported `threading` module) so a thread spawned from inside a plugin
+// Install the thread-attribution shim: wraps `_thread.start_new_thread` and, on Python 3.13+,
+// `_thread.start_joinable_thread` (and the references cached by an already-imported `threading` module) so a thread spawned from inside a plugin
 // call runs with that call's plugin key/capability audit scope. The captured identity is held
 // in a private C++ wrapper; nothing is exposed to Python that could set it.
 //
