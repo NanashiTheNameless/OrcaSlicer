@@ -115,18 +115,23 @@ def main():
             identities = run('security', 'find-identity', '-p', 'codesigning', str(keychain))
             if identity.encode() not in identities.stdout:
                 raise ValueError('Imported macOS identity does not match the pinned certificate.')
+            # Hashes and names only; it shows whether macOS rejects the identity (for example as untrusted).
+            print(identities.stdout.decode(errors='replace').rstrip(), flush=True)
             sign_apps(apps, identity, args.entitlements, keychain)
         finally:
             if keychain.exists():
                 run('security', 'delete-keychain', str(keychain))
 
 
-if __name__ == '__main__':
+def cli():
     try:
         main()
     except subprocess.CalledProcessError as error:
         # CalledProcessError's string contains the full command (and passwords).
         print(f'{error.cmd[0]} failed during macOS signing (exit {error.returncode}).', file=sys.stderr)
+        # codesign's arguments and output hold no secrets, and its output names the failing path.
+        if error.cmd[0] == 'codesign' and error.stderr:
+            print(error.stderr.decode(errors='replace').rstrip(), file=sys.stderr)
         sys.exit(1)
     except subprocess.TimeoutExpired as error:
         print(f'{error.cmd[0]} did not finish within {TIMEOUT} s during macOS signing.', file=sys.stderr)
@@ -134,3 +139,7 @@ if __name__ == '__main__':
     except (OSError, ValueError, KeyError) as error:
         print(str(error), file=sys.stderr)
         sys.exit(1)
+
+
+if __name__ == '__main__':
+    cli()
