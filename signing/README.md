@@ -16,14 +16,15 @@ Set these repository Actions secrets from the signing kit:
 
 Keep private files outside the checkout. Never print secrets into logs. Use
 ephemeral signing runners; native signing imports temporary identities and
-removes them afterwards. macOS CI requires passwordless sudo to set temporary
-admin-domain code-signing trust, then restores the prior settings. Store MSIX
+removes them afterwards. macOS signing never changes trust settings: codesign
+uses the untrusted identity as is, and a trust change would wait on an
+authorization prompt that a CI runner cannot answer. Store MSIX
 keeps its Store Publisher and receives a detached signature; Microsoft signs Store submissions.
 
 Local Windows signing: `./signing/scripts/sign-windows-build.ps1 -BuildDir build`
 before packaging, then repeat with `-Stage Installer` after CPack. Local macOS:
 `python3 signing/scripts/sign-macos-build.py path/to/OrcaSlicer.app` after importing
-and trusting the identity using the kit's macOS guide. For detached local signing,
+the identity using the kit's macOS guide. For detached local signing,
 use the kit's `scripts/sign-release.py` after all packaging is complete. Windows
 uses an already imported identity, or an explicit `-SecretDirectory` argument.
 

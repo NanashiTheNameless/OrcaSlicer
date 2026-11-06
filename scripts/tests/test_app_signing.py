@@ -96,27 +96,13 @@ class DownloadSigningTest(unittest.TestCase):
 
 
 class MacosSigningOrderTest(unittest.TestCase):
-    def run_ci_signer(self, failure=None, empty_trust=False):
+    def run_ci_signer(self, failure=None):
         commands = []
         identity = (REPO / 'signing/public/certificate-sha1.txt').read_bytes().strip()
 
-        def security(*args, **kwargs):
+        def tool(*args, **kwargs):
             commands.append(args)
-            operation = args[3] if args[0] == 'sudo' else args[1]
-            if args[0] == 'codesign':
-                operation = 'codesign'
-            if operation == 'trust-settings-export':
-                if failure == operation or empty_trust:
-                    message = b'sudo: a password is required' if failure else b'No Trust Settings were found'
-                    return subprocess.CompletedProcess(args, 1, stdout=b'', stderr=message)
-                Path(args[-1]).write_text('existing trust settings')
-            if operation == 'add-trusted-cert' and '-o' in args:
-                Path(args[-1]).write_text('empty trust settings')
-            if operation == 'trust-settings-import':
-                self.restored_snapshot = Path(args[-1])
-                self.restored_contents = self.restored_snapshot.read_text()
-                if failure == operation:
-                    self.addCleanup(shutil.rmtree, self.restored_snapshot.parent)
+            operation = 'codesign' if args[0] == 'codesign' else args[1]
             if operation == failure:
                 raise subprocess.CalledProcessError(1, args, stderr=b'test failure')
             if operation == 'create-keychain':
@@ -132,60 +118,35 @@ class MacosSigningOrderTest(unittest.TestCase):
                    'NN_SIGNING_PASSWORD': 'test-password'}
             with patch.dict(os.environ, env), patch.object(macos.sys, 'platform', 'darwin'), \
                     patch.object(macos.sys, 'argv', ['sign-macos-build.py', str(app)]), \
-                    patch.object(macos, 'run', side_effect=security), \
-                    patch.object(macos.sys, 'stderr', new_callable=io.StringIO) as stderr:
+                    patch.object(macos, 'run', side_effect=tool), \
+                    patch.object(macos.sys, 'stdout', new_callable=io.StringIO):
                 if failure:
-                    error = RuntimeError if failure == 'trust-settings-export' else subprocess.CalledProcessError
-                    with self.assertRaises(error):
+                    with self.assertRaises(subprocess.CalledProcessError):
                         macos.main()
                 else:
                     macos.main()
         keychain = next(Path(command[-1]) for command in commands if command[:2] == ('security', 'create-keychain'))
         self.assertFalse(keychain.parent.exists())
         self.assertEqual(commands[-1][:2], ('security', 'delete-keychain'))
-        return commands, stderr.getvalue()
+        return commands
 
-    def test_ci_trust_changes_are_noninteractive_and_restore_the_admin_domain(self):
-        commands, _ = self.run_ci_signer()
-        privileged = [command for command in commands if command[0] == 'sudo']
-        self.assertEqual([command[3] for command in privileged],
-                         ['trust-settings-export', 'add-trusted-cert', 'trust-settings-import'])
-        for command in privileged:
-            self.assertEqual(command[:3], ('sudo', '-n', '/usr/bin/security'))
-            self.assertIn('-d', command)
-        self.assertEqual(self.restored_contents, 'existing trust settings')
-        self.assertFalse(self.restored_snapshot.parent.exists())
+    def test_ci_signing_never_changes_trust_or_needs_privileges(self):
+        # Trust changes wait for a SecurityAgent prompt on CI runners and hang the job.
+        commands = self.run_ci_signer()
+        self.assertFalse(any(command[0] == 'sudo' for command in commands))
+        self.assertFalse(any('trust' in part for command in commands for part in command))
+        lookup = next(command for command in commands if command[:2] == ('security', 'find-identity'))
+        self.assertNotIn('-v', lookup)
+        self.assertTrue(any(command[0] == 'codesign' and '--verify' in command for command in commands))
 
-    def test_signing_failure_restores_trust_and_removes_the_temporary_keychain(self):
-        commands, _ = self.run_ci_signer(failure='codesign')
-        self.assertEqual(commands[-2][:4], ('sudo', '-n', '/usr/bin/security', 'trust-settings-import'))
-        self.assertEqual(self.restored_contents, 'existing trust settings')
-        self.assertFalse(self.restored_snapshot.parent.exists())
-        self.assertFalse(any('remove-trusted-cert' in command for command in commands))
+    def test_signing_failure_removes_the_temporary_keychain(self):
+        self.run_ci_signer(failure='codesign')
 
-    def test_failed_trust_installation_still_restores_the_snapshot(self):
-        commands, _ = self.run_ci_signer(failure='add-trusted-cert')
-        self.assertEqual(commands[-2][:4], ('sudo', '-n', '/usr/bin/security', 'trust-settings-import'))
-        self.assertEqual(self.restored_contents, 'existing trust settings')
-        self.assertFalse(any(command[0] == 'codesign' for command in commands))
-
-    def test_an_empty_admin_domain_is_restored_to_empty(self):
-        commands, _ = self.run_ci_signer(empty_trust=True)
-        self.assertTrue(any(command[:3] == ('/usr/bin/security', 'add-trusted-cert', '-o') for command in commands))
-        self.assertEqual(self.restored_contents, 'empty trust settings')
-        self.assertFalse(self.restored_snapshot.parent.exists())
-
-    def test_restore_failure_retains_only_the_recovery_snapshot(self):
-        _, message = self.run_ci_signer(failure='trust-settings-import')
-        self.assertEqual(self.restored_snapshot.read_text(), 'existing trust settings')
-        self.assertEqual(list(self.restored_snapshot.parent.iterdir()), [self.restored_snapshot])
-        self.assertIn(str(self.restored_snapshot), message)
-
-    def test_missing_passwordless_sudo_fails_before_any_trust_change(self):
-        commands, _ = self.run_ci_signer(failure='trust-settings-export')
-        self.assertFalse(any('add-trusted-cert' in command for command in commands))
-        self.assertFalse(any('trust-settings-import' in command for command in commands))
-        self.assertFalse(any(command[0] == 'codesign' for command in commands))
+    def test_commands_cannot_wait_for_input(self):
+        with patch.object(macos.subprocess, 'run') as run:
+            macos.run('security', 'list-keychains')
+        self.assertIs(run.call_args.kwargs['stdin'], subprocess.DEVNULL)
+        self.assertTrue(run.call_args.kwargs['timeout'])
 
     def test_nested_code_is_signed_before_its_containing_bundles(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -196,6 +157,12 @@ class MacosSigningOrderTest(unittest.TestCase):
             binary.write_bytes(b'\xcf\xfa\xed\xfe' + b'fake Mach-O')
             link = framework / 'Helper'
             link.symlink_to(binary)
+            plugin = framework / 'Versions/A/PlugIns/Nested.bundle'
+            nested = plugin / 'Contents/MacOS/Nested'
+            nested.parent.mkdir(parents=True)
+            nested.write_bytes(b'\xcf\xfa\xed\xfe' + b'fake Mach-O')
+            library = app / 'Contents/Frameworks/libshallow.dylib'
+            library.write_bytes(b'\xca\xfe\xba\xbe' + b'fake universal Mach-O')
             resource = app / 'Contents/Resources/info.txt'
             resource.parent.mkdir()
             resource.write_text('plain resource')
@@ -204,6 +171,11 @@ class MacosSigningOrderTest(unittest.TestCase):
             self.assertLess(objects.index(framework), objects.index(app))
             self.assertNotIn(link, objects)
             self.assertNotIn(resource, objects)
+            batches = macos.signing_batches(app)
+            self.assertEqual(sorted(batches[0]), sorted([binary, nested, library]))
+            self.assertEqual(batches[1:], [[plugin], [framework], [app]])
+            with patch.object(macos, 'BATCH', 2):
+                self.assertEqual([len(batch) for batch in macos.signing_batches(app)], [2, 1, 1, 1, 1])
 
 
 if __name__ == '__main__':
