@@ -1372,7 +1372,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("supertack_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("This is the bed temperature for layers except for the first one. A value of 0 means the filament does not support printing on the Cool Plate SuperTack.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Bed temperature");
     def->min = 0;
     def->max = 120;
@@ -1381,7 +1381,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("cool_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("This is the bed temperature for layers except for the first one. A value of 0 means the filament does not support printing on the Cool Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Bed temperature");
     def->min = 0;
     def->max = 300;
@@ -1390,7 +1390,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("textured_cool_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("This is the bed temperature for layers except for the first one. A value of 0 means the filament does not support printing on the Textured Cool Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Bed temperature");
     def->min = 0;
     def->max = 300;
@@ -1399,7 +1399,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("eng_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("This is the bed temperature for layers except for the first one. A value of 0 means the filament does not support printing on the Engineering Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Bed temperature");
     def->min = 0;
     def->max = 300;
@@ -1408,7 +1408,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("hot_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("This is the bed temperature for layers except for the first one. A value of 0 means the filament does not support printing on the High Temp Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Bed temperature");
     def->min = 0;
     def->max = 300;
@@ -1417,7 +1417,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("textured_plate_temp", coInts);
     def->label = L("Other layers");
     def->tooltip = L("This is the bed temperature for layers except for the first one. A value of 0 means the filament does not support printing on the Textured PEI Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Bed temperature");
     def->min = 0;
     def->max = 300;
@@ -1427,7 +1427,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer bed temperature");
     def->tooltip = L("This is the bed temperature of the first layer. A value of 0 means the filament does not support printing on the Cool Plate SuperTack.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = 120;
     def->set_default_value(new ConfigOptionInts{ 35 });
@@ -1436,7 +1436,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer bed temperature");
     def->tooltip = L("This is the bed temperature of the first layer. A value of 0 means the filament does not support printing on the Cool Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = 120;
     def->set_default_value(new ConfigOptionInts{ 35 });
@@ -1445,7 +1445,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer bed temperature");
     def->tooltip = L("This is the bed temperature of the first layer. A value of 0 means the filament does not support printing on the Textured Cool Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = 120;
     def->set_default_value(new ConfigOptionInts{ 40 });
@@ -1454,7 +1454,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer bed temperature");
     def->tooltip = L("This is the bed temperature of the first layer. A value of 0 means the filament does not support printing on the Engineering Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = 300;
     def->set_default_value(new ConfigOptionInts{ 45 });
@@ -1463,7 +1463,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer bed temperature");
     def->tooltip = L("This is the bed temperature of the first layer. A value of 0 means the filament does not support printing on the High Temp Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->max = 300;
     def->set_default_value(new ConfigOptionInts{ 45 });
 
@@ -1471,7 +1471,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer bed temperature");
     def->tooltip = L("This is the bed temperature of the first layer. A value of 0 means the filament does not support printing on the Textured PEI Plate.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = 300;
     def->set_default_value(new ConfigOptionInts{45});
@@ -3245,7 +3245,7 @@ void PrintConfigDef::init_fff_params()
     def->nullable = true;
     def->min = 0;
     def->max = max_temp;
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->set_default_value(new ConfigOptionIntsNullable{0});
 
     // Fast-purge flush temperature: used only when prime_volume_mode==Fast.
@@ -3258,7 +3258,7 @@ void PrintConfigDef::init_fff_params()
     def->nullable = true;
     def->min = 0;
     def->max = max_temp;
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->set_default_value(new ConfigOptionIntsNullable{0});
 
     def = this->add("filament_flush_volumetric_speed", coFloats);
@@ -3498,7 +3498,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_cooling_before_tower", coFloats);
     def->label = L("Wipe tower cooling");
     def->tooltip = L("Temperature drop before entering the wipe tower.");
-    def->sidetext = L(u8"\u2103" /* °C */); // degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */); // degrees Celsius, CIS languages need translation
     def->mode = comDevelop;
     def->nullable = true;
     def->set_default_value(new ConfigOptionFloatsNullable { 10. });
@@ -3538,7 +3538,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_tower_interface_print_temp", coInts);
     def->label = L("Interface layer print temperature");
     def->tooltip = L("Print temperature for prime tower interface layer (where different materials meet). If set to -1, use max recommended nozzle temperature.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = -1;
     def->mode = comAdvanced;
     def->set_default_value(new ConfigOptionInts { -1 });
@@ -3706,7 +3706,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("temperature_vitrification", coInts);
     def->label = L("Softening temperature");
     def->tooltip = L("The material softens at this temperature, so when the bed temperature is equal to or greater than this, it\'s highly recommended to open the front door and/or remove the upper glass to avoid clogs.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->mode = comSimple;
     def->set_default_value(new ConfigOptionInts{ 100 });
 
@@ -4203,7 +4203,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("First layer");
     def->full_label = L("First layer nozzle temperature");
     def->tooltip = L("Nozzle temperature for printing the first layer with this filament");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = max_temp;
     def->set_default_value(new ConfigOptionInts { 200 });
@@ -7528,7 +7528,7 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L("Temperature difference to be applied when an extruder is not active. "
                      "The value is not used when 'idle_temperature' in filament settings "
                      "is set to non-zero value.");
-    def->sidetext = L(u8"\u2206\u2103" /* ∆°C */);	// delta degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u2206\u00B0C" /* ∆°C */);	// delta degrees Celsius, CIS languages need translation
     def->min = -max_temp;
     def->max = max_temp;
     def->mode = comAdvanced;
@@ -8612,7 +8612,7 @@ void PrintConfigDef::init_fff_params()
                      "This may be useful if your printer does not support M141/M191 commands, or if you desire "
                      "to handle heat soaking in the print start macro if no active chamber heater is installed."
                     );
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Chamber temperature");
     def->min = 0;
     def->max = max_temp;
@@ -8622,12 +8622,12 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Minimal");
     def->tooltip = L("This is the chamber temperature at which printing should start, while the chamber continues heating "
                      "toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to "
-                     "begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n\n"
+                     "begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n\n"
                      "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro "
                      "or a heat soak macro, like this:\nPRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n\n"
                      "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes "
                      "the value to your custom G-code. It should not exceed the \"Target\" chamber temperature.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Chamber minimal temperature");
     def->min = 0;
     def->max = max_temp;
@@ -8636,7 +8636,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("nozzle_temperature", coInts);
     def->label = L("Other layers");
     def->tooltip = L("Nozzle temperature after the first layer");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->full_label = L("Nozzle temperature");
     def->min = 0;
     def->max = max_temp;
@@ -8645,7 +8645,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("nozzle_temperature_range_low", coInts);
     def->label = L("Min");
     //def->tooltip = L("");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = max_temp;
     def->set_default_value(new ConfigOptionInts { 190 });
@@ -8653,7 +8653,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("nozzle_temperature_range_high", coInts);
     def->label = L("Max");
     //def->tooltip = L("");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = max_temp;
     def->set_default_value(new ConfigOptionInts { 240 });
@@ -9125,7 +9125,7 @@ void PrintConfigDef::init_fff_params()
     def->label = L("Idle temperature");
     def->tooltip = L("Nozzle temperature when the tool is currently not used in multi-tool setups. "
                      "This is only used when 'Ooze prevention' is active in Print Settings. Set to 0 to disable.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min = 0;
     def->max = max_temp;
     def->set_default_value(new ConfigOptionInts{0});
@@ -9472,7 +9472,7 @@ void PrintConfigDef::init_fff_params()
     def->label    = L("Extruder change");
     def->tooltip  = L("To prevent oozing, the nozzle temperature will be cooled during ramming. Therefore, the ramming time must be greater than the cooldown time. 0 means disabled.");
     def->mode     = comAdvanced;
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min      = 0;
     def->nullable = true;
     def->set_default_value(new ConfigOptionIntsNullable{0});
@@ -9502,7 +9502,7 @@ void PrintConfigDef::init_fff_params()
     def->tooltip = L(
         "To prevent oozing, the nozzle temperature will be cooled during ramming. 0 means disabled.\n\nNote: only a cooldown command and fan activation are triggered, reaching the target temperature is not guaranteed.");
     def->mode     = comAdvanced;
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->min      = 0;
     def->nullable = true;
     def->set_default_value(new ConfigOptionIntsNullable{0});
@@ -9563,7 +9563,7 @@ void PrintConfigDef::init_fff_params()
     def = this->add("filament_preheat_temperature_delta", coFloats);
     def->label = L("Preheat temperature delta");
     def->tooltip = L("Temperature delta applied during pre-heating before tool change.");
-    def->sidetext = L(u8"\u2103" /* °C */);	// degrees Celsius, CIS languages need translation
+    def->sidetext = L(u8"\u00B0C" /* °C */);	// degrees Celsius, CIS languages need translation
     def->mode = comDevelop;
     def->nullable = true;
     def->set_default_value(new ConfigOptionFloatsNullable{0});

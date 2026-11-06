@@ -13997,8 +13997,8 @@ static std::vector<wxString> collect_imex_warnings(PartPlate* plate)
             const int secondary_bed_temp = bed_temps->values[secondary_logical];
             if (secondary_bed_temp > 0 && std::abs(secondary_bed_temp - primary_bed_temp) > 5) {
                 warnings.push_back(wxString::Format(
-                    _L("Bed temperature conflict: T%d (%s) sets the bed to %d℃ \u2014 "
-                       "T%d (%s) requires %d℃. The primary tool controls the bed; "
+                    _L("Bed temperature conflict: T%d (%s) sets the bed to %d°C \u2014 "
+                       "T%d (%s) requires %d°C. The primary tool controls the bed; "
                        "secondary tools print at whatever temperature it sets."),
                     primary_tool, primary_display_type, primary_bed_temp,
                     tool_idx, secondary_display_type, secondary_bed_temp));
@@ -17733,7 +17733,7 @@ void Plater::calib_temp(const Calib_Params& params) {
         if (printer_config.has("belt_printer") && printer_config.opt_bool("belt_printer") &&
             ! boost::filesystem::exists(belt_temp_tower_asset(params))) {
             MessageDialog dlg(static_cast<wxWindow *>(wxGetApp().mainframe),
-                              format_wxstr(_L("No belt temperature tower is available for the range %1% to %2%℃. "
+                              format_wxstr(_L("No belt temperature tower is available for the range %1% to %2%°C. "
                                               "Use a range the tower models cover, for example 230 to 190."),
                                            (int) lround(params.start), (int) lround(params.end)),
                               _L("Temperature tower"), wxICON_ERROR | wxOK);

@@ -62,6 +62,8 @@ class ImGuiWrapper
     // Chinese, Japanese, Korean
     bool m_font_cjk{ false };
     bool m_is_korean{ false };
+    // Latin-script UI language: 0xProto is the default font (see Label::uses_0xproto()).
+    bool m_use_0xproto{ true };
     float m_font_size{ 18.0 };
     unsigned m_font_texture{ 0 };
     unsigned m_font_another_texture{ 0 };

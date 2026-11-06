@@ -1,3 +1,5 @@
+@import url("../../include/orca_font.css");
+
 :root {
   --thumb-size  : 20px;
   --field-height: 28px;
@@ -25,7 +27,7 @@ html, body {
 }
 
 body {
-  font-family: var(--orca-font, system-ui, sans-serif);
+  font-family: "0xProto", var(--orca-font, system-ui, sans-serif);
   background: var(--bg-color);
   color: var(--fg-color-text);
   padding: 10px;

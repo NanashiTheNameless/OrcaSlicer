@@ -514,4 +514,4 @@ ambiguity check behind structure rule 3.
   commit the result. Do not type an id by hand.
 
 For general profile authoring, see the profile development guide on the
-[OrcaSlicer wiki](https://www.orcaslicer.com/wiki).
+[OrcaSlicer wiki](https://github.com/NanashiTheNameless/OrcaSlicer/wiki).

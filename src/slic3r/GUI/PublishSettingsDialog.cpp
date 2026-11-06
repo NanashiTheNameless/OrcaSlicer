@@ -762,7 +762,7 @@ PublishSettingsDialog::PublishSettingsDialog(wxWindow* parent,
     wxBoxSizer* links_sizer = new wxBoxSizer(wxHORIZONTAL);
 
     auto wiki_btn = new Button(this, "", "toolbar_wiki", 0, 15);
-    auto wiki_url = "https://www.orcaslicer.com/wiki/publishing_3mf/publish_3mf";
+    auto wiki_url = "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/publish_3mf";
     wiki_btn->SetToolTip(_L("Wiki Guide") + "\n" + wiki_url);
     wiki_btn->SetStyle(ButtonStyle::Confirm, ButtonType::Circle);
     wiki_btn->SetCanFocus(false);

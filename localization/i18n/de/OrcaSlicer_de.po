@@ -4680,8 +4680,8 @@ msgstr "Druckbetttemperatur"
 msgid "Max volumetric speed"
 msgstr "Maximale Volumengeschwindigkeit"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "Druckbetttemperatur"
@@ -5137,12 +5137,12 @@ msgid "Bed Shape"
 msgstr "Druckbettform"
 
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "eine Mindesttemperatur über %d℃ wird für %s empfohlen.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "eine Mindesttemperatur über %d°C wird für %s empfohlen.\n"
 
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "eine Höchsttemperatur unter %d℃ wird für %s empfohlen.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "eine Höchsttemperatur unter %d°C wird für %s empfohlen.\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "Die empfohlene Mindesttemperatur darf nicht höher sein als die empfohlene Maximaltemperatur.\n"
@@ -5187,8 +5187,8 @@ msgstr "Die aktuelle Kammer-Temperatur ist höher als die sichere Temperatur des
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "Die minimale Druckraumtemperatur (%d℃) ist höher als die Ziel-Druckraumtemperatur (%d℃). Der Minimalwert ist der Schwellenwert, bei dem der Druck beginnt, während der Druckraum weiter auf die Zieltemperatur heizt; er sollte diese daher nicht überschreiten. Er wird auf die Zieltemperatur begrenzt."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "Die minimale Druckraumtemperatur (%d°C) ist höher als die Ziel-Druckraumtemperatur (%d°C). Der Minimalwert ist der Schwellenwert, bei dem der Druck beginnt, während der Druckraum weiter auf die Zieltemperatur heizt; er sollte diese daher nicht überschreiten. Er wird auf die Zieltemperatur begrenzt."
 
 # AI Translated
 #, c-format, boost-format
@@ -6111,21 +6111,21 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "Um Ihre Sicherheit zu gewährleisten, können bestimmte Verarbeitungsvorgänge (z. B. Laser) nur am Drucker fortgesetzt werden."
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "Die Kammertemperatur ist zu hoch, was dazu führen kann, dass das Filament erweicht. Bitte warten Sie, bis die Kammertemperatur unter %d℃ sinkt. Sie können die Vorderseite öffnen oder Lüfter einschalten, um die Kammer zu kühlen."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "Die Kammertemperatur ist zu hoch, was dazu führen kann, dass das Filament erweicht. Bitte warten Sie, bis die Kammertemperatur unter %d°C sinkt. Sie können die Vorderseite öffnen oder Lüfter einschalten, um die Kammer zu kühlen."
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "Die AMS-Temperatur ist zu hoch, was dazu führen kann, dass das Filament erweicht. Bitte warten Sie, bis die AMS-Temperatur unter %d℃ sinkt."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "Die AMS-Temperatur ist zu hoch, was dazu führen kann, dass das Filament erweicht. Bitte warten Sie, bis die AMS-Temperatur unter %d°C sinkt."
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "Die aktuelle Kammertemperatur oder die Ziel-Kammertemperatur überschreitet 45℃. Um eine Verstopfung des Extruders zu vermeiden, darf kein Niedrigtemperaturfilament (PLA/PETG/TPU) geladen werden."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "Die aktuelle Kammertemperatur oder die Ziel-Kammertemperatur überschreitet 45°C. Um eine Verstopfung des Extruders zu vermeiden, darf kein Niedrigtemperaturfilament (PLA/PETG/TPU) geladen werden."
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Im Extruder ist Niedrigtemperaturfilament (PLA/PETG/TPU) geladen. Um eine Verstopfung des Extruders zu vermeiden, darf die Kammertemperatur nicht eingestellt werden."
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Wenn Sie die Kammertemperatur unter 40℃ einstellen, wird die Kammertemperaturregelung nicht aktiviert. Die Ziel-Kammertemperatur wird automatisch auf 0℃ eingestellt."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Wenn Sie die Kammertemperatur unter 40°C einstellen, wird die Kammertemperaturregelung nicht aktiviert. Die Ziel-Kammertemperatur wird automatisch auf 0°C eingestellt."
 
 msgid "Failed to start print job"
 msgstr "Druckauftrag konnte nicht gestartet werden"
@@ -6710,8 +6710,8 @@ msgstr "Ruck (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Lüftergeschwindigkeit (%)"
 
-msgid "Temperature (℃)"
-msgstr "Temperatur (℃)"
+msgid "Temperature (°C)"
+msgstr "Temperatur (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Volumetrische Flussrate (mm³/s)"
@@ -8387,14 +8387,14 @@ msgstr "Schicht: %s"
 msgid "Layer: %d/%d"
 msgstr "Schicht: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Heizen Sie die Düse vor dem Laden oder Entladen des Filaments auf über 170℃."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Heizen Sie die Düse vor dem Laden oder Entladen des Filaments auf über 170°C."
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "Die Kammertemperatur kann im Kühlmodus während des Druckens nicht geändert werden."
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Wenn die Kammertemperatur 40℃ überschreitet, wechselt das System automatisch in den Heizmodus. Bitte bestätigen Sie, ob Sie wechseln möchten."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Wenn die Kammertemperatur 40°C überschreitet, wechselt das System automatisch in den Heizmodus. Bitte bestätigen Sie, ob Sie wechseln möchten."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Bitte wählen Sie einen AMS-Steckplatz vor der Kalibrierung"
@@ -10099,8 +10099,8 @@ msgstr "Slicing abgebrochen"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Druckbett-Temperaturkonflikt: T%d (%s) stellt das Druckbett auf %d℃ ein — T%d (%s) benötigt %d℃. Das Primär-Werkzeug steuert das Druckbett; sekundäre Werkzeuge drucken mit der Temperatur, die es einstellt."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Druckbett-Temperaturkonflikt: T%d (%s) stellt das Druckbett auf %d°C ein — T%d (%s) benötigt %d°C. Das Primär-Werkzeug steuert das Druckbett; sekundäre Werkzeuge drucken mit der Temperatur, die es einstellt."
 
 # AI Translated
 #, c-format, boost-format
@@ -10287,8 +10287,8 @@ msgstr "Flussratentest - Durchgang %d"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "Für den Bereich %1% bis %2%℃ ist kein Temperaturturm für Förderbanddrucker verfügbar. Verwenden Sie einen Bereich, den die Turmmodelle abdecken, zum Beispiel 230 bis 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "Für den Bereich %1% bis %2%°C ist kein Temperaturturm für Förderbanddrucker verfügbar. Verwenden Sie einen Bereich, den die Turmmodelle abdecken, zum Beispiel 230 bis 190."
 
 # AI Translated
 msgid "Temperature tower"
@@ -20275,8 +20275,8 @@ msgstr "Temperaturvariation"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "Temperaturunterschied, der angewendet wird, wenn ein Extruder nicht aktiv ist. Der Wert wird nicht verwendet, wenn 'idle_temperature' in den Filament-Einstellungen auf einen Wert ungleich Null gesetzt ist."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "Vorheizzeit"
@@ -21103,14 +21103,14 @@ msgstr ""
 "Dies kann nützlich sein, wenn Ihr Drucker die Befehle M141/M191 nicht unterstützt oder wenn Sie das Wärmespeichern im Druckstart-Makro behandeln möchten, wenn kein aktiver Druckraumheizer installiert ist."
 
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Dies ist die Druckraumtemperatur, bei der der Druckvorgang beginnen soll, während der Druckraum weiterhin auf die \"Ziel\"-Druckraumtemperatur erhitzt wird. Zum Beispiel: Setzen Sie das Ziel auf 60 und das Minimum auf 50, um mit dem Drucken zu beginnen, sobald der Druckraum 50℃ erreicht hat, ohne auf die vollen 60℃ zu warten.\n"
+"Dies ist die Druckraumtemperatur, bei der der Druckvorgang beginnen soll, während der Druckraum weiterhin auf die \"Ziel\"-Druckraumtemperatur erhitzt wird. Zum Beispiel: Setzen Sie das Ziel auf 60 und das Minimum auf 50, um mit dem Drucken zu beginnen, sobald der Druckraum 50°C erreicht hat, ohne auf die vollen 60°C zu warten.\n"
 "\n"
 "Es wird eine G-Code-Variable namens chamber_minimal_temperature gesetzt, die an Ihr Druckstart-Makro oder ein Wärmespeicher-Makro übergeben werden kann, wie z.B.:\n"
 "PRINT_START (andere Variablen) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -23936,8 +23936,8 @@ msgstr "Ein Testmodell wird gedruckt. Bitte reinigen Sie die Bauplatte und legen
 msgid "Printing Parameters"
 msgstr "Druckparameter"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "Nozzle- und AMS-Informationen synchronisieren"
@@ -26524,13 +26524,13 @@ msgstr "Trocknung – Entfeuchten"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "Die maximale Trocknungstemperatur von %s beträgt %d℃."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "Die maximale Trocknungstemperatur von %s beträgt %d°C."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "Die minimale Trocknungstemperatur von %s beträgt %d℃."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "Die minimale Trocknungstemperatur von %s beträgt %d°C."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -33964,8 +33964,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Geben Sie die nozzle_temperature ein, die zum Extrudieren Ihres Filaments erforderlich ist."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "Als Faustregel gelten 160 bis 230℃ für PLA und 215 bis 250℃ für ABS."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "Als Faustregel gelten 160 bis 230°C für PLA und 215 bis 250°C für ABS."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -33976,8 +33976,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Geben Sie die Druckbetttemperatur ein, die erforderlich ist, damit Ihr Filament auf dem beheizten Druckbett haftet."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "Als Faustregel gelten 60℃ für PLA und 110℃ für ABS. Lassen Sie den Wert auf null, wenn Sie kein beheiztes Druckbett haben."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "Als Faustregel gelten 60°C für PLA und 110°C für ABS. Lassen Sie den Wert auf null, wenn Sie kein beheiztes Druckbett haben."
 
 # AI Translated
 msgid "Bed Temperature:"

@@ -1,3 +1,5 @@
+@import url("../../include/orca_font.css");
+
 * {
   margin: 0;
   padding: 0;
@@ -27,7 +29,7 @@ html, body {
 #terminal-container,
 #terminal-container .xterm,
 #terminal-container .xterm * {
-  font-family: "Cascadia Code", "Fira Code", "JetBrains Mono", monospace;
+  font-family: "0xProto", "Cascadia Code", "Fira Code", "JetBrains Mono", monospace;
   letter-spacing: 0;
   word-spacing: 0;
 }

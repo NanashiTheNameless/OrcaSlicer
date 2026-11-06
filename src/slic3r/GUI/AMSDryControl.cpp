@@ -487,7 +487,7 @@ wxBoxSizer* AMSDryCtrWin::create_normal_state_panel(wxPanel* parent)
     m_temperature_input->SetBackgroundColour(StateColor::darkModeColorFor(*wxWHITE));
     m_temperature_input->SetForegroundColour(StateColor::darkModeColorFor(*wxBLACK));
 
-    Label* temp_unit_label = new Label(parent, wxString::FromUTF8(u8"\u2103" /* °C */));
+    Label* temp_unit_label = new Label(parent, wxString::FromUTF8(u8"\u00B0C" /* °C */));
     temp_unit_label->SetForegroundColour(*wxBLACK);
     temp_sizer->Add(m_temperature_input, 1, wxRIGHT, FromDIP(1));
     temp_sizer->Add(temp_unit_label, 0, wxALIGN_CENTER_VERTICAL);
@@ -1229,11 +1229,11 @@ void AMSDryCtrWin::update_normal_description(DevAms* dev_ams)
     for (const auto& lim : ams_limits) {
         if (dev_ams->GetAmsType() == lim.type) {
             if (temp_val > lim.max_temp) {
-                wxString msg = wxString::Format(_L("%s maximum drying temperature is %d\u2103." /* °C */), wxString(lim.name), lim.max_temp);
+                wxString msg = wxString::Format(_L("%s maximum drying temperature is %d\u00B0C." /* °C */), wxString(lim.name), lim.max_temp);
                 warning_text += msg + "\n";
                 can_enable_button = false;
             } else if (temp_val < lim.min_temp) {
-                wxString msg = wxString::Format(_L("%s minimum drying temperature is %d\u2103." /* °C */), wxString(lim.name), lim.min_temp);
+                wxString msg = wxString::Format(_L("%s minimum drying temperature is %d\u00B0C." /* °C */), wxString(lim.name), lim.min_temp);
                 warning_text += msg + "\n";
                 can_enable_button = false;
             }
@@ -1261,7 +1261,7 @@ void AMSDryCtrWin::update_normal_description(DevAms* dev_ams)
             auto limit_temperature = preset.value().filament_dev_ams_drying_heat_distortion_temperature;
             if (temp_val > limit_temperature) {
                 warning_text += _L("The temperature shall not exceed the filament's heat distortion temperature") + "(" +
-                    wxString::Format(wxT("%d"), static_cast<int>(limit_temperature)) + wxString::FromUTF8(u8"\u2103" /* °C */) + ")\n";
+                    wxString::Format(wxT("%d"), static_cast<int>(limit_temperature)) + wxString::FromUTF8(u8"\u00B0C" /* °C */) + ")\n";
                 can_enable_button = false;
             }
         }
@@ -1477,9 +1477,9 @@ int AMSDryCtrWin::update_ams_change(DevAms* dev_ams)
 
     m_ams_info.m_ams_id = dev_ams->GetAmsId();
     if (dev_ams->GetAmsType() == DevAmsType::N3F) {
-        m_temperature_input->SetHint("45-65" + wxString::FromUTF8(u8"\u2103" /* °C */));
+        m_temperature_input->SetHint("45-65" + wxString::FromUTF8(u8"\u00B0C" /* °C */));
     } else if (dev_ams->GetAmsType() == DevAmsType::N3S) {
-        m_temperature_input->SetHint("45-85" + wxString::FromUTF8(u8"\u2103" /* °C */));
+        m_temperature_input->SetHint("45-85" + wxString::FromUTF8(u8"\u00B0C" /* °C */));
     }
 
     m_time_input->SetHint("1-24 h");
@@ -1500,7 +1500,7 @@ int AMSDryCtrWin::update_dryness_status(DevAms* dev_ams)
     if (m_ams_info.m_temperature != dev_ams->GetCurrentTemperature()) {
         updated += 1;
         m_ams_info.m_temperature = dev_ams->GetCurrentTemperature();
-        m_temperature_data_label->SetLabel(std::to_string(m_ams_info.m_temperature) + wxString::FromUTF8(u8"\u2103" /* °C */));
+        m_temperature_data_label->SetLabel(std::to_string(m_ams_info.m_temperature) + wxString::FromUTF8(u8"\u00B0C" /* °C */));
     }
 
     if (is_dry_ctr_idle(dev_ams)) {

@@ -4716,8 +4716,8 @@ msgstr "อุณหภูมิฐานพิมพ์"
 msgid "Max volumetric speed"
 msgstr "ความเร็วปริมาตรสูงสุด"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "อุณหภูมิฐานพิมพ์"
@@ -5170,12 +5170,12 @@ msgid "Bed Shape"
 msgstr "รูปทรงฐานพิมพ์"
 
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "แนะนำให้ใช้อุณหภูมิต่ำสุดที่สูงกว่า %d℃ สำหรับ %s\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "แนะนำให้ใช้อุณหภูมิต่ำสุดที่สูงกว่า %d°C สำหรับ %s\n"
 
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "แนะนำให้ใช้อุณหภูมิสูงสุดต่ำกว่า %d℃ สำหรับ %s\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "แนะนำให้ใช้อุณหภูมิสูงสุดต่ำกว่า %d°C สำหรับ %s\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "อุณหภูมิต่ำสุดที่แนะนำต้องไม่สูงกว่าอุณหภูมิสูงสุดที่แนะนำ\n"
@@ -5220,8 +5220,8 @@ msgstr "อุณหภูมิห้องพิมพ์ปัจจุบั
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "อุณหภูมิห้องพิมพ์ต่ำสุด (%d℃) สูงกว่าอุณหภูมิห้องพิมพ์เป้าหมาย (%d℃) ค่าต่ำสุดคือเกณฑ์ที่การพิมพ์จะเริ่มต้นในขณะที่ห้องพิมพ์ยังคงร้อนขึ้นไปสู่เป้าหมาย จึงไม่ควรเกินค่าเป้าหมาย ระบบจะจำกัดค่าให้เท่ากับเป้าหมาย"
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "อุณหภูมิห้องพิมพ์ต่ำสุด (%d°C) สูงกว่าอุณหภูมิห้องพิมพ์เป้าหมาย (%d°C) ค่าต่ำสุดคือเกณฑ์ที่การพิมพ์จะเริ่มต้นในขณะที่ห้องพิมพ์ยังคงร้อนขึ้นไปสู่เป้าหมาย จึงไม่ควรเกินค่าเป้าหมาย ระบบจะจำกัดค่าให้เท่ากับเป้าหมาย"
 
 # AI Translated
 #, c-format, boost-format
@@ -6154,21 +6154,21 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "เพื่อความปลอดภัยของคุณ งานการประมวลผลบางอย่าง (เช่น เลเซอร์) สามารถดำเนินการต่อได้บนเครื่องพิมพ์เท่านั้น"
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "อุณหภูมิในห้องเพาะเลี้ยงสูงเกินไป ซึ่งอาจทำให้เส้นพลาสติกนิ่มลง โปรดรอจนกว่าอุณหภูมิห้องจะลดลงต่ำกว่า %d℃ คุณสามารถเปิดประตูหน้าหรือเปิดพัดลมให้เย็นลงได้"
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "อุณหภูมิในห้องเพาะเลี้ยงสูงเกินไป ซึ่งอาจทำให้เส้นพลาสติกนิ่มลง โปรดรอจนกว่าอุณหภูมิห้องจะลดลงต่ำกว่า %d°C คุณสามารถเปิดประตูหน้าหรือเปิดพัดลมให้เย็นลงได้"
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "อุณหภูมิ AMS สูงเกินไป ซึ่งอาจทำให้เส้นพลาสติกอ่อนตัวลง โปรดรอจนกว่าอุณหภูมิ AMS จะลดลงต่ำกว่า %d℃"
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "อุณหภูมิ AMS สูงเกินไป ซึ่งอาจทำให้เส้นพลาสติกอ่อนตัวลง โปรดรอจนกว่าอุณหภูมิ AMS จะลดลงต่ำกว่า %d°C"
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "อุณหภูมิห้องปัจจุบันหรืออุณหภูมิห้องเป้าหมายเกิน 45℃ เพื่อหลีกเลี่ยงการอุดตันของชุดดันเส้น ไม่อนุญาตให้โหลดเส้นพลาสติกที่มีอุณหภูมิต่ำ (PLA/PETG/TPU)"
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "อุณหภูมิห้องปัจจุบันหรืออุณหภูมิห้องเป้าหมายเกิน 45°C เพื่อหลีกเลี่ยงการอุดตันของชุดดันเส้น ไม่อนุญาตให้โหลดเส้นพลาสติกที่มีอุณหภูมิต่ำ (PLA/PETG/TPU)"
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "โหลดเส้นพลาสติกอุณหภูมิต่ำ (PLA/PETG/TPU) ลงในชุดดันเส้น เพื่อหลีกเลี่ยงการอุดตันของชุดดันเส้น ไม่อนุญาตให้ตั้งอุณหภูมิห้องเพาะเลี้ยง"
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "เมื่อคุณตั้งอุณหภูมิห้องเพาะเลี้ยงให้ต่ำกว่า 40℃ การควบคุมอุณหภูมิห้องเพาะเลี้ยงจะไม่ทำงาน และอุณหภูมิห้องเพาะเลี้ยงเป้าหมายจะถูกตั้งค่าเป็น 0℃ โดยอัตโนมัติ"
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "เมื่อคุณตั้งอุณหภูมิห้องเพาะเลี้ยงให้ต่ำกว่า 40°C การควบคุมอุณหภูมิห้องเพาะเลี้ยงจะไม่ทำงาน และอุณหภูมิห้องเพาะเลี้ยงเป้าหมายจะถูกตั้งค่าเป็น 0°C โดยอัตโนมัติ"
 
 msgid "Failed to start print job"
 msgstr "ไม่สามารถเริ่มงานพิมพ์ได้"
@@ -6742,8 +6742,8 @@ msgstr "กระตุก (มม./วินาที)"
 msgid "Fan speed (%)"
 msgstr "ความเร็วพัดลม (%)"
 
-msgid "Temperature (℃)"
-msgstr "อุณหภูมิ (℃)"
+msgid "Temperature (°C)"
+msgstr "อุณหภูมิ (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "อัตราการไหลเชิงปริมาตร (มม.³/วินาที)"
@@ -8413,14 +8413,14 @@ msgstr "เลเยอร์: %s"
 msgid "Layer: %d/%d"
 msgstr "เลเยอร์: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "กรุณาตั้งอุณหภูมิหัวฉีดให้สูงกว่า 170℃ ก่อนที่จะบรรจุหรือขนถ่ายเส้นพลาสติก"
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "กรุณาตั้งอุณหภูมิหัวฉีดให้สูงกว่า 170°C ก่อนที่จะบรรจุหรือขนถ่ายเส้นพลาสติก"
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "อุณหภูมิห้องเพาะเลี้ยงไม่สามารถเปลี่ยนแปลงได้ในโหมดทำความเย็นขณะพิมพ์"
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "หากอุณหภูมิห้องเพาะเกิน 40℃ ระบบจะเปลี่ยนเป็นโหมดทำความร้อนโดยอัตโนมัติ โปรดยืนยันว่าจะสลับหรือไม่"
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "หากอุณหภูมิห้องเพาะเกิน 40°C ระบบจะเปลี่ยนเป็นโหมดทำความร้อนโดยอัตโนมัติ โปรดยืนยันว่าจะสลับหรือไม่"
 
 msgid "Please select an AMS slot before calibration"
 msgstr "โปรดเลือกช่อง AMS ก่อนการสอบเทียบ"
@@ -10114,8 +10114,8 @@ msgstr "ยกเลิกการสไลซ์แล้ว"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "อุณหภูมิฐานพิมพ์ขัดแย้งกัน: T%d (%s) ตั้งฐานพิมพ์ไว้ที่ %d℃ — T%d (%s) ต้องการ %d℃ เครื่องมือหลักเป็นผู้ควบคุมฐานพิมพ์ เครื่องมือรองจะพิมพ์ที่อุณหภูมิใดก็ตามที่เครื่องมือหลักตั้งไว้"
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "อุณหภูมิฐานพิมพ์ขัดแย้งกัน: T%d (%s) ตั้งฐานพิมพ์ไว้ที่ %d°C — T%d (%s) ต้องการ %d°C เครื่องมือหลักเป็นผู้ควบคุมฐานพิมพ์ เครื่องมือรองจะพิมพ์ที่อุณหภูมิใดก็ตามที่เครื่องมือหลักตั้งไว้"
 
 # AI Translated
 #, c-format, boost-format
@@ -10301,8 +10301,8 @@ msgstr "การทดสอบอัตราการไหล - รอบ %d
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "ไม่มีทาวเวอร์อุณหภูมิสำหรับสายพานในช่วง %1% ถึง %2%℃ ใช้ช่วงที่โมเดลทาวเวอร์ครอบคลุม เช่น 230 ถึง 190"
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "ไม่มีทาวเวอร์อุณหภูมิสำหรับสายพานในช่วง %1% ถึง %2%°C ใช้ช่วงที่โมเดลทาวเวอร์ครอบคลุม เช่น 230 ถึง 190"
 
 # AI Translated
 msgid "Temperature tower"
@@ -20469,8 +20469,8 @@ msgstr "การเปลี่ยนแปลงของอุณหภูม
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "ความแตกต่างของอุณหภูมิที่จะใช้เมื่อชุดดันเส้นไม่ทำงาน ค่าจะไม่ถูกใช้เมื่อตั้งค่า 'idle_temperature' ในการตั้งค่าเส้นพลาสติกเป็นค่าที่ไม่ใช่ศูนย์"
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "เวลาอุ่นเครื่อง"
@@ -21304,14 +21304,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"นี่คืออุณหภูมิห้องพิมพ์ที่การพิมพ์ควรเริ่มต้น ขณะที่ห้องพิมพ์ยังคงร้อนขึ้นไปสู่อุณหภูมิห้องพิมพ์ \"Target\" ตัวอย่างเช่น ตั้ง Target เป็น 60 และ Minimal เป็น 50 เพื่อเริ่มพิมพ์เมื่อห้องพิมพ์ถึง 50℃ โดยไม่ต้องรอจนครบ 60℃\n"
+"นี่คืออุณหภูมิห้องพิมพ์ที่การพิมพ์ควรเริ่มต้น ขณะที่ห้องพิมพ์ยังคงร้อนขึ้นไปสู่อุณหภูมิห้องพิมพ์ \"Target\" ตัวอย่างเช่น ตั้ง Target เป็น 60 และ Minimal เป็น 50 เพื่อเริ่มพิมพ์เมื่อห้องพิมพ์ถึง 50°C โดยไม่ต้องรอจนครบ 60°C\n"
 "\n"
 "โดยจะตั้งค่าตัวแปร G-code ชื่อ chamber_minimal_temperature ซึ่งสามารถส่งไปยังมาโครเริ่มพิมพ์หรือมาโคร heat soak ได้ เช่น:\n"
 "PRINT_START (ตัวแปรอื่น) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -24174,8 +24174,8 @@ msgstr "แบบจำลองทดสอบจะถูกพิมพ์ �
 msgid "Printing Parameters"
 msgstr "พารามิเตอร์การพิมพ์"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "ประสานข้อมูลหัวฉีดและ AMS"
@@ -26796,13 +26796,13 @@ msgstr "อบแห้ง-ลดความชื้น"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "อุณหภูมิอบแห้งสูงสุดของ %s คือ %d℃"
+msgid "%s maximum drying temperature is %d°C."
+msgstr "อุณหภูมิอบแห้งสูงสุดของ %s คือ %d°C"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "อุณหภูมิอบแห้งต่ำสุดของ %s คือ %d℃"
+msgid "%s minimum drying temperature is %d°C."
+msgstr "อุณหภูมิอบแห้งต่ำสุดของ %s คือ %d°C"
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -34197,8 +34197,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "ป้อน nozzle_temperature ที่จำเป็นสำหรับการอัดเส้นพลาสติกของคุณ"
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "โดยทั่วไปคือ 160 ถึง 230℃ สำหรับ PLA และ 215 ถึง 250℃ สำหรับ ABS"
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "โดยทั่วไปคือ 160 ถึง 230°C สำหรับ PLA และ 215 ถึง 250°C สำหรับ ABS"
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -34209,8 +34209,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "ป้อนอุณหภูมิฐานพิมพ์ที่จำเป็นเพื่อให้เส้นพลาสติกยึดติดกับฐานพิมพ์ร้อนของคุณ"
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "โดยทั่วไปคือ 60℃ สำหรับ PLA และ 110℃ สำหรับ ABS ปล่อยเป็นศูนย์หากไม่มีฐานพิมพ์ร้อน"
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "โดยทั่วไปคือ 60°C สำหรับ PLA และ 110°C สำหรับ ABS ปล่อยเป็นศูนย์หากไม่มีฐานพิมพ์ร้อน"
 
 # AI Translated
 msgid "Bed Temperature:"

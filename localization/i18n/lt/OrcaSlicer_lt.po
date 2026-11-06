@@ -4729,8 +4729,8 @@ msgstr "Pagrindo temperatūra"
 msgid "Max volumetric speed"
 msgstr "Maksimalus tūrinis greitis"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "Pagrindo temperatūra"
@@ -5195,16 +5195,16 @@ msgid "Bed Shape"
 msgstr "Pagrindo forma"
 
 # AI Translated
-# Needs human review: Human translation reordered so the placeholders keep the English order (temperature, then material); extra line break removed and %d℃ written without a space.
+# Needs human review: Human translation reordered so the placeholders keep the English order (temperature, then material); extra line break removed and %d°C written without a space.
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "Minimali temperatūra, aukštesnė nei %d℃, rekomenduojama medžiagai „%s“.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "Minimali temperatūra, aukštesnė nei %d°C, rekomenduojama medžiagai „%s“.\n"
 
 # AI Translated
-# Needs human review: Human translation reordered so the placeholders keep the English order (temperature, then material); extra line break removed and %d℃ written without a space.
+# Needs human review: Human translation reordered so the placeholders keep the English order (temperature, then material); extra line break removed and %d°C written without a space.
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "Maksimali temperatūra, žemesnė nei %d℃, rekomenduojama medžiagai „%s“.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "Maksimali temperatūra, žemesnė nei %d°C, rekomenduojama medžiagai „%s“.\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "Rekomenduojama minimali temperatūra negali būti aukštesnė už rekomenduojamą maksimalią temperatūrą.\n"
@@ -5248,8 +5248,8 @@ msgid "Current chamber temperature is higher than the material's safe temperatur
 msgstr "Dabartinė kameros temperatūra yra aukštesnė už saugią medžiagos temperatūrą, dėl to medžiaga gali suminkštėti ir užkimšti purkštuką. Maksimali saugi medžiagos temperatūra yra %d."
 
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "Minimali kameros temperatūra (%d℃) yra aukštesnė nei tikslinė kameros temperatūra (%d℃). Minimali vertė yra slenkstis, kurį pasiekus pradedamas spausdinimas, kol kamera vis dar kaitinama iki tikslinės temperatūros, todėl ji neturėtų viršyti tikslinės. Vertė bus apribota iki tikslinės temperatūros."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "Minimali kameros temperatūra (%d°C) yra aukštesnė nei tikslinė kameros temperatūra (%d°C). Minimali vertė yra slenkstis, kurį pasiekus pradedamas spausdinimas, kol kamera vis dar kaitinama iki tikslinės temperatūros, todėl ji neturėtų viršyti tikslinės. Vertė bus apribota iki tikslinės temperatūros."
 
 # AI Translated
 #, c-format, boost-format
@@ -6188,21 +6188,21 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "Siekiant užtikrinti saugumą, tam tikras apdorojimo užduotis (pavyzdžiui, lazerio) galima pratęsti tik pačiame spausdintuve."
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "Kameros temperatūra per aukšta, todėl gija gali suminkštėti. Palaukite, kol kameros temperatūra nukris žemiau %d ℃. Norėdami pagreitinti aušinimą, galite atidaryti priekines dureles arba įjungti ventiliatorius."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "Kameros temperatūra per aukšta, todėl gija gali suminkštėti. Palaukite, kol kameros temperatūra nukris žemiau %d °C. Norėdami pagreitinti aušinimą, galite atidaryti priekines dureles arba įjungti ventiliatorius."
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "AMS temperatūra per aukšta, todėl gija gali suminkštėti. Palaukite, kol AMS temperatūra nukris žemiau %d ℃."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "AMS temperatūra per aukšta, todėl gija gali suminkštėti. Palaukite, kol AMS temperatūra nukris žemiau %d °C."
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "Dabartinė arba tikslinė kameros temperatūra viršija 45 ℃. Siekiant išvengti ekstruderio (stūmiklio) užsikimšimo, žemos temperatūros gijų (PLA/PETG/TPU) įverti neleidžiama."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "Dabartinė arba tikslinė kameros temperatūra viršija 45 °C. Siekiant išvengti ekstruderio (stūmiklio) užsikimšimo, žemos temperatūros gijų (PLA/PETG/TPU) įverti neleidžiama."
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Ekstruderyje (stūmiklyje) yra įverta žemos temperatūros gija (PLA/PETG/TPU). Siekiant išvengti ekstruderio užsikimšimo, nustatyti kameros temperatūros neleidžiama."
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Nustačius kameros temperatūrą žemesnę nei 40 ℃, kameros temperatūros valdymas nebus aktyvuotas, o tikslinė kameros temperatūra automatiškai bus nustatyta į 0 ℃."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Nustačius kameros temperatūrą žemesnę nei 40 °C, kameros temperatūros valdymas nebus aktyvuotas, o tikslinė kameros temperatūra automatiškai bus nustatyta į 0 °C."
 
 msgid "Failed to start print job"
 msgstr "Nepavyko pradėti spausdinimo"
@@ -6791,8 +6791,8 @@ msgstr "Trūktelėjimas (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Ventiliatoriaus greitis (%)"
 
-msgid "Temperature (℃)"
-msgstr "Temperatūra (℃)"
+msgid "Temperature (°C)"
+msgstr "Temperatūra (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Tūrinis srautas (mm³/s)"
@@ -8481,14 +8481,14 @@ msgstr "Sluoksnis: %s"
 msgid "Layer: %d/%d"
 msgstr "Sluoksnis: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Prieš įverdami arba išverdami giją, įkaitinkite purkštuką virš 170℃."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Prieš įverdami arba išverdami giją, įkaitinkite purkštuką virš 170°C."
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "Spausdinimo metu vėsinimo režimu negalima keisti kameros temperatūros."
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Jei kameros temperatūra viršys 40℃, sistema automatiškai persijungs į šildymo režimą. Patvirtinkite, ar norite perjungti."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Jei kameros temperatūra viršys 40°C, sistema automatiškai persijungs į šildymo režimą. Patvirtinkite, ar norite perjungti."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Prieš kalibruodami pasirinkite AMS lizdą"
@@ -10193,8 +10193,8 @@ msgstr "Sluoksniavimas atšauktas"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Pagrindo temperatūros konfliktas: T%d (%s) nustato pagrindo temperatūrą %d℃ — T%d (%s) reikia %d℃. Pagrindą valdo pagrindinis įrankis; antriniai įrankiai spausdina tokia temperatūra, kokią jis nustato."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Pagrindo temperatūros konfliktas: T%d (%s) nustato pagrindo temperatūrą %d°C — T%d (%s) reikia %d°C. Pagrindą valdo pagrindinis įrankis; antriniai įrankiai spausdina tokia temperatūra, kokią jis nustato."
 
 # AI Translated
 #, c-format, boost-format
@@ -10380,8 +10380,8 @@ msgstr "Srauto testas – %d etapas"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "Juostiniam spausdintuvui nėra temperatūros bokštelio intervalui nuo %1% iki %2%℃. Naudokite intervalą, kurį apima bokštelio modeliai, pavyzdžiui, nuo 230 iki 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "Juostiniam spausdintuvui nėra temperatūros bokštelio intervalui nuo %1% iki %2%°C. Naudokite intervalą, kurį apima bokštelio modeliai, pavyzdžiui, nuo 230 iki 190."
 
 # AI Translated
 msgid "Temperature tower"
@@ -20409,8 +20409,8 @@ msgstr "Temperatūros kitimas"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "Temperatūros skirtumas, taikomas, kai ekstruderis yra neaktyvus. Ši reikšmė nenaudojama, kai gijos nustatymuose „idle_temperature“ (pasyvaus režimo temperatūra) yra nustatyta ne nuliui."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "Įkaitinimo laikas"
@@ -21245,14 +21245,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Tai kameros temperatūra, kuriai esant spausdinimas turėtų prasidėti, kol kamera toliau kaista link „Tikslinės“ kameros temperatūros. Pavyzdžiui, nustatykite Tikslinę į 60, o Mažiausią į 50, kad spausdinimas prasidėtų vos kamerai pasiekus 50℃, nelaukiant pilnų 60℃.\n"
+"Tai kameros temperatūra, kuriai esant spausdinimas turėtų prasidėti, kol kamera toliau kaista link „Tikslinės“ kameros temperatūros. Pavyzdžiui, nustatykite Tikslinę į 60, o Mažiausią į 50, kad spausdinimas prasidėtų vos kamerai pasiekus 50°C, nelaukiant pilnų 60°C.\n"
 "\n"
 "Ji nustato G-code kintamąjį, pavadintą chamber_minimal_temperature, kurį galima perduoti spausdinimo pradžios makrokomandai arba įkaitinimo makrokomandai, pavyzdžiui:\n"
 "PRINT_START (kiti kintamieji) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -24096,8 +24096,8 @@ msgstr "Bus atspausdintas bandomasis modelis. Prieš kalibruodami nuvalykite pag
 msgid "Printing Parameters"
 msgstr "Spausdinimo parametrai"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "Sinchronizuoti purkštuko ir AMS informaciją"
@@ -26684,13 +26684,13 @@ msgstr "Džiovinimas – sausinimas"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "Didžiausia %s džiovinimo temperatūra yra %d℃."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "Didžiausia %s džiovinimo temperatūra yra %d°C."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "Mažiausia %s džiovinimo temperatūra yra %d℃."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "Mažiausia %s džiovinimo temperatūra yra %d°C."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -34155,8 +34155,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Įveskite purkštuko temperatūrą, reikalingą jūsų gijai išspausti."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "Orientacinės reikšmės: PLA – nuo 160 iki 230℃, ABS – nuo 215 iki 250℃."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "Orientacinės reikšmės: PLA – nuo 160 iki 230°C, ABS – nuo 215 iki 250°C."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -34167,8 +34167,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Įveskite pagrindo temperatūrą, reikalingą, kad gija priliptų prie šildomo pagrindo."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "Orientacinės reikšmės: PLA – 60℃, ABS – 110℃. Jei pagrindas nešildomas, palikite nulį."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "Orientacinės reikšmės: PLA – 60°C, ABS – 110°C. Jei pagrindas nešildomas, palikite nulį."
 
 # AI Translated
 msgid "Bed Temperature:"

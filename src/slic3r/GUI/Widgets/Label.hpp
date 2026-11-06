@@ -7,6 +7,8 @@
 #include <wx/stattext.h>
 #include <wx/string.h>
 
+#include <string>
+
 #define LB_HYPERLINK 0x0020
 #define LB_PROPAGATE_MOUSE_EVENT 0x0040
 #define LB_AUTO_WRAP 0x0080
@@ -58,7 +60,15 @@ public:
 	static wxFont Body_9;
 	static wxFont Body_8;
 
-	static void initSysFont();
+    // language: the UI language code ("de_DE", "zh_CN", ...); empty means the system language.
+    static void initSysFont(const std::string &language);
+
+    // True when the bundled 0xProto covers the script of this language code, so the UI uses it.
+    // Other languages keep a font that covers their script (HarmonyOS Sans SC, NanumGothic).
+    static bool uses_0xproto(const std::string &language);
+
+    // The UI face name initSysFont() picked, for fonts built with their own size and weight.
+    static const wxString &face();
 
     static wxFont sysFont(int size, bool bold = false);
 

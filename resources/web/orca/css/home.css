@@ -1,7 +1,9 @@
+@import url("../../include/orca_font.css");
+
 body
 {
     background-color:#eeeeee;
-    font-family: Arial, sans-serif;
+    font-family: "0xProto", Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;

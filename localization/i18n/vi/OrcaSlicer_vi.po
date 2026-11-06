@@ -4927,8 +4927,8 @@ msgstr "Nhiệt độ bàn in"
 msgid "Max volumetric speed"
 msgstr "Tốc độ thể tích tối đa"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 # AI Translated
 msgid "Bed temperature"
@@ -5414,13 +5414,13 @@ msgstr "Hình dạng bàn in"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "Nên đặt nhiệt độ tối thiểu trên %d℃ cho %s.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "Nên đặt nhiệt độ tối thiểu trên %d°C cho %s.\n"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "Nên đặt nhiệt độ tối đa dưới %d℃ cho %s.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "Nên đặt nhiệt độ tối đa dưới %d°C cho %s.\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "Nhiệt độ tối thiểu khuyến nghị không thể cao hơn nhiệt độ tối đa khuyến nghị.\n"
@@ -5465,8 +5465,8 @@ msgstr "Nhiệt độ buồng hiện tại cao hơn nhiệt độ an toàn của
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "Nhiệt độ buồng tối thiểu (%d℃) cao hơn nhiệt độ buồng mục tiêu (%d℃). Giá trị tối thiểu là ngưỡng để bắt đầu in trong khi buồng vẫn tiếp tục gia nhiệt tới mục tiêu, nên nó không được vượt quá giá trị mục tiêu. Nó sẽ được giới hạn về mức mục tiêu."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "Nhiệt độ buồng tối thiểu (%d°C) cao hơn nhiệt độ buồng mục tiêu (%d°C). Giá trị tối thiểu là ngưỡng để bắt đầu in trong khi buồng vẫn tiếp tục gia nhiệt tới mục tiêu, nên nó không được vượt quá giá trị mục tiêu. Nó sẽ được giới hạn về mức mục tiêu."
 
 # AI Translated
 #, c-format, boost-format
@@ -6442,24 +6442,24 @@ msgstr "Để đảm bảo an toàn cho bạn, một số tác vụ xử lý (nh
 
 # AI Translated
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "Nhiệt độ buồng quá cao, có thể làm mềm filament. Vui lòng đợi cho đến khi nhiệt độ buồng giảm xuống dưới %d℃. Bạn có thể mở cửa trước hoặc bật quạt để làm mát."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "Nhiệt độ buồng quá cao, có thể làm mềm filament. Vui lòng đợi cho đến khi nhiệt độ buồng giảm xuống dưới %d°C. Bạn có thể mở cửa trước hoặc bật quạt để làm mát."
 
 # AI Translated
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "Nhiệt độ AMS quá cao, có thể làm mềm filament. Vui lòng đợi cho đến khi nhiệt độ AMS giảm xuống dưới %d℃."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "Nhiệt độ AMS quá cao, có thể làm mềm filament. Vui lòng đợi cho đến khi nhiệt độ AMS giảm xuống dưới %d°C."
 
 # AI Translated
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "Nhiệt độ buồng hiện tại hoặc nhiệt độ buồng mục tiêu vượt quá 45℃. Để tránh tắc extruder, không được phép nạp filament nhiệt độ thấp (PLA/PETG/TPU)."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "Nhiệt độ buồng hiện tại hoặc nhiệt độ buồng mục tiêu vượt quá 45°C. Để tránh tắc extruder, không được phép nạp filament nhiệt độ thấp (PLA/PETG/TPU)."
 
 # AI Translated
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Filament nhiệt độ thấp (PLA/PETG/TPU) đang được nạp trong extruder. Để tránh tắc extruder, không được phép đặt nhiệt độ buồng."
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Khi bạn đặt nhiệt độ buồng dưới 40℃, kiểm soát nhiệt độ buồng sẽ không được kích hoạt, và nhiệt độ buồng đích sẽ tự động được đặt thành 0℃."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Khi bạn đặt nhiệt độ buồng dưới 40°C, kiểm soát nhiệt độ buồng sẽ không được kích hoạt, và nhiệt độ buồng đích sẽ tự động được đặt thành 0°C."
 
 msgid "Failed to start print job"
 msgstr "Không thể bắt đầu công việc in"
@@ -7061,8 +7061,8 @@ msgstr "Jerk (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Tốc độ quạt (%)"
 
-msgid "Temperature (℃)"
-msgstr "Nhiệt độ (℃)"
+msgid "Temperature (°C)"
+msgstr "Nhiệt độ (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Tốc độ flow thể tích (mm³/s)"
@@ -8815,16 +8815,16 @@ msgstr "Lớp: %s"
 msgid "Layer: %d/%d"
 msgstr "Lớp: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Vui lòng làm nóng đầu phun lên trên 170℃ trước khi nạp hoặc tháo filament."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Vui lòng làm nóng đầu phun lên trên 170°C trước khi nạp hoặc tháo filament."
 
 # AI Translated
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "Không thể thay đổi nhiệt độ buồng ở chế độ làm mát trong khi in."
 
 # AI Translated
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Nếu nhiệt độ buồng vượt quá 40℃, hệ thống sẽ tự động chuyển sang chế độ gia nhiệt. Vui lòng xác nhận có chuyển hay không."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Nếu nhiệt độ buồng vượt quá 40°C, hệ thống sẽ tự động chuyển sang chế độ gia nhiệt. Vui lòng xác nhận có chuyển hay không."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Vui lòng chọn một khe AMS trước khi hiệu chỉnh"
@@ -10589,8 +10589,8 @@ msgstr "Đã hủy slice"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Xung đột nhiệt độ bàn in: T%d (%s) đặt bàn in ở %d℃ — T%d (%s) yêu cầu %d℃. Công cụ chính điều khiển bàn in; các công cụ phụ in ở nhiệt độ mà nó đặt, dù là bao nhiêu."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Xung đột nhiệt độ bàn in: T%d (%s) đặt bàn in ở %d°C — T%d (%s) yêu cầu %d°C. Công cụ chính điều khiển bàn in; các công cụ phụ in ở nhiệt độ mà nó đặt, dù là bao nhiêu."
 
 # AI Translated
 #, c-format, boost-format
@@ -10780,8 +10780,8 @@ msgstr "Kiểm tra lưu lượng - Lượt %d"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "Không có tháp nhiệt độ băng chuyền nào cho khoảng %1% đến %2%℃. Hãy dùng khoảng mà các mô hình tháp hỗ trợ, ví dụ 230 đến 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "Không có tháp nhiệt độ băng chuyền nào cho khoảng %1% đến %2%°C. Hãy dùng khoảng mà các mô hình tháp hỗ trợ, ví dụ 230 đến 190."
 
 # AI Translated
 msgid "Temperature tower"
@@ -21216,8 +21216,8 @@ msgstr "Thay đổi nhiệt độ"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "Chênh lệch nhiệt độ được áp dụng khi extruder không hoạt động. Giá trị không được sử dụng khi 'idle_temperature' trong cài đặt filament được đặt thành giá trị khác không."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "Thời gian làm nóng trước"
@@ -22051,14 +22051,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Đây là nhiệt độ buồng mà tại đó quá trình in sẽ bắt đầu, trong khi buồng vẫn tiếp tục gia nhiệt tới nhiệt độ buồng \"Mục tiêu\". Ví dụ, đặt Mục tiêu là 60 và Tối thiểu là 50 để bắt đầu in ngay khi buồng đạt 50℃, không phải chờ đủ 60℃.\n"
+"Đây là nhiệt độ buồng mà tại đó quá trình in sẽ bắt đầu, trong khi buồng vẫn tiếp tục gia nhiệt tới nhiệt độ buồng \"Mục tiêu\". Ví dụ, đặt Mục tiêu là 60 và Tối thiểu là 50 để bắt đầu in ngay khi buồng đạt 50°C, không phải chờ đủ 60°C.\n"
 "\n"
 "Nó đặt một biến G-code tên là chamber_minimal_temperature, có thể truyền vào macro bắt đầu in hoặc macro ngâm nhiệt của bạn, ví dụ:\n"
 "PRINT_START (các biến khác) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -24934,8 +24934,8 @@ msgstr "Một model kiểm tra sẽ được in. Vui lòng làm sạch bàn in v
 msgid "Printing Parameters"
 msgstr "Tham số in"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 # AI Translated
 msgid "Synchronize nozzle and AMS information"
@@ -27766,13 +27766,13 @@ msgstr "Sấy - Hút ẩm"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "Nhiệt độ sấy tối đa của %s là %d℃."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "Nhiệt độ sấy tối đa của %s là %d°C."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "Nhiệt độ sấy tối thiểu của %s là %d℃."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "Nhiệt độ sấy tối thiểu của %s là %d°C."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -35173,8 +35173,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Nhập nhiệt độ đầu phun (nozzle_temperature) cần để đùn filament của bạn."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "Theo kinh nghiệm, 160 đến 230℃ cho PLA và 215 đến 250℃ cho ABS."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "Theo kinh nghiệm, 160 đến 230°C cho PLA và 215 đến 250°C cho ABS."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -35185,8 +35185,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Nhập nhiệt độ bàn in cần để filament bám dính vào bàn in nóng."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "Theo kinh nghiệm, 60℃ cho PLA và 110℃ cho ABS. Để 0 nếu bạn không có bàn in nóng."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "Theo kinh nghiệm, 60°C cho PLA và 110°C cho ABS. Để 0 nếu bạn không có bàn in nóng."
 
 # AI Translated
 msgid "Bed Temperature:"

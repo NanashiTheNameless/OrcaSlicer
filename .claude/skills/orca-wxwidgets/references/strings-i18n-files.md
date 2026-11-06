@@ -144,8 +144,8 @@ ImGui layer).
 MSVC compiles with `/utf-8`, so `"°C"` is a UTF-8 byte string on every compiler, and
 `wxString("°C")` decodes it with the locale like any other narrow string ("never use 8-bit
 characters directly in the program source", `docs/doxygen/overviews/unicode.h:145-160`). Non-ASCII
-text goes through `_L("…")` (decodes UTF-8), `wxString::FromUTF8(u8"\u2103")` (the
-`AMSDryControl.cpp` style for `℃`) or a wide literal `L"…"`. In C++20 `u8"…"` becomes `char8_t`,
+text goes through `_L("…")` (decodes UTF-8), `wxString::FromUTF8(u8"\u00B0C")` (the
+`AMSDryControl.cpp` style for `°C`) or a wide literal `L"…"`. In C++20 `u8"…"` becomes `char8_t`,
 which `FromUTF8` does not accept; Orca builds C++17. Mixing plain ASCII literals with a `wxString`
 (`_L("Version") + " " + v`) is fine.
 

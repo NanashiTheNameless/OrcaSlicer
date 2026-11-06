@@ -624,7 +624,7 @@ std::vector<NativeCommand> build_command_catalog()
         return AppActionRunResult{AppActionRunResult::Level::Success};
     });
     add_with_icon("open_wiki", L("Open Wiki"), L("Help"), "link_wiki_img", [](const std::string&) {
-        wxLaunchDefaultBrowser("https://www.orcaslicer.com/wiki/", wxBROWSER_NEW_WINDOW);
+        wxLaunchDefaultBrowser("https://github.com/NanashiTheNameless/OrcaSlicer/wiki", wxBROWSER_NEW_WINDOW);
         return AppActionRunResult{AppActionRunResult::Level::Success};
     });
     add("open_youtube", L("Open YouTube Channel"), L("Help"), [](const std::string&) {

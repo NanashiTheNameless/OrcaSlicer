@@ -4943,8 +4943,8 @@ msgstr "熱床溫度"
 msgid "Max volumetric speed"
 msgstr "最大體積流量"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 # AI Translated
 msgid "Bed temperature"
@@ -5429,13 +5429,13 @@ msgstr "熱床形狀"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "建議最低溫度高於 %d℃（適用於 %s）。\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "建議最低溫度高於 %d°C（適用於 %s）。\n"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "建議最高溫度低於 %d℃（適用於 %s）。\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "建議最高溫度低於 %d°C（適用於 %s）。\n"
 
 # AI Translated
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
@@ -5485,8 +5485,8 @@ msgstr "目前腔體溫度高於線材的安全溫度，可能導致線材軟化
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "最低腔體溫度（%d℃）高於目標腔體溫度（%d℃）。最低值是列印開始的門檻，此時腔體會持續朝目標溫度加熱，因此不應超過目標值。系統會將其限制在目標值。"
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "最低腔體溫度（%d°C）高於目標腔體溫度（%d°C）。最低值是列印開始的門檻，此時腔體會持續朝目標溫度加熱，因此不應超過目標值。系統會將其限制在目標值。"
 
 # AI Translated
 #, c-format, boost-format
@@ -6435,24 +6435,24 @@ msgstr "為確保您的安全，某些處理作業（例如雷射）只能在列
 
 # AI Translated
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "腔體溫度過高，可能導致線材軟化。請等待腔體溫度降至 %d℃ 以下。您可以打開前門或啟用風扇來加速冷卻。"
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "腔體溫度過高，可能導致線材軟化。請等待腔體溫度降至 %d°C 以下。您可以打開前門或啟用風扇來加速冷卻。"
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "AMS 溫度過高，可能導致線材軟化。請等待 AMS 溫度降至 %d℃ 以下。"
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "AMS 溫度過高，可能導致線材軟化。請等待 AMS 溫度降至 %d°C 以下。"
 
 # AI Translated
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "目前腔體溫度或目標腔體溫度超過 45℃。為避免擠出機堵塞，不允許裝入低溫線材（PLA/PETG/TPU）。"
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "目前腔體溫度或目標腔體溫度超過 45°C。為避免擠出機堵塞，不允許裝入低溫線材（PLA/PETG/TPU）。"
 
 # AI Translated
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "擠出機內已裝入低溫線材（PLA/PETG/TPU）。為避免擠出機堵塞，不允許設定腔體溫度。"
 
 # AI Translated
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "當腔體溫度設定低於 40℃時，腔體溫度控制將不會啟動，並且目標腔體溫度將自動設為 0℃。"
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "當腔體溫度設定低於 40°C時，腔體溫度控制將不會啟動，並且目標腔體溫度將自動設為 0°C。"
 
 msgid "Failed to start print job"
 msgstr "無法啟動列印作業"
@@ -7051,8 +7051,8 @@ msgstr "急衝速度（mm/s）"
 msgid "Fan speed (%)"
 msgstr "風扇速度（%）"
 
-msgid "Temperature (℃)"
-msgstr "溫度（℃）"
+msgid "Temperature (°C)"
+msgstr "溫度（°C）"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "體積流量（mm³/s）"
@@ -8817,16 +8817,16 @@ msgstr "層：%s"
 msgid "Layer: %d/%d"
 msgstr "層：%d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "請在進料或退料之前將噴嘴加熱至 170℃ 以上。"
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "請在進料或退料之前將噴嘴加熱至 170°C 以上。"
 
 # AI Translated
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "列印時無法在冷卻模式下變更腔體溫度。"
 
 # AI Translated
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "如果腔體溫度超過 40℃，系統將自動切換到加熱模式。請確認是否切換。"
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "如果腔體溫度超過 40°C，系統將自動切換到加熱模式。請確認是否切換。"
 
 msgid "Please select an AMS slot before calibration"
 msgstr "請先選擇一個 AMS 槽位後進行校正"
@@ -10583,8 +10583,8 @@ msgstr "切片已取消"
 # AI Translated
 # Needs human review: Uses 熱床 (as in the existing 熱床溫度 label) instead of the glossary's 列印板 for 'bed'; confirm which the bed-temperature sense should use.
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "熱床溫度衝突：T%d（%s）將熱床設為 %d℃，而 T%d（%s）需要 %d℃。熱床由主工具控制，次要工具只能沿用其設定的溫度。"
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "熱床溫度衝突：T%d（%s）將熱床設為 %d°C，而 T%d（%s）需要 %d°C。熱床由主工具控制，次要工具只能沿用其設定的溫度。"
 
 # AI Translated
 #, c-format, boost-format
@@ -10775,8 +10775,8 @@ msgstr "流量測試（第 %d 輪）"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "沒有適用於 %1% 至 %2%℃ 範圍的輸送帶溫度塔。請使用溫度塔模型涵蓋的範圍，例如 230 至 190。"
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "沒有適用於 %1% 至 %2%°C 範圍的輸送帶溫度塔。請使用溫度塔模型涵蓋的範圍，例如 230 至 190。"
 
 # AI Translated
 msgid "Temperature tower"
@@ -21449,8 +21449,8 @@ msgid "Temperature difference to be applied when an extruder is not active. The 
 msgstr "擠出機閒置時套用的溫差。若線材設定中的 'idle_temperature' 設為非零值，則不使用此值。"
 
 # AI Translated
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "預熱時間"
@@ -22340,14 +22340,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"這是開始列印時的腔體溫度，此時腔體會持續朝「目標」腔體溫度加熱。例如，將「目標」設為 60、「最低」設為 50，腔體達到 50℃ 時即開始列印，無需等到完整的 60℃。\n"
+"這是開始列印時的腔體溫度，此時腔體會持續朝「目標」腔體溫度加熱。例如，將「目標」設為 60、「最低」設為 50，腔體達到 50°C 時即開始列印，無需等到完整的 60°C。\n"
 "\n"
 "它會設定一個名為 chamber_minimal_temperature 的 G-code 變數，可傳給您的列印開始巨集或熱浸泡巨集，例如：\n"
 "PRINT_START (其他變數) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -25371,8 +25371,8 @@ msgstr "將列印一份測試模型。在校正之前，請清理列印板並將
 msgid "Printing Parameters"
 msgstr "列印參數"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "同步噴嘴和 AMS 資訊"
@@ -28161,13 +28161,13 @@ msgstr "烘乾：除濕中"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "%s 的最高烘乾溫度為 %d℃。"
+msgid "%s maximum drying temperature is %d°C."
+msgstr "%s 的最高烘乾溫度為 %d°C。"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "%s 的最低烘乾溫度為 %d℃。"
+msgid "%s minimum drying temperature is %d°C."
+msgstr "%s 的最低烘乾溫度為 %d°C。"
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -35596,8 +35596,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "輸入擠出線材所需的噴嘴溫度。"
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "經驗法則：PLA 為 160 至 230℃，ABS 為 215 至 250℃。"
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "經驗法則：PLA 為 160 至 230°C，ABS 為 215 至 250°C。"
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -35608,8 +35608,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "輸入讓線材附著在熱床上所需的熱床溫度。"
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "經驗法則：PLA 為 60℃，ABS 為 110℃。若沒有加熱床，請保留為 0。"
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "經驗法則：PLA 為 60°C，ABS 為 110°C。若沒有加熱床，請保留為 0。"
 
 # AI Translated
 msgid "Bed Temperature:"

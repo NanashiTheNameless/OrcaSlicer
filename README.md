@@ -150,9 +150,14 @@ OrcaSlicer was originally forked from Bambu Studio, it was previously known as B
 
 The OrcaSlicer logo was designed by community member [Justin Levine](https://github.com/jal-co).
 
+# Thank you, 0xProto
+
+Unlike official OrcaSlicer, this fork uses [0xProto](https://github.com/0xType/0xProto) by [0xType](https://github.com/0xType) throughout its interface. It's an amazing font that deserves to be the default everywhere. Thank you to its authors for making it and sharing it freely.
+
 # License
 
 - **OrcaSlicer** is licensed under the GNU Affero General Public License, version 3.
 - The **GNU Affero General Public License**, version 3 ensures that if you use any part of this software in any way (even behind a web server), your software must be released under the same license.
 - OrcaSlicer includes a **pressure advance calibration pattern test** adapted from Andrew Ellis' generator, which is licensed under GNU General Public License, version 3. Ellis' generator is itself adapted from a generator developed by Sineos for Marlin, which is licensed under GNU General Public License, version 3.
+- The bundled **0xProto** font (`resources/fonts/0xProto-*.ttf`) is licensed under the SIL Open Font License, version 1.1 (`resources/fonts/0xProto-OFL.txt`).
 - The **Bambu networking plugin** is based on non-free libraries from BambuLab. It is optional to the OrcaSlicer and provides extended functionalities for Bambulab printer users.

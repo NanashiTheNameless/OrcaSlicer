@@ -21,6 +21,7 @@
 #include "libslic3r/Polygon.hpp"
 #include "libslic3r/BoundingBox.hpp"
 #include "slic3r/GUI/GUI_Utils.hpp"
+#include "slic3r/GUI/Widgets/Label.hpp"
 #include "libslic3r/Exception.hpp"
 #include <tuple>
 #include <vector>
@@ -430,6 +431,7 @@ void ImGuiWrapper::set_language(const std::string &language)
     };
     m_font_cjk = false;
     m_is_korean = false;
+    m_use_0xproto = Label::uses_0xproto(language);
     if (lang == "cs" || lang == "pl") {
         ranges = ranges_latin2;
     } else if (lang == "ru" || lang == "uk") {
@@ -2988,10 +2990,14 @@ void ImGuiWrapper::init_font(bool compress)
     // Orca: temp fix for Korean font
     auto font_name_regular = "HarmonyOS_Sans_SC_Regular.ttf";
     auto font_name_bold = "HarmonyOS_Sans_SC_Bold.ttf";
-    // The Korean and Thai fonts cover their own script and little else, so they need the
-    // default font merged in behind them to reach the full range.
+    // 0xProto (Latin only), the Korean and the Thai fonts cover their own script and little else,
+    // so they need HarmonyOS merged in behind them to reach the full range (CJK, °/³/µ, Cyrillic).
     bool needs_glyph_fallback = false;
-    if(m_glyph_ranges == ImGui::GetIO().Fonts->GetGlyphRangesKorean()) {
+    if (m_use_0xproto) {
+        font_name_regular = "0xProto-Regular.ttf";
+        font_name_bold = "0xProto-Bold.ttf";
+        needs_glyph_fallback = true;
+    } else if(m_glyph_ranges == ImGui::GetIO().Fonts->GetGlyphRangesKorean()) {
         font_name_regular = "NanumGothic-Regular.ttf";
         font_name_bold = "NanumGothic-Bold.ttf";
         needs_glyph_fallback = true;

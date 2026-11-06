@@ -508,8 +508,8 @@ def validate(e, msgstrs, nplurals, glossary=None, lang=None):
             errors.append(f"{tag}leading/trailing spaces differ")
         if sorted(TAG.findall(src)) != sorted(TAG.findall(s)):
             errors.append(f"{tag}HTML tags {TAG.findall(src)} -> {TAG.findall(s)}")
-        if src.count("℃") != s.count("℃"):
-            errors.append(f"{tag}'℃' count differs (keep U+2103, not °C)")
+        if src.count("°C") != s.count("°C") or "℃" in s:
+            errors.append(f"{tag}'°C' count differs (keep °C, not U+2103 ℃)")
         missing = [t for t in set(IDENT.findall(src)) if t not in s]
         tokens = [t for t in missing if not SNAKE.fullmatch(t)]
         if tokens:

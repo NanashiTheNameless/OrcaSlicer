@@ -4760,8 +4760,8 @@ msgstr "Yatak Sıcaklığı"
 msgid "Max volumetric speed"
 msgstr "Maksimum hacimsel hız"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "Yatak Sıcaklığı"
@@ -5221,13 +5221,13 @@ msgstr "Yatak Şekli"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "%d℃'nin üzerinde bir minimum sıcaklık %s için önerilir.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "%d°C'nin üzerinde bir minimum sıcaklık %s için önerilir.\n"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "%d℃'nin altında bir maksimum sıcaklık %s için önerilir.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "%d°C'nin altında bir maksimum sıcaklık %s için önerilir.\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "Önerilen minimum sıcaklık, önerilen maksimum sıcaklıktan yüksek olamaz.\n"
@@ -5272,8 +5272,8 @@ msgstr "Mevcut hazne sıcaklığı malzemenin güvenli sıcaklığından yüksek
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "Minimum oda sıcaklığı (%d℃), hedef oda sıcaklığından (%d℃) yüksek. Minimum değer, oda hedefe doğru ısınmaya devam ederken baskının başladığı eşiktir; bu nedenle hedefi aşmamalıdır. Değer hedefe sınırlandırılacak."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "Minimum oda sıcaklığı (%d°C), hedef oda sıcaklığından (%d°C) yüksek. Minimum değer, oda hedefe doğru ısınmaya devam ederken baskının başladığı eşiktir; bu nedenle hedefi aşmamalıdır. Değer hedefe sınırlandırılacak."
 
 # AI Translated
 #, c-format, boost-format
@@ -6056,21 +6056,21 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "Güvenliğinizi sağlamak için belirli işleme görevleri (lazer gibi) yalnızca yazıcıda sürdürülebilir."
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "Oda sıcaklığı çok yüksek, bu da filamentin yumuşamasına neden olabilir. Lütfen hazne sıcaklığı %d℃'nin altına düşene kadar bekleyin. Ön kapıyı açabilir veya fanların soğumasını sağlayabilirsiniz."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "Oda sıcaklığı çok yüksek, bu da filamentin yumuşamasına neden olabilir. Lütfen hazne sıcaklığı %d°C'nin altına düşene kadar bekleyin. Ön kapıyı açabilir veya fanların soğumasını sağlayabilirsiniz."
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "AMS sıcaklığı çok yüksek, bu da filamentin yumuşamasına neden olabilir. Lütfen AMS sıcaklığı %d℃'nin altına düşene kadar bekleyin."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "AMS sıcaklığı çok yüksek, bu da filamentin yumuşamasına neden olabilir. Lütfen AMS sıcaklığı %d°C'nin altına düşene kadar bekleyin."
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "Mevcut hazne sıcaklığı veya hedef hazne sıcaklığı 45℃'yi aşıyor. Ekstruderin tıkanmasını önlemek için düşük sıcaklık filamentinin (PLA/PETG/TPU) yüklenmesine izin verilmez."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "Mevcut hazne sıcaklığı veya hedef hazne sıcaklığı 45°C'yi aşıyor. Ekstruderin tıkanmasını önlemek için düşük sıcaklık filamentinin (PLA/PETG/TPU) yüklenmesine izin verilmez."
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Ekstrudere düşük sıcaklık filamenti (PLA/PETG/TPU) yüklenir. Ekstruderin tıkanmasını önlemek için hazne sıcaklığının ayarlanmasına izin verilmez."
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Hazne sıcaklığını 40℃'nin altına ayarladığınızda, hazne sıcaklık kontrolü etkinleştirilmeyecektir. Ve hedef hazne sıcaklığı otomatik olarak 0℃'ye ayarlanacaktır."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Hazne sıcaklığını 40°C'nin altına ayarladığınızda, hazne sıcaklık kontrolü etkinleştirilmeyecektir. Ve hedef hazne sıcaklığı otomatik olarak 0°C'ye ayarlanacaktır."
 
 msgid "Failed to start print job"
 msgstr "Yazdırma işi başlatılamadı"
@@ -6653,8 +6653,8 @@ msgstr "Sarsıntı (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Fan hızı (%)"
 
-msgid "Temperature (℃)"
-msgstr "Sıcaklık (℃)"
+msgid "Temperature (°C)"
+msgstr "Sıcaklık (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Hacimsel akış hızı (mm³/s)"
@@ -8338,14 +8338,14 @@ msgstr "Katman: %s"
 msgid "Layer: %d/%d"
 msgstr "Katman: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Filamenti yüklemeden veya boşaltmadan önce lütfen nozulu 170℃'nin üzerine ısıtın."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Filamenti yüklemeden veya boşaltmadan önce lütfen nozulu 170°C'nin üzerine ısıtın."
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "Yazdırma sırasında soğutma modunda hazne sıcaklığı değiştirilemez."
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Oda sıcaklığı 40℃'yi aşarsa sistem otomatik olarak ısıtma moduna geçecektir. Lütfen geçiş yapıp yapmayacağınızı onaylayın."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Oda sıcaklığı 40°C'yi aşarsa sistem otomatik olarak ısıtma moduna geçecektir. Lütfen geçiş yapıp yapmayacağınızı onaylayın."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Lütfen kalibrasyondan önce bir AMS yuvası seçin"
@@ -10052,8 +10052,8 @@ msgstr "Dilimleme İptal Edildi"
 # AI Translated
 # Needs human review: 'Tool' (T%d) is rendered 'araç' as in the old translation; the glossary row Tool (printer) is unsettled (Takım / Araç). Check the term once it is settled.
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Yatak sıcaklığı çakışması: T%d (%s) yatağı %d℃ değerine ayarlıyor — T%d (%s) ise %d℃ gerektiriyor. Yatağı birincil araç kontrol eder; ikincil araçlar onun ayarladığı sıcaklıkta basar."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Yatak sıcaklığı çakışması: T%d (%s) yatağı %d°C değerine ayarlıyor — T%d (%s) ise %d°C gerektiriyor. Yatağı birincil araç kontrol eder; ikincil araçlar onun ayarladığı sıcaklıkta basar."
 
 # AI Translated
 #, c-format, boost-format
@@ -10238,8 +10238,8 @@ msgstr "Akış Hızı Testi - %d. Geçiş"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "%1% ile %2%℃ aralığı için bant sıcaklık kulesi mevcut değil. Kule modellerinin kapsadığı bir aralık kullanın, örneğin 230 ile 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "%1% ile %2%°C aralığı için bant sıcaklık kulesi mevcut değil. Kule modellerinin kapsadığı bir aralık kullanın, örneğin 230 ile 190."
 
 # AI Translated
 msgid "Temperature tower"
@@ -20351,8 +20351,8 @@ msgstr "Sıcaklık değişimi"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "Ekstruder aktif olmadığında uygulanacak sıcaklık farkı. Filament ayarlarında ‘rölanti sıcaklığı’ sıfır olmayan bir değere ayarlandığında bu değer kullanılmaz."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "Ön ısıtma süresi"
@@ -21200,14 +21200,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Bu, oda \"Hedef\" oda sıcaklığına doğru ısınmayı sürdürürken baskının başlaması gereken oda sıcaklığıdır. Örneğin, tam 60℃ beklemeden oda 50℃'ye ulaştığında yazdırmaya başlamak için Hedef'i 60, Minimum'u 50 olarak ayarlayın.\n"
+"Bu, oda \"Hedef\" oda sıcaklığına doğru ısınmayı sürdürürken baskının başlaması gereken oda sıcaklığıdır. Örneğin, tam 60°C beklemeden oda 50°C'ye ulaştığında yazdırmaya başlamak için Hedef'i 60, Minimum'u 50 olarak ayarlayın.\n"
 "\n"
 "chamber_minimal_temperature adlı bir G-code değişkeni ayarlar; bu değişken baskı başlangıç makronuza veya bir ısı emdirme makrosuna şu şekilde aktarılabilir:\n"
 "PRINT_START (diğer değişkenler) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -24077,8 +24077,8 @@ msgstr "Test modeli yazdırılacaktır. Kalibrasyondan önce lütfen baskı plak
 msgid "Printing Parameters"
 msgstr "Yazdırma Parametreleri"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "Nozul ve AMS bilgilerini senkronize edin"
@@ -26815,13 +26815,13 @@ msgstr "Kurutma-Nem Alma"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "%s için maksimum kurutma sıcaklığı %d℃'dir."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "%s için maksimum kurutma sıcaklığı %d°C'dir."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "%s için minimum kurutma sıcaklığı %d℃'dir."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "%s için minimum kurutma sıcaklığı %d°C'dir."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -34265,8 +34265,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Filamentinizi ekstrüde etmek için gereken nozzle_temperature değerini girin."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "Genel bir kural olarak PLA için 160 ile 230℃, ABS için 215 ile 250℃ arası kullanılır."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "Genel bir kural olarak PLA için 160 ile 230°C, ABS için 215 ile 250°C arası kullanılır."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -34277,8 +34277,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Filamentinizin ısıtmalı yatağa yapışması için gereken yatak sıcaklığını girin."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "Genel bir kural olarak PLA için 60℃, ABS için 110℃ kullanılır. Isıtmalı yatağınız yoksa sıfır bırakın."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "Genel bir kural olarak PLA için 60°C, ABS için 110°C kullanılır. Isıtmalı yatağınız yoksa sıfır bırakın."
 
 # AI Translated
 msgid "Bed Temperature:"

@@ -894,7 +894,7 @@ wxDisplay(win).GetClientArea();                              // Right (or check 
 
 **The table** (`src/slic3r/GUI/Widgets/Label.hpp/.cpp`): static fonts `Label::Head_48, 32, 24, 20,
 18, 16, 15, 14, 13, 12, 11, 10` (bold) and `Label::Body_16, 15, 14, 13, 12, 11, 10, 9, 8` (regular),
-built by `Label::initSysFont()`. Convention: `Head_*` for titles and section headers, `Body_*` for
+built by `Label::initSysFont(language)`. Convention: `Head_*` for titles and section headers, `Body_*` for
 content; `Body_14` is the dialog workhorse (`SetFont(Label::Body_14)` on dialogs and controls),
 `Body_12`/`Body_13` for dense secondary text. `Label` widgets default to `Body_14`.
 
@@ -903,8 +903,7 @@ content; `Body_14` is the dialog workhorse (`SetFont(Label::Body_14)` on dialogs
 #ifndef __APPLE__
     size = size * 4 / 5;                           // integer arithmetic
 #endif
-wxString face = "HarmonyOS Sans SC";
-if (wxLocale::GetSystemLanguage() == wxLANGUAGE_KOREAN) face = "NanumGothic";
+const wxString &face = Label::face();             // picked once by initSysFont()
 wxFont font{size, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, face};
 font.SetFaceName(face);
 if (!font.IsOk()) { font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT); if (bold) font.MakeBold(); font.SetPointSize(size); }
@@ -916,17 +915,22 @@ if (!font.IsOk()) { font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT); if
 - Integer truncation makes some entries identical on MSW/Linux: `Body_16`/`Body_15` and
   `Head_16`/`Head_15` are 12 pt, `Body_11`/`Body_10` and `Head_11`/`Head_10` are 8 pt. Pick the
   next step down when a visible difference matters.
-- The Korean face is keyed on the **system** language (`wxLocale::GetSystemLanguage()`), not on
-  Orca's UI language.
+- The face is keyed on Orca's UI language (`app_config` `language`, the system language on first
+  run): `0xProto` when `Label::uses_0xproto()` says it covers the script (every Latin-script
+  language), `NanumGothic` for Korean, `HarmonyOS Sans SC` for Chinese, Japanese, Thai, Russian
+  and Ukrainian. 0xProto has no CJK, Cyrillic or Thai glyphs, and GDI does not reliably borrow
+  missing glyphs from another font. `Label::face()` returns the pick for fonts that need their own
+  size or weight (`wxFont(14, …, Label::face())`); never hard-code a face name. ImGui makes the
+  same choice and merges HarmonyOS behind 0xProto for °, ³, µ and CJK file names.
 - The statics are created once and stay DPI-correct on MSW because wx adjusts fonts per window,
   window DC and memory-DC bitmap scale (§wxFont).
 
 **`Label::initSysFont()`** runs near the start of `GUI_App::on_init_inner()` (after the log
 target and the macOS deep-link handler), before any window or `wxGraphicsContext` exists, which
 satisfies the MSW `AddPrivateFont` rule. On MSW and Linux it registers
-`resources/fonts/HarmonyOS_Sans_SC_{Bold,Regular}.ttf` and `NanumGothic-{Regular,Bold}.ttf`
-with `wxFont::AddPrivateFont` (`wxUSE_PRIVATE_FONTS=ON` in `deps/wxWidgets/wxWidgets.cmake`). On
-Linux it skips all four calls when fontconfig already knows both families (e.g. installed
+`resources/fonts/HarmonyOS_Sans_SC_{Bold,Regular}.ttf`, `NanumGothic-{Regular,Bold}.ttf` and
+`0xProto-{Regular,Bold}.ttf` with `wxFont::AddPrivateFont` (`wxUSE_PRIVATE_FONTS=ON` in `deps/wxWidgets/wxWidgets.cmake`). On
+Linux it skips all the calls when fontconfig already knows every family (e.g. installed
 system-wide in a Flatpak): Orca's comment records that `AddPrivateFont` triggers a Pango crash in
 `ensure_faces()` on Pango ≥ 1.48 because `FcConfigAppFontAddFile` invalidates Pango's cached font
 map. macOS never calls it: the bundle plist sets `ATSApplicationFontsPath = fonts/`, and wx's

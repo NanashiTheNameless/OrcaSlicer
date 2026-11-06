@@ -1,8 +1,8 @@
 # Translation rules
 
 The rules a translation must follow, condensed from the wiki's
-[Localization guide](https://github.com/OrcaSlicer/OrcaSlicer_WIKI/blob/main/developer_reference/localization_guide.md),
-the [glossary](https://github.com/OrcaSlicer/OrcaSlicer_WIKI/blob/main/developer_reference/localization_glossary.md)
+[Localization guide](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/localization_guide),
+the [glossary](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/localization_glossary)
 and the localization section of `AGENTS.md`. `po_tool.py apply` rejects the mechanical violations it
 can detect; everything else is on the translator.
 
@@ -18,8 +18,7 @@ A rejected entry is not written. Fix it and apply again.
   text, least of all in parameter names.
 - **Leading and trailing spaces** are kept. A leading space usually means the string is appended to another.
 - **HTML tags** are kept, and the text between them is translated: `Click <a>here</a> to install it.`
-- **`℃`** (U+2103) stays one character, written exactly as in the source: `%d℃`, never `°C`, `° C` or
-  `%d ℃`.
+- **`°C`** stays written exactly as in the source: `%d°C`, never `℃` (U+2103), `° C` or `%d °C`.
 - **Tokens stay verbatim:** `{placeholders}`, `[macros]`, G-code commands (`M141`, `G28`). Setting keys
   in snake_case (`use_relative_e_distances`) are flagged as warnings, because a few snake_case msgids
   are really labels (`top_front`). Keep a key unless the string uses it as a display name.

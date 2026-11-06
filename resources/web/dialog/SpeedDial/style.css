@@ -1,3 +1,5 @@
+@import url("../../include/orca_font.css");
+
 * {
     box-sizing: border-box;
 }
@@ -8,7 +10,7 @@ body {
 }
 
 body {
-    font-family: var(--orca-font, "Segoe UI", sans-serif);
+    font-family: "0xProto", var(--orca-font, "Segoe UI", sans-serif);
     font-size: 13px;
     color: var(--text, var(--orca-fg, #1b1c1e));
     background: var(--bg, var(--orca-bg, #fff));

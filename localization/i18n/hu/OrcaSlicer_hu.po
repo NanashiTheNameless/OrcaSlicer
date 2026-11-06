@@ -4735,8 +4735,8 @@ msgstr "Asztalhőmérséklet"
 msgid "Max volumetric speed"
 msgstr "Max. volumetrikus sebesség"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "Asztalhőmérséklet"
@@ -5203,12 +5203,12 @@ msgid "Bed Shape"
 msgstr "Asztal alakja"
 
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "%d℃ feletti minimális hőmérséklet ajánlott %s esetén.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "%d°C feletti minimális hőmérséklet ajánlott %s esetén.\n"
 
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "%d℃ alatti maximális hőmérséklet ajánlott %s esetén.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "%d°C alatti maximális hőmérséklet ajánlott %s esetén.\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "Az ajánlott minimális hőmérséklet nem lehet magasabb az ajánlott maximális hőmérsékletnél.\n"
@@ -5253,8 +5253,8 @@ msgstr "A kamra aktuális hőmérséklete magasabb az anyag biztonságos hőmér
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "A minimális kamrahőmérséklet (%d℃) magasabb a cél kamrahőmérsékletnél (%d℃). A minimális érték az a küszöb, amelynél a nyomtatás elindul, miközben a kamra tovább melegszik a célérték felé, ezért nem haladhatja meg azt. Az érték a célértékre lesz korlátozva."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "A minimális kamrahőmérséklet (%d°C) magasabb a cél kamrahőmérsékletnél (%d°C). A minimális érték az a küszöb, amelynél a nyomtatás elindul, miközben a kamra tovább melegszik a célérték felé, ezért nem haladhatja meg azt. Az érték a célértékre lesz korlátozva."
 
 # AI Translated
 #, c-format, boost-format
@@ -6177,21 +6177,21 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "A biztonság érdekében bizonyos műveletek (például lézeres feladatok) csak a nyomtatón folytathatók."
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "A kamra hőmérséklete túl magas, ami a filament meglágyulását okozhatja. Várj, amíg a kamrahőmérséklet %d℃ alá csökken. A gyorsabb hűtéshez nyisd ki az elülső ajtót vagy kapcsold be a ventilátorokat."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "A kamra hőmérséklete túl magas, ami a filament meglágyulását okozhatja. Várj, amíg a kamrahőmérséklet %d°C alá csökken. A gyorsabb hűtéshez nyisd ki az elülső ajtót vagy kapcsold be a ventilátorokat."
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "Az AMS hőmérséklete túl magas, ami a filament meglágyulását okozhatja. Várj, amíg az AMS hőmérséklete %d℃ alá csökken."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "Az AMS hőmérséklete túl magas, ami a filament meglágyulását okozhatja. Várj, amíg az AMS hőmérséklete %d°C alá csökken."
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "Az aktuális vagy cél kamrahőmérséklet meghaladja a 45℃-ot. Az extruder eltömődésének elkerülése érdekében alacsony hőmérsékletű filament (PLA/PETG/TPU) nem tölthető be."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "Az aktuális vagy cél kamrahőmérséklet meghaladja a 45°C-ot. Az extruder eltömődésének elkerülése érdekében alacsony hőmérsékletű filament (PLA/PETG/TPU) nem tölthető be."
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Alacsony hőmérsékletű filament (PLA/PETG/TPU) van betöltve az extruderbe. Az extruder eltömődésének elkerülése érdekében ilyenkor nem engedélyezett a kamrahőmérséklet beállítása."
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Ha a kamrahőmérsékletet 40℃ alá állítod, a kamrahőmérséklet-szabályozás nem aktiválódik és a cél kamrahőmérséklet automatikusan 0℃ lesz."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Ha a kamrahőmérsékletet 40°C alá állítod, a kamrahőmérséklet-szabályozás nem aktiválódik és a cél kamrahőmérséklet automatikusan 0°C lesz."
 
 msgid "Failed to start print job"
 msgstr "Nem sikerült elindítani a nyomtatási feladatot"
@@ -6774,8 +6774,8 @@ msgstr "Rántás (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Ventilátor fordulatszám (%)"
 
-msgid "Temperature (℃)"
-msgstr "Hőmérséklet (℃)"
+msgid "Temperature (°C)"
+msgstr "Hőmérséklet (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Térfogatáramlás (mm³/s)"
@@ -8464,14 +8464,14 @@ msgstr "Réteg: %s"
 msgid "Layer: %d/%d"
 msgstr "Réteg: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Kérlek, melegítsd a fúvókát 170℃ fölé a filament betöltése vagy kihúzása előtt."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Kérlek, melegítsd a fúvókát 170°C fölé a filament betöltése vagy kihúzása előtt."
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "Nyomtatás közben hűtési módban a kamrahőmérséklet nem módosítható."
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Ha a kamrahőmérséklet meghaladja a 40℃-ot, a rendszer automatikusan fűtési módra vált. Erősítsd meg, hogy átváltsunk-e."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Ha a kamrahőmérséklet meghaladja a 40°C-ot, a rendszer automatikusan fűtési módra vált. Erősítsd meg, hogy átváltsunk-e."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Válassz egy AMS-helyet a kalibrálás előtt"
@@ -10178,8 +10178,8 @@ msgstr "Szeletelés megszakítva"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Asztalhőmérséklet-ütközés: a T%d (%s) %d℃-ra állítja az asztalt — a T%d (%s) %d℃-ot igényel. Az asztalt az elsődleges szerszám vezérli; a másodlagos szerszámok az általa beállított hőmérsékleten nyomtatnak."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Asztalhőmérséklet-ütközés: a T%d (%s) %d°C-ra állítja az asztalt — a T%d (%s) %d°C-ot igényel. Az asztalt az elsődleges szerszám vezérli; a másodlagos szerszámok az általa beállított hőmérsékleten nyomtatnak."
 
 # AI Translated
 #, c-format, boost-format
@@ -10366,8 +10366,8 @@ msgstr "Anyagáramlás-teszt - %d. menet"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "Nem érhető el szalagos hőmérséklettorony a(z) %1% és %2%℃ közötti tartományhoz. Olyan tartományt használj, amelyet a toronymodellek lefednek, például 230-tól 190-ig."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "Nem érhető el szalagos hőmérséklettorony a(z) %1% és %2%°C közötti tartományhoz. Olyan tartományt használj, amelyet a toronymodellek lefednek, például 230-tól 190-ig."
 
 # AI Translated
 msgid "Temperature tower"
@@ -20497,8 +20497,8 @@ msgstr "Hőmérséklet változás"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "A nem aktív extrudernél alkalmazott hőmérséklet-különbség. A rendszer figyelmen kívül hagyja ezt az értéket, ha a filamentbeállításokban az 'idle_temperature' értéke nem nulla."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "Előmelegítési idő"
@@ -21331,14 +21331,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Ez az a kamrahőmérséklet, amelynél a nyomtatásnak el kell indulnia, miközben a kamra tovább melegszik a \"Cél\" kamrahőmérséklet felé. Például állítsd a Célt 60-ra, a Minimálisat pedig 50-re, hogy a nyomtatás elinduljon, amint a kamra eléri az 50℃-ot, anélkül hogy megvárnád a teljes 60℃-ot.\n"
+"Ez az a kamrahőmérséklet, amelynél a nyomtatásnak el kell indulnia, miközben a kamra tovább melegszik a \"Cél\" kamrahőmérséklet felé. Például állítsd a Célt 60-ra, a Minimálisat pedig 50-re, hogy a nyomtatás elinduljon, amint a kamra eléri az 50°C-ot, anélkül hogy megvárnád a teljes 60°C-ot.\n"
 "\n"
 "Ez beállít egy chamber_minimal_temperature nevű G-code változót, amely átadható a nyomtatásindító makrónak vagy egy átmelegítő makrónak, például így:\n"
 "PRINT_START (egyéb változók) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -24180,8 +24180,8 @@ msgstr "A rendszer egy tesztmodellt nyomtat. A kalibrálás előtt tisztítsd me
 msgid "Printing Parameters"
 msgstr "Nyomtatási paraméterek"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "Fúvóka- és AMS-információk szinkronizálása"
@@ -26911,13 +26911,13 @@ msgstr "Szárítás – páramentesítés"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "%s maximális szárítási hőmérséklete %d℃."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "%s maximális szárítási hőmérséklete %d°C."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "%s minimális szárítási hőmérséklete %d℃."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "%s minimális szárítási hőmérséklete %d°C."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -34348,8 +34348,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Add meg a filament extrudálásához szükséges nozzle_temperature értéket."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "Ökölszabályként PLA-hoz 160–230℃, ABS-hez 215–250℃ ajánlott."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "Ökölszabályként PLA-hoz 160–230°C, ABS-hez 215–250°C ajánlott."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -34360,8 +34360,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Add meg azt az asztalhőmérsékletet, amely ahhoz szükséges, hogy a filament megtapadjon a fűtött asztalon."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "Ökölszabályként PLA-hoz 60℃, ABS-hez 110℃ ajánlott. Hagyd nullán, ha nincs fűtött asztalod."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "Ökölszabályként PLA-hoz 60°C, ABS-hez 110°C ajánlott. Hagyd nullán, ha nincs fűtött asztalod."
 
 # AI Translated
 msgid "Bed Temperature:"

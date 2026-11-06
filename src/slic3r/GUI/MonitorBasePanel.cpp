@@ -17,6 +17,7 @@
 #include <wx/stattext.h>
 #include <wx/font.h>
 #include "slic3r/GUI/Widgets/StaticLine.hpp"
+#include "slic3r/GUI/Widgets/Label.hpp"
 
 class wxWindow;
 
@@ -83,7 +84,7 @@ MonitorBasePanel::MonitorBasePanel(wxWindow* parent, wxWindowID id, const wxPoin
 
 	m_staticText_machine_name = new wxStaticText(m_panel_printer, wxID_ANY, wxT("BBL-Printer001"), wxDefaultPosition, wxSize(-1, -1), wxST_ELLIPSIZE_END | wxST_ELLIPSIZE_MIDDLE | wxST_ELLIPSIZE_START);
 	m_staticText_machine_name->Wrap(-1);
-	m_staticText_machine_name->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("@HarmonyOS Sans SC")));
+	m_staticText_machine_name->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 	m_staticText_machine_name->SetMinSize(wxSize(100, -1));
 
 	bSizer_printer_info->Add(m_staticText_machine_name, 0, wxALIGN_CENTER_VERTICAL | wxALL, 0);
@@ -121,7 +122,7 @@ MonitorBasePanel::MonitorBasePanel(wxWindow* parent, wxWindowID id, const wxPoin
 
 	m_staticText_status = new wxStaticText(m_panel_status_tab, wxID_ANY, wxT("Status"), wxDefaultPosition, wxSize(-1, -1), wxST_ELLIPSIZE_END);
 	m_staticText_status->Wrap(-1);
-	m_staticText_status->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("@HarmonyOS Sans SC")));
+	m_staticText_status->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 	m_staticText_status->SetMinSize(wxSize(65, -1));
 
 	bSizer_status_caption->Add(m_staticText_status, 0, wxALIGN_CENTER_VERTICAL | wxBOTTOM | wxLEFT, 0);
@@ -158,7 +159,7 @@ MonitorBasePanel::MonitorBasePanel(wxWindow* parent, wxWindowID id, const wxPoin
 
 	m_staticText_time_lapse = new wxStaticText(m_panel_time_lapse_tab, wxID_ANY, wxT("Time Lapse"), wxDefaultPosition, wxSize(-1, -1), wxALIGN_LEFT | wxST_ELLIPSIZE_END);
 	m_staticText_time_lapse->Wrap(-1);
-	m_staticText_time_lapse->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("@HarmonyOS Sans SC")));
+	m_staticText_time_lapse->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 	m_staticText_time_lapse->SetMinSize(wxSize(122, -1));
 
 	bSizer_time_lapse_caption->Add(m_staticText_time_lapse, 0, wxALIGN_CENTER_VERTICAL | wxALL, 0);
@@ -191,7 +192,7 @@ MonitorBasePanel::MonitorBasePanel(wxWindow* parent, wxWindowID id, const wxPoin
 
 	m_staticText_video_monitoring = new wxStaticText(m_panel_video_tab, wxID_ANY, wxT("Video"), wxDefaultPosition, wxSize(-1, -1), wxALIGN_LEFT | wxST_ELLIPSIZE_END);
 	m_staticText_video_monitoring->Wrap(-1);
-	m_staticText_video_monitoring->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("@HarmonyOS Sans SC")));
+	m_staticText_video_monitoring->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 	m_staticText_video_monitoring->SetMinSize(wxSize(122, -1));
 
 	bSizer_video_monitoring_caption->Add(m_staticText_video_monitoring, 0, wxALIGN_CENTER_VERTICAL | wxALL, 0);
@@ -225,7 +226,7 @@ MonitorBasePanel::MonitorBasePanel(wxWindow* parent, wxWindowID id, const wxPoin
 
 	m_staticText_subtask_list = new wxStaticText(m_panel_task_list_tab, wxID_ANY, wxT("Task List"), wxDefaultPosition, wxSize(-1, -1), wxALIGN_LEFT | wxST_ELLIPSIZE_END);
 	m_staticText_subtask_list->Wrap(-1);
-	m_staticText_subtask_list->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("@HarmonyOS Sans SC")));
+	m_staticText_subtask_list->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 	m_staticText_subtask_list->SetMinSize(wxSize(122, -1));
 
 	bSizer_tasklist_caption->Add(m_staticText_subtask_list, 0, wxALIGN_CENTER_VERTICAL | wxALL, 0);
@@ -321,7 +322,7 @@ TaskListBasePanel::TaskListBasePanel(wxWindow* parent, wxWindowID id, const wxPo
 
 	m_staticText_model_name = new wxStaticText(m_panel_model_name_caption, wxID_ANY, wxT("Model Name"), wxDefaultPosition, wxDefaultSize, 0);
 	m_staticText_model_name->Wrap(-1);
-	m_staticText_model_name->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("HarmonyOS Sans SC")));
+	m_staticText_model_name->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, Label::face()));
 
 	bSizer_model_name_caption->Add(m_staticText_model_name, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 
@@ -397,7 +398,7 @@ TaskListBasePanel::TaskListBasePanel(wxWindow* parent, wxWindowID id, const wxPo
 
 	m_staticText_plater = new wxStaticText(m_panel_plater_caption, wxID_ANY, wxT("Plater"), wxDefaultPosition, wxDefaultSize, 0);
 	m_staticText_plater->Wrap(-1);
-	m_staticText_plater->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, wxT("HarmonyOS Sans SC")));
+	m_staticText_plater->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, Label::face()));
 
 	bSizer_plater_caption->Add(m_staticText_plater, 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
 

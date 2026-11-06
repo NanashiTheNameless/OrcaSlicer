@@ -1,6 +1,6 @@
 <!--
 # THIS FORK IS UNSTABLE AND UNOFFICIAL DO NOT REPORT BUGS FOUND HERE TO THE OFFICIAL VERSION
-> Please read How to Contribute: https://github.com/NanashiTheNameless/OrcaSlicer_WIKI/blob/main/developer_reference/how_to_contribute.md
+> Please read How to Contribute: https://github.com/NanashiTheNameless/OrcaSlicer/wiki/how_to_contribute
 -->
 
 # Pull Request

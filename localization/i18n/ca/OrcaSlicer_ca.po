@@ -4804,8 +4804,8 @@ msgstr "Temperatura del llit"
 msgid "Max volumetric speed"
 msgstr "Velocitat volumètrica màxima"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "Temperatura del llit"
@@ -5265,12 +5265,12 @@ msgid "Bed Shape"
 msgstr "Forma de la placa d'impressió"
 
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "Es recomana una temperatura mínima superior a %d℃ per a %s.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "Es recomana una temperatura mínima superior a %d°C per a %s.\n"
 
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "Es recomana una temperatura màxima inferior a %d℃ per a %s.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "Es recomana una temperatura màxima inferior a %d°C per a %s.\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "La temperatura mínima recomanada no pot ser superior a la temperatura màxima recomanada.\n"
@@ -5315,8 +5315,8 @@ msgstr "La temperatura actual de la cambra és superior a la temperatura segura 
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "La temperatura mínima de la cambra (%d℃) és superior a la temperatura objectiu de la cambra (%d℃). El valor mínim és el llindar a partir del qual comença la impressió mentre la cambra continua escalfant-se cap a l'objectiu, de manera que no l'hauria de superar. Es limitarà al valor objectiu."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "La temperatura mínima de la cambra (%d°C) és superior a la temperatura objectiu de la cambra (%d°C). El valor mínim és el llindar a partir del qual comença la impressió mentre la cambra continua escalfant-se cap a l'objectiu, de manera que no l'hauria de superar. Es limitarà al valor objectiu."
 
 # AI Translated
 #, c-format, boost-format
@@ -6240,21 +6240,21 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "Per garantir la vostra seguretat, certes tasques de processament (com el làser) només es poden reprendre a la impressora."
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "La temperatura de la cambra és massa alta, cosa que pot causar que el filament s'estovi. Espereu fins que la temperatura de la cambra baixi per sota de %d℃. Podeu obrir la porta frontal o activar els ventiladors per refredar."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "La temperatura de la cambra és massa alta, cosa que pot causar que el filament s'estovi. Espereu fins que la temperatura de la cambra baixi per sota de %d°C. Podeu obrir la porta frontal o activar els ventiladors per refredar."
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "La temperatura de l'AMS és massa alta, cosa que pot causar que el filament s'estovi. Espereu fins que la temperatura de l'AMS baixi per sota de %d℃."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "La temperatura de l'AMS és massa alta, cosa que pot causar que el filament s'estovi. Espereu fins que la temperatura de l'AMS baixi per sota de %d°C."
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "La temperatura actual de la cambra o la temperatura objectiu de la cambra supera els 45℃. Per evitar l'obstrucció de l'extrusor, no es permet carregar filament de baixa temperatura (PLA/PETG/TPU)."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "La temperatura actual de la cambra o la temperatura objectiu de la cambra supera els 45°C. Per evitar l'obstrucció de l'extrusor, no es permet carregar filament de baixa temperatura (PLA/PETG/TPU)."
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Hi ha filament de baixa temperatura (PLA/PETG/TPU) carregat a l'extrusor. Per evitar l'obstrucció de l'extrusor, no es permet establir la temperatura de la cambra."
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Quan establiu la temperatura de la cambra per sota dels 40 ℃, el control de temperatura de la cambra no s'activarà. I la temperatura de la cambra objectiu s'establirà automàticament a 0 ℃."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Quan establiu la temperatura de la cambra per sota dels 40 °C, el control de temperatura de la cambra no s'activarà. I la temperatura de la cambra objectiu s'establirà automàticament a 0 °C."
 
 msgid "Failed to start print job"
 msgstr "No s'ha pogut començar a imprimir"
@@ -6840,8 +6840,8 @@ msgstr "Jerk (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Velocitat Ventilador ( % )"
 
-msgid "Temperature (℃)"
-msgstr "Temperatura ( ℃ )"
+msgid "Temperature (°C)"
+msgstr "Temperatura ( °C )"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Taxa de flux volumètric ( mm³/seg )"
@@ -8531,14 +8531,14 @@ msgstr "Capa: %s"
 msgid "Layer: %d/%d"
 msgstr "Capa: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Escalfeu el broquet per sobre dels 170 ℃ abans de carregar o descarregar el filament."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Escalfeu el broquet per sobre dels 170 °C abans de carregar o descarregar el filament."
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "La temperatura de la cambra no es pot canviar en mode de refredament durant la impressió."
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Si la temperatura de la cambra supera els 40℃, el sistema canviarà automàticament al mode d'escalfament. Confirmeu si voleu canviar."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Si la temperatura de la cambra supera els 40°C, el sistema canviarà automàticament al mode d'escalfament. Confirmeu si voleu canviar."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Seleccioneu una ranura AMS abans del calibratge"
@@ -10253,8 +10253,8 @@ msgstr "Laminat cancel·lat"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Conflicte de temperatura del llit: T%d (%s) fixa el llit a %d℃ — T%d (%s) requereix %d℃. L'eina principal controla el llit; les eines secundàries imprimeixen a la temperatura que aquesta fixi."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Conflicte de temperatura del llit: T%d (%s) fixa el llit a %d°C — T%d (%s) requereix %d°C. L'eina principal controla el llit; les eines secundàries imprimeixen a la temperatura que aquesta fixi."
 
 # AI Translated
 #, c-format, boost-format
@@ -10439,8 +10439,8 @@ msgstr "Prova de relació de flux - Passada %d"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "No hi ha cap torre de temperatura per a cinta disponible per al rang de %1% a %2%℃. Feu servir un rang que cobreixin els models de torre, per exemple de 230 a 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "No hi ha cap torre de temperatura per a cinta disponible per al rang de %1% a %2%°C. Feu servir un rang que cobreixin els models de torre, per exemple de 230 a 190."
 
 # AI Translated
 msgid "Temperature tower"
@@ -20630,8 +20630,8 @@ msgstr "Variació de temperatura"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "Diferència de temperatura a aplicar quan una extrusora no està activa. El valor no s'utilitza quan 'idle_temperature' a la configuració del filament s'estableix en un valor diferent de zero."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 msgid "Preheat time"
 msgstr "Temps de preescalfament"
@@ -21463,14 +21463,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Aquesta és la temperatura de la cambra a la qual ha de començar la impressió, mentre la cambra continua escalfant-se cap a la temperatura \"Objectiu\" de la cambra. Per exemple, establiu l'Objectiu a 60 i la Mínima a 50 per començar a imprimir quan la cambra arribi a 50℃, sense esperar als 60℃ complets.\n"
+"Aquesta és la temperatura de la cambra a la qual ha de començar la impressió, mentre la cambra continua escalfant-se cap a la temperatura \"Objectiu\" de la cambra. Per exemple, establiu l'Objectiu a 60 i la Mínima a 50 per començar a imprimir quan la cambra arribi a 50°C, sense esperar als 60°C complets.\n"
 "\n"
 "Estableix una variable de G-code anomenada chamber_minimal_temperature, que es pot passar a la vostra macro d'inici d'impressió o a una macro d'escalfament, així:\n"
 "PRINT_START (altres variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -24319,8 +24319,8 @@ msgstr "S'imprimirà un model de prova. Elimineu la placa d'impressió i torneu-
 msgid "Printing Parameters"
 msgstr "Paràmetres d'impressió"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "Sincronitza la informació del broquet i l'AMS"
@@ -27067,13 +27067,13 @@ msgstr "Assecatge - Deshumidificació"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "La temperatura màxima d'assecatge de %s és %d℃."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "La temperatura màxima d'assecatge de %s és %d°C."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "La temperatura mínima d'assecatge de %s és %d℃."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "La temperatura mínima d'assecatge de %s és %d°C."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -34507,8 +34507,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Introduïu la temperatura del broquet (nozzle_temperature) necessària per extrudir el vostre filament."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "Com a norma general, de 160 a 230℃ per al PLA i de 215 a 250℃ per a l'ABS."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "Com a norma general, de 160 a 230°C per al PLA i de 215 a 250°C per a l'ABS."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -34519,8 +34519,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Introduïu la temperatura del llit necessària perquè el filament s'adhereixi al llit calent."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "Com a norma general, 60℃ per al PLA i 110℃ per a l'ABS. Deixeu-ho a zero si no teniu llit calent."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "Com a norma general, 60°C per al PLA i 110°C per a l'ABS. Deixeu-ho a zero si no teniu llit calent."
 
 # AI Translated
 msgid "Bed Temperature:"

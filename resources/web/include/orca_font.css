@@ -1,0 +1,15 @@
+/* The bundled UI font. Pages @import this and list "0xProto" first in font-family; the browser
+   falls back per glyph to the rest of the stack for scripts 0xProto lacks (CJK, Cyrillic, Thai). */
+@font-face {
+    font-family: "0xProto";
+    src: url("../../fonts/0xProto-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "0xProto";
+    src: url("../../fonts/0xProto-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}

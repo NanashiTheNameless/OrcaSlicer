@@ -1,3 +1,5 @@
+@import url("../../include/orca_font.css");
+
 html,
 body {
   width: 100% !important;
@@ -5,7 +7,7 @@ body {
   max-width: none !important;
   max-height: none !important;
   margin: 0;
-  font-family: sans-serif;
+  font-family: "0xProto", sans-serif;
   background: var(--bg);
   color: var(--text);
   overflow: hidden;
@@ -1260,7 +1262,7 @@ body.pane-resizing {
   border-radius: 4px;
   background: var(--bg);
   color: var(--text);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: "0xProto", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12px;
   line-height: 1.5;
   resize: none;

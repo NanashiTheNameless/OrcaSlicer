@@ -4904,8 +4904,8 @@ msgstr "ベッド温度"
 msgid "Max volumetric speed"
 msgstr "最大体積速度"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "ベッド温度"
@@ -5378,12 +5378,12 @@ msgid "Bed Shape"
 msgstr "ベッド形状"
 
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "%d℃以上の最低温度が%sに推奨されます。\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "%d°C以上の最低温度が%sに推奨されます。\n"
 
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "%d℃以下の最高温度が%sに推奨されます。\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "%d°C以下の最高温度が%sに推奨されます。\n"
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
 msgstr "推奨最低温度は推奨最高温度より高くすることはできません。\n"
@@ -5432,8 +5432,8 @@ msgstr "現在の庫内温度が材料の安全温度を超えています。材
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "最低庫内温度 (%d℃) が目標庫内温度 (%d℃) を上回っています。最低値は、チャンバーが目標に向けて加熱を続けながら印刷を開始するしきい値であるため、目標値を超えてはいけません。値は目標値に制限されます。"
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "最低庫内温度 (%d°C) が目標庫内温度 (%d°C) を上回っています。最低値は、チャンバーが目標に向けて加熱を続けながら印刷を開始するしきい値であるため、目標値を超えてはいけません。値は目標値に制限されます。"
 
 # AI Translated
 #, c-format, boost-format
@@ -6391,17 +6391,17 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr "安全のため、レーザーなどの特定の処理タスクはプリンターでのみ再開できます。"
 
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "庫内温度が高すぎるため、フィラメントが軟化する可能性があります。庫内温度が%d℃以下になるまでお待ちください。フロントドアを開けるかファンを有効にして冷却できます。"
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "庫内温度が高すぎるため、フィラメントが軟化する可能性があります。庫内温度が%d°C以下になるまでお待ちください。フロントドアを開けるかファンを有効にして冷却できます。"
 
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "AMS温度が高すぎるため、フィラメントが軟化する可能性があります。AMS温度が%d℃以下になるまでお待ちください。"
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "AMS温度が高すぎるため、フィラメントが軟化する可能性があります。AMS温度が%d°C以下になるまでお待ちください。"
 
 # AI Translated
 # Needs human review: Rewrote a person's translation: Term swaps: エクストルーダー to 押出機, チャンバー温度 to 庫内温度 (glossary).
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "現在の庫内温度または目標庫内温度が45℃を超えています。押出機の詰まりを避けるため、低温フィラメント（PLA/PETG/TPU）のロードは許可されません。"
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "現在の庫内温度または目標庫内温度が45°Cを超えています。押出機の詰まりを避けるため、低温フィラメント（PLA/PETG/TPU）のロードは許可されません。"
 
 # AI Translated
 # Needs human review: Rewrote a person's translation: Term swaps: エクストルーダー to 押出機, チャンバー温度 to 庫内温度 (glossary).
@@ -6410,8 +6410,8 @@ msgstr "低温フィラメント（PLA/PETG/TPU）が押出機にロードされ
 
 # AI Translated
 # Needs human review: Rewrote a person's translation: Term swap: チャンバー温度 to the glossary Chamber temperature 庫内温度.
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "庫内温度を40℃未満に設定すると、庫内温度制御は有効にならず、目標庫内温度は自動的に0℃に設定されます。"
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "庫内温度を40°C未満に設定すると、庫内温度制御は有効にならず、目標庫内温度は自動的に0°Cに設定されます。"
 
 msgid "Failed to start print job"
 msgstr "造形タスクを開始できませんでした"
@@ -7004,8 +7004,8 @@ msgstr "Jerk (mm/s)"
 msgid "Fan speed (%)"
 msgstr "ファン回転速度 (%)"
 
-msgid "Temperature (℃)"
-msgstr "温度 (℃)"
+msgid "Temperature (°C)"
+msgstr "温度 (°C)"
 
 # AI Translated
 # Needs human review: Rewrote a person's translation: Legend title of the volumetric flow rate: glossary Flow Rate is フロー率, and its pair Actual volumetric flow rate reads 実際の体積フロー率 (mm³/s).
@@ -8725,14 +8725,14 @@ msgstr "レイヤー: %s"
 msgid "Layer: %d/%d"
 msgstr "レイヤー: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "フィラメントのロード/アンロード前にノズルを170℃以上に加熱してください。"
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "フィラメントのロード/アンロード前にノズルを170°C以上に加熱してください。"
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "印刷中の冷却モードでは庫内温度を変更できません。"
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "庫内温度が40℃を超えると、システムは自動的に加熱モードに切り替わります。切り替えてもよろしいですか？"
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "庫内温度が40°Cを超えると、システムは自動的に加熱モードに切り替わります。切り替えてもよろしいですか？"
 
 msgid "Please select an AMS slot before calibration"
 msgstr "キャリブレーション前に、AMSスロットを選択してください"
@@ -10474,8 +10474,8 @@ msgstr "スライスを取消しました"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "ベッド温度の競合: T%d (%s) はベッドを%d℃に設定しますが、T%d (%s) は%d℃を必要とします。ベッドはプライマリツールが制御し、セカンダリツールはその設定温度で印刷します。"
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "ベッド温度の競合: T%d (%s) はベッドを%d°Cに設定しますが、T%d (%s) は%d°Cを必要とします。ベッドはプライマリツールが制御し、セカンダリツールはその設定温度で印刷します。"
 
 # AI Translated
 #, c-format, boost-format
@@ -10663,8 +10663,8 @@ msgstr "流量比テスト - パス%d"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "%1%～%2%℃の範囲に対応するベルト用温度タワーはありません。タワーモデルが対応する範囲 (例: 230～190) を使用してください。"
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "%1%～%2%°Cの範囲に対応するベルト用温度タワーはありません。タワーモデルが対応する範囲 (例: 230～190) を使用してください。"
 
 # AI Translated
 msgid "Temperature tower"
@@ -21414,8 +21414,8 @@ msgstr "温度差"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "押出機が非アクティブなときに適用される温度差です。フィラメント設定の'idle_temperature'が0以外に設定されている場合、この値は使用されません。"
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 # AI Translated
 msgid "Preheat time"
@@ -22310,14 +22310,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"これは、チャンバーが「目標」庫内温度に向けて加熱を続けながら印刷を開始する庫内温度です。例えば「目標」を60、「最低」を50に設定すると、60℃になるまで待たずに、チャンバーが50℃に達した時点で印刷を開始します。\n"
+"これは、チャンバーが「目標」庫内温度に向けて加熱を続けながら印刷を開始する庫内温度です。例えば「目標」を60、「最低」を50に設定すると、60°Cになるまで待たずに、チャンバーが50°Cに達した時点で印刷を開始します。\n"
 "\n"
 "このオプションはchamber_minimal_temperatureというG-code変数を設定し、印刷開始マクロやヒートソークマクロに次のように渡せます:\n"
 "PRINT_START (その他の変数) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -25380,8 +25380,8 @@ msgstr "テストモデルが印刷されます。キャリブレーションの
 msgid "Printing Parameters"
 msgstr "印刷パラメータ"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 msgid "Synchronize nozzle and AMS information"
 msgstr "ノズルとAMS情報を同期"
@@ -28182,13 +28182,13 @@ msgstr "乾燥 - 除湿"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "%s の最高乾燥温度は %d℃ です。"
+msgid "%s maximum drying temperature is %d°C."
+msgstr "%s の最高乾燥温度は %d°C です。"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "%s の最低乾燥温度は %d℃ です。"
+msgid "%s minimum drying temperature is %d°C."
+msgstr "%s の最低乾燥温度は %d°C です。"
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -35599,8 +35599,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "フィラメントの押出に必要なノズル温度を入力してください。"
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "目安として、PLAは160～230℃、ABSは215～250℃です。"
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "目安として、PLAは160～230°C、ABSは215～250°Cです。"
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -35611,8 +35611,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "フィラメントをヒートベッドに定着させるために必要なベッド温度を入力してください。"
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "目安として、PLAは60℃、ABSは110℃です。ヒートベッドがない場合は0のままにしてください。"
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "目安として、PLAは60°C、ABSは110°Cです。ヒートベッドがない場合は0のままにしてください。"
 
 # AI Translated
 msgid "Bed Temperature:"

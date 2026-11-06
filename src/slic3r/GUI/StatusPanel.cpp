@@ -624,7 +624,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     #ifdef __WXOSX_MAC__
     m_staticText_subtask_value->SetFont(::Label::Body_13);
     #else
-    m_staticText_subtask_value->SetFont(wxFont(13, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+    m_staticText_subtask_value->SetFont(wxFont(13, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
     #endif
     m_staticText_subtask_value->SetForegroundColour(wxColour(44, 44, 46));
 
@@ -665,7 +665,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
 #ifdef __WXOSX_MAC__
     m_staticText_profile_value->SetFont(::Label::Body_11);
 #else
-    m_staticText_profile_value->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+    m_staticText_profile_value->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 #endif
 
     m_staticText_profile_value->SetForegroundColour(0x6B6B6B);
@@ -768,11 +768,11 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
 
     m_staticText_progress_left = new wxStaticText(penel_text, wxID_ANY, _L("N/A"), wxDefaultPosition, wxDefaultSize, 0);
     m_staticText_progress_left->Wrap(-1);
-    m_staticText_progress_left->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+    m_staticText_progress_left->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
     m_staticText_progress_left->SetForegroundColour(wxColour(146, 146, 146));
 
     m_staticText_layers = new wxStaticText(penel_text, wxID_ANY, _L("Layer: N/A"));
-    m_staticText_layers->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+    m_staticText_layers->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
     m_staticText_layers->SetForegroundColour(wxColour(146, 146, 146));
     m_staticText_layers->Hide();
 
@@ -800,7 +800,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
 #ifdef __WXOSX_MAC__
     m_printing_stage_value->SetFont(::Label::Body_11);
 #else
-    m_printing_stage_value->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+    m_printing_stage_value->SetFont(wxFont(11, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
 #endif
     m_printing_stage_value->SetForegroundColour(STAGE_TEXT_COL);
 
@@ -872,7 +872,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     m_staticText_progress_end = new wxStaticText(penel_finish_time, wxID_ANY, _L("N/A"), wxDefaultPosition, wxDefaultSize, 0);
     m_staticText_progress_end->Wrap(-1);
     m_staticText_progress_end->SetFont(
-        wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxT("HarmonyOS Sans SC")));
+        wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Label::face()));
     m_staticText_progress_end->SetForegroundColour(wxColour(146, 146, 146));
     bSizer_finish_time->Add(m_printing_stage_panel, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, 0);
     bSizer_finish_time->Add(0, 0, 1, wxEXPAND, 0);
@@ -4253,13 +4253,13 @@ void StatusPanel::axis_ctrl_e_hint(bool up_down)
 {
     if (ctrl_e_hint_dlg == nullptr) {
         /* ctrl_e_hint_dlg = new SecondaryCheckDialog(this->GetParent(), wxID_ANY, _L("Warning"), SecondaryCheckDialog::VisibleButtons::CONFIRM_AND_CANCEL, wxDefaultPosition,
-         ctrl_e_hint_dlg->update_text(_L("Please heat the nozzle to above 170\u2103 before loading or unloading filament."));
+         ctrl_e_hint_dlg->update_text(_L("Please heat the nozzle to above 170\u00B0C before loading or unloading filament."));
          ctrl_e_hint_dlg->m_show_again_checkbox->Hide();
          ctrl_e_hint_dlg->m_button_cancel->Hide();
          ctrl_e_hint_dlg->m_staticText_release_note->SetMaxSize(wxSize(FromDIP(360), -1));
          ctrl_e_hint_dlg->m_staticText_release_note->SetMinSize(wxSize(FromDIP(360), -1));
          ctrl_e_hint_dlg->Fit();*/
-        ctrl_e_hint_dlg = new MessageDialog(this, _L("Please heat the nozzle to above 170\u2103 before loading or unloading filament."), wxString(_L("Warning")), wxOK | wxCENTER);
+        ctrl_e_hint_dlg = new MessageDialog(this, _L("Please heat the nozzle to above 170\u00B0C before loading or unloading filament."), wxString(_L("Warning")), wxOK | wxCENTER);
     }
       ctrl_e_hint_dlg->ShowModal();
    // ctrl_e_hint_dlg->on_show();
@@ -4393,11 +4393,11 @@ void StatusPanel::on_set_chamber_temp()
             else if (!obj->GetFan()->is_at_heating_mode() && chamber_temp >= obj->GetConfig()->GetChamberTempSwitchHeat())
             {
 #ifndef __APPLE__
-                MessageDialog champer_switch_head_dlg(this, _L("If the chamber temperature exceeds 40\u2103, the system will automatically switch to heating mode. "
+                MessageDialog champer_switch_head_dlg(this, _L("If the chamber temperature exceeds 40\u00B0C, the system will automatically switch to heating mode. "
                                                                 "Please confirm whether to switch."), wxEmptyString, wxICON_WARNING | wxOK | wxCANCEL);
 #else
                 /*STUDIO-10386 MessageDialog here may cause block in macOS, use wxMessageDialog*/
-                wxMessageDialog champer_switch_head_dlg(this, _L("If the chamber temperature exceeds 40\u2103, the system will automatically switch to heating mode. "
+                wxMessageDialog champer_switch_head_dlg(this, _L("If the chamber temperature exceeds 40\u00B0C, the system will automatically switch to heating mode. "
                                                                    "Please confirm whether to switch."), wxEmptyString, wxICON_WARNING | wxOK | wxCANCEL);
 #endif
                 if (champer_switch_head_dlg.ShowModal() != wxID_OK) { return; }

@@ -18,7 +18,7 @@ placement, or one object per body), and one optional 3MF archive entry that carr
 Everything else is contained in `src/libslic3r/CAD/` and `src/slic3r/GUI/CAD/`.
 
 The user-facing manual lives in the wiki
-([Design Tab](https://www.orcaslicer.com/wiki/design_tab)), not here. This document covers the
+([Design Tab](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/design_tab)), not here. This document covers the
 parts of the design that the code does not make evident.
 
 ## The model is a recipe

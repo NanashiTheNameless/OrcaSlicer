@@ -1167,7 +1167,7 @@ void GUI_App::post_init()
     if (is_editor() && m_last_config_version && m_last_config_version->valid()
         && *m_last_config_version < Semver(2, 4, 0)) {
         CallAfter([] {
-            const wxString wiki_url = "https://www.orcaslicer.com/wiki/user_profiles/user_profiles.html#profiles-missing-after-updating-from-bambu-cloud";
+            const wxString wiki_url = "https://github.com/NanashiTheNameless/OrcaSlicer/wiki/user_profiles#profiles-missing-after-updating-from-bambu-cloud";
             MessageDialog dlg(nullptr,
                 _L("Since version 2.4.0, OrcaSlicer syncs user profiles through Orca Cloud instead of Bambu Cloud.\n\n"
                    "To migrate your existing profiles, log in to Orca Cloud and they will be transferred automatically. "
@@ -3262,7 +3262,7 @@ bool GUI_App::on_init_inner()
     wxLog::SetLogLevel(wxLOG_Message);
 #endif
 
-    ::Label::initSysFont();
+    ::Label::initSysFont(app_config->get("language"));
 
     // Register wxInspector plugins for Orca custom controls
     RegisterOrcaInspectorPlugins();

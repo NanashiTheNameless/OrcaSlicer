@@ -72,12 +72,12 @@ Before opening a pull request or posting on GitHub, read [CONTRIBUTING.md](CONTR
 - Include targeted tests or documented verification for behavior changes, especially in slicing logic, profiles, formats, and GUI defaults.
 - For profile changes (`resources/profiles/<Vendor>/**`), check that `version` in the sibling `resources/profiles/<Vendor>.json` was bumped.
 - For new or changed UI strings, check they follow [Writing translatable strings in the source](#writing-translatable-strings-in-the-source): no concatenated fragments, plural forms for counts, contexts for ambiguous words.
-- For translation changes (`localization/i18n/**/*.po`), check that recurring terms match the [Localization glossary](https://github.com/NanashiTheNameless/OrcaSlicer_WIKI/blob/main/developer_reference/localization_glossary.md) for that language.
+- For translation changes (`localization/i18n/**/*.po`), check that recurring terms match the [Localization glossary](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/localization_glossary) for that language.
 
 ## Localization & translations
 
 Catalogs live in `localization/i18n/<lang>/OrcaSlicer_<lang>.po`; the template is `OrcaSlicer.pot`.
-See the [Localization guide](https://github.com/NanashiTheNameless/OrcaSlicer_WIKI/blob/main/developer_reference/localization_guide.md) for the human-facing version of these principles.
+See the [Localization guide](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/localization_guide) for the human-facing version of these principles.
 
 ### Writing translatable strings in the source
 
@@ -94,7 +94,7 @@ See `.claude/skills/orca-translations/references/source-audit.md` for the full c
 
 ### Terminology
 
-- Use the [Localization glossary](https://github.com/OrcaSlicer/OrcaSlicer_WIKI/blob/main/developer_reference/localization_glossary.md) as the source of truth for recurring terms, so the same English term is always rendered the same way within a language, and terms that must stay in English (brand/product names, acronyms, materials, file formats, G-code tokens, macros/variables/identifiers) are not translated.
+- Use the [Localization glossary](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/localization_glossary) as the source of truth for recurring terms, so the same English term is always rendered the same way within a language, and terms that must stay in English (brand/product names, acronyms, materials, file formats, G-code tokens, macros/variables/identifiers) are not translated.
 - If a term's established translation changes, update both the affected `.po` files and the glossary (`developer_reference/glossary/<lang>.tsv` in the wiki, then regenerate) so they stay in sync.
 - Translate the *meaning*, not the words. Check what the string actually controls before translating it — English reuses one word for different things. `Flow ratio` (multiplier), `Flow Rate` (throughput) and `Flow Dynamics` (pressure compensation) are three different terms; `extruder` may mean the toolhead, the feeder motor, or the nozzle depending on the string.
 - Reuse one template per recurring message shape (`Failed to connect to …`, `Are you sure you want to …?`), even where the English wording varies.
@@ -102,7 +102,7 @@ See `.claude/skills/orca-translations/references/source-audit.md` for the full c
 ### Editing rules
 
 - Only edit `msgstr` — **never** change `msgid`, and never "fix" wrong English in the translation alone. Report the source string instead.
-- Preserve exactly: placeholders (`%s`, `%d`, `%1%`, `%zu`, `%%`), every `\n` (count *and* position, including leading/trailing), leading/trailing spaces, HTML tags, `℃`, and the file's encoding and line endings.
+- Preserve exactly: placeholders (`%s`, `%d`, `%1%`, `%zu`, `%%`), every `\n` (count *and* position, including leading/trailing), leading/trailing spaces, HTML tags, `°C`, and the file's encoding and line endings.
 - **Never reorder positional arguments** in a `c-format` string. If the msgid is `%d` then `%s`, that order must hold — swapping them breaks at runtime.
 - `msgctxt` separates homonyms — always read it. `Back`/`Camera View` is the rear view of the 3D navigator, while `Back`/`Navigation` is the go-back button; `Top` exists in the *Alignment*, *Layers* and *Camera View* senses.
 - When a string needs disambiguating, add context in the source (`_L_CONTEXT`/`_u8L_CONTEXT`), don't work around it in the translation.

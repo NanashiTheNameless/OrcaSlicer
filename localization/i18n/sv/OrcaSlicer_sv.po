@@ -5158,8 +5158,8 @@ msgstr "Byggplattans temperatur"
 msgid "Max volumetric speed"
 msgstr "Max volymetrisk hastighet"
 
-msgid "℃"
-msgstr "℃"
+msgid "°C"
+msgstr "°C"
 
 msgid "Bed temperature"
 msgstr "Byggplattans temperatur"
@@ -5653,13 +5653,13 @@ msgstr "Byggplattans Form"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
-msgstr "En minimitemperatur över %d℃ rekommenderas för %s.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
+msgstr "En minimitemperatur över %d°C rekommenderas för %s.\n"
 
 # AI Translated
 #, c-format, boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
-msgstr "En maxtemperatur under %d℃ rekommenderas för %s.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
+msgstr "En maxtemperatur under %d°C rekommenderas för %s.\n"
 
 # AI Translated
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
@@ -5706,8 +5706,8 @@ msgstr "Kammarens aktuella temperatur är högre än materialets säkra temperat
 
 # AI Translated
 #, c-format, boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
-msgstr "Kammarens minimitemperatur (%d℃) är högre än kammarens måltemperatur (%d℃). Minimivärdet är tröskeln där utskriften startar medan kammaren fortsätter värmas mot målet, så det bör inte överstiga målet. Värdet begränsas till måltemperaturen."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgstr "Kammarens minimitemperatur (%d°C) är högre än kammarens måltemperatur (%d°C). Minimivärdet är tröskeln där utskriften startar medan kammaren fortsätter värmas mot målet, så det bör inte överstiga målet. Värdet begränsas till måltemperaturen."
 
 # AI Translated
 #, c-format, boost-format
@@ -6686,25 +6686,25 @@ msgstr "För din säkerhet kan vissa bearbetningsuppgifter (till exempel laser) 
 
 # AI Translated
 #, c-format, boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
-msgstr "Kammartemperaturen är för hög, vilket kan göra att filamentet mjuknar. Vänta tills kammartemperaturen sjunker under %d℃. Du kan öppna framluckan eller aktivera fläktarna för att kyla ner."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
+msgstr "Kammartemperaturen är för hög, vilket kan göra att filamentet mjuknar. Vänta tills kammartemperaturen sjunker under %d°C. Du kan öppna framluckan eller aktivera fläktarna för att kyla ner."
 
 # AI Translated
 #, c-format, boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
-msgstr "AMS-temperaturen är för hög, vilket kan göra att filamentet mjuknar. Vänta tills AMS-temperaturen sjunker under %d℃."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
+msgstr "AMS-temperaturen är för hög, vilket kan göra att filamentet mjuknar. Vänta tills AMS-temperaturen sjunker under %d°C."
 
 # AI Translated
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
-msgstr "Kammarens aktuella temperatur eller måltemperatur överstiger 45℃. För att undvika igensättning i extrudern går det inte att ladda lågtemperaturfilament (PLA/PETG/TPU)."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgstr "Kammarens aktuella temperatur eller måltemperatur överstiger 45°C. För att undvika igensättning i extrudern går det inte att ladda lågtemperaturfilament (PLA/PETG/TPU)."
 
 # AI Translated
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr "Lågtemperaturfilament (PLA/PETG/TPU) är laddat i extrudern. För att undvika igensättning i extrudern går det inte att ställa in kammartemperaturen."
 
 # AI Translated
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
-msgstr "Om du ställer in kammartemperaturen under 40℃ aktiveras inte kammarens temperaturstyrning, och kammarens måltemperatur ställs automatiskt in på 0℃."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
+msgstr "Om du ställer in kammartemperaturen under 40°C aktiveras inte kammarens temperaturstyrning, och kammarens måltemperatur ställs automatiskt in på 0°C."
 
 # AI Translated
 msgid "Failed to start print job"
@@ -7342,8 +7342,8 @@ msgstr "Jerk (mm/s)"
 msgid "Fan speed (%)"
 msgstr "Fläkt hastighet (%)"
 
-msgid "Temperature (℃)"
-msgstr "Temperatur (℃)"
+msgid "Temperature (°C)"
+msgstr "Temperatur (°C)"
 
 msgid "Volumetric flow rate (mm³/s)"
 msgstr "Volymetrisk flödeshastighet (mm³/s)"
@@ -9152,16 +9152,16 @@ msgstr "Lager: %s"
 msgid "Layer: %d/%d"
 msgstr "Lager: %d/%d"
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
-msgstr "Värm nozzeln till över 170℃ innan du laddar eller matar ut filament."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
+msgstr "Värm nozzeln till över 170°C innan du laddar eller matar ut filament."
 
 # AI Translated
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr "Kammartemperaturen kan inte ändras i kylläget under utskrift."
 
 # AI Translated
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
-msgstr "Om kammartemperaturen överstiger 40℃ växlar systemet automatiskt till värmeläget. Bekräfta om du vill växla."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgstr "Om kammartemperaturen överstiger 40°C växlar systemet automatiskt till värmeläget. Bekräfta om du vill växla."
 
 msgid "Please select an AMS slot before calibration"
 msgstr "Välj ett AMS-fack innan kalibrering"
@@ -10971,8 +10971,8 @@ msgstr "Beredning avbruten"
 
 # AI Translated
 #, c-format, boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
-msgstr "Konflikt i byggplattans temperatur: T%d (%s) ställer in byggplattan på %d℃ — T%d (%s) kräver %d℃. Det primära verktyget styr byggplattan; sekundära verktyg skriver ut vid den temperatur det ställer in."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgstr "Konflikt i byggplattans temperatur: T%d (%s) ställer in byggplattan på %d°C — T%d (%s) kräver %d°C. Det primära verktyget styr byggplattan; sekundära verktyg skriver ut vid den temperatur det ställer in."
 
 # AI Translated
 #, c-format, boost-format
@@ -11166,8 +11166,8 @@ msgstr "Flödestest - omgång %d"
 
 # AI Translated
 #, boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
-msgstr "Det finns inget temperaturtorn för bandskrivare för intervallet %1% till %2%℃. Använd ett intervall som tornmodellerna täcker, till exempel 230 till 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
+msgstr "Det finns inget temperaturtorn för bandskrivare för intervallet %1% till %2%°C. Använd ett intervall som tornmodellerna täcker, till exempel 230 till 190."
 
 # AI Translated
 msgid "Temperature tower"
@@ -22236,8 +22236,8 @@ msgstr "Temperatur variation"
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr "Temperaturskillnad som tillämpas när en extruder inte är aktiv. Värdet används inte när 'idle_temperature' i filamentinställningarna är satt till ett värde skilt från noll."
 
-msgid "∆℃"
-msgstr "∆℃"
+msgid "∆°C"
+msgstr "∆°C"
 
 # AI Translated
 msgid "Preheat time"
@@ -23122,14 +23122,14 @@ msgstr ""
 
 # AI Translated
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
 "\n"
 "Unlike the \"Target\" chamber temperature, this option does not emit any M141/M191 commands; it only exposes the value to your custom G-code. It should not exceed the \"Target\" chamber temperature."
 msgstr ""
-"Detta är den kammartemperatur vid vilken utskriften ska starta, medan kammaren fortsätter värmas mot kammarens \"Mål\"-temperatur. Sätt till exempel Mål till 60 och Minimum till 50 för att börja skriva ut när kammaren når 50℃, utan att vänta på hela 60℃.\n"
+"Detta är den kammartemperatur vid vilken utskriften ska starta, medan kammaren fortsätter värmas mot kammarens \"Mål\"-temperatur. Sätt till exempel Mål till 60 och Minimum till 50 för att börja skriva ut när kammaren når 50°C, utan att vänta på hela 60°C.\n"
 "\n"
 "Det sätter en G-code-variabel med namnet chamber_minimal_temperature, som kan skickas till ditt print start-makro eller ett heat soak-makro så här:\n"
 "PRINT_START (andra variabler) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -26161,8 +26161,8 @@ msgstr "En testmodell kommer att skrivas ut. Ta bort byggplattan och placera til
 msgid "Printing Parameters"
 msgstr "Parametrar för utskrift"
 
-msgid "- ℃"
-msgstr "- ℃"
+msgid "- °C"
+msgstr "- °C"
 
 # AI Translated
 msgid "Synchronize nozzle and AMS information"
@@ -29130,13 +29130,13 @@ msgstr "Torkning – avfuktning"
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s maximum drying temperature is %d℃."
-msgstr "Maximal torktemperatur för %s är %d℃."
+msgid "%s maximum drying temperature is %d°C."
+msgstr "Maximal torktemperatur för %s är %d°C."
 
 # AI Translated
 #, c-format, boost-format
-msgid "%s minimum drying temperature is %d℃."
-msgstr "Minimal torktemperatur för %s är %d℃."
+msgid "%s minimum drying temperature is %d°C."
+msgstr "Minimal torktemperatur för %s är %d°C."
 
 # AI Translated
 msgid "This filament may not be completely dried."
@@ -36582,8 +36582,8 @@ msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr "Ange den nozzeltemperatur (nozzle_temperature) som krävs för att extrudera ditt filament."
 
 # AI Translated
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
-msgstr "En tumregel är 160 till 230℃ för PLA och 215 till 250℃ för ABS."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
+msgstr "En tumregel är 160 till 230°C för PLA och 215 till 250°C för ABS."
 
 # AI Translated
 msgid "Extrusion Temperature:"
@@ -36594,8 +36594,8 @@ msgid "Enter the bed temperature needed for getting your filament to stick to yo
 msgstr "Ange den byggplattstemperatur som krävs för att filamentet ska fastna på den uppvärmda byggplattan."
 
 # AI Translated
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
-msgstr "En tumregel är 60℃ för PLA och 110℃ för ABS. Lämna noll om du inte har någon uppvärmd byggplatta."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
+msgstr "En tumregel är 60°C för PLA och 110°C för ABS. Lämna noll om du inte har någon uppvärmd byggplatta."
 
 # AI Translated
 msgid "Bed Temperature:"

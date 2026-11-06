@@ -110,12 +110,12 @@ void ConfigManipulation::check_nozzle_recommended_temperature_range(DynamicPrint
     wxString msg_text;
     bool     need_check = false;
     if (temperature_range_low < min_recommended_temp) {
-        msg_text += wxString::Format(_L("A minimum temperature above %d\u2103 is recommended for %s.\n"),
+        msg_text += wxString::Format(_L("A minimum temperature above %d\u00B0C is recommended for %s.\n"),
                                         min_recommended_temp, filament_type);
         need_check = true;
     }
     if (temperature_range_high > max_recommended_temp) {
-        msg_text += wxString::Format(_L("A maximum temperature below %d\u2103 is recommended for %s.\n"),
+        msg_text += wxString::Format(_L("A maximum temperature below %d\u00B0C is recommended for %s.\n"),
                                         max_recommended_temp, filament_type);
         need_check = true;
     }
@@ -268,7 +268,7 @@ void ConfigManipulation::check_chamber_minimal_temperature(DynamicPrintConfig* c
         const int chamber_min_temp    = config->option<ConfigOptionInts>("chamber_minimal_temperature")->get_at(0);
         const int chamber_target_temp = config->option<ConfigOptionInts>("chamber_temperature")->get_at(0);
         if (chamber_min_temp > chamber_target_temp) {
-            wxString msg_text = wxString::Format(_L("The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). "
+            wxString msg_text = wxString::Format(_L("The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). "
                                                     "The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, "
                                                     "so it should not exceed it. It will be clamped to the target."),
                                                  chamber_min_temp, chamber_target_temp);

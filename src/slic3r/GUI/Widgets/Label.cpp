@@ -25,6 +25,18 @@
 #endif
 
 
+// Face picked by initSysFont() for the UI language.
+static wxString s_face = "HarmonyOS Sans SC";
+
+bool Label::uses_0xproto(const std::string &language)
+{
+    // 0xProto has Latin glyphs only: no Cyrillic, Greek, Thai or CJK.
+    const std::string lang = language.substr(0, language.find('_'));
+    return !(lang == "zh" || lang == "ja" || lang == "ko" || lang == "th" || lang == "ru" || lang == "uk");
+}
+
+const wxString &Label::face() { return s_face; }
+
 wxFont Label::sysFont(int size, bool bold)
 {
 //#ifdef __linux__
@@ -34,13 +46,7 @@ wxFont Label::sysFont(int size, bool bold)
     size = size * 4 / 5;
 #endif
 
-    wxString face = "HarmonyOS Sans SC";
-
-    // Check if the current locale is Korean
-    if (wxLocale::GetSystemLanguage() == wxLANGUAGE_KOREAN) {
-        face = "NanumGothic";
-    }
-
+    const wxString &face = Label::face();
     wxFont font{size, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, false, face};
     font.SetFaceName(face);
     if (!font.IsOk()) {
@@ -98,8 +104,20 @@ static bool fc_font_available(const char *family_name)
 }
 #endif
 
-void Label::initSysFont()
+void Label::initSysFont(const std::string &language)
 {
+    std::string lang = language;
+    if (lang.empty()) {
+        const wxLanguageInfo *info = wxLocale::GetLanguageInfo(wxLocale::GetSystemLanguage());
+        lang = info ? info->CanonicalName.ToStdString() : "en";
+    }
+    if (uses_0xproto(lang))
+        s_face = "0xProto";
+    else if (lang.rfind("ko", 0) == 0)
+        s_face = "NanumGothic";
+    else
+        s_face = "HarmonyOS Sans SC";
+
 #if defined(__linux__) || defined(_WIN32)
     // On Linux, skip AddPrivateFont for fonts already known to fontconfig
     // (e.g. installed system-wide in a Flatpak).  Calling AddPrivateFont
@@ -107,7 +125,7 @@ void Label::initSysFont()
     // because FcConfigAppFontAddFile invalidates Pango's cached font map.
     bool load_fonts = true;
 #ifdef __linux__
-    load_fonts = !fc_font_available("HarmonyOS Sans SC") || !fc_font_available("NanumGothic");
+    load_fonts = !fc_font_available("HarmonyOS Sans SC") || !fc_font_available("NanumGothic") || !fc_font_available("0xProto");
 #endif
     if (load_fonts) {
         const std::string &resource_path = Slic3r::resources_dir();
@@ -115,6 +133,8 @@ void Label::initSysFont()
         wxFont::AddPrivateFont(wxString::FromUTF8(resource_path + "/fonts/HarmonyOS_Sans_SC_Regular.ttf"));
         wxFont::AddPrivateFont(wxString::FromUTF8(resource_path + "/fonts/NanumGothic-Regular.ttf"));
         wxFont::AddPrivateFont(wxString::FromUTF8(resource_path + "/fonts/NanumGothic-Bold.ttf"));
+        wxFont::AddPrivateFont(wxString::FromUTF8(resource_path + "/fonts/0xProto-Regular.ttf"));
+        wxFont::AddPrivateFont(wxString::FromUTF8(resource_path + "/fonts/0xProto-Bold.ttf"));
     }
 #endif
     Head_48 = Label::sysFont(48, true);

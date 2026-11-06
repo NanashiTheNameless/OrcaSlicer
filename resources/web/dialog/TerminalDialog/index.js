@@ -41,7 +41,7 @@ function OnInit() {
   term = new Terminal({
     cursorBlink: true,
     fontSize: 13,
-    fontFamily: '"Cascadia Code", "Fira Code", "JetBrains Mono", monospace',
+    fontFamily: '"0xProto", "Cascadia Code", "Fira Code", "JetBrains Mono", monospace',
     theme: XtermTheme(),
     allowProposedApi: true
   });

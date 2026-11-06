@@ -4331,7 +4331,7 @@ msgstr ""
 msgid "Max volumetric speed"
 msgstr ""
 
-msgid "℃"
+msgid "°C"
 msgstr ""
 
 msgid "Bed temperature"
@@ -4756,11 +4756,11 @@ msgid "Bed Shape"
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "A minimum temperature above %d℃ is recommended for %s.\n"
+msgid "A minimum temperature above %d°C is recommended for %s.\n"
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "A maximum temperature below %d℃ is recommended for %s.\n"
+msgid "A maximum temperature below %d°C is recommended for %s.\n"
 msgstr ""
 
 msgid "The recommended minimum temperature cannot be higher than the recommended maximum temperature.\n"
@@ -4797,7 +4797,7 @@ msgid "Current chamber temperature is higher than the material's safe temperatur
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "The minimal chamber temperature (%d℃) is higher than the target chamber temperature (%d℃). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
+msgid "The minimal chamber temperature (%d°C) is higher than the target chamber temperature (%d°C). The minimal value is the threshold at which printing starts while the chamber keeps heating toward the target, so it should not exceed it. It will be clamped to the target."
 msgstr ""
 
 #, possible-c-format, possible-boost-format
@@ -5533,20 +5533,20 @@ msgid "To ensure your safety, certain processing tasks (such as laser) can only 
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d℃. You may open the front door or enable fans to cool down."
+msgid "The chamber temperature is too high, which may cause the filament to soften. Please wait until the chamber temperature drops below %d°C. You may open the front door or enable fans to cool down."
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d℃."
+msgid "AMS temperature is too high, which may cause the filament to soften. Please wait until the AMS temperature drops below %d°C."
 msgstr ""
 
-msgid "The current chamber temperature or the target chamber temperature exceeds 45℃. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
+msgid "The current chamber temperature or the target chamber temperature exceeds 45°C. In order to avoid extruder clogging, low temperature filament(PLA/PETG/TPU) is not allowed to be loaded."
 msgstr ""
 
 msgid "Low temperature filament(PLA/PETG/TPU) is loaded in the extruder. In order to avoid extruder clogging, it is not allowed to set the chamber temperature."
 msgstr ""
 
-msgid "When you set the chamber temperature below 40℃, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0℃."
+msgid "When you set the chamber temperature below 40°C, the chamber temperature control will not be activated, and the target chamber temperature will automatically be set to 0°C."
 msgstr ""
 
 msgid "Failed to start print job"
@@ -6097,7 +6097,7 @@ msgstr ""
 msgid "Fan speed (%)"
 msgstr ""
 
-msgid "Temperature (℃)"
+msgid "Temperature (°C)"
 msgstr ""
 
 msgid "Volumetric flow rate (mm³/s)"
@@ -7681,13 +7681,13 @@ msgstr ""
 msgid "Layer: %d/%d"
 msgstr ""
 
-msgid "Please heat the nozzle to above 170℃ before loading or unloading filament."
+msgid "Please heat the nozzle to above 170°C before loading or unloading filament."
 msgstr ""
 
 msgid "Chamber temperature cannot be changed in cooling mode while printing."
 msgstr ""
 
-msgid "If the chamber temperature exceeds 40℃, the system will automatically switch to heating mode. Please confirm whether to switch."
+msgid "If the chamber temperature exceeds 40°C, the system will automatically switch to heating mode. Please confirm whether to switch."
 msgstr ""
 
 msgid "Please select an AMS slot before calibration"
@@ -9174,7 +9174,7 @@ msgid "Slicing Canceled"
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "Bed temperature conflict: T%d (%s) sets the bed to %d℃ — T%d (%s) requires %d℃. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
+msgid "Bed temperature conflict: T%d (%s) sets the bed to %d°C — T%d (%s) requires %d°C. The primary tool controls the bed; secondary tools print at whatever temperature it sets."
 msgstr ""
 
 #, possible-c-format, possible-boost-format
@@ -9323,7 +9323,7 @@ msgid "Flowrate Test - Pass%d"
 msgstr ""
 
 #, possible-boost-format
-msgid "No belt temperature tower is available for the range %1% to %2%℃. Use a range the tower models cover, for example 230 to 190."
+msgid "No belt temperature tower is available for the range %1% to %2%°C. Use a range the tower models cover, for example 230 to 190."
 msgstr ""
 
 msgid "Temperature tower"
@@ -17930,7 +17930,7 @@ msgstr ""
 msgid "Temperature difference to be applied when an extruder is not active. The value is not used when 'idle_temperature' in filament settings is set to non-zero value."
 msgstr ""
 
-msgid "∆℃"
+msgid "∆°C"
 msgstr ""
 
 msgid "Preheat time"
@@ -18624,7 +18624,7 @@ msgid ""
 msgstr ""
 
 msgid ""
-"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50℃, without waiting for the full 60℃.\n"
+"This is the chamber temperature at which printing should start, while the chamber continues heating toward the \"Target\" chamber temperature. For example, set the Target to 60 and the Minimal to 50 to begin printing once the chamber reaches 50°C, without waiting for the full 60°C.\n"
 "\n"
 "It sets a G-code variable named chamber_minimal_temperature, which can be passed to your print start macro or a heat soak macro, like this:\n"
 "PRINT_START (other variables) CHAMBER_MIN_TEMP=[chamber_minimal_temperature]\n"
@@ -21008,7 +21008,7 @@ msgstr ""
 msgid "Printing Parameters"
 msgstr ""
 
-msgid "- ℃"
+msgid "- °C"
 msgstr ""
 
 msgid "Synchronize nozzle and AMS information"
@@ -23365,11 +23365,11 @@ msgid "Drying-Dehumidifying"
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "%s maximum drying temperature is %d℃."
+msgid "%s maximum drying temperature is %d°C."
 msgstr ""
 
 #, possible-c-format, possible-boost-format
-msgid "%s minimum drying temperature is %d℃."
+msgid "%s minimum drying temperature is %d°C."
 msgstr ""
 
 msgid "This filament may not be completely dried."
@@ -29064,7 +29064,7 @@ msgstr ""
 msgid "Enter the nozzle temperature needed for extruding your filament."
 msgstr ""
 
-msgid "A rule of thumb is 160 to 230℃ for PLA, and 215 to 250℃ for ABS."
+msgid "A rule of thumb is 160 to 230°C for PLA, and 215 to 250°C for ABS."
 msgstr ""
 
 msgid "Extrusion Temperature:"
@@ -29073,7 +29073,7 @@ msgstr ""
 msgid "Enter the bed temperature needed for getting your filament to stick to your heated bed."
 msgstr ""
 
-msgid "A rule of thumb is 60℃ for PLA and 110℃ for ABS. Leave zero if you have no heated bed."
+msgid "A rule of thumb is 60°C for PLA and 110°C for ABS. Leave zero if you have no heated bed."
 msgstr ""
 
 msgid "Bed Temperature:"

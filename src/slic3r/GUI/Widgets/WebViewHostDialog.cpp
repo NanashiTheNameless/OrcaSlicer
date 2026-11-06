@@ -36,7 +36,8 @@ std::string host_theme_name() { return wxGetApp().dark_mode() ? "dark" : "light"
 
 // The host theme "contract": CSS custom properties filled from the LIVE app theme,
 // plus color-scheme. Consumed by resources/web/dialog/css/theme.css and by plugin
-// content. Variables only — no element styling — so it never fights a page's CSS.
+// content. Variables and the bundled @font-face only — no element styling — so it never fights a
+// page's CSS.
 std::string host_theme_vars_css()
 {
     GUI_App&       app    = wxGetApp();
@@ -52,7 +53,17 @@ std::string host_theme_vars_css()
                }),
                font.end());
 
-    std::string s;
+    // The bundled 0xProto goes first for every page, plugin pages included, which cannot @import
+    // resources/web/include/orca_font.css. The browser falls back per glyph to the rest of the stack.
+    const boost::filesystem::path fonts_dir = boost::filesystem::path(resources_dir()) / "fonts";
+    auto font_face = [&fonts_dir](const char *file, int weight) {
+        std::string url = file_url_from_path(fonts_dir / file).ToStdString();
+        url.erase(std::remove_if(url.begin(), url.end(), [](char c) { return c == '"' || c == '<' || c == '>'; }), url.end());
+        return "@font-face{font-family:'0xProto';src:url(\"" + url + "\") format('truetype');font-weight:" +
+               std::to_string(weight) + ";}";
+    };
+
+    std::string s = font_face("0xProto-Regular.ttf", 400) + font_face("0xProto-Bold.ttf", 700);
     s += ":root{";
     s += "--orca-bg:" + css_color(bg) + ";";
     s += "--orca-fg:" + css_color(fg) + ";";
@@ -60,7 +71,7 @@ std::string host_theme_vars_css()
     s += "--orca-border:" + css_color(border) + ";";
     s += "--orca-accent:" + css_color(accent) + ";";
     s += "--orca-accent-fg:#ffffff;";
-    s += "--orca-font:" + (font.empty() ? std::string() : "'" + font + "',") +
+    s += "--orca-font:'0xProto'," + (font.empty() || font == "0xProto" ? std::string() : "'" + font + "',") +
          "system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;";
     s += "color-scheme:" + host_theme_name() + ";";
     s += "}";

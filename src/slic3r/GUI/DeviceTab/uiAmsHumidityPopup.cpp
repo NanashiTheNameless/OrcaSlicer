@@ -155,8 +155,8 @@ void uiAmsPercentHumidityDryPopup::UpdateContents()
     // table grid
     const wxString& humidity_str = wxString::Format("%d%%", m_humidity_percent);
     m_humidity_label->SetLabel(humidity_str);
-    // Orca: format the temperature with an explicit UTF-8 \u2103 (no translation of a units-only format)
-    const wxString& temp_str = wxString::Format(wxString::FromUTF8(u8"%d\u2103" /* \u00b0C */), (int)std::round(m_current_temperature));
+    // Orca: format the temperature with an explicit UTF-8 \u00B0C (no translation of a units-only format)
+    const wxString& temp_str = wxString::Format(wxString::FromUTF8(u8"%d\u00B0C" /* \u00b0C */), (int)std::round(m_current_temperature));
     m_temperature_label->SetLabel(temp_str);
 
     if (m_left_dry_time > 0)

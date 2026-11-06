@@ -8,7 +8,7 @@ description: Use when updating, filling, reviewing or fixing OrcaSlicer translat
 The UI strings live in gettext catalogs: `localization/i18n/OrcaSlicer.pot` is the template, and
 `localization/i18n/<lang>/OrcaSlicer_<lang>.po` holds each language. The `en` catalog is empty on
 purpose, so skip it. Recurring terms are fixed by the
-[localization glossary](https://github.com/OrcaSlicer/OrcaSlicer_WIKI/blob/main/developer_reference/localization_glossary.md),
+[localization glossary](https://github.com/NanashiTheNameless/OrcaSlicer/wiki/localization_glossary),
 whose source is the per-language files in `developer_reference/glossary/` (`terms.tsv`, `languages.txt` and one `<lang>.tsv`) in the **OrcaSlicer_WIKI** repository.
 A translation pass therefore touches two repositories: the catalogs here, and the glossary there.
 
