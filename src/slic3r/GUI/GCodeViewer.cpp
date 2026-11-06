@@ -113,6 +113,8 @@ namespace Slic3r { class PrintBase; }
 namespace Slic3r {
 namespace GUI {
 
+static constexpr float PREVIEW_FONT_SCALE = 1.2f;
+
 //BBS translation of EViewType
 //const std::string EViewType_Map[(int) GCodeViewer::EViewType::Count] = {
 //        _u8L("Line Type"),
@@ -972,7 +974,7 @@ void GCodeViewer::SequentialView::GCodeWindow::render(float top, float bottom, f
     const float wnd_height = bottom - top;
 
     // number of visible lines
-    const float text_height = ImGui::CalcTextSize("0").y;
+    const float text_height = ImGui::CalcTextSize("0").y * PREVIEW_FONT_SCALE;
     const ImGuiStyle& style = ImGui::GetStyle();
     const uint64_t lines_count = static_cast<uint64_t>((wnd_height - 2.0f * style.WindowPadding.y + style.ItemSpacing.y) / (text_height + style.ItemSpacing.y));
 
@@ -1004,7 +1006,7 @@ void GCodeViewer::SequentialView::GCodeWindow::render(float top, float bottom, f
     }
 
     // line number's column width
-    const float id_width = ImGui::CalcTextSize(std::to_string(end_id).c_str()).x;
+    const float id_width = ImGui::CalcTextSize(std::to_string(end_id).c_str()).x * PREVIEW_FONT_SCALE;
 
     float required_width = 0.0f;
     { // --- Compute required G-code window width ---
@@ -1013,13 +1015,13 @@ void GCodeViewer::SequentialView::GCodeWindow::render(float top, float bottom, f
             float w = 0.0f;
 
             if (!line.command.empty())
-                w += ImGui::CalcTextSize(line.command.c_str()).x;
+                w += ImGui::CalcTextSize(line.command.c_str()).x * PREVIEW_FONT_SCALE;
 
             if (!line.parameters.empty())
-                w += ImGui::CalcTextSize(line.parameters.c_str()).x;
+                w += ImGui::CalcTextSize(line.parameters.c_str()).x * PREVIEW_FONT_SCALE;
 
             if (!line.comment.empty())
-                w += ImGui::CalcTextSize(line.comment.c_str()).x;
+                w += ImGui::CalcTextSize(line.comment.c_str()).x * PREVIEW_FONT_SCALE;
 
             // spacing between segments
             w += 3 * ImGui::GetStyle().ItemSpacing.x;
@@ -1039,6 +1041,7 @@ void GCodeViewer::SequentialView::GCodeWindow::render(float top, float bottom, f
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 8.0f * m_scale); // ORCA add window rounding to modernize / match style
     ImGui::SetNextWindowBgAlpha(0.8f);
     imgui.begin(std::string("G-code"), ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove);
+    ImGui::SetWindowFontScale(PREVIEW_FONT_SCALE);
 
     // center the text in the window by pushing down the first line
     const float f_lines_count = static_cast<float>(lines_count);
@@ -4030,6 +4033,7 @@ void GCodeViewer::render_legend(float &legend_height, int canvas_width, int canv
     const float child_height = 0.3333f * max_height;
     ImGui::SetNextWindowSizeConstraints({ 0.0f, 0.0f }, { -1.0f, max_height });
     imgui.begin(std::string("Legend"), ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove);
+    ImGui::SetWindowFontScale(PREVIEW_FONT_SCALE);
 
     enum class EItemType : unsigned char
     {
