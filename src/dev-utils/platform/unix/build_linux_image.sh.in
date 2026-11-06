@@ -400,6 +400,52 @@ target_missing_runtime_library() {
 
 TARGET_BIN="\$1"
 
+# The AppImage is built on Ubuntu 24.04 and needs a host glibc and libstdc++ at
+# least that new. On an older host (Ubuntu 22.04, Debian 12) the loader would fail
+# with no visible message when started from a desktop icon, so check with the
+# host's own loader first and point to the Flatpak, which carries its own runtime.
+# If the AppImage bundles its own WebKitGTK, the app loads it from \$APPDIR/lib
+# instead of the system's copy, so add that directory to the path ldd checks.
+CHECK_LIB_PATH="\$LD_LIBRARY_PATH"
+if [ "\$USE_BUNDLED_WEBKITGTK_STACK" = "1" ]; then
+    CHECK_LIB_PATH="\$APPDIR/lib:\$CHECK_LIB_PATH"
+fi
+if [ -n "\$APPIMAGE" ] && command -v ldd >/dev/null 2>&1 && \
+   LD_LIBRARY_PATH="\$CHECK_LIB_PATH" ldd "\$TARGET_BIN" 2>&1 | grep -q "version .* not found"; then
+    url="https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling"
+    msg="This AppImage needs a newer Linux system (Ubuntu 24.04, Debian 13, Fedora 40 or later).
+
+On this system, install the Flatpak build instead."
+    open_label="Open download page"
+    # The dialogs open the URL from a button; only the terminal and a notification
+    # without one show it as text.
+    printf '%s\n%s\n' "\$msg" "\$url" >&2
+    # The dialog tools and the browser are the host's: keep the AppImage's
+    # libraries out of their library path.
+    open=1
+    if command -v zenity >/dev/null 2>&1; then
+        env -u LD_LIBRARY_PATH zenity --question --icon-name=dialog-error --no-wrap --title="@SLIC3R_APP_KEY@" \
+            --text="\$msg" --ok-label="\$open_label" --cancel-label="Close" 2>/dev/null && open=0
+    elif command -v kdialog >/dev/null 2>&1; then
+        env -u LD_LIBRARY_PATH kdialog --title "@SLIC3R_APP_KEY@" --yes-label "\$open_label" --no-label "Close" \
+            --warningyesno "\$msg" 2>/dev/null && open=0
+    elif command -v xmessage >/dev/null 2>&1; then
+        env -u LD_LIBRARY_PATH xmessage -center -buttons "\$open_label:0,Close:1" "\$msg" 2>/dev/null && open=0
+    elif command -v notify-send >/dev/null 2>&1; then
+        # --action needs libnotify 0.7.10 or later; older versions show the message only.
+        if env -u LD_LIBRARY_PATH notify-send --help 2>/dev/null | grep -q -- "--action"; then
+            [ "\$(env -u LD_LIBRARY_PATH notify-send -u critical --wait --action=open="\$open_label" \
+                "@SLIC3R_APP_KEY@" "\$msg" 2>/dev/null)" = "open" ] && open=0
+        else
+            env -u LD_LIBRARY_PATH notify-send -u critical "@SLIC3R_APP_KEY@" "\$msg \$url" 2>/dev/null || true
+        fi
+    fi
+    if [ "\$open" = 0 ] && command -v xdg-open >/dev/null 2>&1; then
+        env -u LD_LIBRARY_PATH xdg-open "\$url" >/dev/null 2>&1 &
+    fi
+    exit 1
+fi
+
 if target_missing_runtime_library "\$TARGET_BIN" "libOpenGL.so.0" || ! has_host_runtime_library "libOpenGL.so.0"; then
     echo "Error: missing host OpenGL runtime library libOpenGL.so.0." >&2
     echo "On Ubuntu/Pop!_OS/Debian, install: libopengl0" >&2

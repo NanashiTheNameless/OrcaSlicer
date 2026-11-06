@@ -27,7 +27,7 @@ env:
   REPO: ${{ github.repository }}
   WORKFLOW: build_all.yml
   BASE_REF: ${{ github.base_ref }}
-  JOB: build_linux (${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }})
+  JOB: build_linux (${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }})
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
@@ -38,7 +38,7 @@ jobs:
     # Branch protection requires this check by name. Renaming the job disables
     # that gate.
     name: clang-tidy
-    runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }}
+    runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}
     # approve_pr_checks.yml starts first-time contributors' runs without a
     # maintainer looking at the pull request first. The deps-cache wait alone may
     # take 100 minutes; this bounds a runaway run without cutting a real one.
@@ -63,7 +63,7 @@ jobs:
             echo "deps=true" >> "$GITHUB_OUTPUT"
           fi
           # Same key build_check_cache.yml saves for the matching build_linux leg.
-          echo "deps-key=linux-clang-${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }}-cache-orcaslicer_deps-build-${{ hashFiles('deps/**', '.github/actions/build-deps/**', 'build_linux.sh') }}" >> "$GITHUB_OUTPUT"
+          echo "deps-key=linux-clang-${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}-cache-orcaslicer_deps-build-${{ hashFiles('deps/**', '.github/actions/build-deps/**', 'build_linux.sh') }}" >> "$GITHUB_OUTPUT"
 
       # Parsing needs the dependency headers, not a build of this PR's deps/.
       # Without an exact match the job waits for the build that saves it: this
@@ -122,7 +122,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/deps/build/OrcaSlicer_dep
           key: ${{ steps.changes.outputs.deps-key }}
-          restore-keys: linux-clang-${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-22.04' }}-cache-orcaslicer_deps-build-
+          restore-keys: linux-clang-${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04' }}-cache-orcaslicer_deps-build-
           fail-on-cache-miss: true
 
       - name: Warn about older deps

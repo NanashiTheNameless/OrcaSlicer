@@ -4,9 +4,6 @@
 
 # DO NOT REPORT BUGS FOUND HERE TO THE OFFICIAL VERSION
 
-# This fork is primarily maintained and managed by [@NanashiTheNameless](<https://github.com/NanashiTheNameless/>)
-
-
 <table border="2" style="border-color: #ffa500; background-color:rgb(232, 220, 180); color: #856404;">
 <tr>
 <td>
@@ -61,17 +58,18 @@ This fork **does not publish stable builds**, for stability and sanity **go to t
 
 ## Windows
 
-Download the **Windows Installer exe** for your preferred version from the [releases page]([https://github.com/NanashiTheNameless/OrcaSlicer/releases/latest](https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling)).
+Download the **Windows Installer exe** for your preferred version from the [releases page](https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling).
 
 - *For convenience there is also a portable build available.*
     <details>
     <summary>Troubleshooting</summary>
-      If you need a torubleshooting guide you should use the official version, this version is for people who are experienced!
+      If you need a troubleshooting guide you should use the official version, this version is for people who are experienced!
+    </details>
 
 ## Mac
 
 1. Download the DMG for your computer (All mac builds are universal now).
-2. Drag OrcaSlicer.app to Application folder.
+2. Drag OrcaSlicer.app to the Applications folder.
 3. *If you want to run a build from a PR, you also need to follow the instructions below:*
 
     <details>
@@ -91,16 +89,25 @@ Download the **Windows Installer exe** for your preferred version from the [rele
     - Option 3:
         - Step 1: open the app, a warning window will pop up\
             ![mac_cant_open](./SoftFever_doc/mac_cant_open.png)
-        - Step 2: in `System Settings` -> `Privacy & Security`, click `Open Anyway`:
+        - Step 2: in `System Settings` -> `Privacy & Security`, click `Open Anyway`:\
             ![mac_security_setting](./SoftFever_doc/mac_security_setting.png)
     </details>
 
 ## Linux
 
-### Flathub (Recommended)
-This OrcaSlicer fork is **NOT** available through FlatHub!
+### AppImage (Recommended)
+The AppImage needs Ubuntu 24.04, Debian 13, Fedora 40 or a similarly recent distribution. On older systems such as Ubuntu 22.04, Linux Mint 21 or Debian 12 it shows a message and does not start; use the Flatpak below instead.
 
-<https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling>
+ 1. Download the AppImage from the [releases page](<https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling>).
+ 2. Double click the downloaded file to run it.
+
+ 3. If you run into trouble executing it, try this command in the terminal:
+    `chmod +x /path/to/OrcaSlicer_Linux_AppImage*.AppImage`
+
+### Flatpak
+This OrcaSlicer fork is **NOT** available through Flathub! Download the `.flatpak` file for your architecture from the [releases page](https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling).
+
+If Flatpak is not set up on your system yet, follow the [Flatpak setup guide](https://flathub.org/en/setup) for your distribution first.
 
 Install from the command line:
 
@@ -109,14 +116,7 @@ flatpak install /path/to/orca/OrcaSlicer-Linux-flatpak_nightly_<arch>.flatpak
 flatpak run dev.namelessnanashi.OrcaSlicer
 ```
 
-It can also be installed through graphical software managers (KDE Discover, GNOME Software, etc.) when Flathub is enabled. Search for **OrcaSlicer** in your software center.
-
-### AppImage
- 1. Download App image from the [releases page](<https://github.com/NanashiTheNameless/OrcaSlicer/releases/tag/Nightly-Rolling>).
- 2. Double click the downloaded file to run it.
-
- 3. If you run into trouble executing it, try this command in the terminal:
-    `chmod +x /path_to_appimage/OrcaSlicer_Linux.AppImage`
+Or open the downloaded `.flatpak` file with a graphical software manager such as GNOME Software or KDE Discover. Searching for OrcaSlicer there finds the official version, not this fork.
 
 # How to Compile
 

@@ -30,7 +30,6 @@ jobs:
       date: ""
       ver: ""
       ver_pure: ""
-      ubuntu-ver: ""
       # Private material is passed only to signing steps on trusted refs.
       # PRs (including same-repository PRs) and other forks never import this key.
       NN_SIGNING_ENABLED: ${{ github.repository == 'NanashiTheNameless/OrcaSlicer' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
@@ -49,11 +48,6 @@ jobs:
         uses: actions/checkout@v7
         with:
           lfs: 'false'
-
-      - name: Detect Ubuntu version
-        if: runner.os == 'Linux'
-        run: echo "ubuntu-ver=$(lsb_release -rs | tr -d '.')" >> $GITHUB_ENV
-        shell: bash
 
       - name: load cached deps
         if: ${{ !(runner.os == 'macOS' && inputs.macos-combine-only) }}
@@ -870,13 +864,6 @@ jobs:
       - name: Build slicer and tests
         if: runner.os == 'Linux'
         shell: bash
-        env:
-          # Ubuntu 22.04's default clang 14 mis-codegens some numeric code (observed
-          # as multicolor prints purging 35-45% less filament than the identical
-          # source built with the clang 18 that 24.04 ships). Pin clang 18 there
-          # instead; deps stay on the cached build since the C++ ABI is stable
-          # across these clang versions.
-          ORCA_CLANG_VERSION: ${{ env.ubuntu-ver == '2204' && '18' || '' }}
         run: |
           # Build + tar the unit tests (-t) on every leg the unit_tests jobs run:
           # both arches, or amd64 alone on self-hosted runners (no arm server).
