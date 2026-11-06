@@ -42,6 +42,7 @@ jobs:
       NSIS_SHA256: ${{ vars.NSIS_SHA256 || 'BA63DFFC4410EE89193E1CB5A41989991BD77C61068DA17E3156D136B7B0B3D8' }}
       JSIGN_VERSION: '7.6'
       JSIGN_SHA256: 6CF58AA080E7FF82656F320CFF8D4A3BFF30408DF8766806DCBA3740DD839FA5
+      RCODESIGN_VERSION: '0.29.0'
 
     steps:
       - name: Checkout
@@ -363,12 +364,37 @@ jobs:
             retry xcrun stapler staple OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg
           fi
 
+      # Apple's codesign refuses the untrusted self-signed identity, so CI signs with rcodesign
+      # (signing/README.md). crates.io versions are immutable; --locked uses the crate's lockfile.
+      - name: Restore rcodesign
+        id: rcodesign_cache
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'macOS' && inputs.macos-combine-only
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/rcodesign
+          key: rcodesign-${{ env.RCODESIGN_VERSION }}-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Build rcodesign
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'macOS' && inputs.macos-combine-only && steps.rcodesign_cache.outputs.cache-hit != 'true'
+        timeout-minutes: 30
+        shell: bash
+        run: cargo install --locked --root "$RUNNER_TEMP/rcodesign" apple-codesign --version "$RCODESIGN_VERSION"
+
+      # Saved now, not at the end of the job, so a later failure does not rebuild it next time.
+      - name: Save rcodesign
+        if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'macOS' && inputs.macos-combine-only && steps.rcodesign_cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/rcodesign
+          key: rcodesign-${{ env.RCODESIGN_VERSION }}-${{ runner.os }}-${{ runner.arch }}
+
       - name: Sign NamelessNanashi macOS apps
         if: env.NN_SIGNING_ENABLED == 'true' && runner.os == 'macOS' && inputs.macos-combine-only
         timeout-minutes: 30
         env:
           NN_SIGNING_MACOS_P12_BASE64: ${{ secrets.NN_SIGNING_MACOS_P12_BASE64 }}
           NN_SIGNING_PASSWORD: ${{ secrets.NN_SIGNING_PASSWORD }}
+          RCODESIGN: ${{ runner.temp }}/rcodesign/bin/rcodesign
         shell: bash
         run: |
           test -n "$NN_SIGNING_MACOS_P12_BASE64" && test -n "$NN_SIGNING_PASSWORD"
