@@ -32,6 +32,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/pytypes.h>
 #include <pybind11/stl.h>
+#include <patchlevel.h> // PY_VERSION_HEX
 
 #include <clocale>
 #include <fstream>
@@ -2058,6 +2059,13 @@ TEST_CASE("An approved audited operation does not replace an unreadable install-
     CHECK(read_text_file(sidecar) == malformed);
 }
 
+// threading.Thread.start() raises _thread.start_joinable_thread from Python 3.13 on.
+#if PY_VERSION_HEX >= 0x030D0000
+static const std::string THREAD_START_PROMPT = "_thread.start_joinable_thread: thread\n";
+#else
+static const std::string THREAD_START_PROMPT = "_thread.start_new_thread: thread\n";
+#endif
+
 TEST_CASE("Thread creation is denied without a grant and remembered after approval", "[audit][Python]")
 {
     AuditHarness harness;
@@ -2072,14 +2080,14 @@ TEST_CASE("Thread creation is denied without a grant and remembered after approv
     // the test case.
     python.run_as(PLUGIN, "thread_outcome = attempt(start_and_join_thread)");
     CHECK(python.str("thread_outcome") == "denied");
-    CHECK(describe(harness.prompts) == "_thread.start_new_thread: thread\n");
+    CHECK(describe(harness.prompts) == THREAD_START_PROMPT);
     CHECK_FALSE(harness.saved_permissions(PLUGIN).threading);
 
     harness.approve = [](const Prompt&) { return true; };
     harness.prompts.clear();
     python.run_as(PLUGIN, "thread_outcome = attempt(start_and_join_thread)");
     CHECK(python.str("thread_outcome") == "ok");
-    CHECK(describe(harness.prompts) == "_thread.start_new_thread: thread\n");
+    CHECK(describe(harness.prompts) == THREAD_START_PROMPT);
     CHECK(harness.saved_permissions(PLUGIN).threading);
 
     // The saved grant is effective for later events without another prompt.

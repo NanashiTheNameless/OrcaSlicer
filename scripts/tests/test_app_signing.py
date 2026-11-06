@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+import unittest.mock
 from unittest.mock import patch
 
 
@@ -96,18 +97,31 @@ class DownloadSigningTest(unittest.TestCase):
 
 
 class MacosSigningOrderTest(unittest.TestCase):
-    def run_ci_signer(self, failure=None):
+    def run_ci_signer(self, failure=None, leaf=None):
         commands = []
-        identity = (REPO / 'signing/public/certificate-sha1.txt').read_bytes().strip()
+        self.secrets = {}
+        identity = (REPO / 'signing/public/certificate-sha1.txt').read_text().strip()
+        # A stand-in leaf certificate whose SHA-1 is the pinned identity cannot be built, so
+        # check_signer's hash is patched to compare the fake leaf bytes instead.
+        leaf = leaf or b'pinned leaf'
 
         def tool(*args, **kwargs):
             commands.append(args)
-            operation = 'codesign' if args[0] == 'codesign' else args[1]
-            if operation == failure:
+            if args[0] == 'rcodesign':
+                p12 = Path(args[args.index('--p12-file') + 1])
+                password = Path(args[args.index('--p12-password-file') + 1])
+                self.secrets = {'p12': p12, 'p12 bytes': p12.read_bytes(), 'password': password.read_text()}
+            if args[0] == failure:
                 raise subprocess.CalledProcessError(1, args, stderr=b'test failure')
-            if operation == 'create-keychain':
-                Path(args[-1]).touch()
-            return subprocess.CompletedProcess(args, 0, stdout=identity, stderr=b'')
+            for part in args:
+                if part.startswith('--extract-certificates='):
+                    Path(part.split('=', 1)[1] + '0').write_bytes(leaf)
+            return subprocess.CompletedProcess(args, 0, stdout=b'', stderr=b'')
+
+        def sha1(data):
+            digest = unittest.mock.Mock()
+            digest.hexdigest.return_value = identity.lower() if data == b'pinned leaf' else '00' * 20
+            return digest
 
         with tempfile.TemporaryDirectory() as folder:
             app = Path(folder) / 'OrcaSlicer.app'
@@ -119,30 +133,41 @@ class MacosSigningOrderTest(unittest.TestCase):
             with patch.dict(os.environ, env), patch.object(macos.sys, 'platform', 'darwin'), \
                     patch.object(macos.sys, 'argv', ['sign-macos-build.py', str(app)]), \
                     patch.object(macos, 'run', side_effect=tool), \
-                    patch.object(macos.sys, 'stdout', new_callable=io.StringIO) as stdout:
+                    patch.object(macos.hashlib, 'sha1', side_effect=sha1), \
+                    patch.object(macos.sys, 'stdout', new_callable=io.StringIO):
                 if failure:
                     with self.assertRaises(subprocess.CalledProcessError):
                         macos.main()
+                elif leaf != b'pinned leaf':
+                    with self.assertRaises(ValueError):
+                        macos.main()
                 else:
                     macos.main()
-        keychain = next(Path(command[-1]) for command in commands if command[:2] == ('security', 'create-keychain'))
-        self.assertFalse(keychain.parent.exists())
-        self.assertEqual(commands[-1][:2], ('security', 'delete-keychain'))
-        self.stdout = stdout.getvalue()
+        # The decoded .p12 and the password file are gone once signing ends, however it ends.
+        if self.secrets:
+            self.assertFalse(self.secrets['p12'].parent.exists())
         return commands
 
-    def test_ci_signing_never_changes_trust_or_needs_privileges(self):
-        # Trust changes wait for a SecurityAgent prompt on CI runners and hang the job.
+    def test_ci_signing_uses_the_p12_without_keychain_or_trust(self):
+        # Apple's codesign refuses the untrusted self-signed identity, and trusting it waits for a
+        # SecurityAgent prompt on CI runners, so CI signs from the .p12 with rcodesign.
         commands = self.run_ci_signer()
-        self.assertFalse(any(command[0] == 'sudo' for command in commands))
-        self.assertFalse(any('trust' in part for command in commands for part in command))
-        lookup = next(command for command in commands if command[:2] == ('security', 'find-identity'))
-        self.assertNotIn('-v', lookup)
-        self.assertIn((REPO / 'signing/public/certificate-sha1.txt').read_text().strip(), self.stdout)
+        self.assertFalse(any(command[0] in ('sudo', 'security') for command in commands))
+        sign = next(command for command in commands if command[0] == 'rcodesign')
+        self.assertEqual(sign[1], 'sign')
+        self.assertEqual(sign[sign.index('--timestamp-url') + 1], 'none')
+        self.assertEqual(sign[sign.index('--code-signature-flags') + 1], 'runtime')
+        self.assertIn('--entitlements-xml-file', sign)
+        self.assertNotIn('test-password', sign)
+        self.assertEqual(self.secrets['p12 bytes'], b'test-p12')
+        self.assertEqual(self.secrets['password'].splitlines()[0], 'test-password')
         self.assertTrue(any(command[0] == 'codesign' and '--verify' in command for command in commands))
 
-    def test_signing_failure_removes_the_temporary_keychain(self):
-        self.run_ci_signer(failure='codesign')
+    def test_a_signature_from_another_certificate_fails(self):
+        self.run_ci_signer(leaf=b'some other certificate')
+
+    def test_signing_failure_removes_the_decoded_secrets(self):
+        self.run_ci_signer(failure='rcodesign')
 
     def report(self, command):
         error = subprocess.CalledProcessError(1, command, stderr=b'error: the reason')
@@ -154,6 +179,7 @@ class MacosSigningOrderTest(unittest.TestCase):
 
     def test_codesign_errors_are_shown_but_security_output_is_not(self):
         self.assertIn('error: the reason', self.report(('codesign', '--sign', 'identity', 'app')))
+        self.assertIn('error: the reason', self.report(('/Users/runner/.cargo/bin/rcodesign', 'sign', 'app')))
         message = self.report(('security', 'import', 'identity.p12', '-P', 'secret-password'))
         self.assertNotIn('the reason', message)
         self.assertNotIn('secret-password', message)

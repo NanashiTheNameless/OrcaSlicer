@@ -3,9 +3,9 @@
 
 import argparse
 import base64
+import hashlib
 import os
 from pathlib import Path
-import secrets
 import subprocess
 import sys
 import tempfile
@@ -17,15 +17,14 @@ MACHO_MAGIC = {
 }
 
 
-# Every command is non-interactive; a timeout turns any unexpected keychain or
-# authorization prompt into a fast failure instead of a job that hangs for hours.
+# Every command is non-interactive; a timeout turns any unexpected prompt into a fast
+# failure instead of a job that hangs for hours.
 TIMEOUT = 600
 # Paths per codesign invocation: one process per file costs minutes on large bundles.
 BATCH = 200
 
 
 def run(*args, check=True):
-    # Do not echo commands: security import uses a password argument.
     return subprocess.run(args, check=check, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                           stdin=subprocess.DEVNULL, timeout=TIMEOUT)
 
@@ -61,18 +60,39 @@ def signing_batches(app):
     return batches
 
 
-def sign_apps(apps, identity, entitlements, keychain=None):
+def sign_apps(apps, identity, entitlements):
     for app in apps:
         batches = signing_batches(app)
         print(f'Signing {sum(map(len, batches))} code objects in {app}', flush=True)
         for batch in batches:
             args = ['codesign', '--force', '--options', 'runtime', '--timestamp=none',
                     '--entitlements', str(entitlements), '--sign', identity]
-            if keychain:
-                args += ['--keychain', str(keychain)]
             run(*args, *map(str, batch))
         run('codesign', '--verify', '--deep', '--strict', '--verbose=2', str(app))
         print(f'Signed and verified: {app}', flush=True)
+
+
+def sign_apps_with_p12(apps, p12, password_file, entitlements, rcodesign):
+    # Apple's codesign only signs with an identity macOS trusts, and trusting the self-signed
+    # certificate on a runner needs an authorization prompt nobody can answer. rcodesign signs
+    # from the .p12 itself: no keychain and no trust settings. It signs the bundle's nested
+    # Mach-O files and bundles too; hardened runtime and entitlements go on the main executable.
+    for app in apps:
+        print(f'Signing {app}', flush=True)
+        run(rcodesign, 'sign', '--p12-file', str(p12), '--p12-password-file', str(password_file),
+            '--code-signature-flags', 'runtime', '--entitlements-xml-file', str(entitlements),
+            '--timestamp-url', 'none', str(app))
+        run('codesign', '--verify', '--deep', '--strict', '--verbose=2', str(app))
+        print(f'Signed and verified: {app}', flush=True)
+
+
+def check_signer(app, identity, folder):
+    """Fail unless the app's leaf signing certificate is the pinned one."""
+    prefix = folder / f'{app.stem}-certificate'
+    run('codesign', '--display', f'--extract-certificates={prefix}', str(app))
+    leaf = Path(f'{prefix}0').read_bytes()
+    if hashlib.sha1(leaf).hexdigest().upper() != identity.upper():
+        raise ValueError(f'{app} is not signed by the pinned certificate.')
 
 
 def main():
@@ -89,38 +109,22 @@ def main():
     identity = (ROOT / 'public/certificate-sha1.txt').read_text().strip()
     encoded = os.environ.get('NN_SIGNING_MACOS_P12_BASE64')
     if not encoded:
-        # Local builds use the identity already imported by the user.
+        # Local builds use the identity already imported and trusted by the user.
         sign_apps(apps, identity, args.entitlements)
         return
     password = os.environ['NN_SIGNING_PASSWORD']
+    rcodesign = os.environ.get('RCODESIGN', 'rcodesign')
     with tempfile.TemporaryDirectory(prefix='orca-signing-') as folder:
         folder = Path(folder)
         p12 = folder / 'identity.p12'
         p12.write_bytes(base64.b64decode(encoded, validate=True))
         p12.chmod(0o600)
-        keychain = folder / 'signing.keychain-db'
-        keychain_password = secrets.token_hex(32)
-        try:
-            run('security', 'create-keychain', '-p', keychain_password, str(keychain))
-            run('security', 'set-keychain-settings', '-lut', '21600', str(keychain))
-            run('security', 'unlock-keychain', '-p', keychain_password, str(keychain))
-            run('security', 'import', str(p12), '-P', password, '-k', str(keychain),
-                '-T', '/usr/bin/codesign')
-            run('security', 'set-key-partition-list', '-S', 'apple-tool:,apple:,codesign:',
-                '-s', '-k', keychain_password, str(keychain))
-            # codesign signs with the self-signed identity without trusting it, so trust
-            # settings stay untouched: changing admin trust needs a SecurityAgent
-            # authorization even as root, which waits forever on a CI runner. Hence
-            # also no -v here, which would hide the untrusted identity.
-            identities = run('security', 'find-identity', '-p', 'codesigning', str(keychain))
-            if identity.encode() not in identities.stdout:
-                raise ValueError('Imported macOS identity does not match the pinned certificate.')
-            # Hashes and names only; it shows whether macOS rejects the identity (for example as untrusted).
-            print(identities.stdout.decode(errors='replace').rstrip(), flush=True)
-            sign_apps(apps, identity, args.entitlements, keychain)
-        finally:
-            if keychain.exists():
-                run('security', 'delete-keychain', str(keychain))
+        password_file = folder / 'password.txt'
+        password_file.write_text(password + '\n')
+        password_file.chmod(0o600)
+        sign_apps_with_p12(apps, p12, password_file, args.entitlements, rcodesign)
+        for app in apps:
+            check_signer(app, identity, folder)
 
 
 def cli():
@@ -129,8 +133,9 @@ def cli():
     except subprocess.CalledProcessError as error:
         # CalledProcessError's string contains the full command (and passwords).
         print(f'{error.cmd[0]} failed during macOS signing (exit {error.returncode}).', file=sys.stderr)
-        # codesign's arguments and output hold no secrets, and its output names the failing path.
-        if error.cmd[0] == 'codesign' and error.stderr:
+        # Signing tools get only paths (the password is in a file), and their output names the
+        # failing path.
+        if Path(error.cmd[0]).name in ('codesign', 'rcodesign') and error.stderr:
             print(error.stderr.decode(errors='replace').rstrip(), file=sys.stderr)
         sys.exit(1)
     except subprocess.TimeoutExpired as error:
