@@ -741,7 +741,7 @@ void install_python_thread_audit_shim()
             PyObject*  threading_module = PyDict_GetItemString(sys_modules.ptr(), "threading");
             if (!threading_module || threading_module == Py_None)
                 continue;
-            for (const std::string cached_name : {std::string("_") + name, std::string(name)}) {
+            for (const std::string& cached_name : {std::string("_") + name, std::string(name)}) {
                 const int has_cached_name = PyObject_HasAttrString(threading_module, cached_name.c_str());
                 if (has_cached_name < 0) {
                     PyErr_Clear();
