@@ -115,6 +115,8 @@ def main():
             identities = run('security', 'find-identity', '-p', 'codesigning', str(keychain))
             if identity.encode() not in identities.stdout:
                 raise ValueError('Imported macOS identity does not match the pinned certificate.')
+            # Hashes and names only; it shows whether macOS rejects the identity (for example as untrusted).
+            print(identities.stdout.decode(errors='replace').rstrip(), flush=True)
             sign_apps(apps, identity, args.entitlements, keychain)
         finally:
             if keychain.exists():

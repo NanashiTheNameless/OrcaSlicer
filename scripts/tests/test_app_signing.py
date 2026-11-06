@@ -119,7 +119,7 @@ class MacosSigningOrderTest(unittest.TestCase):
             with patch.dict(os.environ, env), patch.object(macos.sys, 'platform', 'darwin'), \
                     patch.object(macos.sys, 'argv', ['sign-macos-build.py', str(app)]), \
                     patch.object(macos, 'run', side_effect=tool), \
-                    patch.object(macos.sys, 'stdout', new_callable=io.StringIO):
+                    patch.object(macos.sys, 'stdout', new_callable=io.StringIO) as stdout:
                 if failure:
                     with self.assertRaises(subprocess.CalledProcessError):
                         macos.main()
@@ -128,6 +128,7 @@ class MacosSigningOrderTest(unittest.TestCase):
         keychain = next(Path(command[-1]) for command in commands if command[:2] == ('security', 'create-keychain'))
         self.assertFalse(keychain.parent.exists())
         self.assertEqual(commands[-1][:2], ('security', 'delete-keychain'))
+        self.stdout = stdout.getvalue()
         return commands
 
     def test_ci_signing_never_changes_trust_or_needs_privileges(self):
@@ -137,6 +138,7 @@ class MacosSigningOrderTest(unittest.TestCase):
         self.assertFalse(any('trust' in part for command in commands for part in command))
         lookup = next(command for command in commands if command[:2] == ('security', 'find-identity'))
         self.assertNotIn('-v', lookup)
+        self.assertIn((REPO / 'signing/public/certificate-sha1.txt').read_text().strip(), self.stdout)
         self.assertTrue(any(command[0] == 'codesign' and '--verify' in command for command in commands))
 
     def test_signing_failure_removes_the_temporary_keychain(self):
