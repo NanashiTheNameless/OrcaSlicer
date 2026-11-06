@@ -142,6 +142,20 @@ class MacosSigningOrderTest(unittest.TestCase):
     def test_signing_failure_removes_the_temporary_keychain(self):
         self.run_ci_signer(failure='codesign')
 
+    def report(self, command):
+        error = subprocess.CalledProcessError(1, command, stderr=b'error: the reason')
+        with patch.object(macos, 'main', side_effect=error), \
+                patch.object(macos.sys, 'stderr', new_callable=io.StringIO) as stderr, \
+                self.assertRaises(SystemExit):
+            macos.cli()
+        return stderr.getvalue()
+
+    def test_codesign_errors_are_shown_but_security_output_is_not(self):
+        self.assertIn('error: the reason', self.report(('codesign', '--sign', 'identity', 'app')))
+        message = self.report(('security', 'import', 'identity.p12', '-P', 'secret-password'))
+        self.assertNotIn('the reason', message)
+        self.assertNotIn('secret-password', message)
+
     def test_commands_cannot_wait_for_input(self):
         with patch.object(macos.subprocess, 'run') as run:
             macos.run('security', 'list-keychains')
