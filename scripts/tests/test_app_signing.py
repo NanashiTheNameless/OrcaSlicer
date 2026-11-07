@@ -97,6 +97,11 @@ class DownloadSigningTest(unittest.TestCase):
 
 
 class MacosSigningOrderTest(unittest.TestCase):
+    def test_workflow_does_not_export_rcodesign_configuration(self):
+        # rcodesign parses RCODESIGN_* as configuration, including build-tool version pins.
+        workflow = (REPO / '.github/workflows/build_orca.yml').read_text()
+        self.assertNotRegex(workflow, r'(?m)^\s+RCODESIGN_\w+\s*:')
+
     def run_ci_signer(self, failure=None, leaf=None):
         commands = []
         self.secrets = {}
