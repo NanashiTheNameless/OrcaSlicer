@@ -621,7 +621,7 @@ void NightlyUpdater::report(Trigger trigger, const wxString &message)
 {
     if (trigger != Trigger::User)
         return;
-    MessageDialog(wxGetApp().mainframe, message, wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Check for Updates"),
+    MessageDialog(wxGetApp().mainframe, message + "\n", wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Check for Updates"),
                   wxOK | wxICON_INFORMATION, "", _L("Check the nightly release page on GitHub to update manually."),
                   [](const wxString &) { wxLaunchDefaultBrowser(RELEASE_PAGE, wxBROWSER_NEW_WINDOW); })
         .ShowModal();
