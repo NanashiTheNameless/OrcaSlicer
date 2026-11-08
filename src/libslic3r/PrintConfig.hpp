@@ -214,6 +214,7 @@ inline bool is_smoothable_infill_pattern(InfillPattern pattern, int multiline = 
     case ipTriangles:
     case ipStars:
     case ipCubic:
+    case ipQuarterCubic:
         return multiline > 1;
     default:
         return false;
