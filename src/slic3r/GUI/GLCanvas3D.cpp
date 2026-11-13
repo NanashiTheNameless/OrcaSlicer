@@ -2208,6 +2208,10 @@ GLCanvas3D::~GLCanvas3D()
             glsafe(::glDeleteTextures(1, &m_fxaa_texture_id));
             m_fxaa_texture_id = 0;
         }
+        if (m_fxaa_framebuffer_id != 0) {
+            glsafe(::glDeleteFramebuffers(1, &m_fxaa_framebuffer_id));
+            m_fxaa_framebuffer_id = 0;
+        }
         if (m_ssao_color_texture_id != 0) {
             glsafe(::glDeleteTextures(1, &m_ssao_color_texture_id));
             m_ssao_color_texture_id = 0;
@@ -8231,6 +8235,7 @@ bool GLCanvas3D::_init_main_toolbar()
     m_main_toolbar.set_horizontal_orientation(GLToolbar::Layout::HO_Right);
     m_main_toolbar.set_vertical_orientation(GLToolbar::Layout::VO_Top);
     m_main_toolbar.set_border(4.0f);
+    m_main_toolbar.set_corner_radius(GLToolbar::Top_Corner_Radius);
     m_main_toolbar.set_separator_size(4);
     m_main_toolbar.set_gap_size(4);
 
@@ -8464,6 +8469,7 @@ bool GLCanvas3D::_init_assemble_view_toolbar()
     m_assemble_view_toolbar.set_horizontal_orientation(GLToolbar::Layout::HO_Left);
     m_assemble_view_toolbar.set_vertical_orientation(GLToolbar::Layout::VO_Top);
     m_assemble_view_toolbar.set_border(4.0f);
+    m_assemble_view_toolbar.set_corner_radius(GLToolbar::Top_Corner_Radius);
     m_assemble_view_toolbar.set_separator_size(10);
     m_assemble_view_toolbar.set_gap_size(4);
 
@@ -8504,10 +8510,12 @@ bool GLCanvas3D::_init_separator_toolbar()
 
     BackgroundTexture::Metadata background_data;
     background_data.filename = m_is_dark ? "toolbar_background_dark.png" : "toolbar_background.png";
-    background_data.left = 0;
-    background_data.top = 0;
-    background_data.right = 0;
-    background_data.bottom = 0;
+    // The separator sits between other toolbars, so it keeps square corners (no corner radius) and
+    // samples only the square center of the texture.
+    background_data.left = 16;
+    background_data.top = 16;
+    background_data.right = 16;
+    background_data.bottom = 16;
 
     if (!m_separator_toolbar.init(background_data))
     {
@@ -9422,7 +9430,7 @@ void GLCanvas3D::_render_fxaa_pass(unsigned int width, unsigned int height)
     if (shader == nullptr)
         return;
 
-    GLTexture::copy_from_framebuffer(m_fxaa_texture_id, m_fxaa_texture_size, width, height, GL_LINEAR);
+    GLTexture::copy_from_framebuffer(m_fxaa_texture_id, m_fxaa_framebuffer_id, m_fxaa_texture_size, width, height, GL_LINEAR);
 
     glsafe(::glDisable(GL_DEPTH_TEST));
     glsafe(::glDisable(GL_BLEND));
@@ -12218,6 +12226,8 @@ void GLCanvas3D::_render_collapse_toolbar() const
     const float left = side == CollapseSide::Right ? 0.5f * (float) cnv_size.get_width() - (float) collapse_toolbar.get_width() :
                                                      -0.5f * (float) cnv_size.get_width();
 
+    // Round only the bottom corner facing the canvas.
+    collapse_toolbar.set_horizontal_orientation(side == CollapseSide::Right ? GLToolbar::Layout::HO_Right : GLToolbar::Layout::HO_Left);
     collapse_toolbar.set_position(top, left);
     collapse_toolbar.render(*this);
 }
