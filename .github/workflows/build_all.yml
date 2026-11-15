@@ -288,7 +288,8 @@ jobs:
   slice_check_linux:
     name: Slice check (Linux ${{ vars.SELF_HOSTED && 'x86_64' || 'aarch64' }})
     needs: build_linux
-    if: ${{ !cancelled() && success() }}
+    # A deps-only dispatch skips the app build, so there is no validator to download.
+    if: ${{ !cancelled() && success() && (github.event_name != 'workflow_dispatch' || !inputs.build-deps-only) }}
     # Follows whichever Linux leg built the validator.
     runs-on: ${{ vars.SELF_HOSTED && 'orca-lnx-server' || 'ubuntu-24.04-arm' }}
     steps:

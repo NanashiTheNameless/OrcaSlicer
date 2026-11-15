@@ -1,0 +1,17 @@
+diff --git a/src/ModelingData/TKBRep/BRepGraph/BRepGraph_LayerTopoSupplement.cxx b/src/ModelingData/TKBRep/BRepGraph/BRepGraph_LayerTopoSupplement.cxx
+index 44e59b0..5338bf7 100644
+--- a/src/ModelingData/TKBRep/BRepGraph/BRepGraph_LayerTopoSupplement.cxx
++++ b/src/ModelingData/TKBRep/BRepGraph/BRepGraph_LayerTopoSupplement.cxx
+@@ -11,6 +11,12 @@
+ // Alternatively, this file may be used under the terms of Open CASCADE
+ // commercial license or contractual agreement.
+ 
++// MSVC 19.52 for ARM64 crashes with C1001 (code generator, p2/main.cpp) while optimizing
++// this file; compile it without optimization there.
++#if defined(_MSC_VER) && !defined(__clang__) && defined(_M_ARM64) && _MSC_VER >= 1952
++  #pragma optimize("", off)
++#endif
++
+ #include <BRepGraph_LayerTopoSupplement.hxx>
+ 
+ #include <BRepGraph_LayerRegistry.hxx>
