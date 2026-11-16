@@ -507,6 +507,17 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+      # hashFiles() would walk the large build tree and hash every match only to test
+      # that a file exists, which can exceed its 120 s expression timeout.
+      - name: Check Mac release assets
+        id: mac_assets
+        if: runner.os == 'macOS' && inputs.macos-combine-only
+        working-directory: ${{ github.workspace }}
+        run: |
+          [ -f "OrcaSlicer_Mac_universal_${{ env.ver }}.app.tar.gz" ] && echo "app_archive=true" >> "$GITHUB_OUTPUT"
+          [ -f "OrcaSlicer_profile_validator_Mac_universal_${{ env.ver }}.dmg" ] && echo "validator_dmg=true" >> "$GITHUB_OUTPUT"
+          exit 0
+
       - name: Deploy Mac release
         if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer'
         uses: ./.github/actions/deploy-signed-nightly
@@ -520,7 +531,7 @@ jobs:
           max_releases: 1 # optional, if there are more releases than this matching the asset_name, the oldest ones are going to be deleted
 
       - name: Deploy Mac app archive
-        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && hashFiles(format('OrcaSlicer_Mac_universal_{0}.app.tar.gz', env.ver)) != ''
+        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && steps.mac_assets.outputs.app_archive == 'true'
         uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
@@ -533,7 +544,7 @@ jobs:
 
       # The DMG is only built when the validator app was.
       - name: Deploy Mac OrcaSlicer_profile_validator DMG release
-        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && hashFiles(format('OrcaSlicer_profile_validator_Mac_universal_{0}.dmg', env.ver)) != ''
+        if: runner.os == 'macOS' && inputs.macos-combine-only && github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'NanashiTheNameless/OrcaSlicer' && steps.mac_assets.outputs.validator_dmg == 'true'
         uses: ./.github/actions/deploy-signed-nightly
         with:
           token: ${{ secrets.GH_TOKEN }}
