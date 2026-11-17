@@ -10083,9 +10083,11 @@ std::string GCode::_extrude_piece(const ExtrusionPath &path, const std::string &
 
     // Orca: wave-overhang print speed override. Overrides any prior speed selection
     // (including dynamic overhang-speed results) so wave-overhang paths print at the
-    // user-configured wave speed. Clearing new_points keeps this as a single-speed path.
+    // user-configured wave speed. Clearing new_points and requires_segmented_extrusion keeps
+    // this as a single-speed path.
     if (path.wave_overhang && m_config.wave_overhang_print_speed.value > 0) {
         speed = m_config.wave_overhang_print_speed.value;
+        requires_segmented_extrusion = false;
         new_points.clear();
     } else if (path.wave_overhang_floor && m_config.wave_overhang_floor_print_speed.value > 0) {
         // Orca: wave-overhang Hilbert floor speed override. Slower print on the floor
@@ -10103,12 +10105,14 @@ std::string GCode::_extrude_piece(const ExtrusionPath &path, const std::string &
         } else {
             speed = override_speed;
         }
+        requires_segmented_extrusion = false;
         new_points.clear();
     } else if (path.wave_overhang_perimeter && m_config.wave_overhang_perimeter_speed.value > 0) {
         // Orca: walls in wave-overhang layers anchor onto cantilevered wave traces;
         // override to the user-configured perimeter speed so they can grip without
         // pulling the wave loose at the regular outer/inner wall speed.
         speed = m_config.wave_overhang_perimeter_speed.value;
+        requires_segmented_extrusion = false;
         new_points.clear();
     } else if (path.wave_overhang_floor_perimeter && m_config.wave_overhang_floor_perimeter_speed.value > 0) {
         // Orca: walls on floor layers above wave-overhang regions ride a fragile
@@ -10125,6 +10129,7 @@ std::string GCode::_extrude_piece(const ExtrusionPath &path, const std::string &
         } else {
             speed = override_speed;
         }
+        requires_segmented_extrusion = false;
         new_points.clear();
     }
 
