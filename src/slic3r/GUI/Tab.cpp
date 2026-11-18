@@ -2591,8 +2591,10 @@ void Tab::on_value_change(const std::string& opt_key, const boost::any& value)
         }
     }
 
-    //Orca: disable purge_in_prime_tower if single_extruder_multi_material is disabled
-    if (opt_key == "single_extruder_multi_material" && m_config->opt_bool("single_extruder_multi_material") == false){
+    //Orca: disable purge_in_prime_tower if single_extruder_multi_material is disabled. Only where the option is
+    // editable (Type 2 tower on a non-Bambu printer), so a locked checkbox never changes under the user.
+    if (opt_key == "single_extruder_multi_material" && m_config->opt_bool("single_extruder_multi_material") == false &&
+        !m_preset_bundle->is_bbl_vendor() && m_config->opt_enum<WipeTowerType>("wipe_tower_type") == WipeTowerType::Type2){
         DynamicPrintConfig new_conf = *m_config;
         new_conf.set_key_value("purge_in_prime_tower", new ConfigOptionBool(false));
         m_config_manipulation.apply(m_config, &new_conf);
@@ -5180,6 +5182,11 @@ void TabFilament::build()
         optgroup->append_single_option_line("filament_tower_interface_purge_volume", "material_multimaterial#multimaterial-wipe-tower-parameters");
         optgroup->append_single_option_line("filament_tower_interface_print_temp", "material_multimaterial#multimaterial-wipe-tower-parameters");
 
+        // Orca: the Type 1 tower (every Bambu printer) primes by these instead of the process prime volume
+        optgroup = page->new_optgroup(L("Prime volume"), "param_tower");
+        optgroup->append_single_option_line("filament_prime_volume", "material_multimaterial");
+        optgroup->append_single_option_line("filament_prime_volume_nc", "material_multimaterial");
+
         optgroup = page->new_optgroup(L("Multi Filament"));
         // optgroup->append_single_option_line("filament_flush_temp", "", 0);
         // optgroup->append_single_option_line("filament_flush_volumetric_speed", "", 0);
@@ -5431,6 +5438,18 @@ void TabFilament::toggle_options()
         const wxString multitool_ramming_reason = _L("Enable multitool ramming to edit this setting.");
         toggle_option("filament_multitool_ramming_volume", multitool_ramming, 256 + variant_index, multitool_ramming_reason);
         toggle_option("filament_multitool_ramming_flow", multitool_ramming, 256 + variant_index, multitool_ramming_reason);
+
+        // Same rule as Print::wipe_tower_type(): Bambu printers always use the Type 1 tower
+        const bool is_type1_tower = is_BBL_printer || printer_cfg.opt_enum<WipeTowerType>("wipe_tower_type") == WipeTowerType::Type1;
+        const wxString prime_volume_reason = _L("Wipe tower Type 2 uses the prime volume in the process settings instead.");
+        toggle_line("filament_prime_volume", is_type1_tower, -1, prime_volume_reason);
+        // A hotend change only happens on printers with a nozzle carousel
+        const auto *max_nozzle_count = printer_cfg.option<ConfigOptionIntsNullable>("extruder_max_nozzle_count");
+        const bool  has_hotend_change = max_nozzle_count != nullptr &&
+            std::any_of(max_nozzle_count->values.begin(), max_nozzle_count->values.end(),
+                        [](int v) { return v > 1 && v != ConfigOptionIntsNullable::nil_value(); });
+        toggle_line("filament_prime_volume_nc", is_type1_tower && has_hotend_change, -1,
+                    is_type1_tower ? _L("This setting requires a printer that changes hotends.") : prime_volume_reason);
 
         bool is_BBL_multi_extruder = is_BBL_printer && printer_cfg.option<ConfigOptionFloats>("nozzle_diameter")->size() > 1;
         toggle_line("long_retractions_when_ec", is_BBL_multi_extruder, 256 + variant_index,
