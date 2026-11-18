@@ -14,6 +14,7 @@
 #include <cassert>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <climits>
 #include <array>
@@ -1950,6 +1951,29 @@ bool Sidebar::priv::switch_diameter_to(const wxString &diameter)
         MessageDialog dlg(this->plater, _L("Configuration incompatible"), _L("Warning"), wxICON_WARNING | wxOK);
         dlg.ShowModal();
         return false;
+    }
+    // ORCA: switching nozzles from a user preset lands on the user's own preset for the new nozzle when there is
+    // one, instead of the bare system preset: the user preset that inherits the target system preset and is named
+    // like the current one with the nozzle swapped, else the only user preset that inherits it.
+    if (printer_preset.is_user()) {
+        PresetCollection  &printers      = wxGetApp().preset_bundle->printers;
+        const std::string  target_system = preset->is_system ? preset->name : preset->inherits();
+        const std::string  swapped_name  = boost::replace_all_copy(printer_preset.name, printer_variant, diameter.ToStdString());
+        Preset            *sibling       = nullptr;
+        int                siblings      = 0;
+        for (Preset &candidate : printers) {
+            if (target_system.empty() || !candidate.is_user() || candidate.inherits() != target_system)
+                continue;
+            if (!printer_variant.empty() && candidate.name == swapped_name) {
+                sibling  = &candidate;
+                siblings = 1;
+                break;
+            }
+            sibling = &candidate;
+            ++siblings;
+        }
+        if (siblings == 1)
+            preset = sibling;
     }
     preset->is_visible = true; // force visible
     return wxGetApp().get_tab(Preset::TYPE_PRINTER)->select_preset(preset->name);
