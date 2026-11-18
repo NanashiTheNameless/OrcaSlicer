@@ -2990,8 +2990,8 @@ void ImGuiWrapper::init_font(bool compress)
     // Orca: temp fix for Korean font
     auto font_name_regular = "HarmonyOS_Sans_SC_Regular.ttf";
     auto font_name_bold = "HarmonyOS_Sans_SC_Bold.ttf";
-    // 0xProto (Latin only), the Korean and the Thai fonts cover their own script and little else,
-    // so they need HarmonyOS merged in behind them to reach the full range (CJK, °/³/µ, Cyrillic).
+    // 0xProto (Latin, with symbols merged in from JetBrains Mono), the Korean and the Thai fonts cover their
+    // own script and little else, so they need HarmonyOS merged in behind them to reach the full range (CJK).
     bool needs_glyph_fallback = false;
     if (m_use_0xproto) {
         font_name_regular = "0xProto-Regular.ttf";

@@ -31,7 +31,8 @@ static wxString s_face = "HarmonyOS Sans SC";
 
 bool Label::uses_0xproto(const std::string &language)
 {
-    // 0xProto has Latin glyphs only: no Cyrillic, Greek, Thai or CJK.
+    // 0xProto is a Latin font: no Thai or CJK, and its Greek and Cyrillic are JetBrains Mono glyphs merged in
+    // by scripts/merge_ui_font_fallback.py, so those languages keep a font designed for their script.
     const std::string lang = language.substr(0, language.find('_'));
     return !(lang == "zh" || lang == "ja" || lang == "ko" || lang == "th" || lang == "ru" || lang == "uk");
 }

@@ -918,10 +918,12 @@ if (!font.IsOk()) { font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT); if
 - The face is keyed on Orca's UI language (`app_config` `language`, the system language on first
   run): `0xProto` when `Label::uses_0xproto()` says it covers the script (every Latin-script
   language), `NanumGothic` for Korean, `HarmonyOS Sans SC` for Chinese, Japanese, Thai, Russian
-  and Ukrainian. 0xProto has no CJK, Cyrillic or Thai glyphs, and GDI does not reliably borrow
-  missing glyphs from another font. `Label::face()` returns the pick for fonts that need their own
+  and Ukrainian. 0xProto has no CJK or Thai glyphs, and GDI does not reliably borrow missing
+  glyphs from another font, so the bundled 0xProto files carry the symbols, Greek and Cyrillic
+  that upstream 0xProto lacks (³, →, ✓, ...) copied from JetBrains Mono by
+  `scripts/merge_ui_font_fallback.py`; rerun it if 0xProto is ever updated. `Label::face()` returns the pick for fonts that need their own
   size or weight (`wxFont(14, …, Label::face())`); never hard-code a face name. ImGui makes the
-  same choice and merges HarmonyOS behind 0xProto for °, ³, µ and CJK file names.
+  same choice and merges HarmonyOS behind 0xProto for CJK file names.
 - The statics are created once and stay DPI-correct on MSW because wx adjusts fonts per window,
   window DC and memory-DC bitmap scale (§wxFont).
 
