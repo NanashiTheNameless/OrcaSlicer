@@ -462,6 +462,8 @@ public:
     // Orca: remember the user's preferred print/export action across sessions (see "remember_print_action" preference)
     void        remember_print_select(PrintSelectType select_type);
     bool        get_remembered_print_select(PrintSelectType& out) const;
+    // Orca: apply a choice from the slice dropdown to the slice button, remembered like the print action
+    void        select_slice_action(SliceSelectType select_type);
 
     bool can_save() const;
     bool can_save_as() const;

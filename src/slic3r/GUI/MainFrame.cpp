@@ -2297,6 +2297,19 @@ void MainFrame::remember_print_select(PrintSelectType select_type)
     wxGetApp().app_config->set("last_print_action", print_select_type_key(select_type));
 }
 
+void MainFrame::select_slice_action(SliceSelectType select_type)
+{
+    m_slice_btn->SetLabel(select_type == eSliceAll ? _L("Slice all") : _L("Slice plate"));
+    m_slice_select = select_type;
+    // Orca: shares the print action preference, so one switch keeps both buttons as last used
+    if (wxGetApp().app_config->get_bool("remember_print_action"))
+        wxGetApp().app_config->set("last_slice_action", select_type == eSliceAll ? "slice_all" : "slice_plate");
+    m_slice_enable = get_enable_slice_status();
+    m_slice_btn->Enable(m_slice_enable);
+    this->Layout();
+    fit_tab_labels(); // ORCA on label change
+}
+
 bool MainFrame::get_remembered_print_select(PrintSelectType& out) const
 {
     if (!wxGetApp().app_config->get_bool("remember_print_action"))
@@ -2333,7 +2346,11 @@ wxBoxSizer* MainFrame::create_side_tools()
     m_print_btn = new SideButton(print_panel, _L("Print plate"), "");
     m_print_option_btn = new SideButton(print_panel, "", "sidebutton_dropdown", 0, 14);
 
-    // Orca: restore the last used print/export action if the user opted to remember it
+    // Orca: restore the last used slice and print/export actions if the user opted to remember them
+    if (wxGetApp().app_config->get_bool("remember_print_action") && wxGetApp().app_config->get("last_slice_action") == "slice_all") {
+        m_slice_select = eSliceAll;
+        m_slice_btn->SetLabel(_L("Slice all"));
+    }
     PrintSelectType remembered_print_select;
     if (get_remembered_print_select(remembered_print_select)) {
         m_print_select = remembered_print_select;
@@ -2474,23 +2491,13 @@ wxBoxSizer* MainFrame::create_side_tools()
             slice_plate_btn->SetCornerRadius(0);
 
             slice_all_btn->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) {
-                m_slice_btn->SetLabel(_L("Slice all"));
-                m_slice_select = eSliceAll;
-                m_slice_enable = get_enable_slice_status();
-                m_slice_btn->Enable(m_slice_enable);
-                this->Layout();
-                fit_tab_labels(); // ORCA on label change
+                select_slice_action(eSliceAll);
                 if(m_slice_option_pop_up)
                     m_slice_option_pop_up->Dismiss();
                 });
 
             slice_plate_btn->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) {
-                m_slice_btn->SetLabel(_L("Slice plate"));
-                m_slice_select = eSlicePlate;
-                m_slice_enable = get_enable_slice_status();
-                m_slice_btn->Enable(m_slice_enable);
-                this->Layout();
-                fit_tab_labels(); // ORCA on label change
+                select_slice_action(eSlicePlate);
                 if(m_slice_option_pop_up)
                     m_slice_option_pop_up->Dismiss();
                 });
