@@ -1237,12 +1237,9 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, in
     toggle_line("toolchange_cyclic_order", use_cyclic_ordering, -1, cyclic_order_reason);
     toggle_line("toolchange_cyclic_first_layer", use_cyclic_ordering, -1, cyclic_order_reason);
 
-    // Orca: the Type 1 tower (every Bambu printer) primes by the per-filament volumes on the filament's
-    // Multimaterial page, never by prime_volume; purge_in_prime_tower only applies to Type 2.
-    if (supports_wipe_tower_2)
-        toggle_line("prime_volume", have_prime_tower && (!purge_in_primetower || !bSEMM), -1, _L("Enable the prime tower and either disable purging in the prime tower or disable single extruder multimaterial mode."));
-    else
-        toggle_line("prime_volume", false, -1, _L("This printer's prime tower (Type 1) sets the prime volume per filament, on the filament's Multimaterial page."));
+    toggle_line("prime_volume",have_prime_tower && (!purge_in_primetower || !bSEMM), -1, _L("Enable the prime tower and either disable purging in the prime tower or disable single extruder multimaterial mode."));
+    // Orca: the Type 1 tower takes the prime volume of each filament instead.
+    toggle_field("prime_volume", supports_wipe_tower_2, -1, _L("The Type 1 prime tower takes the prime volume from each filament, on its Multimaterial page."));
 
     for (auto el : {"flush_into_infill", "flush_into_support", "flush_into_objects"})
         toggle_field(el, have_prime_tower, -1, _L("Enable the prime tower to use this setting."));
