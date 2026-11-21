@@ -384,6 +384,17 @@ public:
 
     bool verbose_events = true;
 
+    // False when the running CPython raises _winapi.CreateProcess with a command line hooks cannot
+    // read (python/cpython#159237). install_hook() probes it on Windows. The event is then judged
+    // only as part of a granted subprocess.Popen; a direct call has no readable target and is
+    // denied without a prompt.
+    bool winapi_create_process_audit_reliable() const { return m_winapi_create_process_audit_reliable; }
+    // Replaces the probe result. Production never calls it.
+    void set_winapi_create_process_audit_reliable_for_testing(bool reliable)
+    {
+        m_winapi_create_process_audit_reliable = reliable;
+    }
+
 private:
     friend class ScopedPluginAuditContext;
 
@@ -425,6 +436,8 @@ private:
     mutable std::mutex m_mutex;
 
     std::vector<AllowedRoot>             m_global_allowed_roots;
+    // Set once by install_hook() while it holds the GIL, and read only under the GIL.
+    bool                                 m_winapi_create_process_audit_reliable = true;
     std::vector<std::string>             m_denied_filenames;
     std::vector<std::string>             m_denied_path_keywords;
 };

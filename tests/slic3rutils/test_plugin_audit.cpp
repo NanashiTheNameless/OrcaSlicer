@@ -1568,6 +1568,10 @@ struct AuditHarness
     // this process (under ctest, this one) -- so the test files live in `outside`.
     ScopedDataDir                      data{"plugin-audit-hook"};
     bool                               initialized = PluginManager::instance().initialize();
+    // What install_hook() found about real _winapi.CreateProcess events, restored on teardown.
+    // Synthetic sys.audit() events carry their command line as text, so tests judge them as reliable.
+    bool                               winapi_audit_reliable =
+        PluginAuditManager::instance().winapi_create_process_audit_reliable();
     ScopedTemporaryDir                 outside{"orca-plugin-audit-outside"};
     std::vector<Prompt>                prompts;
     std::function<bool(const Prompt&)> approve = [](const Prompt&) { return false; };
@@ -1584,6 +1588,7 @@ struct AuditHarness
         PluginAuditManager::set_recursive_delete_approval_lifetime_for_testing(std::chrono::minutes(1));
         PluginAuditManager::set_recursive_delete_prompt_background_for_testing(false);
         PluginAuditManager::set_recursive_delete_prompt_deferred_for_testing(false);
+        audit.set_winapi_create_process_audit_reliable_for_testing(true);
         PluginAuditManager::set_permission_prompt_for_testing(
             [this](const std::string& event, const std::vector<std::string>& targets,
                    const std::vector<PluginAuditManager::PermissionPromptEntry>& entries) {
@@ -1606,6 +1611,7 @@ struct AuditHarness
         PluginAuditManager::set_recursive_delete_prompt_deferred_for_testing(false);
         PluginAuditManager::clear_recursive_delete_approvals_for_testing();
         PluginAuditManager::set_recursive_delete_approval_lifetime_for_testing(std::chrono::minutes(1));
+        PluginAuditManager::instance().set_winapi_create_process_audit_reliable_for_testing(winapi_audit_reliable);
         PluginManager::instance().shutdown();
     }
 
@@ -2267,6 +2273,46 @@ explicit_outcome = raise_popen(r"D:\other\tool.exe", r'"C:\Program Files\Tool\to
     CHECK(describe(harness.prompts).empty());
 }
 
+TEST_CASE("An unreadable _winapi.CreateProcess command line is denied without a prompt", "[audit][Python]")
+{
+    AuditHarness harness;
+    if (!harness.initialized)
+        SKIP("Bundled Python interpreter unavailable: " + PythonInterpreter::instance().last_error());
+    harness.add_plugin(PLUGIN);
+    harness.approve = [](const Prompt&) { return true; };
+    PluginAuditManager::instance().set_winapi_create_process_audit_reliable_for_testing(false);
+    py::gil_scoped_acquire gil;
+    PythonSide python(harness);
+
+    // A runtime whose event carries garbage in place of the command line: whatever the hook reads
+    // names no executable, so no prompt is shown and no grant is saved, even one the user would allow.
+    python.run_as(PLUGIN, R"PY(
+def raise_create_process(command_line):
+    try:
+        sys.audit("_winapi.CreateProcess", None, command_line, None)
+        return "ok"
+    except PermissionError:
+        return "denied"
+
+garbage_outcome = raise_create_process("\x02")
+repeat_outcome = raise_create_process("\x02")
+)PY");
+    CHECK(python.str("garbage_outcome") == "denied");
+    CHECK(python.str("repeat_outcome") == "denied");
+    CHECK(describe(harness.prompts).empty());
+
+    // subprocess.Popen carries its arguments as given, so it is still asked about.
+    python.run_as(PLUGIN, R"PY(
+try:
+    sys.audit("subprocess.Popen", None, r'"C:\Program Files\ToolA\a.exe" --one', None, None)
+    popen_outcome = "ok"
+except PermissionError:
+    popen_outcome = "denied"
+)PY");
+    CHECK(python.str("popen_outcome") == "ok");
+    CHECK(describe(harness.prompts) == "subprocess.Popen: C:\\Program Files\\ToolA\\a.exe\n");
+}
+
 TEST_CASE("A Windows command line grant names one quoted executable, not another path", "[audit][Python]")
 {
     AuditHarness harness;
@@ -2710,19 +2756,21 @@ site_packages_outcome = attempt(lambda: open(SITE_PACKAGE_FILE).close())
 }
 
 #ifdef _WIN32
-TEST_CASE("A real _winapi.CreateProcess audit event reports its command line as text", "[audit][Python]")
+TEST_CASE("A real _winapi.CreateProcess audit event is judged only when its command line is readable", "[audit][Python]")
 {
     AuditHarness harness;
     if (!harness.initialized)
         SKIP("Bundled Python interpreter unavailable: " + PythonInterpreter::instance().last_error());
     harness.add_plugin(PLUGIN);
+    PluginAuditManager::instance().set_winapi_create_process_audit_reliable_for_testing(harness.winapi_audit_reliable);
     py::gil_scoped_acquire gil;
     PythonSide python(harness);
 
-    // subprocess reaches this event on Windows. CPython 3.12.13 raised it with PySys_Audit's "uuu"
-    // format, reading the command-line object as a wide string, so audit hooks received garbage
-    // instead of the text subprocess passed. The deps patch raises "uOu" (as upstream does,
-    // python/cpython#159237) until the pinned release carries the fix.
+    // subprocess reaches this event on Windows. CPython raises it with PySys_Audit's "uuu" format,
+    // reading the command-line object as a wide string, so audit hooks receive garbage instead of
+    // the text subprocess passed (python/cpython#159237). A runtime built from source carries the
+    // deps patch that raises "uOu"; the signed runtime does not until a CPython release has the fix.
+    // install_hook() probes which one is running, and this checks that the probe agrees.
     //
     // The event is raised before the arguments are used, so a rejected environment mapping ends
     // the call after the hook saw the event, without reaching CreateProcessW. Run outside a
@@ -2748,16 +2796,21 @@ except TypeError:
 )PY");
     CHECK(python.str("audit_arguments_outcome") == "stopped");
     INFO("recorded audit arguments: " << python.str("WINAPI_AUDIT_CALLS"));
-    CHECK(python.eval("WINAPI_AUDIT_CALLS == [(None, COMMAND_LINE, None)]") == "True");
+    CHECK(python.eval("WINAPI_AUDIT_CALLS == [(None, COMMAND_LINE, None)]") ==
+          (harness.winapi_audit_reliable ? "True" : "False"));
 
-    // In a plugin scope the same call is prompted and denied. The quoted executable is the
-    // permission target; its arguments are not part of the grant.
+    // In a plugin scope the same call is denied. A readable command line is prompted, and the
+    // quoted executable is the permission target; its arguments are not part of the grant. An
+    // unreadable one names nothing to ask about, so it is denied without a prompt.
     python.run_as(PLUGIN, R"PY(
 create_process_outcome = attempt(lambda: _winapi.CreateProcess(
     None, COMMAND_LINE, None, None, False, 0, None, None, subprocess.STARTUPINFO()))
 )PY");
     CHECK(python.str("create_process_outcome") == "denied");
-    CHECK(describe(harness.prompts) == "_winapi.CreateProcess: " + python.str("DENIED_EXECUTABLE") + "\n");
+    if (harness.winapi_audit_reliable)
+        CHECK(describe(harness.prompts) == "_winapi.CreateProcess: " + python.str("DENIED_EXECUTABLE") + "\n");
+    else
+        CHECK(describe(harness.prompts).empty());
 }
 #endif
 

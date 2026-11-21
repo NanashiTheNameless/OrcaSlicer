@@ -1491,6 +1491,69 @@ std::string python_str(PyObject* object)
     return result;
 }
 
+#ifdef _WIN32
+// The probe's state. install_hook() runs it once with the GIL held, so plain statics suffice.
+static bool        s_winapi_probe_active = false;
+static bool        s_winapi_probe_seen   = false;
+static std::string s_winapi_probe_command_line;
+
+// CPython raises _winapi.CreateProcess with PySys_Audit format "uuu" although command_line is a
+// Python object, so a hook receives garbage in its place (python/cpython#159237). Raises the event
+// once with a known command line and an environment of the wrong type, which ends the call after
+// the event and before CreateProcessW, and reports whether the hook received the text. A probe
+// that cannot run reports false, so the event is not trusted.
+bool probe_winapi_create_process_audit()
+{
+    static const char* const kCommandLine = "orca-audit-probe.exe --probe";
+
+    PyObject* globals = PyDict_New();
+    if (!globals) {
+        PyErr_Clear();
+        return false;
+    }
+    PyDict_SetItemString(globals, "__builtins__", PyEval_GetBuiltins());
+    PyObject* command_line = PyUnicode_FromString(kCommandLine);
+    if (!command_line || PyDict_SetItemString(globals, "COMMAND_LINE", command_line) < 0) {
+        Py_XDECREF(command_line);
+        Py_DECREF(globals);
+        PyErr_Clear();
+        return false;
+    }
+    Py_DECREF(command_line);
+
+    s_winapi_probe_active = true;
+    s_winapi_probe_seen   = false;
+    s_winapi_probe_command_line.clear();
+    PyObject* result = PyRun_String(R"PY(
+import _winapi, subprocess
+try:
+    _winapi.CreateProcess(None, COMMAND_LINE, None, None, False, 0, object(), None, subprocess.STARTUPINFO())
+except (TypeError, OSError):
+    pass
+)PY",
+                                    Py_file_input, globals, globals);
+    s_winapi_probe_active = false;
+
+    const bool ran = result != nullptr;
+    Py_XDECREF(result);
+    Py_DECREF(globals);
+    if (!ran)
+        PyErr_Clear();
+    return ran && s_winapi_probe_seen && s_winapi_probe_command_line == kCommandLine;
+}
+
+// Records the probe's event in place of judging it. Returns true when the event was the probe's.
+bool record_winapi_probe_event(const std::string& event_name, PyObject* args)
+{
+    if (!s_winapi_probe_active || event_name != "_winapi.CreateProcess")
+        return false;
+    s_winapi_probe_seen = true;
+    if (!python_text(tuple_item(args, 1), s_winapi_probe_command_line))
+        s_winapi_probe_command_line.clear();
+    return true;
+}
+#endif
+
 // The interpreter's stdlib folders, and the site-packages folders inside them that hold
 // third-party code, both resolved. Set by install_hook(); like the verdict cache below, only
 // touched while the GIL is held.
@@ -3768,6 +3831,11 @@ int audit_plugin_event(PluginAuditManager& mgr, const std::string& event_name, A
          approved_subtree_covers_delete))
         return 0;
 
+    // Outside a granted subprocess.Popen, an unreadable _winapi.CreateProcess command line names
+    // no executable to ask about or to save a grant for.
+    if (event_name == "_winapi.CreateProcess" && !mgr.winapi_create_process_audit_reliable())
+        return report_denied(mgr, event_name, {false, "command line cannot be read"});
+
     // A hardlink's source becomes writable through the new name, so the source needs write
     // authorization on its own. This runs after root-frame coverage, so a link performed by an
     // approved read/write operation is covered as part of it, and before implicit allowed roots,
@@ -4600,6 +4668,11 @@ int PluginAuditManager::audit_hook(const char* event, PyObject* args, void* user
     if (event_name.empty())
         return 0;
 
+#ifdef _WIN32
+    if (PluginAuditDetail::record_winapi_probe_event(event_name, args))
+        return 0;
+#endif
+
     // Verbose logging of every audit event (can be noisy)
     if (mgr->verbose_events) {
         BOOST_LOG_TRIVIAL(debug) << "[AUDIT EVENT] " << event_name;
@@ -4682,6 +4755,13 @@ void PluginAuditManager::install_hook()
         return;
     }
     BOOST_LOG_TRIVIAL(info) << "[AUDIT] CPython audit hook installed successfully";
+
+#ifdef _WIN32
+    m_winapi_create_process_audit_reliable = PluginAuditDetail::probe_winapi_create_process_audit();
+    if (!m_winapi_create_process_audit_reliable)
+        BOOST_LOG_TRIVIAL(warning) << "[AUDIT] _winapi.CreateProcess audit events do not carry a readable command line; "
+                                      "plugins calling it outside subprocess.Popen are denied";
+#endif
 }
 
 } // namespace Slic3r
