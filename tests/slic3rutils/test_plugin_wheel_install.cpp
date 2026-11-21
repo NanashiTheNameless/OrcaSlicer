@@ -12,6 +12,7 @@
 #include <libslic3r/Zipper.hpp>
 #include <slic3r/plugin/PluginDescriptor.hpp>
 #include <slic3r/plugin/PluginFsUtils.hpp>
+#include <slic3r/plugin/PythonInterpreter.hpp>
 
 #include <algorithm>
 #include <chrono>
@@ -229,8 +230,12 @@ TEST_CASE("a staged wheel filename uses the tags the wheel declares", "[PluginWh
     // incompatibility), while a wheel declaring both uses the interpreter-compatible one.
     CHECK(wheel_install::wheel_filename_tag({"py2-none-any"}) == "py2-none-any");
     CHECK(wheel_install::wheel_filename_tag({"py2-none-any", "py3-none-any"}) == "py3-none-any");
-    CHECK(wheel_install::wheel_filename_tag({"cp311-cp311-linux_x86_64", "cp312-cp312-linux_x86_64"}) ==
-          "cp312-cp312-linux_x86_64");
+    // Built from the bundled interpreter's ABI, so the check holds whichever CPython is pinned.
+    const std::string current_abi = PythonInterpreter::python_abi_tag();
+    const std::string other_abi   = current_abi == "cp311" ? "cp310" : "cp311";
+    CHECK(wheel_install::wheel_filename_tag({other_abi + "-" + other_abi + "-linux_x86_64",
+                                             current_abi + "-" + current_abi + "-linux_x86_64"}) ==
+          current_abi + "-" + current_abi + "-linux_x86_64");
 
     // Tags that differ only in platform are combined into a standard compressed tag set.
     CHECK(wheel_install::wheel_filename_tag({"cp312-cp312-manylinux_2_17_x86_64",
