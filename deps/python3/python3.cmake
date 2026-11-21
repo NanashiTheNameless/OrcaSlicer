@@ -252,6 +252,7 @@ ExternalProject_Add(dep_python3
     URL_HASH SHA256=${_python_sha256}
     DOWNLOAD_DIR ${DEP_DOWNLOAD_DIR}/python3
     BUILD_IN_SOURCE ON
+    PATCH_COMMAND ${_python_patch_cmd}
     CONFIGURE_COMMAND ${_conf_cmd}
     BUILD_COMMAND ${_build_cmd}
     INSTALL_COMMAND ${_install_cmd}
