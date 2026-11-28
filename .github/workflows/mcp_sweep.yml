@@ -32,8 +32,8 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           # <ver> is V<version> or PR-<number>, so this leaves out the aarch64
-          # build's OrcaSlicer_Linux_ubuntu_2404_aarch64_<ver>.
-          pattern: OrcaSlicer_Linux_ubuntu_2404_{V,PR-}*
+          # build's OrcaSlicer_Linux_AppImage_aarch64_<ver>.
+          pattern: OrcaSlicer_Linux_AppImage_{V,PR-}*
           path: ${{ runner.temp }}/appimage
 
       - name: Extract the AppImage
