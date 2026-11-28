@@ -313,8 +313,9 @@ def _submit(self, fn, /, *args, **kwargs):
     finally:
         _submitting.item = None
 
-def _item_init(self, future, fn, args, kwargs):
-    _original_item_init(self, future, fn, args, kwargs)
+def _item_init(self, future, *args):
+    # (future, fn, args, kwargs) before Python 3.14, (future, task) from it.
+    _original_item_init(self, future, *args)
     tag = _item_tag()
     if tag is None:
         return
@@ -720,11 +721,11 @@ bool claim_item(ItemTag& tag)
 // callable, the future's completion and so the done callbacks the pool calls from there) runs inside that run, on a
 // worker that is the run's interrupt target meanwhile. Every BaseException stops here, so neither Stop nor a
 // SystemExit in a callback ends the worker, which pools share across runs.
-py::object run_work_item(const py::object& original, const py::handle& interrupt, const py::object& item)
+py::object run_work_item(const py::object& original, const py::handle& interrupt, const py::object& item, const py::args& rest)
 {
     const py::object capsule = py::getattr(item, "_orca_run", py::none());
     if (capsule.is_none())
-        return original(item);
+        return original(item, *rest);
     ItemTag&                        tag = tag_of(capsule);
     std::shared_ptr<PythonRunScope> run = tag.run;
     if (!claim_item(tag)) {
@@ -732,7 +733,7 @@ py::object run_work_item(const py::object& original, const py::handle& interrupt
         // notified, which wait() and as_completed() need, and raises for any other (a future completed by hand),
         // which must not end the worker either.
         try {
-            original(item);
+            original(item, *rest);
         } catch (py::error_already_set&) {
         }
         return py::none();
@@ -753,7 +754,7 @@ py::object run_work_item(const py::object& original, const py::handle& interrupt
                 if (future.attr("set_running_or_notify_cancel")().cast<bool>())
                     future.attr("set_exception")(py::module_::import("builtins").attr("RuntimeError")(why));
             } else
-                original(item);
+                original(item, *rest);
         } catch (py::error_already_set& err) {
             if (!err.matches(interrupt)) {
                 try {
@@ -834,7 +835,7 @@ const Capture& capture_functions()
         py::object item_class = py::module_::import("concurrent.futures.thread").attr("_WorkItem");
         py::object original   = item_class.attr("run");
         py::handle interrupt  = capture.interrupt;
-        item_class.attr("run") = py::cpp_function([original, interrupt](const py::object& item) { return run_work_item(original, interrupt, item); },
+        item_class.attr("run") = py::cpp_function([original, interrupt](const py::object& item, const py::args& rest) { return run_work_item(original, interrupt, item, rest); },
                                                   py::name("run"), py::is_method(item_class));
     }
     // Last: a set `begin` is what tells a later caller, under the GIL, that the rest is there.
@@ -1778,21 +1779,28 @@ bool python_run_waits_for(const py::handle& function)
 
 PoolInitializerBinding python_run_bind_pool_initializer(const py::handle& function, const std::shared_ptr<PythonRunScope>& run)
 {
-    // The worker's target is _worker(executor_reference, work_queue, initializer, initargs).
+    // The worker's target is _worker(executor_reference, work_queue, initializer, initargs) before Python 3.14, and
+    // _worker(executor_reference, ctx, work_queue) from it, where ctx is the worker's own context and calls
+    // ctx.initializer(*ctx.initargs).
     const py::object thread = thread_of(function);
     if (!is_pool_worker_thread(thread))
         return PoolInitializerBinding::None;
     const py::object args = py::getattr(thread, "_args", py::none());
-    if (!py::isinstance<py::tuple>(args) || py::len(args) < 4)
+    if (!py::isinstance<py::tuple>(args))
         return PoolInitializerBinding::None;
     py::list         worker_args(args);
-    const py::object initializer = worker_args[2];
+    py::object       context;
+    if (py::len(worker_args) == 3)
+        context = worker_args[1];
+    else if (py::len(worker_args) < 4)
+        return PoolInitializerBinding::None;
+    const py::object initializer = context ? py::getattr(context, "initializer", py::none()) : py::object(worker_args[2]);
     if (initializer.is_none())
         return PoolInitializerBinding::None;
     if (!run->task_submitted())
         return PoolInitializerBinding::Refused;
     try {
-        worker_args[2] = py::cpp_function([initializer, run](const py::args& call_args) -> py::object {
+        py::object bound_initializer = py::cpp_function([initializer, run](const py::args& call_args) -> py::object {
             ScopedPythonRun          bound(run, PythonRunThread::Started);
             ScopedPluginAuditContext audit(run->identity());
             run->allow_folder_reads();
@@ -1814,7 +1822,12 @@ PoolInitializerBinding python_run_bind_pool_initializer(const py::handle& functi
                 throw py::error_already_set();
             return py::reinterpret_steal<py::object>(result);
         });
-        py::setattr(thread, "_args", py::tuple(worker_args));
+        if (context) {
+            py::setattr(context, "initializer", bound_initializer);
+        } else {
+            worker_args[2] = bound_initializer;
+            py::setattr(thread, "_args", py::tuple(worker_args));
+        }
     } catch (...) {
         run->task_done();
         throw;
